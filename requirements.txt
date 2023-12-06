@@ -44,6 +44,7 @@ patsy==0.5.3
 Pillow==10.1.0
 platformdirs==3.11.0
 plotly==5.18.0
+polars==0.19.9
 prompt-toolkit==3.0.39
 psutil==5.9.6
 pure-eval==0.2.2
