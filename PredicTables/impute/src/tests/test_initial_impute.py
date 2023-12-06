@@ -1,28 +1,18 @@
-import pytest
-import pandas as pd
-from pandas.testing import (
-    assert_frame_equal as pd_assert_frame_equal,
-    # assert_series_equal as pd_assert_series_equal,
-)
-import polars as pl
-from polars.testing import (
-    assert_frame_equal as pl_assert_frame_equal,
-    assert_series_equal as pl_assert_series_equal,
-)
 import numpy as np
-# from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+import pandas as pd
+import polars as pl
+import pytest
+from pandas.testing import assert_frame_equal as pd_assert_frame_equal
+from polars.testing import assert_frame_equal as pl_assert_frame_equal
+from polars.testing import assert_series_equal as pl_assert_series_equal
 
-import sys
-
-sys.path.append("../../")
-sys.path.append("../")
-from get_cv_folds import get_cv_folds
-from get_missing_data_mask import get_missing_data_mask
-from impute_with_median import impute_with_median
-from impute_with_mode import _check_if_categorical, impute_with_mode
-from initial_impute import initial_impute
-# from rf_param_grid import regression_grid, classification_grid
-# from get_rf_hyperparameters import _get_default_params_col
+from PredicTables.impute import (
+    get_cv_folds,
+    get_missing_data_mask,
+    impute_with_median,
+    impute_with_mode,
+    initial_impute,
+)
 
 
 @pytest.fixture
@@ -962,6 +952,14 @@ def test_initial_impute_invalid_input_type():
 #             _get_default_params_col(df, None)
 
 #     def test_col_not_in_df(self):
+#         df = pd.DataFrame({'numeric_col': [1, 2, 3]})
+#         with pytest.raises(ValueError, match="Column 'not_a_col' not found in DataFrame."):
+#             _get_default_params_col(df, 'not_a_col')
+
+#     def test_unsupported_column_type(self):
+#         df = pd.DataFrame({'unsupported_col': pd.TimedeltaIndex([1, 2, 3], unit='d')})
+#         with pytest.raises(ValueError, match="Column type must be numeric or string, not timedelta64[ns]."):
+#             _get_default_params_col(df, 'unsupported_col')
 #         df = pd.DataFrame({'numeric_col': [1, 2, 3]})
 #         with pytest.raises(ValueError, match="Column 'not_a_col' not found in DataFrame."):
 #             _get_default_params_col(df, 'not_a_col')

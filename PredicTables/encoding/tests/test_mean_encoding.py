@@ -19,7 +19,7 @@ def sample_data():
                 start=date(2022, 1, 1), end=date(2022, 1, 6), interval="1d", eager=True
             ),
         }
-    ).with_columns(pl.col("category").cast(pl.Categorical).keep_name())
+    ).with_columns(pl.col("category").cast(pl.Categorical).name.keep())
 
 
 def test_mean_encoding_hit_ratio1(sample_data):

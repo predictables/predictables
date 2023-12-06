@@ -1,21 +1,15 @@
-import pytest
-import pandas as pd
 import numpy as np
+import pandas as pd
+import pytest
 from sklearn.linear_model import LinearRegression
 
-import sys
-
-sys.path.append(".")
-sys.path.append("..")
-sys.path.append("../..")
-
-from impute.src.evaluate_imputation import (
-    evaluate_imputation_one_column,
-    train_model_on_fold,
+from PredicTables.impute import (
     calculate_fold_error,
-    cross_validate_model,
     calculate_standard_error_of_mean,
     check_stopping_criterion,
+    cross_validate_model,
+    evaluate_imputation_one_column,
+    train_model_on_fold,
 )
 
 
@@ -386,4 +380,5 @@ def test_check_stopping_criterion_converged_NEW():
 def test_check_stopping_criterion_not_converged_NEW():
     # Test where errors have not converged
     errors = [[1, 2, 3], [1, 3, 4], [2, 4, 5]]
+    assert check_stopping_criterion(errors) == False
     assert check_stopping_criterion(errors) == False

@@ -1,12 +1,9 @@
 from typing import Union
-
 import numpy as np
 import pandas as pd
 from catboost import CatBoostClassifier, CatBoostRegressor
-
 from PredicTables.util import to_pd_df
-
-from .get_cv_folds import get_cv_folds
+from PredicTables.impute import get_cv_folds
 
 
 def train_one_catboost_model(

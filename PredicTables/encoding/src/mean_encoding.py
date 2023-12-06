@@ -97,8 +97,8 @@ def mean_encoding_with_ratio_lazy(
         # Get cumulative sums of col1 and col2 by the categorical column
         .with_columns(
             [
-                pl.cumsum(col1).over(cat_col).alias("sum_col1"),
-                pl.cumsum(col2).over(cat_col).alias("sum_col2"),
+                pl.cum_sum(col1).over(cat_col).alias("sum_col1"),
+                pl.cum_sum(col2).over(cat_col).alias("sum_col2"),
             ]
         )
         # Shift the cumulative sums by the date offset and divide to get the mean ratio

@@ -1,12 +1,13 @@
+from dataclasses import dataclass
+from typing import Union
+
 import pandas as pd
 from joblib import Parallel, delayed
-from typing import Union
-from dataclasses import dataclass
 
 from PredicTables.impute import (
     impute_single_column,
-    train_one_catboost_model,
     initial_impute,
+    train_one_catboost_model,
 )
 
 
@@ -299,4 +300,5 @@ class ModelImputer:
 
         # Update the imputed_df with the weighted average of the
         # current and updated dfs
+        self.imputed_df = (1 - learning_rate) * current_df + learning_rate * updated_df
         self.imputed_df = (1 - learning_rate) * current_df + learning_rate * updated_df
