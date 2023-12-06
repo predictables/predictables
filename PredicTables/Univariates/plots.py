@@ -6,6 +6,7 @@ import pandas as pd
 from scipy.interpolate import interp1d
 from scipy.stats import ttest_ind
 
+from PredicTables.util.stats import gini_coefficient, kl_divergence
 
 
 def _plot_label(s: str) -> str:
@@ -127,20 +128,6 @@ def _rotate_x_labels_if_overlap(ax: plt.Axes) -> plt.Axes:
                 break
 
     return ax
-
-
-def _calculate_gini(observed, modeled):
-    from sklearn.metrics import roc_auc_score
-
-    # Gini coefficient calculation using AUC
-    return 2 * roc_auc_score(observed, modeled) - 1
-
-
-def _calculate_kl_divergence(observed, modeled):
-    from scipy.stats import entropy
-
-    # Calculate KL divergence directly from observed and modeled averages
-    return entropy(observed, modeled)
 
 
 def _quintile_lift_plot(
@@ -266,12 +253,12 @@ def _quintile_lift_plot(
     ax.legend()
 
     # KL Divergence calculation
-    kl_div = _calculate_kl_divergence(
+    kl_div = kl_divergence(
         lift_df["observed_target_mean"].values, lift_df["modeled_target_mean"].values
     )
 
     # Gini calculation
-    gini_coeff = _calculate_gini(df["observed_target"], df["modeled_target"])
+    gini_coeff = gini_coefficient(df["observed_target"], df["modeled_target"])
 
     # Add KL divergence and Gini coefficient as annotation to the plot
     ax.annotate(
@@ -570,7 +557,7 @@ def _plot_violin(
     try:
         bin_edges = np.histogram_bin_edges(data, bins=n_bins)
         hist, _ = np.histogram(data, bins=bin_edges, density=True)
-    except:
+    except ValueError:
         hist, bin_edges = np.histogram(data, bins="auto", density=True)
 
     # Smooth the histogram
@@ -590,11 +577,6 @@ def _plot_violin(
 
     # Mirror the density values for plotting on one side
     plot_x_vals = -new_x if (side == "left" and orientation == "vertical") else new_x
-    plot_hist_smooth = (
-        -new_hist_smooth
-        if (side == "left" and orientation == "horizontal")
-        else new_hist_smooth
-    )
 
     # Plot the density
     if orientation == "vertical":
@@ -827,6 +809,3 @@ p-value: {p_val:.3f}"
     )
 
     return ax
-
-
-from sklearn.metrics import roc_curve, auc, roc_auc_score
