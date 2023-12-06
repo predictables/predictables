@@ -1,4 +1,4 @@
-import sys
+import warnings
 from collections import namedtuple
 from typing import Callable, Optional
 
@@ -38,14 +38,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from tqdm import tqdm
 
-sys.path.append(".")
-sys.path.append("..")
-sys.path.append("../../")
-sys.path.append("../../../")
-
-
-import warnings
-
 from PredicTables.Univariates.plots import (
     _plot_lift_chart,
     _quintile_lift_plot,
@@ -57,8 +49,7 @@ from PredicTables.Univariates.plots import (
 from PredicTables.Univariates.plots import (
     plot_violin_with_outliers as _plot_violin,
 )
-
-from .stat import informedness
+from PredicTables.util.stats import gini_coefficient, informedness, kl_divergence
 
 warnings.filterwarnings("ignore")
 
@@ -2336,13 +2327,13 @@ p-value: {pvalue:.2f}
         )
 
         # KL Divergence calculation
-        kl_div = _calculate_kl_divergence(
+        kl_div = kl_divergence(
             lift_df["observed_target_mean"].values,
             lift_df["modeled_target_mean"].values,
         )
 
         # Gini calculation
-        gini_coeff = _calculate_gini(df["observed_target"], df["modeled_target"])
+        gini_coeff = gini_coefficient(df["observed_target"], df["modeled_target"])
 
         # Add KL divergence and Gini coefficient as annotations
         fig.add_annotation(
