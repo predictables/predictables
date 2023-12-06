@@ -1,14 +1,15 @@
-import pandas as pd
-from typing import Tuple
 from concurrent.futures import ProcessPoolExecutor
+from typing import Tuple
 
-from .evaluate_imputation import (
+import pandas as pd
+
+from PredicTables.impute.src.evaluate_imputation import (
     check_stopping_criterion,
 )
-from .get_missing_data_mask import get_missing_data_mask
-from .initial_impute import initial_impute
-from .impute_with_trained_model import impute_with_trained_model
-from .train_catboost_model import train_one_catboost_model
+from PredicTables.impute.src.get_missing_data_mask import get_missing_data_mask
+from PredicTables.impute.src.impute_with_trained_model import impute_with_trained_model
+from PredicTables.impute.src.initial_impute import initial_impute
+from PredicTables.impute.src.train_catboost_model import train_one_catboost_model
 
 
 def train_and_predict(

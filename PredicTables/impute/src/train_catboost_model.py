@@ -1,9 +1,11 @@
 from typing import Union
+
 import numpy as np
 import pandas as pd
 from catboost import CatBoostClassifier, CatBoostRegressor
+
+from PredicTables.impute.src.get_cv_folds import get_cv_folds
 from PredicTables.util import to_pd_df
-from PredicTables.impute import get_cv_folds
 
 
 def train_one_catboost_model(
@@ -12,16 +14,22 @@ def train_one_catboost_model(
     """
     Trains a CatBoost model (regressor or classifier) based on the target column's data type.
 
-    :param df: The df to train the model on. Should contain the features and target column.
-    :type df: pd.DataFrame
-    :param target_column: The name of the target column.
-    :type target_column: str
-    :param cv_folds: The number of cross-validation folds to use. If None, will not do cross validation. If an integer is provided, will create that many folds. If a list is provided and is the same length as the df, will use those indices to create the folds. If the size if not the same as the df, will raise an error.
-    :type cv_folds: Union[int, list]
-    :return: A trained CatBoost model.
-    :rtype: Union[CatBoostRegressor, CatBoostClassifier]
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The df to train the model on. Should contain the features and target column.
+    target_column : str
+        The name of the target column.
+    cv_folds : Union[int, list], optional
+        The number of cross-validation folds to use. If None, will not do cross validation. If an integer is provided, will create that many folds. If a list is provided and is the same length as the df, will use those indices to create the folds. If the size if not the same as the df, will raise an error. The default is None.
+
+    Returns
+    -------
+    Union[CatBoostRegressor, CatBoostClassifier]
+        A trained CatBoost model.
     """
     df = to_pd_df(df)
+
     # Check inputs
     assert isinstance(
         df, pd.DataFrame
@@ -117,9 +125,31 @@ def train_catboost_model(df, missing_mask, cv_folds: Union[int, list] = None):
     """
     Trains a CatBoost model (regressor or classifier) for each column in the df.
 
-    :param df: The df to train the models on.
-    :param missing_mask: The mask indicating which values are missing in the df.
-    :return: A dictionary of trained CatBoost models.
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The df to train the model on. Should contain the features and target column.
+    missing_mask : pd.DataFrame
+        A boolean mask with the same shape as df, where True indicates a missing value.
+    cv_folds : Union[int, list], optional
+        The number of cross-validation folds to use. If None, will not do cross validation. If an integer is provided, will create that many folds. If a list is provided and is the same length as the df, will use those indices to create the folds. If the size if not the same as the df, will raise an error. The default is None.
+
+    Returns
+    -------
+    dict
+        A dictionary where the keys are the column names and the values are the trained models.
+
+    Raises
+    ------
+    AssertionError
+        If df is not a pandas DataFrame.
+        If missing_mask is not a pandas DataFrame.
+        If df and missing_mask do not have the same shape.
+
+    Notes
+    -----
+    This function is a wrapper around train_one_catboost_model().
+
     """
     df = to_pd_df(df)
     missing_mask = to_pd_df(missing_mask)

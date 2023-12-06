@@ -1,21 +1,11 @@
-import pytest
-import pandas as pd
-from pandas.testing import assert_frame_equal
-import polars as pl
 import numpy as np
+import pandas as pd
+import polars as pl
+import pytest
 
-from catboost import CatBoostRegressor, CatBoostClassifier
-
-import sys
-
-sys.path.append("../")
-sys.path.append("../../")
-sys.path.append("../../../")
-
-from impute.src.initial_impute import initial_impute
-from impute.src.get_missing_data_mask import get_missing_data_mask
-from iterativerf_plan import predict_missing_values, fit_catboost_models
-from util import to_pl_df, to_pl_s, to_pd_df
+from PredicTables.impute.src.get_missing_data_mask import get_missing_data_mask
+from PredicTables.impute.src.train_catboost_model import train_catboost_model
+from PredicTables.util import to_pl_df, to_pl_s
 
 
 @pytest.fixture
@@ -85,7 +75,7 @@ def fitted_model_num1(pd_df_missing_num1):
     X = df.drop(columns=["num_col1"])
     y = df["num_col1"]
     catcols = ["cat_col1", "cat_col2"]
-    model = fit_catboost_models(X, y, catcols)[0]
+    model = train_catboost_model(X, y, catcols)[0]
     return model
 
 
@@ -98,7 +88,7 @@ def fitted_model_num2(pd_df_missing_num2):
     X = df.drop(columns=["num_col2"])
     y = df["num_col2"]
     catcols = ["cat_col1", "cat_col2"]
-    model = fit_catboost_models(X, y, catcols)[0]
+    model = train_catboost_model(X, y, catcols)[0]
     return model
 
 
@@ -111,7 +101,7 @@ def fitted_model_cat1(pd_df_missing_cat1):
     X = df.drop(columns=["cat_col1"])
     y = df["cat_col1"]
     catcols = ["cat_col2"]
-    model = fit_catboost_models(X, y, catcols)[1]
+    model = train_catboost_model(X, y, catcols)[1]
     return model
 
 
@@ -124,7 +114,7 @@ def fitted_model_cat2(pd_df_missing_cat2):
     X = df.drop(columns=["cat_col2"])
     y = df["cat_col2"]
     catcols = ["cat_col1"]
-    model = fit_catboost_models(X, y, catcols)[1]
+    model = train_catboost_model(X, y, catcols)[1]
     return model
 
 

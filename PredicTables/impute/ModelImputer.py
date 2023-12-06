@@ -4,11 +4,9 @@ from typing import Union
 import pandas as pd
 from joblib import Parallel, delayed
 
-from PredicTables.impute import (
-    impute_single_column,
-    initial_impute,
-    train_one_catboost_model,
-)
+from PredicTables.impute.src.impute_with_trained_model import impute_single_column
+from PredicTables.impute.src.initial_impute import initial_impute
+from PredicTables.impute.src.train_catboost_model import train_one_catboost_model
 
 
 @dataclass

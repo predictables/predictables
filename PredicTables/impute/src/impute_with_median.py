@@ -1,7 +1,9 @@
+from typing import Union
+
 import pandas as pd
 import polars as pl
 import polars.selectors as cs
-from typing import Union
+
 from PredicTables.util import to_pl_lf
 
 

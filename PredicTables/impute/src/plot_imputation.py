@@ -1,7 +1,8 @@
-import polars as pl
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import polars as pl
 import seaborn as sns
+
 from PredicTables.util import to_pd_df
 
 

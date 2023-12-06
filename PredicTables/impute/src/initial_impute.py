@@ -1,11 +1,11 @@
+from typing import Union
+
 import pandas as pd
 import polars as pl
 
-from .impute_with_median import impute_with_median
-from .impute_with_mode import impute_with_mode
+from PredicTables.impute.src.impute_with_median import impute_with_median
+from PredicTables.impute.src.impute_with_mode import impute_with_mode
 from PredicTables.util import to_pl_lf
-
-from typing import Union
 
 
 def initial_impute(

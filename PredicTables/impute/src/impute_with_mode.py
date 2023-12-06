@@ -19,9 +19,11 @@ Example:
     >>> imputed_df
 """
 
+from typing import Union
+
 import pandas as pd
 import polars as pl
-from typing import Union
+
 from PredicTables.util import to_pl_df
 
 
