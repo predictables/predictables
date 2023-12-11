@@ -21,10 +21,59 @@ Example:
 
 from typing import Union
 
+import numpy as np
 import pandas as pd
 import polars as pl
 
-from PredicTables.util import to_pl_df
+from PredicTables.util import to_pd_s, to_pl_df
+
+
+def _is_mode_ambiguous(s: Union[pl.Series, pd.Series, np.ndarray]) -> bool:
+    """
+    Returns true if there is more than one mode, false otherwise.
+    """
+    # Convert to pandas series no matter what the input
+    s = to_pd_s(s)
+
+    # If the series has a categorical dtype, convert to string for the mode calculation
+    if s.dtype == "category":
+        s = s.astype(str)
+
+    return len(s.mode()) > 1
+
+
+def _first_mode(s: Union[pl.Series, pd.Series, np.ndarray]) -> str:
+    """
+    Returns the first mode listed in the dataset. Used to resolve multimodal categorical distributions.
+    """
+    # Convert to pandas series no matter what the input
+    s = to_pd_s(s)
+
+    # If the series has a categorical dtype, convert to string for the mode calculation
+    if s.dtype == "category":
+        s = s.astype(str)
+
+    if len(s.mode()) == 1:
+        return s.mode()[0]
+    elif len(s.mode()) == 0:
+        raise ValueError("No mode found in series")
+    else:
+        # more than one mode found -> find the index each mode first
+        # shows up in the data:
+        modes = s.mode()
+
+        # This is just an ordered list of the indices of the modes
+        idx = s.reset_index(drop=True).index.to_series()
+
+        # This is a list of the indices of the modes in the
+        # original series
+        mode_idx = pd.Series([idx[s == m].min() for m in modes])
+
+        # Dataframe with modes matched with their first index:
+        mode_df = pd.DataFrame({"mode": modes, "idx": mode_idx})
+
+        # Mode (as a string) corresponding to the minimum idx:
+        return mode_df.loc[mode_df.idx.idxmin(), "mode"]
 
 
 def _is_numeric_dtype(dtype) -> bool:

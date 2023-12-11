@@ -1,7 +1,8 @@
+from typing import Union
+
+import numpy as np
 import pandas as pd
 import polars as pl
-import numpy as np
-from typing import Union
 
 
 def to_pd_df(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]) -> pd.DataFrame:
@@ -37,7 +38,12 @@ def to_pd_s(s: Union[pd.Series, pl.Series]) -> pd.Series:
         if isinstance(s, pd.Series):
             return s
         elif isinstance(s, pl.Series):
-            return s.to_pandas()
+            # if the data type is categorical, first convert to string, then to pandas, then back to categorical
+            if s.dtype == "category":
+                return s.astype(str).to_pandas().astype("category")
+            else:
+                arr = s.to_numpy()  ## This prevents the
+                return pd.Series(arr)
         elif isinstance(s, np.ndarray):
             return pd.Series(s)
         else:
