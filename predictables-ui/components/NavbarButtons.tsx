@@ -6,9 +6,14 @@ import { NavButton } from '@data/navbarData';
 interface NavbarButtonsProps {
   data: NavButton[];
   timeout?: number;
+  isDataLoaded?: boolean;
 }
 
-const NavbarButtons = ({ data = dat, timeout = 5000 }: NavbarButtonsProps) => {
+const NavbarButtons = ({
+  data = dat,
+  timeout = 5000,
+  isDataLoaded = false,
+}: NavbarButtonsProps) => {
   return (
     <>
       <ul className="flex flex-row items-end justify-end">
@@ -16,7 +21,9 @@ const NavbarButtons = ({ data = dat, timeout = 5000 }: NavbarButtonsProps) => {
           return (
             <li key={idx}>
               <Link href={item.route} passHref>
-                <Button>{item.name}</Button>
+                <Button inactive={item.name === 'view data' && !isDataLoaded}>
+                  {item.name}
+                </Button>
               </Link>
             </li>
           );

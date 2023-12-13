@@ -61,6 +61,10 @@ const data: NavButton[] = [
     route: '/',
   },
   {
+    name: 'view data',
+    route: '/view-data',
+  },
+  {
     name: 'univariate',
     route: '/univariate',
   },

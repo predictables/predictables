@@ -21,11 +21,9 @@ export default function RootLayout({
         bg-white text-black
         flex flex-col w-[100vw] h-[100vh] justify-center items-center `}
       >
-        <Navbar />
-        {/* <div id="mainContainer" className={`mt-[120px] w-[80%] h-[90%]`}>
-          <Drawer /> */}
-        <main className="h-full w-full">{children}</main>
-        {/* </div> */}
+        <Navbar>
+          <main className="h-full w-full">{children}</main>
+        </Navbar>
       </body>
     </html>
   );

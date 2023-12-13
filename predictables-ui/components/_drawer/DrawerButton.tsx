@@ -1,7 +1,7 @@
 import Logo from '@components/Logo';
 
 interface DrawerButtonProps {
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const DrawerButton = ({ onClick }: DrawerButtonProps) => {

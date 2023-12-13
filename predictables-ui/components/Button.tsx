@@ -6,6 +6,7 @@ interface ButtonProps {
   filledIn?: boolean;
   clickable?: boolean;
   selected?: boolean;
+  inactive?: boolean;
 }
 
 const Button = ({
@@ -14,6 +15,7 @@ const Button = ({
   filledIn = false,
   clickable = true,
   selected = false,
+  inactive = false,
 }: ButtonProps) => {
   // Will fill the button in one of two ways:
   // 1. If the button HAS the filledIn design, it will be filled in when it is NOT selected
@@ -30,6 +32,7 @@ const Button = ({
           ? `bg-black text-white hover:bg-white hover:text-black shadow-lg border-black border-[2px]`
           : `bg-white text-black hover:bg-black hover:text-white shadow-lg border-black border-[2px]`
       }
+      ${inactive ? 'opacity-50 cursor-not-allowed' : ''}
     `}
     >
       {children}

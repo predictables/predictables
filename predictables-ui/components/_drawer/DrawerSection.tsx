@@ -7,6 +7,7 @@ interface DrawerSection {
   isChecked?: boolean;
   accordionNumber?: number;
   children?: React.ReactNode;
+  status?: boolean;
 }
 
 const DrawerSection = ({
@@ -15,6 +16,7 @@ const DrawerSection = ({
   isChecked = false,
   accordionNumber = 1,
   children,
+  status = false,
 }: DrawerSection) => {
   return (
     <div>
@@ -23,6 +25,7 @@ const DrawerSection = ({
         accordionType={accordionType}
         isChecked={isChecked}
         accordionNumber={accordionNumber}
+        status={status}
       >
         <AccordionChild>{children}</AccordionChild>
       </AccordionItem>
