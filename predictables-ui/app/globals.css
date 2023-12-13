@@ -16,15 +16,18 @@
   }
 }
 
-
+@font-face {
+  font-family: 'InterTight';
+  src: url('/fonts/InterTight-VariableFont_wght.ttf');
+}
 
 @font-face {
-  font-family: "InterTight";
-  src: url("/fonts/InterTight-VariableFont_wght.ttf");
+  font-family: 'Ubuntu Mono';
+  src: url('/fonts/UbuntuMono-Regular.ttf');
 }
 
 * {
-  font-family: "InterTight", sans-serif;
-  font-weight: 100;
+  font-family: 'InterTight', sans-serif;
+  font-weight: 200;
   color: black;
 }
