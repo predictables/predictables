@@ -71,6 +71,37 @@ class DataTable {
     this.columns.forEach((c, i) => {
       this[c] = values[i];
     });
+
+    // set the values array
+    this.values = values;
+
+    // set the shape
+    this.shape = [this.width, this.height];
+  }
+
+  get height() {
+    // Returns the height of the DataTable
+    return this.values[0].length;
+  }
+
+  get width() {
+    // Returns the width of the DataTable
+    return this.values.length;
+  }
+
+  get nRows() {
+    // Returns the number of rows in the DataTable
+    return this.height;
+  }
+
+  get nCols() {
+    // Returns the number of columns in the DataTable
+    return this.width;
+  }
+
+  at(row, column) {
+    // Returns the value at the given row and column
+    return this.values[column].at(row);
   }
 
   col(column) {
@@ -90,6 +121,62 @@ class DataTable {
       json[c] = this.values[i].json(byRow);
     });
     return json;
+  }
+
+  head(n = 5) {
+    // Returns the first n rows of the DataTable
+    const values = this.values.map((v) => v.head(n));
+    return new DataTable(values, this.columns, this.index);
+  }
+
+  tail(n = 5) {
+    // Returns the last n rows of the DataTable
+    const values = this.values.map((v) => v.tail(n));
+    return new DataTable(values, this.columns, this.index);
+  }
+
+  slice(start, end) {
+    // Returns a slice of the DataTable
+    const values = this.values.map((v) => v.slice(start, end));
+    return new DataTable(values, this.columns, this.index);
+  }
+
+  filter(condition) {
+    // Returns a filtered version of the DataTable
+    const values = this.values.map((v) => v.filter(condition));
+    return new DataTable(values, this.columns, this.index);
+  }
+
+  sort(column, ascending = true) {
+    // Returns a sorted version of the DataTable
+    const values = this.values.map((v) => v.sort(column, ascending));
+    return new DataTable(values, this.columns, this.index);
+  }
+
+  transpose() {
+    // Returns a transposed version of the DataTable
+    const index = this.columns;
+    const columns = this.index;
+    const curValues = this.values;
+    const newShape = [this.shape[1], this.shape[0]];
+    const newValues = [];
+    for (let i = 0; i < newShape[0]; i++) {
+      newValues.push([]);
+    }
+    curValues.forEach((v) => {
+      for (let i = 0; i < v.length; i++) {
+        newValues[i].push(v[i]);
+      }
+    });
+    const newVals2 = newValues.map((v) => new DataSeries(v));
+
+    return new DataTable(newVals2, columns, index);
+  }
+
+  mapColumns(func) {
+    // Returns a mapped version of the DataTable
+    const values = this.values.map((v) => v.map(func));
+    return new DataTable(values, this.columns, this.index);
   }
 
   split(nChunks = 2, output = 'json', saveFile = '') {

@@ -7,10 +7,11 @@ import { data } from '@data/navbarData';
 import DrawerButton from './_drawer/DrawerButton';
 import LoadDataSection from './_drawer/LoadDataSection';
 import CloseButton from './CloseButton';
-import Table from '@components/Table';
 
 import DataTable from '@models/DataTable/DataTable';
 import DataSeries from '@models/DataTable/DataSeries';
+
+import DataTableContext from '@app/_context/DataTableContext';
 
 interface NavbarProps {
   children: React.ReactNode;
@@ -25,7 +26,7 @@ const Navbar = ({ children }: NavbarProps) => {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [loadedData, setLoadedData] = useState(null);
   const [dataKeys, setDataKeys] = useState<string[] | null>(null);
-  const [df, setDF] = useState<DataTable | null>(null);
+  const [dt, setDT] = useState<DataTable | null>(null);
 
   const buildData = (keys: string[], data: any) => {
     let outData: any = [];
@@ -41,24 +42,19 @@ const Navbar = ({ children }: NavbarProps) => {
       outData.push(ds);
     });
 
-    console.log('outData:', outData);
+    // console.log('outData:', outData);
     let outData2 = new DataTable(outData);
-    console.log('outData2:', outData2);
-    setDF(outData2);
+    // console.log('outData2:', outData2);
+    setDT(outData2);
 
     return outData2;
   };
 
   useEffect(() => {
     if (loadedData) {
-      // console.log("loadedData['data'] =", loadedData['data']);
-      // console.log("loadedData['data'][0] =", loadedData['data'][0]);
       const k = Object.keys(loadedData['data'][0]);
       setDataKeys(k);
-      let dat = buildData(k, loadedData['data']);
-      // dat = DataTable
-      // setDF(dat);
-      console.log('df:', dat);
+      buildData(k, loadedData['data']);
     }
   }, [loadedData]);
 
@@ -66,14 +62,13 @@ const Navbar = ({ children }: NavbarProps) => {
     setIsDrawerExpanded(!isDrawerExpanded);
   };
 
-  // Functions to open & close the drawer
-  // const openDrawer = () => setIsDrawerExpanded(true);
   const closeDrawer = () => setIsDrawerExpanded(false);
-  const toggleDrawer = () => setIsDrawerExpanded((i) => !i);
 
   // Effect to add/remove event listener for the Escape key
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      const toggleDrawer = () => setIsDrawerExpanded((i) => !i);
+
       if (event.key === 'Escape') {
         toggleDrawer();
       } else if (event.key.toLowerCase() === 'd') {
@@ -125,8 +120,9 @@ const Navbar = ({ children }: NavbarProps) => {
             <NavbarButtons data={data} isDataLoaded={isDataLoaded} />
           </div>
         </nav>
-
-        {children}
+        <DataTableContext.Provider value={{ dt, setDT }}>
+          {children}
+        </DataTableContext.Provider>
       </div>
 
       {/* This is the actual sidebar & sidebar content that

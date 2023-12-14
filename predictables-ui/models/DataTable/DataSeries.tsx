@@ -276,6 +276,232 @@ class DataSeries {
   }
 
   /**
+   * @method count
+   * @description Returns the number of values in the DataSeries.
+   * @returns {number} - The number of values in the DataSeries.
+   * @example
+   * const ds = new DataSeries({ values: [1, 2, 3] });
+   * ds.count(); // 3
+   */
+  count() {
+    return this.values.length;
+  }
+
+  /**
+   * @method sum
+   * @description Returns the sum of the values in the DataSeries.
+   * @returns {number} - The sum of the values in the DataSeries.
+   * @example
+   * const ds = new DataSeries({ values: [1, 2, 3] });
+   * ds.sum(); // 6
+   */
+  sum() {
+    return this.values.reduce((a, b) => a + b, 0);
+  }
+
+  /**
+   * @method mean
+   * @description Returns the mean of the values in the DataSeries.
+   * @returns {number} - The mean of the values in the DataSeries.
+   * @example
+   * const ds = new DataSeries({ values: [1, 2, 3] });
+   * ds.mean(); // 2
+   */
+  mean() {
+    return this.sum() / this.count();
+  }
+
+  /**
+   * @method std
+   * @description Returns the standard deviation of the values in the DataSeries.
+   * @returns {number} - The standard deviation of the values in the DataSeries.
+   * @example
+   * const ds = new DataSeries({ values: [1, 2, 3] });
+   * ds.std(); // 0.816496580927726
+   */
+  std(unbiased: boolean = true) {
+    const mean = this.mean();
+    const variance = this.values
+      .map((value) => (value - mean) ** 2)
+      .reduce((a, b) => a + b, 0);
+    if (unbiased) {
+      return Math.sqrt(variance / (this.count() - 1));
+    } else {
+      return Math.sqrt(variance / this.count());
+    }
+  }
+
+  /**
+   * @method min
+   * @description Returns the minimum value in the DataSeries.
+   * @returns {number} - The minimum value in the DataSeries.
+   * @example
+   * const ds = new DataSeries({ values: [1, 2, 3] });
+   * ds.min(); // 1
+   */
+  min() {
+    return Math.min(...this.values);
+  }
+
+  /**
+   * @method max
+   * @description Returns the maximum value in the DataSeries.
+   * @returns {number} - The maximum value in the DataSeries.
+   * @example
+   * const ds = new DataSeries({ values: [1, 2, 3] });
+   * ds.max(); // 3
+   */
+  max() {
+    return Math.max(...this.values);
+  }
+
+  /**
+   * @method quantile
+   * @description Returns the quantile value in the DataSeries.
+   * @param {number} q - The quantile to return. Must be between 0 and 1.
+   * @returns {number} - The quantile value in the DataSeries.
+   * @example
+   * const ds = new DataSeries({ values: [1, 2, 3] });
+   * ds.quantile(0.5); // 2
+   */
+  quantile(q: number) {
+    if (q < 0 || q > 1) {
+      throw new Error('Quantile must be between 0 and 1.');
+    }
+    const sorted = this.sort((a, b) => a - b);
+    const idx = Math.round(q * (sorted.length - 1));
+    return sorted[idx];
+  }
+
+  /**
+   * @method describe
+   * @description Returns a new DataSeries with the following statistics of the DataSeries:
+   * - count
+   * - mean
+   * - std
+   * - min
+   * - 25%
+   * - 50%
+   * - 75%
+   * - max
+   * @returns {DataSeries} - A new DataSeries with the statistics of the DataSeries.
+   * @example
+   * const ds = new DataSeries({ values: [1, 2, 3, 4, 5] });
+   * ds.describe().toString(); // DataSeries([5, 3, 1.5811388300841898, 1, 2, 3, 4, 5], index: ['count', 'mean', 'std', 'min', '25%', '50%', '75%', 'max'])
+   */
+  describe() {
+    const count = this.count();
+    const mean = this.mean();
+    const std = this.std();
+    const min = this.min();
+    const q25 = this.quantile(0.25);
+    const q50 = this.quantile(0.5);
+    const q75 = this.quantile(0.75);
+    const max = this.max();
+
+    const ds = new DataSeries({
+      values: [count, mean, std, min, q25, q50, q75, max],
+      name: 'describe',
+      index: ['count', 'mean', 'std', 'min', '25%', '50%', '75%', 'max'],
+      dtype: 'float',
+    });
+    return ds;
+  }
+
+  /**
+   * @method dot
+   * @description Returns the dot product of the DataSeries and another DataSeries.
+   * @param {DataSeries} ds - The DataSeries to take the dot product with.
+   * @returns {number} - The dot product of the DataSeries and another DataSeries.
+   * @example
+   * const ds1 = new DataSeries({ values: [1, 2, 3] });
+   * const ds2 = new DataSeries({ values: [4, 5, 6] });
+   * ds1.dot(ds2); // 32
+   */
+  dot(ds: DataSeries) {
+    if (this.length !== ds.length) {
+      throw new Error('DataSeries must be the same length.');
+    }
+    let dotProd = 0;
+    for (let i = 0; i < this.length; i++) {
+      dotProd += this.values[i] * ds.values[i];
+    }
+    return dotProd;
+  }
+
+  /**
+   * @method head
+   * @description Returns a new DataSeries with the first n values of the DataSeries.
+   * @param {number} n - The number of values to return.
+   * @returns {DataSeries} - A new DataSeries with the first n values of the DataSeries.
+   * @example
+   * const ds = new DataSeries({ values: [1, 2, 3, 4, 5] });
+   * const ds2 = ds.head(3);
+   * ds.toString(); // DataSeries([1, 2, 3, 4, 5], index: [0, 1, 2, 3, 4])
+   * ds2.toString(); // DataSeries([1, 2, 3], index: [0, 1, 2])
+   * ds.head(2).toString(); // DataSeries([1, 2], index: [0, 1])
+   */
+  head(n: number) {
+    return this.slice(0, n);
+  }
+
+  /**
+   * @method tail
+   * @description Returns a new DataSeries with the last n values of the DataSeries.
+   * @param {number} n - The number of values to return.
+   * @returns {DataSeries} - A new DataSeries with the last n values of the DataSeries.
+   * @example
+   * const ds = new DataSeries({ values: [1, 2, 3, 4, 5] });
+   * const ds2 = ds.tail(3);
+   * ds.toString(); // DataSeries([1, 2, 3, 4, 5], index: [0, 1, 2, 3, 4])
+   * ds2.toString(); // DataSeries([3, 4, 5], index: [2, 3, 4])
+   * ds.tail(2).toString(); // DataSeries([4, 5], index: [3, 4])
+   */
+  tail(n: number) {
+    return this.slice(this.length - n, this.length);
+  }
+
+  /**
+   * @method shuffle
+   * @description Returns a new DataSeries with the values shuffled.
+   * @param {number[]} idx - The index to shuffle.
+   * @returns {DataSeries} - A new DataSeries with the values shuffled.
+   * @example
+   * const ds = new DataSeries({ values: [1, 2, 3, 4, 5] });
+   * const ds2 = ds.shuffle();
+   * ds.toString(); // DataSeries([1, 2, 3, 4, 5], index: [0, 1, 2, 3, 4])
+   * ds2.toString(); // DataSeries([3, 1, 5, 2, 4], index: [2, 0, 4, 1, 3])
+   */
+  shuffle(idx: number[]) {
+    let shuffledIdx = [...idx];
+    for (let i = shuffledIdx.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledIdx[i], shuffledIdx[j]] = [shuffledIdx[j], shuffledIdx[i]];
+    }
+    return shuffledIdx;
+  }
+
+  /**
+   * @method sample
+   * @description Returns a new DataSeries with n random values of the DataSeries.
+   * @param {number} n - The number of values to return.
+   * @param {boolean} replace - Whether or not to sample with replacement.
+   * @returns {DataSeries} - A new DataSeries with n random values of the DataSeries.
+   * @example
+   * const ds = new DataSeries({ values: [1, 2, 3, 4, 5] });
+   * const ds2 = ds.sample(3);
+   * ds.toString(); // DataSeries([1, 2, 3, 4, 5], index: [0, 1, 2, 3, 4])
+   * ds2.toString(); // DataSeries([1, 4, 5], index: [0, 3, 4])
+   */
+  sample(n: number, replace: boolean = false) {
+    let idx = [...Array(this.length).keys()];
+    if (!replace) {
+      idx = this.shuffle(idx);
+    }
+    return this.slice(0, n);
+  }
+
+  /**
    * @method resetIndex
    * @description Returns a new DataSeries with the index reset to the default index (0, 1, 2, ...). If no index is set, the index will be set to the default index.
    * @returns {DataSeries} - A new DataSeries with the index set to the default index.
