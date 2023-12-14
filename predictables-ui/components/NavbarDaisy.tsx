@@ -8,6 +8,8 @@ import DrawerButton from './_drawer/DrawerButton';
 import LoadDataSection from './_drawer/LoadDataSection';
 import CloseButton from './CloseButton';
 
+// import DataTable from '@models/DataTable';
+
 interface NavbarProps {
   children: React.ReactNode;
 }
@@ -20,13 +22,44 @@ const Navbar = ({ children }: NavbarProps) => {
   const [isLoadDataExpanded, setIsLoadDataExpanded] = useState(false);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [loadedData, setLoadedData] = useState(null);
+  const [dataKeys, setDataKeys] = useState<string[] | null>(null);
+  const [df, setDF] = useState<{
+    name: string | null;
+    data: any[] | null;
+  }>({ name: null, data: null });
+  // const [dt, setDT] = useState<DataTable | null>(null);
+
+  const buildData = (keys: string[], data: any) => {
+    let outData: any = [];
+    keys.map((key: string) => {
+      let dataArr: any[] = [];
+      data.map((datum: any) => {
+        dataArr.push(datum);
+      });
+      outData.push({ name: key, data: dataArr });
+    });
+
+    return outData;
+  };
+
+  useEffect(() => {
+    if (loadedData) {
+      console.log("loadedData['data'] =", loadedData['data']);
+      console.log("loadedData['data'][0] =", loadedData['data'][0]);
+      const k = Object.keys(loadedData['data'][0]);
+      setDataKeys(k);
+      const dat = buildData(k, loadedData['data']);
+      setDF(dat);
+      console.log('df:', dat);
+    }
+  }, [loadedData]);
 
   const handleDrawerButtonClick = () => {
     setIsDrawerExpanded(!isDrawerExpanded);
   };
 
   // Functions to open & close the drawer
-  const openDrawer = () => setIsDrawerExpanded(true);
+  // const openDrawer = () => setIsDrawerExpanded(true);
   const closeDrawer = () => setIsDrawerExpanded(false);
   const toggleDrawer = () => setIsDrawerExpanded((i) => !i);
 
@@ -84,6 +117,10 @@ const Navbar = ({ children }: NavbarProps) => {
             <NavbarButtons data={data} isDataLoaded={isDataLoaded} />
           </div>
         </nav>
+        <div className="justify-center items-center align-middle flex text-center flex-wrap h-[100vh] w-[100vw] absolute">
+          {dataKeys}
+        </div>
+
         {children}
       </div>
 

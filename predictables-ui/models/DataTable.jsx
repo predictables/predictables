@@ -1,36 +1,29 @@
 // Note: Table Model used to simplify the data structure, as well as have a way to convert back and forth between Polars and JSON,
 // as well as a method to split the data table into smaller chunks for pagination.
 
-import pl from 'nodejs-polars';
-
-interface DataTableType {
-  id: number;
-  name: string;
-  columnName: string[];
-  data: string | Buffer;
-}
-
-class DataTable implements DataTableType {
-  id: number;
-  name: string;
-  columnName: string[];
-  data: string | Buffer;
+class DataTable{
+  
+  
 
   constructor(
-    id: number,
-    name: string,
-    columnName: string[],
-    data: string | Buffer,
-  ) {
-    this.id = id;
-    this.name = name || '';
-    this.columnName = columnName || [];
-    this.data = data || '';
-  }
+    
+  )
 
   df(this: DataTable) {
     // Returns a Polars DataFrame representation of the DataTable
     return pl.readJSON(this.data.toString());
+  }
+
+  col(this: DataTable, column: string) {
+    // Returns a single column by name as a polars Series
+    const df = this.df();
+    return df.getColumn(column);
+  }
+
+  cols(this: DataTable) {
+    // Returns the DataTable as an array of polars series
+    const df = this.df();
+    return df.getColumns();
   }
 
   json(this: DataTable) {

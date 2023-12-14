@@ -3,6 +3,7 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import breastCancerData from '@data/bc.json';
+import DataTable from '@models/DataTable';
 
 export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(200).json(breastCancerData);

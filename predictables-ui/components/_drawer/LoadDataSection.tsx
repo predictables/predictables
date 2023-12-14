@@ -4,6 +4,8 @@ import Button from '@components/Button';
 import { fetchPlaceholderData } from '@app/api/placeholder';
 import Accordion from './Accordion';
 
+
+
 interface LoadDataSectionProps {
   accordionTitle?: string;
   accordionType?: 'radio' | 'checkbox';
