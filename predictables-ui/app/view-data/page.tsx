@@ -1,21 +1,18 @@
-import Table from '@plotting/Table';
+'use client';
+
+import Table from '@components/Table';
+import DataTable from '@models/DataTable/DataTable';
 
 interface ViewDataPageProps {
-  data: any;
+  df: DataTable | null;
 }
 
-const ViewDataPage = ({ data }: ViewDataPageProps) => {
-  let tbl = new Table(
-    'view-data-page-table', // elementId
-    [], // data
-    [], // columnNames
-    [], // rowNames
-  );
+{
+  /* <div className="h-[100vh] w-[100vw]"> */
+}
 
-  // Draw the table
-  tbl.draw();
-
-  return <div id="view-data-page"></div>;
+const ViewDataPage = ({ df }: ViewDataPageProps) => {
+  return <>{df ? <Table dt={df} /> : <div>df is null</div>}</>;
 };
 
 export default ViewDataPage;

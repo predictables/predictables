@@ -1,7 +1,5 @@
 import React from 'react';
-// import Plotly from 'plotly.js';
-// import DataTable from '@models/DataTable';
-// import pl from "nodejs-polars"
+
 
 interface _ScatterClientProps {
   data?: JSON;

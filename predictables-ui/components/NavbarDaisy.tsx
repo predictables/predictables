@@ -7,8 +7,10 @@ import { data } from '@data/navbarData';
 import DrawerButton from './_drawer/DrawerButton';
 import LoadDataSection from './_drawer/LoadDataSection';
 import CloseButton from './CloseButton';
+import Table from '@components/Table';
 
-// import DataTable from '@models/DataTable';
+import DataTable from '@models/DataTable/DataTable';
+import DataSeries from '@models/DataTable/DataSeries';
 
 interface NavbarProps {
   children: React.ReactNode;
@@ -23,33 +25,39 @@ const Navbar = ({ children }: NavbarProps) => {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [loadedData, setLoadedData] = useState(null);
   const [dataKeys, setDataKeys] = useState<string[] | null>(null);
-  const [df, setDF] = useState<{
-    name: string | null;
-    data: any[] | null;
-  }>({ name: null, data: null });
-  // const [dt, setDT] = useState<DataTable | null>(null);
+  const [df, setDF] = useState<DataTable | null>(null);
 
   const buildData = (keys: string[], data: any) => {
     let outData: any = [];
-    keys.map((key: string) => {
+    keys.forEach((key: string, i: number) => {
       let dataArr: any[] = [];
-      data.map((datum: any) => {
-        dataArr.push(datum);
+      data.forEach((datum: any) => {
+        // Ensure the key exists in the datum and push its value
+        if (datum.hasOwnProperty(key)) {
+          dataArr.push(datum[key]);
+        }
       });
-      outData.push({ name: key, data: dataArr });
+      let ds = new DataSeries({ values: dataArr, name: key });
+      outData.push(ds);
     });
 
-    return outData;
+    console.log('outData:', outData);
+    let outData2 = new DataTable(outData);
+    console.log('outData2:', outData2);
+    setDF(outData2);
+
+    return outData2;
   };
 
   useEffect(() => {
     if (loadedData) {
-      console.log("loadedData['data'] =", loadedData['data']);
-      console.log("loadedData['data'][0] =", loadedData['data'][0]);
+      // console.log("loadedData['data'] =", loadedData['data']);
+      // console.log("loadedData['data'][0] =", loadedData['data'][0]);
       const k = Object.keys(loadedData['data'][0]);
       setDataKeys(k);
-      const dat = buildData(k, loadedData['data']);
-      setDF(dat);
+      let dat = buildData(k, loadedData['data']);
+      // dat = DataTable
+      // setDF(dat);
       console.log('df:', dat);
     }
   }, [loadedData]);
@@ -117,9 +125,6 @@ const Navbar = ({ children }: NavbarProps) => {
             <NavbarButtons data={data} isDataLoaded={isDataLoaded} />
           </div>
         </nav>
-        <div className="justify-center items-center align-middle flex text-center flex-wrap h-[100vh] w-[100vw] absolute">
-          {dataKeys}
-        </div>
 
         {children}
       </div>
