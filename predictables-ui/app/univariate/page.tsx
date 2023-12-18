@@ -17,14 +17,6 @@ const UnivariatePage = () => {
 
   const [dt, setDT] = useState(useContext(DataTableContext));
 
-  const fetchData = async () => {};
-
-  useEffect(() => {
-    if (dt) {
-      setIsDataLoaded(true);
-    }
-  }, []);
-
   return (
     <section className="items-center h-[100vh] flex flex-col">
       <Heading text="Univariate" />

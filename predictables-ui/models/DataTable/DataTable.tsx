@@ -2,8 +2,34 @@
 // Particular interest in the .render() method, which returns a formatted HTML table
 import DataSeries, { dtypeTypes } from './DataSeries';
 
+interface DataTableProps {
+  values: DataSeries[];
+  columns?: string[];
+  index?: string[];
+}
+
+/**
+ * @class DataTable
+ * @description A class representing a table of data
+ * @param {DataSeries[]} values - An array of DataSeries objects
+ * @param {string[]} columns - An array of column names
+ * @param {string[]} index - An array of index values
+ * @property {DataSeries[]} values - An array of DataSeries objects
+ * @property {string[]} columns - An array of column names
+ * @property {string[]} index - An array of index values
+ *
+ * @method {height} - Returns the height of the DataTable
+ * @method {width} - Returns the width of the DataTable
+ * @method {nRows} - Returns the number of rows in the DataTable
+ * @method {nCols} - Returns the number of columns in the DataTable
+ * @method {at} - Returns the value at the given row and column
+ */
 class DataTable {
-  constructor(values, columns = [], index = null) {
+  values: DataSeries[];
+  columns: string[];
+  index: string[];
+
+  constructor(values: DataSeries[], columns: string[] = [], index?: string[]) {
     // ensure each element of the values array is a DataSeries
     if (values.length === 0) {
       throw new Error('Values array must not be empty');
@@ -40,7 +66,7 @@ class DataTable {
       this.index = values[0].index;
     } else {
       // set every index to be the passed index, as well as the class index
-      values.forEach((v) => (v.index = index));
+      values.forEach((v: DataSeries) => (v.index = index));
       this.index = index;
     }
 
@@ -78,9 +104,7 @@ class DataTable {
     // set the shape
     this.shape = [this.width, this.height];
   }
-
   get height() {
-    // Returns the height of the DataTable
     return this.values[0].length;
   }
 
@@ -99,55 +123,150 @@ class DataTable {
     return this.width;
   }
 
-  at(row, column) {
-    // Returns the value at the given row and column
-    return this.values[column].at(row);
-  }
-
-  col(column) {
+  /**
+   * @method {col}
+   * @description Returns a single column by name as a DataSeries
+   * @param {number | string} column - Either the column number or a string representing the name of the DataSeries
+   * @returns {DataSeries} - A single column as a DataSeries
+   */
+  col(column: number | string): DataSeries {
     // Returns a single column by name as a DataSeries
-    const index = this.columns.indexOf(column);
+    const columns: string[] = this.columns;
+    const index = columns.indexOf(column.toString());
     if (index === -1) {
       throw new Error(`Column ${column} not found`);
     }
     return this.values[index];
   }
 
-  json(byRow = false) {
-    // Returns a JSON representation of the DataTable
-    const json = {};
-    json.index = this.index;
-    this.columns.forEach((c, i) => {
-      json[c] = this.values[i].json(byRow);
-    });
-    return json;
+  /**
+   * @method {df}
+   * @description Returns a copy of the DataTable
+   * @returns {DataTable} - A copy of the DataTable
+   */
+  df(): DataTable {
+    const values: DataSeries[] = this.values.map((v) => v.copy());
+    const columns: string[] = [...this.columns];
+    const index: string[] = [...this.index];
+    return new DataTable(values, columns, index);
   }
 
-  head(n = 5) {
-    // Returns the first n rows of the DataTable
+  /**
+   * @method {at}
+   * @description Returns the value at the given row and column
+   * @param {number | string} row - Either the row number or a string representing the name of the index
+   * @param {number | string} column - Either the column number or a string representing the name of the DataSeries
+   * @returns {any} - The value at the given row and column. Can be any type that can be held inside a DataSeries.
+   */
+  at(row: number | string, column: number | string): any {
+    // Returns the value at the given row and column
+    const rowIndex = this.index.indexOf(row.toString());
+    if (rowIndex === -1) {
+      throw new Error(`Row ${row} not found`);
+    } else {
+      return this.values[this.columns.indexOf(column.toString())].values[
+        rowIndex
+      ];
+    }
+  }
+
+  /**
+   * @method {toJSON}
+   * @description Returns a JSON representation of the DataTable
+   * @param {boolean} byRow - Whether to return the JSON by row or by column. Default is false, which returns by column.
+   * @returns {any} - A JSON representation of the DataTable
+   * @example
+   * const dt = new DataTable([
+   *    DataSeries.fromArray([1, 2, 3], name="col1"),
+   *    DataSeries.fromArray([4, 5, 6], name="col2"),
+   *    DataSeries.fromArray([7, 8, 9], name="col3"),
+   * ]);
+   * dt.toJSON();
+   * > {
+   * >    "col1": [1, 2, 3],
+   * >    "col2": [4, 5, 6],  
+   * >    "col3": [7, 8, 9],
+   * > }
+   */
+  toJSON(byRow: boolean = false): any {
+    // Returns a JSON representation of the DataTable
+    const json = {};
+    if (byRow) {
+      this.index.forEach((i) => {
+        json[i] = {};
+        this.columns.forEach((c) => {
+          json[i][c]:any = this.at(i, c);
+        });
+      });
+    } else {
+      this.columns.forEach((c) => {
+        json[c] = {};
+        this.index.forEach((i) => {
+          json[c][i]:any = this.at(i, c);
+        });
+      });
+    }
+  }
+
+  /**
+   * @method {head}
+   * @description Returns the first n rows of the DataTable
+   * @param {number} n - The number of rows to return. Default is 5.
+   * @returns {DataTable} - The first n rows of the DataTable
+   * @example
+   * const dt = new DataTable([
+   *   DataSeries.fromArray([1, 2, 3, 4, 5], name="col1"),
+   *   DataSeries.fromArray([6, 7, 8, 9, 10], name="col2"),
+   *   DataSeries.fromArray([11, 12, 13, 14, 15], name="col3"),
+   * ]);
+   * dt.head(3).toJSON();
+   * > {
+   * >  "col1": [1, 2, 3],
+   * >  "col2": [6, 7, 8],  
+   * >  "col3": [11, 12, 13],
+   * > }
+   */
+  head(n:number = 5) {
     const values = this.values.map((v) => v.head(n));
     return new DataTable(values, this.columns, this.index);
   }
 
-  tail(n = 5) {
-    // Returns the last n rows of the DataTable
+  /**
+   * @method {tail}
+   * @description Returns the last n rows of the DataTable
+   * @param {number} n - The number of rows to return. Default is 5.
+   * @returns {DataTable} - The last n rows of the DataTable
+   * @example
+   * const dt = new DataTable([
+   *   DataSeries.fromArray([1, 2, 3, 4, 5], name="col1"),
+   *   DataSeries.fromArray([6, 7, 8, 9, 10], name="col2"),
+   *   DataSeries.fromArray([11, 12, 13, 14, 15], name="col3"),
+   * ]);
+   * dt.tail(2).toJSON();
+   * > {
+   * >  "col1": [4, 5],
+   * >  "col2": [9, 10],  
+   * >  "col3": [14, 15],
+   * > }
+   */
+  tail(n:number = 5) {
     const values = this.values.map((v) => v.tail(n));
     return new DataTable(values, this.columns, this.index);
   }
 
-  slice(start, end) {
+  slice(start:number, end:number) {
     // Returns a slice of the DataTable
     const values = this.values.map((v) => v.slice(start, end));
     return new DataTable(values, this.columns, this.index);
   }
 
-  filter(condition) {
+  filter(condition: (v: any) => boolean) {
     // Returns a filtered version of the DataTable
     const values = this.values.map((v) => v.filter(condition));
     return new DataTable(values, this.columns, this.index);
   }
 
-  sort(column, ascending = true) {
+  sort(column: string, ascending: boolean = true) {
     // Returns a sorted version of the DataTable
     const values = this.values.map((v) => v.sort(column, ascending));
     return new DataTable(values, this.columns, this.index);
@@ -158,8 +277,8 @@ class DataTable {
     const index = this.columns;
     const columns = this.index;
     const curValues = this.values;
-    const newShape = [this.shape[1], this.shape[0]];
-    const newValues = [];
+    const newShape: number[] = [this.shape[1], this.shape[0]];
+    const newValues: any[] = [];
     for (let i = 0; i < newShape[0]; i++) {
       newValues.push([]);
     }
