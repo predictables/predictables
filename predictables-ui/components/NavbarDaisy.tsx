@@ -44,7 +44,7 @@ const Navbar = ({ children }: NavbarProps) => {
 
     // console.log('outData:', outData);
     let outData2 = new DataTable(outData);
-    // console.log('outData2:', outData2);
+    console.log('outData2:', outData2);
     setDT(outData2);
 
     return outData2;

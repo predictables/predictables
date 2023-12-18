@@ -20,7 +20,7 @@ enum LogoColor {
 
 const LogoHeading = () => {
   return (
-    <div className="flex mx-0 px-0 items-center">
+    <div className="flex mx-0 px-0 items-center select-none">
       <Heading text="Predic" className="" />
       <span>
         <Heading text="Tables" className="font-medium" />
@@ -41,6 +41,7 @@ const LogoIcon = ({
   const LOGO_CLASSES = `
   border-[2px] w-[55px] h-[55px] justify-center items-center shadow-lg
   text-${logoColor} border-${logoColor} ${bgCol}
+  select-none
   ${hover ? `hover:bg-${logoColor} hover:text-${hoverColor} duration-200` : ''}
   ${clickable ? 'cursor-default active:scale-90' : ''}
   `;

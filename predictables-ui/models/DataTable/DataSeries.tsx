@@ -85,9 +85,6 @@ class DataSeries {
   get columns() {
     return [this.name];
   }
-  get data() {
-    return this.values;
-  }
   get dtypes() {
     return [this.dtype];
   }
@@ -143,6 +140,20 @@ class DataSeries {
     } else {
       console.log(this);
     }
+  }
+
+  /**
+   * @method data
+   * @description Returns the values of the DataSeries.
+   * @param {number} i - The index of the value to return. If no index is provided, returns all values.
+   * @returns {any[] | any} - The values of the DataSeries.
+   * @example
+   * const ds = new DataSeries({ values: [1, 2, 3] });
+   * ds.data(); // [1, 2, 3]
+   * ds.data(1); // 2
+   */
+  data(i: number = -1) {
+    return i === -1 ? this.values : this.values[i];
   }
 
   /**
@@ -482,6 +493,18 @@ class DataSeries {
   }
 
   /**
+   * @method dataRange
+   * @description Returns a 2-element array with the minimum and maximum values of the DataSeries.
+   * @returns {number[]} - A 2-element array with the minimum and maximum values of the DataSeries.
+   * @example
+   * const ds = new DataSeries({ values: [1, 2, 3, 4, 5] });
+   * ds.dataRange(); // [1, 5]
+   */
+  dataRange() {
+    return [this.min(), this.max()];
+  }
+
+  /**
    * @method sample
    * @description Returns a new DataSeries with n random values of the DataSeries.
    * @param {number} n - The number of values to return.
@@ -564,6 +587,35 @@ class DataSeries {
   static fromJSON(json: string) {
     const obj = JSON.parse(json);
     return DataSeries.fromObject(obj);
+  }
+
+  /**
+   * @static placeholderDataSeries
+   * @description Returns a placeholder DataSeries with the given length, name, and dtype. The values will be an array of the given length filled with 0s. Used as a placeholder for DataSeries.
+   * @param {number} length - The length of the placeholder DataSeries.
+   * @param {string} name - The name of the placeholder DataSeries.
+   * @param {dtypeTypes} dtype - The dtype of the placeholder DataSeries.
+   * @returns {DataSeries} - A placeholder DataSeries with the given length, name, and dtype.
+   * @example
+   * const ds = DataSeries.placeholderDataSeries(3, 'col1', 'integer');
+   * ds.toString(); // DataSeries([0, 0, 0], name: 'col1', dtype: 'integer', index: [0, 1, 2])
+   * @example
+   * const ds = DataSeries.placeholderDataSeries(3, 'col1', 'string');
+   * ds.toString(); // DataSeries(['0', '0', '0'], name: 'col1', dtype: 'string', index: [0, 1, 2])
+   */
+  static placeholderDataSeries(
+    length: number = 10,
+    name: string = 'column',
+    dtype: dtypeTypes = 'integer',
+  ) {
+    const values = [...Array(length)].map(() => {
+      if (dtype === 'string') {
+        return '0';
+      } else {
+        return 0;
+      }
+    });
+    return new DataSeries({ values, name, dtype });
   }
 }
 

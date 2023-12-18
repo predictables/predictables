@@ -26,6 +26,7 @@ const Button = ({
       onClick={onClick}
       className={`
       rounded-sm delay-100 justify-center items-center p-2 mx-2 min-w-[90px] w-fit h-[55px] text-lg duration-100 font-normal
+      select-none
       ${clickable ? 'cursor-default active:scale-90' : ''}
       ${
         filled
