@@ -19,9 +19,8 @@ interface DataSeriesTypes {
 }
 
 /**
- * Numerically-typed DataSeries class. See {@link DataSeries} for details.
- *
  * @class DataSeries
+ * @description A statically-typed, mutable, columnar data structure that stores values, a name, an index, and a dtype.
  * @property {any[]} values - The values of the DataSeries.
  * @property {string} name - The name of the DataSeries. Defaults to ''.
  * @property {any[]} index - The index of the DataSeries. Defaults to the default index (0, 1, 2, ...).
@@ -31,20 +30,42 @@ interface DataSeriesTypes {
  * @method {toString} - Returns a string representation of the DataSeries of the following form:
  * `DataSeries([1, 2, 3], name: 'col1', dtype: 'integer', index: [0, 1, 2])`
  * If any of the attributes are null, they will not be included in the string.
- * @method {toLog} - Logs a string representation of the DataSeries to the console.
  * @method {length} - Returns the length of the DataSeries.
  * @method {nRows} - Returns the number of rows in the DataSeries.
  * @method {nCols} - Returns the number of columns in the DataSeries.
+ * @method {columns} - Returns the columns of the DataSeries.
+ * @method {dtypes} - Returns the dtypes of the DataSeries.
+ * @method {toString} - Returns a string representation of the DataSeries of the following form:
+ * `DataSeries([1, 2, 3], name: 'col1', dtype: 'integer', index: [0, 1, 2])`
+ * If any of the attributes are null, they will not be included in the string.
+ * @method {toLog} - Logs a string representation of the DataSeries to the console.
+ * @method {data} - Returns the values of the DataSeries.
  * @method {map} - Returns a new DataSeries with the values mapped by the callback function.
  * @method {filter} - Returns a new DataSeries with the values filtered by the callback function.
  * @method {sort} - Returns a new DataSeries with the values sorted by the callback function.
  * @method {unique} - Returns a new DataSeries with the unique values of the DataSeries.
  * @method {slice} - Returns a new DataSeries with the values sliced by the start and end indices.
- * @method {valueCounts} - Returns a new DataSeries with the value counts of the DataSeries.
+ * @method {forEach} - Applies a callback function to each value in the DataSeries.
+ * @method {valueCounts} - Returns a new DataSeries with the unique values of the DataSeries as the index and the value counts of the DataSeries as the values.
+ * @method {count} - Returns the number of values in the DataSeries.
+ * @method {sum} - Returns the sum of the values in the DataSeries.
+ * @method {mean} - Returns the mean of the values in the DataSeries.
+ * @method {std} - Returns the standard deviation of the values in the DataSeries.
+ * @method {min} - Returns the minimum value in the DataSeries.
+ * @method {max} - Returns the maximum value in the DataSeries.
+ * @method {quantile} - Returns the quantile value in the DataSeries.
+ * @method {describe} - Returns a new DataSeries with the following statistics of the DataSeries:
+ * @method {dot} - Returns the dot product of the DataSeries and another DataSeries.
+ * @method {head} - Returns a new DataSeries with the first n values of the DataSeries.
+ * @method {tail} - Returns a new DataSeries with the last n values of the DataSeries.
+ * @method {shuffle} - Returns a new DataSeries with the values shuffled.
+ * @method {dataRange} - Returns a 2-element array with the minimum and maximum values of the DataSeries.
+ * @method {sample} - Returns a new DataSeries with n random values of the DataSeries.
  * @method {resetIndex} - Returns a new DataSeries with the index reset to the default index (0, 1, 2, ...).
  *
  * @static {fromObject} - Returns a new DataSeries from an object.
  * @static {fromJSON} - Returns a new DataSeries from a JSON string.
+ * @static {placeholderDataSeries} - Returns a placeholder DataSeries with the given length, name, and dtype. The values will be an array of the given length filled with 0s. Used as a placeholder for DataSeries.
  *
  * @example
  * const ds = new DataSeries({ values: [1, 2, 3] }); // ds gets the default dtype and index
@@ -84,9 +105,6 @@ class DataSeries {
   }
   get columns() {
     return [this.name];
-  }
-  get data() {
-    return this.values;
   }
   get dtypes() {
     return [this.dtype];
@@ -143,6 +161,20 @@ class DataSeries {
     } else {
       console.log(this);
     }
+  }
+
+  /**
+   * @method data
+   * @description Returns the values of the DataSeries.
+   * @param {number} i - The index of the value to return. If no index is provided, returns all values.
+   * @returns {any[] | any} - The values of the DataSeries.
+   * @example
+   * const ds = new DataSeries({ values: [1, 2, 3] });
+   * ds.data(); // [1, 2, 3]
+   * ds.data(1); // 2
+   */
+  data(i: number = -1) {
+    return i === -1 ? this.values : this.values[i];
   }
 
   /**
@@ -482,6 +514,18 @@ class DataSeries {
   }
 
   /**
+   * @method dataRange
+   * @description Returns a 2-element array with the minimum and maximum values of the DataSeries.
+   * @returns {number[]} - A 2-element array with the minimum and maximum values of the DataSeries.
+   * @example
+   * const ds = new DataSeries({ values: [1, 2, 3, 4, 5] });
+   * ds.dataRange(); // [1, 5]
+   */
+  dataRange() {
+    return [this.min(), this.max()];
+  }
+
+  /**
    * @method sample
    * @description Returns a new DataSeries with n random values of the DataSeries.
    * @param {number} n - The number of values to return.
@@ -553,6 +597,22 @@ class DataSeries {
   }
 
   /**
+   * @static fromArray
+   * @description Returns a new DataSeries from an array. Must be able to destructure the array into the following form:
+   * `[any[]]` Otherwise, an error will be thrown.
+   * Optionally takes a name and dtype, both of which default to '' and 'any', respectively, as well as an index, which defaults to the default index (0, 1, 2, ...).
+   * @param {any[]} arr - The array to create the DataSeries from. Must be an array of arrays of the following form: `[any[]]`. If the array is not of the correct form, an error will be thrown.
+   * @param {string} name - The name of the DataSeries. Defaults to ''.
+   * @param {dtypeTypes} dtype - The dtype of the DataSeries. Defaults to 'any'.
+   * @returns {DataSeries} - A new DataSeries created from the array.
+   */
+  static fromArray(arr: any[], name: string = '', dtype: dtypeTypes = 'any') {
+    const values = arr;
+    const index = [...Array(values.length).keys()];
+    return new DataSeries({ values, name, index, dtype });
+  }
+
+  /**
    * @static fromJSON
    * @description Returns a new DataSeries from a JSON string. Must be able to parse the JSON string into an object of the following form:
    * `{ values: any[] }`
@@ -564,6 +624,35 @@ class DataSeries {
   static fromJSON(json: string) {
     const obj = JSON.parse(json);
     return DataSeries.fromObject(obj);
+  }
+
+  /**
+   * @static placeholderDataSeries
+   * @description Returns a placeholder DataSeries with the given length, name, and dtype. The values will be an array of the given length filled with 0s. Used as a placeholder for DataSeries.
+   * @param {number} length - The length of the placeholder DataSeries.
+   * @param {string} name - The name of the placeholder DataSeries.
+   * @param {dtypeTypes} dtype - The dtype of the placeholder DataSeries.
+   * @returns {DataSeries} - A placeholder DataSeries with the given length, name, and dtype.
+   * @example
+   * const ds = DataSeries.placeholderDataSeries(3, 'col1', 'integer');
+   * ds.toString(); // DataSeries([0, 0, 0], name: 'col1', dtype: 'integer', index: [0, 1, 2])
+   * @example
+   * const ds = DataSeries.placeholderDataSeries(3, 'col1', 'string');
+   * ds.toString(); // DataSeries(['0', '0', '0'], name: 'col1', dtype: 'string', index: [0, 1, 2])
+   */
+  static placeholderDataSeries(
+    length: number = 10,
+    name: string = 'column',
+    dtype: dtypeTypes = 'integer',
+  ) {
+    const values = [...Array(length)].map(() => {
+      if (dtype === 'string') {
+        return '0';
+      } else {
+        return 0;
+      }
+    });
+    return new DataSeries({ values, name, dtype });
   }
 }
 

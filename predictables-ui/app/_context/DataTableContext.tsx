@@ -1,8 +1,22 @@
 'use client';
 
-import React from 'react';
-import { DataTableContextType } from '@app/interfaces';
+import React, { useState, ReactNode, createContext } from 'react';
+import { DataTableContextType, DataTableProviderType } from '@app/interfaces';
 
-const DataTableContext = React.createContext<DataTableContextType | null>(null);
+const DataTableContext = createContext<DataTableContextType | null>(null);
+
+export const DataTableProvider = ({ children }: DataTableProviderType) => {
+  const [dt, setDT] = useState<any>(null);
+
+  const updateData = (data: any) => {
+    setDT(data);
+  };
+
+  return (
+    <DataTableContext.Provider value={{ dt, updateData }}>
+      {children}
+    </DataTableContext.Provider>
+  );
+};
 
 export default DataTableContext;
