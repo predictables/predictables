@@ -68,6 +68,13 @@ class DataTable {
     }
 
     // for each column, give the class a property with the column name that returns the DataSeries
+    //      70 | // for each column, give the class a property with the column name that returns the DataSeries
+    // > 71 | this.columns.forEach((c, i) => {
+    //      |^
+    //   72 |   this[c] = values[i];
+    //   73 | });
+    //   74 |
+    // THIS.COLUMNS IS UNDEFINED
     this.columns.forEach((c, i) => {
       this[c] = values[i];
     });
