@@ -80,15 +80,11 @@ def point_biserial_expression(
             ),
             (
                 # Total count of the continuous column
-                pl.col(continuous_col)
-                .count()
-                .alias(f"n_{continuous_col}_{binary_col}")
+                pl.col(continuous_col).count().alias(f"n_{continuous_col}_{binary_col}")
             ),
             (
                 # (Sample) standard deviation of the continuous column
-                pl.col(continuous_col)
-                .std()
-                .alias(f"std_{continuous_col}_{binary_col}")
+                pl.col(continuous_col).std().alias(f"std_{continuous_col}_{binary_col}")
             ),
         ]
 
@@ -137,24 +133,27 @@ def point_biserial(df: Union[pl.DataFrame, pl.LazyFrame, pd.DataFrame]) -> pl.Da
     if not corr_query:
         return pl.DataFrame()
 
-    # Calculate the actual point-biserial correlation coefficient
+    # Calculate the actual point-biserial correlation coefficient -- this is the part that
+    # requires collecting the above pieces (M1, M0, std, etc.) into a single expression
     corr_coef_query = []
     for col in cols:
-        corr_coef_query.append(
-            [
+        # Extending the list so I can use .select later and only keep the correlation coefficient
+        corr_coef_query += [
+            (
                 (
-                    (
-                        # M1 - M0 / std
-                        (pl.col(f"M1_{col}") - pl.col(f"M0_{col}"))
-                        / pl.col(f"std_{col}")
-                    )
-                    * (
-                        # SQRT[n1 * n0 / (n * (n - 1))]
-                        (pl.col(f"SQRT[n1_{col}]") * pl.col(f"SQRT[n0_{col}]"))
-                        / (pl.col(f"n_{col}") * (pl.col(f"n_{col}") - 1)).sqrt()
-                    ).alias(f"correlation_{col}")
-                ),
-            ]
-        )
+                    # M1 - M0 / std --
+                    #   this is the left-hand fraction
+                    (pl.col(f"M1_{col}") - pl.col(f"M0_{col}")) / pl.col(f"std_{col}")
+                )
+                * (
+                    # SQRT[n1 * n0 / (n * (n - 1))] --
+                    #   this is the right-hand fraction under the square root
+                    (pl.col(f"SQRT[n1_{col}]") * pl.col(f"SQRT[n0_{col}]"))
+                    / (pl.col(f"n_{col}") * (pl.col(f"n_{col}") - 1)).sqrt()
+                ).alias(f"correlation_{col}")
+            ),
+        ]
 
+    # Build a data frame with the correlation coefficients
     corr_coef_df = corr_component_df.select(corr_coef_query).collect()
+    return corr_coef_df
