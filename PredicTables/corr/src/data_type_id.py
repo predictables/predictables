@@ -1,8 +1,12 @@
-import polars as pl
-import numpy as np
-import pandas as pd
+#
+from typing import Any
 
-from PredicTables.util import to_pl_df, to_pl_lf, to_pl_s
+# import numpy as np
+# import pandas as pd
+# import polars as pl
+
+# from PredicTables.util import to_pl_df, to_pl_lf, to_pl_s
 
 
-def id_data_type()
+def id_data_type(column: Any):
+    pass  ## TODO: implement this function
