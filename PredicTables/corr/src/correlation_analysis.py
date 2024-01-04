@@ -9,31 +9,6 @@ from .cat_cat import calc_categorical_categorical_corr
 def perform_correlation_analysis(dataset, target_variable, cv_folds):
     pass
 
-
-def calc_continuous_continuous_corr(dataset):
-    pass
-
-
-def calc_continuous_binary_corr(dataset):
-    pass
-
-
-def calc_continuous_categorical_corr(dataset):
-    pass
-
-
-def calc_binary_binary_corr(dataset):
-    pass
-
-
-def calc_binary_categorical_corr(dataset):
-    pass
-
-
-def calc_categorical_categorical_corr(dataset):
-    pass
-
-
 def calc_predictor_target_corr(dataset, target_variable):
     pass
 

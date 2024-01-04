@@ -7,3 +7,4 @@ from .monitor_resources import monitor_resources
 from .performance_testing import time_fn
 from .to_pd import to_pd_df, to_pd_s
 from .to_pl import to_pl_df, to_pl_lf, to_pl_s
+from .get_column_dtype import get_column_dtype

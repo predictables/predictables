@@ -2,7 +2,7 @@ import pytest
 import polars as pl
 import pandas as pd
 from datetime import datetime
-from PredicTables.corr.src.get_column_dtype import (
+from util.src.get_column_dtype import (
     is_numeric,
     is_integer,
     is_binary,
