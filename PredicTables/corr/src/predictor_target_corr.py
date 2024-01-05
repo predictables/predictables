@@ -1,28 +1,52 @@
-from .ctsX_ctsY import calc_continuousX_continuousY_corr
-from .ctsX_binY import calc_continuousX_binaryY_corr
-from .ctsX_catY import calc_continuousX_categoricalY_corr
-from .binX_binY import calc_binaryX_binaryY_corr
-from .binX_catY import calc_binaryX_categoricalY_corr
-from .catX_catY import calc_categoricalX_categoricalY_corr
+import pandas as pd
 
-from PredicTables.util import get_column_dtype
+from .cts_cts import calc_continuous_continuous_corr
+from .cts_bin import calc_continuous_binary_corr
+from .cts_cat import calc_continuous_categorical_corr
+from .bin_bin import calc_binary_binary_corr
+from .bin_cat import calc_binary_categorical_corr
+from .cat_cat import calc_categorical_categorical_corr
+
+from PredicTables.util import get_column_dtype, to_pd_df, to_pd_s
 
 
 def predictor_target_corr(X, y):
-    X_type = get_column_dtype(X)
-    y_type = get_column_dtype(y)
+    X, y = to_pd_df(X), to_pd_s(y)
+    X_dtype = [get_column_dtype(X[x0]) for x0 in X.columns.tolist()]
+    y_dtype = get_column_dtype(y)
 
-    if X_type == "continuous" and y_type == "continuous":
-        return calc_continuousX_continuousY_corr(X, y)
-    elif X_type == "continuous" and y_type == "binary":
-        return calc_continuousX_binaryY_corr(X, y)
-    elif X_type == "continuous" and y_type == "categorical":
-        return calc_continuousX_categoricalY_corr(X, y)
-    elif X_type == "binary" and y_type == "binary":
-        return calc_binaryX_binaryY_corr(X, y)
-    elif X_type == "binary" and y_type == "categorical":
-        return calc_binaryX_categoricalY_corr(X, y)
-    elif X_type == "categorical" and y_type == "categorical":
-        return calc_categoricalX_categoricalY_corr(X, y)
-    else:
-        raise TypeError(f"Unknown dtype: X={X_type}, y={y_type}")
+    df = pd.concat([X, y], axis=1)
+
+    output = []
+    x_cols = []
+    for i, col in enumerate(X.columns):
+        if X_dtype[i] == "continuous" and y_dtype == "continuous":
+            x_cols.append(col)
+            output.append(calc_continuous_continuous_corr(df)["target"])
+            # output.loc[col, "target"] = calc_continuous_continuous_corr(df)["target"]
+        elif X_dtype[i] == "continuous" and y_dtype == "binary":
+            x_cols.append(col)
+            output.append(calc_continuous_binary_corr(df)["target"])
+            # output.loc[col, "target"] = calc_continuous_binary_corr(df)["target"]
+        elif X_dtype[i] == "continuous" and y_dtype == "categorical":
+            x_cols.append(col)
+            output.append(calc_continuous_categorical_corr(df)["target"])
+            # output.loc[col, "target"] = calc_continuous_categorical_corr(df)["target"]
+        elif X_dtype[i] == "binary" and y_dtype == "binary":
+            x_cols.append(col)
+            output.append(calc_binary_binary_corr(df)["target"])
+            # output.loc[col, "target"] = calc_binary_binary_corr(df)["target"]
+        elif X_dtype[i] == "binary" and y_dtype == "categorical":
+            x_cols.append(col)
+            output.append(calc_binary_categorical_corr(df)["target"])
+            # output.loc[col, "target"] = calc_binary_categorical_corr(df)["target"]
+        elif X_dtype[i] == "categorical" and y_dtype == "categorical":
+            x_cols.append(col)
+            output.append(calc_categorical_categorical_corr(df)["target"])
+            # output.loc[col, "target"] = calc_categorical_categorical_corr(df)["target"]
+        else:
+            print(
+                f"Skipping {col} because it is not a valid predictor, having dtype={X_dtype[i]}"
+            )
+
+    return output

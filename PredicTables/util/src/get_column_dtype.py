@@ -4,7 +4,7 @@ import numpy as np
 
 from typing import Union
 
-from PredicTables.util import to_pd_s
+from PredicTables.util.src.to_pd import to_pd_s
 
 
 def get_column_dtype(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> str:
