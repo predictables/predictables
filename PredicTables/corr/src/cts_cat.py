@@ -581,7 +581,7 @@ def spearmans_rank_correlation_coef_df(
                 # Rank the continuous variable
                 _ = stats.rankdata(df[cont_col])
                 # Group by categorical variable and calculate mean rank
-                grouped_ranks = df.groupby(cat_col)[cont_col].mean()
+                grouped_ranks = df.groupby(cat_col)[cont_col].mean(observed=True)
                 # Calculate correlation between categorical variable levels and mean ranks
                 corr, _ = stats.spearmanr(grouped_ranks.index, grouped_ranks)
 
