@@ -231,7 +231,10 @@ def anova_correlation_coef_df(
     # Calculate ANOVA for each pair of continuous and categorical variables
     for cont_col in continuous_vars:
         for cat_col in categorical_vars:
-            groups = [group[cont_col].dropna() for _, group in df.groupby(cat_col)]
+            groups = [
+                group[cont_col].dropna()
+                for _, group in df.groupby(cat_col, observed=True)
+            ]
             _, _ = stats.f_oneway(*groups)
 
             # Calculate Eta Squared
@@ -581,7 +584,7 @@ def spearmans_rank_correlation_coef_df(
                 # Rank the continuous variable
                 _ = stats.rankdata(df[cont_col])
                 # Group by categorical variable and calculate mean rank
-                grouped_ranks = df.groupby(cat_col)[cont_col].mean(observed=True)
+                grouped_ranks = df.groupby(cat_col, observed=True)[cont_col].mean()
                 # Calculate correlation between categorical variable levels and mean ranks
                 corr, _ = stats.spearmanr(grouped_ranks.index, grouped_ranks)
 
@@ -677,7 +680,7 @@ def spearmans_rank_correlation_coef_series(
     else:
         # Calculate correlation between categorical variable levels and mean ranks
         _ = stats.rankdata(s1)
-        grouped_ranks = s1.groupby(s2).mean()
+        grouped_ranks = s1.groupby(s2, observed=True).mean()
         corr, _ = stats.spearmanr(grouped_ranks.index, grouped_ranks)
 
     return corr
