@@ -38,15 +38,17 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from tqdm import tqdm
 
-from PredicTables.Univariates.plots import (
+from PredicTables.univariate import reconcile_train_test_val_sizes
+
+from PredicTables.univariate.plots import (
     _plot_lift_chart,
     _quintile_lift_plot,
     set_rc_params,
 )
-from PredicTables.Univariates.plots import (
+from PredicTables.univariate.plots import (
     _rotate_x_labels_if_overlap as rotate_x_lab,
 )
-from PredicTables.Univariates.plots import (
+from PredicTables.univariate.plots import (
     plot_violin_with_outliers as _plot_violin,
 )
 from PredicTables.util.stats import gini_coefficient, informedness, kl_divergence
@@ -306,49 +308,9 @@ class Univariate:
         -------
         None. The train_size, test_size, and val_size attributes are updated in place.
         """
-        if (
-            (self.train_size is None)
-            & (self.val_size is None)
-            & (self.test_size is None)
-        ):
-            self.train_size = 0.7
-            self.val_size = 0.1
-            self.test_size = 0.2
-        elif self.val_size is None:
-            if self.train_size is None:
-                self.val_size = self.test_size
-                self.train_size = 1 - self.test_size - self.val_size
-            elif self.test_size is None:
-                self.val_size = np.round((1 - self.train_size) / 2, 3)
-                self.test_size = 1 - self.train_size - self.val_size
-            else:
-                self.val_size = 1 - self.train_size - self.test_size
-        elif self.train_size is None:
-            if self.val_size is None:
-                self.val_size = self.test_size
-                self.train_size = 1 - self.test_size - self.val_size
-            elif self.test_size is None:
-                self.test_size = self.val_size
-                self.train_size = 1 - self.test_size - self.val_size
-            else:
-                self.train_size = 1 - self.val_size - self.test_size
-        elif self.test_size is None:
-            if self.train_size is None:
-                self.test_size = self.val_size
-                self.train_size = 1 - self.test_size - self.val_size
-            elif self.val_size is None:
-                self.val_size = np.round((1 - self.train_size) / 2, 3)
-                self.test_size = 1 - self.train_size - self.val_size
-            else:
-                self.test_size = 1 - self.train_size - self.val_size
-        else:
-            assert self.train_size + self.val_size + self.test_size == 1, (
-                f"Train, val, and test sizes must sum to 1.0. \
-                    \n  train_size: {self.train_size} \
-                    \n  val_size: {self.val_size} \
-                    \n  test_size: {self.test_size}"
-                f"Sum: {self.train_size + self.val_size + self.test_size}"
-            )
+        self.train_size, self.val_size, self.test_size = reconcile_train_test_val_sizes(
+            self.train_size, self.test_size, self.val_size
+        )
 
     def set_up_data(self):
         """
