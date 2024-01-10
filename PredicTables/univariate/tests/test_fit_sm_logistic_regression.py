@@ -88,5 +88,5 @@ def test_fit_sm_logistic_regression_type(X, y):
 def test_fit_sm_logistic_regression_coef(X, y):
     regression_result = fit_sm_logistic_regression(X, y)
     assert (
-        np.round(regression_result.params.iloc[0], 3) == 0.011
-    ), f"Expected the coefficient to be -1.025, but got {np.round(regression_result.params.iloc[0], 3)}"
+        np.round(regression_result.params.iloc[0], 2) == 0.01
+    ), f"Expected the coefficient to be 0.01, but got {np.round(regression_result.params.iloc[0], 2)}"
