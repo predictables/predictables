@@ -30,5 +30,12 @@ def fit_sm_logistic_regression(
 
     """
     X = to_pd_df(X)
-    y = to_pd_s(y).values.ravel()
-    return sm.GLM(y, X, family=sm.families.Binomial()).fit(maxiter=10000)
+    y = (
+        to_pd_s(y)
+        .astype(str)
+        .str.replace("0", "0.01")
+        .str.replace("1", "0.99")
+        .str.replace("0.00.99", "0.01")
+        .astype(float)
+    )
+    return sm.GLM(y, X, family=sm.families.Binomial()).fit()
