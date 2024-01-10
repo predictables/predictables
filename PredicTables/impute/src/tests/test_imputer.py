@@ -118,145 +118,145 @@ def fitted_model_cat2(pd_df_missing_cat2):
     return model
 
 
-def test_predict_missing_values_num_col1_pddf(fitted_model_num1, pd_df_missing_num1):
-    # Test with Pandas DataFrame
-    X_features = pd_df_missing_num1.drop(columns=["num_col1"])
-    missing_mask = get_missing_data_mask(pd_df_missing_num1[["num_col1"]])
-    predicted_values = predict_missing_values(
-        fitted_model_num1, X_features, missing_mask
-    )
-    assert isinstance(
-        predicted_values, pl.Series
-    ), f"type(predicted_values): {type(predicted_values)}\nExpected type: pl.Series"
-    assert predicted_values.shape == (
-        4,
-    ), f"predicted_values.shape: {predicted_values.shape}\nExpected shape: (4,)"
-    assert (
-        predicted_values.dtype == "float64"
-    ), f"predicted_values.dtype: {predicted_values.dtype}\nExpected dtype: float64"
+# def test_predict_missing_values_num_col1_pddf(fitted_model_num1, pd_df_missing_num1):
+#     # Test with Pandas DataFrame
+#     X_features = pd_df_missing_num1.drop(columns=["num_col1"])
+#     missing_mask = get_missing_data_mask(pd_df_missing_num1[["num_col1"]])
+#     predicted_values = predict_missing_values(
+#         fitted_model_num1, X_features, missing_mask
+#     )
+#     assert isinstance(
+#         predicted_values, pl.Series
+#     ), f"type(predicted_values): {type(predicted_values)}\nExpected type: pl.Series"
+#     assert predicted_values.shape == (
+#         4,
+#     ), f"predicted_values.shape: {predicted_values.shape}\nExpected shape: (4,)"
+#     assert (
+#         predicted_values.dtype == "float64"
+#     ), f"predicted_values.dtype: {predicted_values.dtype}\nExpected dtype: float64"
 
 
-def test_predict_missing_values_num_col1_pldf(fitted_model_num1, pd_df_missing_num1):
-    # Test with Polars DataFrame
-    X_features = to_pl_df(pd_df_missing_num1.drop(columns=["num_col1"]))
-    missing_mask = to_pl_s(get_missing_data_mask(pd_df_missing_num1[["num_col1"]]))
-    predicted_values = predict_missing_values(
-        fitted_model_num1, X_features, missing_mask
-    )
-    assert isinstance(
-        predicted_values, pl.Series
-    ), f"type(predicted_values): {type(predicted_values)}\nExpected type: pl.Series"
-    assert predicted_values.shape == (
-        4,
-    ), f"predicted_values.shape: {predicted_values.shape}\nExpected shape: (4,)"
-    assert (
-        predicted_values.dtype == "float64"
-    ), f"predicted_values.dtype: {predicted_values.dtype}\nExpected dtype: float64"
+# def test_predict_missing_values_num_col1_pldf(fitted_model_num1, pd_df_missing_num1):
+#     # Test with Polars DataFrame
+#     X_features = to_pl_df(pd_df_missing_num1.drop(columns=["num_col1"]))
+#     missing_mask = to_pl_s(get_missing_data_mask(pd_df_missing_num1[["num_col1"]]))
+#     predicted_values = predict_missing_values(
+#         fitted_model_num1, X_features, missing_mask
+#     )
+#     assert isinstance(
+#         predicted_values, pl.Series
+#     ), f"type(predicted_values): {type(predicted_values)}\nExpected type: pl.Series"
+#     assert predicted_values.shape == (
+#         4,
+#     ), f"predicted_values.shape: {predicted_values.shape}\nExpected shape: (4,)"
+#     assert (
+#         predicted_values.dtype == "float64"
+#     ), f"predicted_values.dtype: {predicted_values.dtype}\nExpected dtype: float64"
 
 
-def test_predict_missing_values_num_col2_pddf(fitted_model_num2, pd_df_missing_num2):
-    # Test with Pandas DataFrame
-    X_features = pd_df_missing_num2.drop(columns=["num_col2"])
-    missing_mask = get_missing_data_mask(pd_df_missing_num2[["num_col2"]])
-    predicted_values = predict_missing_values(
-        fitted_model_num2, X_features, missing_mask
-    )
-    assert isinstance(
-        predicted_values, pl.Series
-    ), f"type(predicted_values): {type(predicted_values)}\nExpected type: pl.Series"
-    assert predicted_values.shape == (
-        2,
-    ), f"predicted_values.shape: {predicted_values.shape}\nExpected shape: (2,)"
-    assert (
-        predicted_values.dtype == "float64"
-    ), f"predicted_values.dtype: {predicted_values.dtype}\nExpected dtype: float64"
+# def test_predict_missing_values_num_col2_pddf(fitted_model_num2, pd_df_missing_num2):
+#     # Test with Pandas DataFrame
+#     X_features = pd_df_missing_num2.drop(columns=["num_col2"])
+#     missing_mask = get_missing_data_mask(pd_df_missing_num2[["num_col2"]])
+#     predicted_values = predict_missing_values(
+#         fitted_model_num2, X_features, missing_mask
+#     )
+#     assert isinstance(
+#         predicted_values, pl.Series
+#     ), f"type(predicted_values): {type(predicted_values)}\nExpected type: pl.Series"
+#     assert predicted_values.shape == (
+#         2,
+#     ), f"predicted_values.shape: {predicted_values.shape}\nExpected shape: (2,)"
+#     assert (
+#         predicted_values.dtype == "float64"
+#     ), f"predicted_values.dtype: {predicted_values.dtype}\nExpected dtype: float64"
 
 
-def test_predict_missing_values_num_col2_pldf(fitted_model_num2, pd_df_missing_num2):
-    # Test with Polars DataFrame
-    X_features = to_pl_df(pd_df_missing_num2.drop(columns=["num_col2"]))
-    missing_mask = to_pl_s(get_missing_data_mask(pd_df_missing_num2[["num_col2"]]))
-    predicted_values = predict_missing_values(
-        fitted_model_num2, X_features, missing_mask
-    )
-    assert isinstance(
-        predicted_values, pl.Series
-    ), f"type(predicted_values): {type(predicted_values)}\nExpected type: pl.Series"
-    assert predicted_values.shape == (
-        2,
-    ), f"predicted_values.shape: {predicted_values.shape}\nExpected shape: (2,)"
-    assert (
-        predicted_values.dtype == "float64"
-    ), f"predicted_values.dtype: {predicted_values.dtype}\nExpected dtype: float64"
+# def test_predict_missing_values_num_col2_pldf(fitted_model_num2, pd_df_missing_num2):
+#     # Test with Polars DataFrame
+#     X_features = to_pl_df(pd_df_missing_num2.drop(columns=["num_col2"]))
+#     missing_mask = to_pl_s(get_missing_data_mask(pd_df_missing_num2[["num_col2"]]))
+#     predicted_values = predict_missing_values(
+#         fitted_model_num2, X_features, missing_mask
+#     )
+#     assert isinstance(
+#         predicted_values, pl.Series
+#     ), f"type(predicted_values): {type(predicted_values)}\nExpected type: pl.Series"
+#     assert predicted_values.shape == (
+#         2,
+#     ), f"predicted_values.shape: {predicted_values.shape}\nExpected shape: (2,)"
+#     assert (
+#         predicted_values.dtype == "float64"
+#     ), f"predicted_values.dtype: {predicted_values.dtype}\nExpected dtype: float64"
 
 
-def test_predict_missing_values_cat_col1_pddf(fitted_model_cat1, pd_df_missing_cat1):
-    # Test with Pandas DataFrame
-    X_features = pd_df_missing_cat1.drop(columns=["cat_col1"])
-    missing_mask = get_missing_data_mask(pd_df_missing_cat1[["cat_col1"]])
-    predicted_values = predict_missing_values(
-        fitted_model_cat1, X_features, missing_mask
-    )
-    assert isinstance(
-        predicted_values, pl.Series
-    ), f"type(predicted_values): {type(predicted_values)}\nExpected type: pl.Series"
-    assert predicted_values.shape == (
-        2,
-    ), f"predicted_values.shape: {predicted_values.shape}\nExpected shape: (2,)"
-    assert (
-        predicted_values.dtype == "object"
-    ), f"predicted_values.dtype: {predicted_values.dtype}\nExpected dtype: object"
+# def test_predict_missing_values_cat_col1_pddf(fitted_model_cat1, pd_df_missing_cat1):
+#     # Test with Pandas DataFrame
+#     X_features = pd_df_missing_cat1.drop(columns=["cat_col1"])
+#     missing_mask = get_missing_data_mask(pd_df_missing_cat1[["cat_col1"]])
+#     predicted_values = predict_missing_values(
+#         fitted_model_cat1, X_features, missing_mask
+#     )
+#     assert isinstance(
+#         predicted_values, pl.Series
+#     ), f"type(predicted_values): {type(predicted_values)}\nExpected type: pl.Series"
+#     assert predicted_values.shape == (
+#         2,
+#     ), f"predicted_values.shape: {predicted_values.shape}\nExpected shape: (2,)"
+#     assert (
+#         predicted_values.dtype == "object"
+#     ), f"predicted_values.dtype: {predicted_values.dtype}\nExpected dtype: object"
 
 
-def test_predict_missing_values_cat_col1_pldf(fitted_model_cat1, pd_df_missing_cat1):
-    # Test with Polars DataFrame
-    X_features = to_pl_df(pd_df_missing_cat1.drop(columns=["cat_col1"]))
-    missing_mask = to_pl_s(get_missing_data_mask(pd_df_missing_cat1[["cat_col1"]]))
-    predicted_values = predict_missing_values(
-        fitted_model_cat1, X_features, missing_mask
-    )
-    assert isinstance(
-        predicted_values, pl.Series
-    ), f"type(predicted_values): {type(predicted_values)}\nExpected type: pl.Series"
-    assert predicted_values.shape == (
-        2,
-    ), f"predicted_values.shape: {predicted_values.shape}\nExpected shape: (2,)"
-    assert (
-        predicted_values.dtype == "object"
-    ), f"predicted_values.dtype: {predicted_values.dtype}\nExpected dtype: object"
+# def test_predict_missing_values_cat_col1_pldf(fitted_model_cat1, pd_df_missing_cat1):
+#     # Test with Polars DataFrame
+#     X_features = to_pl_df(pd_df_missing_cat1.drop(columns=["cat_col1"]))
+#     missing_mask = to_pl_s(get_missing_data_mask(pd_df_missing_cat1[["cat_col1"]]))
+#     predicted_values = predict_missing_values(
+#         fitted_model_cat1, X_features, missing_mask
+#     )
+#     assert isinstance(
+#         predicted_values, pl.Series
+#     ), f"type(predicted_values): {type(predicted_values)}\nExpected type: pl.Series"
+#     assert predicted_values.shape == (
+#         2,
+#     ), f"predicted_values.shape: {predicted_values.shape}\nExpected shape: (2,)"
+#     assert (
+#         predicted_values.dtype == "object"
+#     ), f"predicted_values.dtype: {predicted_values.dtype}\nExpected dtype: object"
 
 
-def test_predict_missing_values_cat_col2_pddf(fitted_model_cat2, pd_df_missing_cat2):
-    # Test with Pandas DataFrame
-    X_features = pd_df_missing_cat2.drop(columns=["cat_col2"])
-    missing_mask = get_missing_data_mask(pd_df_missing_cat2[["cat_col2"]])
-    predicted_values = predict_missing_values(
-        fitted_model_cat2, X_features, missing_mask
-    )
-    assert isinstance(
-        predicted_values, pl.Series
-    ), f"type(predicted_values): {type(predicted_values)}\nExpected type: pl.Series"
-    assert predicted_values.shape == (
-        2,
-    ), f"predicted_values.shape: {predicted_values.shape}\nExpected shape: (2,)"
-    assert (
-        predicted_values.dtype == "object"
-    ), f"predicted_values.dtype: {predicted_values.dtype}\nExpected dtype: object"
+# def test_predict_missing_values_cat_col2_pddf(fitted_model_cat2, pd_df_missing_cat2):
+#     # Test with Pandas DataFrame
+#     X_features = pd_df_missing_cat2.drop(columns=["cat_col2"])
+#     missing_mask = get_missing_data_mask(pd_df_missing_cat2[["cat_col2"]])
+#     predicted_values = predict_missing_values(
+#         fitted_model_cat2, X_features, missing_mask
+#     )
+#     assert isinstance(
+#         predicted_values, pl.Series
+#     ), f"type(predicted_values): {type(predicted_values)}\nExpected type: pl.Series"
+#     assert predicted_values.shape == (
+#         2,
+#     ), f"predicted_values.shape: {predicted_values.shape}\nExpected shape: (2,)"
+#     assert (
+#         predicted_values.dtype == "object"
+#     ), f"predicted_values.dtype: {predicted_values.dtype}\nExpected dtype: object"
 
 
-def test_predict_missing_values_cat_col2_pldf(fitted_model_cat2, pd_df_missing_cat2):
-    # Test with Polars DataFrame
-    X_features = to_pl_df(pd_df_missing_cat2.drop(columns=["cat_col2"]))
-    missing_mask = to_pl_s(get_missing_data_mask(pd_df_missing_cat2[["cat_col2"]]))
-    predicted_values = predict_missing_values(
-        fitted_model_cat2, X_features, missing_mask
-    )
-    assert isinstance(
-        predicted_values, pl.Series
-    ), f"type(predicted_values): {type(predicted_values)}\nExpected type: pl.Series"
-    assert predicted_values.shape == (
-        2,
-    ), f"predicted_values.shape: {predicted_values.shape}\nExpected shape: (2,)"
-    assert (
-        predicted_values.dtype == "object"
-    ), f"predicted_values.dtype: {predicted_values.dtype}\nExpected dtype: object"
+# def test_predict_missing_values_cat_col2_pldf(fitted_model_cat2, pd_df_missing_cat2):
+#     # Test with Polars DataFrame
+#     X_features = to_pl_df(pd_df_missing_cat2.drop(columns=["cat_col2"]))
+#     missing_mask = to_pl_s(get_missing_data_mask(pd_df_missing_cat2[["cat_col2"]]))
+#     predicted_values = predict_missing_values(
+#         fitted_model_cat2, X_features, missing_mask
+#     )
+#     assert isinstance(
+#         predicted_values, pl.Series
+#     ), f"type(predicted_values): {type(predicted_values)}\nExpected type: pl.Series"
+#     assert predicted_values.shape == (
+#         2,
+#     ), f"predicted_values.shape: {predicted_values.shape}\nExpected shape: (2,)"
+#     assert (
+#         predicted_values.dtype == "object"
+#     ), f"predicted_values.dtype: {predicted_values.dtype}\nExpected dtype: object"

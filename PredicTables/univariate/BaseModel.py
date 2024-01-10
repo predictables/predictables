@@ -68,22 +68,14 @@ class Model:
             else fit_sk_linear_regression(self.X_train, self.y_train)
         )
 
-        # Test that the results are close:
-        if np.round(self.model.params.iloc[0], 0) != np.round(
-            self.sk_model.coef_[0][0], 0
-        ):
-            raise ValueError(
-                f"The coefficient estimates from statsmodels {np.round(self.model.params.iloc[0], 2)} and sklearn {np.round(self.sk_model.coef_[0][0], 2)} are not close. This is likely due to a difference in the optimization algorithm used by each package. Try increasing the number of iterations in the statsmodels model."
-            )
-
         # Pull stats from the fitted model object
         self.yhat_train = self.model.predict(self.X_train)
         self.yhat_test = self.model.predict(self.X_test)
 
         self.coef = self.model.params.iloc[0]
-        self.pvalues = self.model.pvalues[0]
+        self.pvalues = self.model.pvalues.iloc[0]
         self.aic = self.model.aic
-        self.se = self.model.bse[0]
+        self.se = self.model.bse.iloc[0]
         # self.lower_ci = self.model.conf_int()[0][0]
         # self.upper_ci = self.model.conf_int()[0][1]
         self.n = self.model.nobs

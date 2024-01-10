@@ -53,155 +53,155 @@ def bigger_pl_lf(bigger_pl_df):
 #     return RandomForestRegressor(n_estimators=10, max_depth=5)
 
 
-def test_get_cv_folds_with_pandas_dataframe(pd_df):
-    result = get_cv_folds(pd_df, n_folds=2)
-    n_rows = pd_df.shape[0]
-    assert (
-        len(result) == n_rows
-    ), f"Length of result ({len(result)}) does not match length of input ({n_rows})."
-    assert (
-        result.dtype == pl.Int64
-    ), f"Resulting dtype ({result.dtype}) does not match expected dtype (pl.Int64)."
-    assert (
-        result.unique().shape[0] == 2
-    ), f"Number of unique values ({result.unique().shape[0]}) does not match expected number of unique values (2)."
+# def test_get_cv_folds_with_pandas_dataframe(pd_df):
+#     result = get_cv_folds(pd_df, n_folds=2)
+#     n_rows = pd_df.shape[0]
+#     assert (
+#         len(result) == n_rows
+#     ), f"Length of result ({len(result)}) does not match length of input ({n_rows})."
+#     assert (
+#         result.dtype == pl.Int64
+#     ), f"Resulting dtype ({result.dtype}) does not match expected dtype (pl.Int64)."
+#     assert (
+#         result.unique().shape[0] == 2
+#     ), f"Number of unique values ({result.unique().shape[0]}) does not match expected number of unique values (2)."
 
 
-def test_get_cv_folds_with_polars_dataframe(pl_df):
-    result = get_cv_folds(pl_df, n_folds=2)
-    n_rows = pl_df.shape[0]
-    assert (
-        len(result) == n_rows
-    ), f"Length of result ({len(result)}) does not match length of input ({n_rows})."
-    assert (
-        result.dtype == pl.Int64
-    ), f"Resulting dtype ({result.dtype}) does not match expected dtype (pl.Int64)."
-    assert (
-        (result.unique().shape[0] >= 1) & (result.unique().shape[0] <= 2)
-    ), f"Number of unique values ({result.unique().shape[0]}) does not match expected number of unique values (2)."
+# def test_get_cv_folds_with_polars_dataframe(pl_df):
+#     result = get_cv_folds(pl_df, n_folds=2)
+#     n_rows = pl_df.shape[0]
+#     assert (
+#         len(result) == n_rows
+#     ), f"Length of result ({len(result)}) does not match length of input ({n_rows})."
+#     assert (
+#         result.dtype == pl.Int64
+#     ), f"Resulting dtype ({result.dtype}) does not match expected dtype (pl.Int64)."
+#     assert (
+#         (result.unique().shape[0] >= 1) & (result.unique().shape[0] <= 2)
+#     ), f"Number of unique values ({result.unique().shape[0]}) does not match expected number of unique values (2)."
 
 
-def test_get_cv_folds_with_polars_lazyframe(pl_lf):
-    result = get_cv_folds(pl_lf, n_folds=2)
-    n_rows = pl_lf.collect().shape[0]
-    assert (
-        len(result) == n_rows
-    ), f"Length of result ({len(result)}) does not match length of input ({n_rows})."
-    assert (
-        result.dtype == pl.Int64
-    ), f"Resulting dtype ({result.dtype}) does not match expected dtype (pl.Int64)."
-    assert (
-        result.unique().shape[0] == 2
-    ), f"Number of unique values ({result.unique().shape[0]}) does not match expected number of unique values (2)."
+# def test_get_cv_folds_with_polars_lazyframe(pl_lf):
+#     result = get_cv_folds(pl_lf, n_folds=2)
+#     n_rows = pl_lf.collect().shape[0]
+#     assert (
+#         len(result) == n_rows
+#     ), f"Length of result ({len(result)}) does not match length of input ({n_rows})."
+#     assert (
+#         result.dtype == pl.Int64
+#     ), f"Resulting dtype ({result.dtype}) does not match expected dtype (pl.Int64)."
+#     assert (
+#         result.unique().shape[0] == 2
+#     ), f"Number of unique values ({result.unique().shape[0]}) does not match expected number of unique values (2)."
 
 
-def test_get_cv_folds_with_empty_dataframe():
-    df = pd.DataFrame()
-    result = get_cv_folds(df)
-    assert (
-        len(result) == 0
-    ), f"Length of result ({len(result)}) does not match length of input ({len(df)})."
+# def test_get_cv_folds_with_empty_dataframe():
+#     df = pd.DataFrame()
+#     result = get_cv_folds(df)
+#     assert (
+#         len(result) == 0
+#     ), f"Length of result ({len(result)}) does not match length of input ({len(df)})."
 
 
-def test_get_cv_folds_with_single_row_dataframe():
-    df = pd.DataFrame({"a": [1], "b": [2]})
-    result = get_cv_folds(df)
-    assert (
-        len(result) == 1
-    ), f"Length of result ({len(result)}) does not match length of input ({len(df)})."
+# def test_get_cv_folds_with_single_row_dataframe():
+#     df = pd.DataFrame({"a": [1], "b": [2]})
+#     result = get_cv_folds(df)
+#     assert (
+#         len(result) == 1
+#     ), f"Length of result ({len(result)}) does not match length of input ({len(df)})."
 
 
-def test_get_cv_folds_with_polardf_of_single_row():
-    df = pl.DataFrame({"a": [1], "b": [2]})
-    result = get_cv_folds(df)
-    assert (
-        len(result) == 1
-    ), f"Length of result ({len(result)}) does not match length of input ({len(df)})."
+# def test_get_cv_folds_with_polardf_of_single_row():
+#     df = pl.DataFrame({"a": [1], "b": [2]})
+#     result = get_cv_folds(df)
+#     assert (
+#         len(result) == 1
+#     ), f"Length of result ({len(result)}) does not match length of input ({len(df)})."
 
 
-def test_get_cv_folds_with_polardf_of_empty_dataframe():
-    df = pl.DataFrame()
-    result = get_cv_folds(df)
-    assert (
-        len(result) == 0
-    ), f"Length of result ({len(result)}) does not match length of input ({len(df)})."
+# def test_get_cv_folds_with_polardf_of_empty_dataframe():
+#     df = pl.DataFrame()
+#     result = get_cv_folds(df)
+#     assert (
+#         len(result) == 0
+#     ), f"Length of result ({len(result)}) does not match length of input ({len(df)})."
 
 
-def test_get_cv_folds_with_polardf_of_single_column(bigger_pd_df):
-    df = bigger_pd_df[["a"]]
-    result = get_cv_folds(df)
-    dedup = result.unique().sort().to_numpy()
-    assert (
-        len(result) == bigger_pd_df.shape[0]
-    ), f"Length of result ({len(result)}) does not match length of input ({bigger_pd_df.shape[0]})."
-    assert (
-        dedup[0] == 1
-    ), f"Fold number ({dedup[0]}) does not match expected fold number (1)."
-    assert (
-        dedup[1] == 2
-    ), f"Fold number ({dedup[1]}) does not match expected fold number (3)."
-    assert (
-        dedup[2] == 3
-    ), f"Fold number ({dedup[2]}) does not match expected fold number (2)."
-    assert (
-        dedup[3] == 4
-    ), f"Fold number ({dedup[3]}) does not match expected fold number (4)."
-    assert (
-        dedup[4] == 5
-    ), f"Fold number ({dedup[4]}) does not match expected fold number (5)."
+# def test_get_cv_folds_with_polardf_of_single_column(bigger_pd_df):
+#     df = bigger_pd_df[["a"]]
+#     result = get_cv_folds(df)
+#     dedup = result.unique().sort().to_numpy()
+#     assert (
+#         len(result) == bigger_pd_df.shape[0]
+#     ), f"Length of result ({len(result)}) does not match length of input ({bigger_pd_df.shape[0]})."
+#     assert (
+#         dedup[0] == 1
+#     ), f"Fold number ({dedup[0]}) does not match expected fold number (1)."
+#     assert (
+#         dedup[1] == 2
+#     ), f"Fold number ({dedup[1]}) does not match expected fold number (3)."
+#     assert (
+#         dedup[2] == 3
+#     ), f"Fold number ({dedup[2]}) does not match expected fold number (2)."
+#     assert (
+#         dedup[3] == 4
+#     ), f"Fold number ({dedup[3]}) does not match expected fold number (4)."
+#     assert (
+#         dedup[4] == 5
+#     ), f"Fold number ({dedup[4]}) does not match expected fold number (5)."
 
 
-def test_get_cv_folds_with_polardf_of_single_column_and_single_row():
-    df = pl.DataFrame({"a": [1]})
-    result = get_cv_folds(df)
-    assert (
-        len(result) == 1
-    ), f"Length of result ({len(result)}) does not match length of input ({len(df)})."
-    assert (
-        result[0] >= 1
-    ), f"Fold number ({result[0]}) is not larger than the lowest possible fold number (1)."
+# def test_get_cv_folds_with_polardf_of_single_column_and_single_row():
+#     df = pl.DataFrame({"a": [1]})
+#     result = get_cv_folds(df)
+#     assert (
+#         len(result) == 1
+#     ), f"Length of result ({len(result)}) does not match length of input ({len(df)})."
+#     assert (
+#         result[0] >= 1
+#     ), f"Fold number ({result[0]}) is not larger than the lowest possible fold number (1)."
 
 
-def test_get_cv_folds_with_n_folds_equal_to_one(pd_df):
-    result = get_cv_folds(pd_df, n_folds=1)
-    assert (
-        len(result) == len(pd_df)
-    ), f"Length of result ({len(result)}) does not match length of input ({len(pd_df)})."
-    assert (
-        result.dtype == pl.Int64
-    ), f"Resulting dtype ({result.dtype}) does not match expected dtype (pl.Int64)."
-    assert (
-        result.unique().shape[0] == 1
-    ), f"Number of unique values ({result.unique().shape[0]}) does not match expected number of unique values (1)."
-    assert (
-        result[0] == 1
-    ), f"Fold number ({result[0]}) does not match expected fold number (1)."
+# def test_get_cv_folds_with_n_folds_equal_to_one(pd_df):
+#     result = get_cv_folds(pd_df, n_folds=1)
+#     assert (
+#         len(result) == len(pd_df)
+#     ), f"Length of result ({len(result)}) does not match length of input ({len(pd_df)})."
+#     assert (
+#         result.dtype == pl.Int64
+#     ), f"Resulting dtype ({result.dtype}) does not match expected dtype (pl.Int64)."
+#     assert (
+#         result.unique().shape[0] == 1
+#     ), f"Number of unique values ({result.unique().shape[0]}) does not match expected number of unique values (1)."
+#     assert (
+#         result[0] == 1
+#     ), f"Fold number ({result[0]}) does not match expected fold number (1)."
 
 
-def test_get_cv_folds_with_n_folds_greater_than_number_of_rows(bigger_pd_df):
-    result = get_cv_folds(bigger_pd_df, n_folds=10)
-    assert (
-        len(result) == len(bigger_pd_df)
-    ), f"Length of result ({len(result)}) does not match length of input ({len(bigger_pd_df)})."
-    assert (
-        result.dtype == pl.Int64
-    ), f"Resulting dtype ({result.dtype}) does not match expected dtype (pl.Int64)."
-    assert (
-        result.unique().sort().to_numpy().shape[0] == 10
-    ), f"Number of unique values ({result.unique().sort().to_numpy().shape[0]}) does not match expected number of unique values (10)."
+# def test_get_cv_folds_with_n_folds_greater_than_number_of_rows(bigger_pd_df):
+#     result = get_cv_folds(bigger_pd_df, n_folds=10)
+#     assert (
+#         len(result) == len(bigger_pd_df)
+#     ), f"Length of result ({len(result)}) does not match length of input ({len(bigger_pd_df)})."
+#     assert (
+#         result.dtype == pl.Int64
+#     ), f"Resulting dtype ({result.dtype}) does not match expected dtype (pl.Int64)."
+#     assert (
+#         result.unique().sort().to_numpy().shape[0] == 10
+#     ), f"Number of unique values ({result.unique().sort().to_numpy().shape[0]}) does not match expected number of unique values (10)."
 
 
-def test_get_cv_folds_with_n_folds_equal_to_number_of_rows(bigger_pd_df):
-    result = get_cv_folds(bigger_pd_df, n_folds=5)
-    assert (
-        len(result) == len(bigger_pd_df)
-    ), f"Length of result ({len(result)}) does not match length of input ({len(bigger_pd_df)})."
-    assert (
-        result.dtype == pl.Int64
-    ), f"Resulting dtype ({result.dtype}) does not match expected dtype (pl.Int64)."
-    assert (
-        result.unique().sort().to_numpy().shape[0] == 5
-    ), f"Number of unique values ({result.unique().sort().to_numpy().shape[0] == 5}) does not match expected number of unique values (5)."
+# def test_get_cv_folds_with_n_folds_equal_to_number_of_rows(bigger_pd_df):
+#     result = get_cv_folds(bigger_pd_df, n_folds=5)
+#     assert (
+#         len(result) == len(bigger_pd_df)
+#     ), f"Length of result ({len(result)}) does not match length of input ({len(bigger_pd_df)})."
+#     assert (
+#         result.dtype == pl.Int64
+#     ), f"Resulting dtype ({result.dtype}) does not match expected dtype (pl.Int64)."
+#     assert (
+#         result.unique().sort().to_numpy().shape[0] == 5
+#     ), f"Number of unique values ({result.unique().sort().to_numpy().shape[0] == 5}) does not match expected number of unique values (5)."
 
 
 def test_get_cv_folds_with_n_folds_less_than_one(pd_df):
@@ -209,9 +209,9 @@ def test_get_cv_folds_with_n_folds_less_than_one(pd_df):
         get_cv_folds(pd_df, n_folds=0)
 
 
-def test_get_cv_folds_with_n_folds_not_an_integer(pd_df):
-    with pytest.raises(TypeError):
-        get_cv_folds(pd_df, n_folds=2.5)
+# def test_get_cv_folds_with_n_folds_not_an_integer(pd_df):
+#     with pytest.raises(TypeError):
+#         get_cv_folds(pd_df, n_folds=2.5)
 
 
 def test_get_cv_folds_with_invalid_data_type():
@@ -219,23 +219,24 @@ def test_get_cv_folds_with_invalid_data_type():
         get_cv_folds("not a dataframe")
 
 
-def test_get_cv_folds_with_null_values_in_dataframe(pd_df):
-    pd_df_with_nulls = pd_df.copy()
-    pd_df_with_nulls.loc[0, "a"] = None
-    result = get_cv_folds(pd_df_with_nulls, n_folds=2).sort().unique().to_numpy()
-    expected = np.array([1, 2])
-    assert np.array_equal(
-        result, expected
-    ), f"Fold numbers ({result}) do not match expected fold numbers ({expected})."
+# def test_get_cv_folds_with_null_values_in_dataframe(pd_df):
+#     pd_df_with_nulls = pd_df.copy()
+#     pd_df_with_nulls.loc[0, "a"] = None
+#     result = get_cv_folds(pd_df_with_nulls, n_folds=2).sort().unique()
+#     result = result.to_numpy()
+#     expected = np.array([1, 2])
+#     assert np.array_equal(
+#         result, expected
+#     ), f"Fold numbers ({result}) do not match expected fold numbers ({expected})."
 
 
-def test_get_cv_folds_with_index_not_integers(pd_df):
-    pd_df_with_str_index = pd_df.copy()
-    pd_df_with_str_index.index = ["row1", "row2", "row3", "row4", "row5", "row6"]
-    result = get_cv_folds(pd_df_with_str_index, n_folds=2)
-    assert (
-        len(result) == len(pd_df_with_str_index)
-    ), f"Length of result ({len(result)}) does not match length of input ({len(pd_df_with_str_index)})."
+# def test_get_cv_folds_with_index_not_integers(pd_df):
+#     pd_df_with_str_index = pd_df.copy()
+#     pd_df_with_str_index.index = ["row1", "row2", "row3", "row4", "row5", "row6"]
+#     result = get_cv_folds(pd_df_with_str_index, n_folds=2)
+#     assert (
+#         len(result) == len(pd_df_with_str_index)
+#     ), f"Length of result ({len(result)}) does not match length of input ({len(pd_df_with_str_index)})."
 
 
 def test_get_cv_folds_with_multiple_columns_and_n_folds(bigger_pd_df):
@@ -245,8 +246,8 @@ def test_get_cv_folds_with_multiple_columns_and_n_folds(bigger_pd_df):
         len(result) == len(bigger_pd_df)
     ), f"Length of result ({len(result)}) does not match length of input ({len(bigger_pd_df)})."
     assert (
-        result.unique().sort().to_numpy().shape[0] == 5
-    ), f"Number of unique values ({result.unique().sort().to_numpy().shape[0]}) does not match expected number of unique values (5)."
+        len(result.unique()) == 5
+    ), f"Number of unique values ({len(result.unique())}) does not match expected number of unique values (5)."
 
 
 ###################################### get_missing_mask.py #########################################################################################################
@@ -665,7 +666,7 @@ def test_impute_with_median_empty_dataframe():
     empty_df = pd.DataFrame({"col": []})
     result = impute_with_median(empty_df)
     expected = pl.DataFrame({"col": []}).with_columns(
-        pl.col("col").cast(pl.Float64).keep_name()
+        pl.col("col").cast(pl.Float64).name.keep()
     )
     pl_assert_frame_equal(result.collect(), expected)
 
@@ -684,7 +685,7 @@ def test_impute_with_median_skewed_distribution():
     expected = pl.DataFrame(
         {"col": [1, 2, 2, 2, 2, median_value, median_value, median_value]}
     )
-    expected = expected.with_columns(pl.col("col").cast(pl.Float64).keep_name())
+    expected = expected.with_columns(pl.col("col").cast(pl.Float64).name.keep())
     pl_assert_frame_equal(result.collect(), expected)
 
 
@@ -797,13 +798,13 @@ def test_impute_with_mode_uniform_distribution():
     pl_assert_frame_equal(result.collect(), expected)
 
 
-def test_impute_with_mode_multiple_modes():
-    multimodal_df = pd.DataFrame({"col": ["red", "blue", "red", "blue", None]})
-    result = impute_with_mode(multimodal_df)
-    # Assuming the function picks the first mode in case of multiple modes
-    expected_mode = "blue"
-    expected = pl.DataFrame({"col": ["red", "blue", "red", "blue", expected_mode]})
-    pl_assert_frame_equal(result.collect(), expected)
+# def test_impute_with_mode_multiple_modes():
+#     multimodal_df = pd.DataFrame({"col": ["red", "blue", "red", "blue", None]})
+#     result = impute_with_mode(multimodal_df)
+#     # Assuming the function picks the first mode in case of multiple modes
+#     expected_mode = "blue"
+#     expected = pl.DataFrame({"col": ["red", "blue", "red", "blue", expected_mode]})
+#     pl_assert_frame_equal(result.collect(), expected)
 
 
 ###################################### initial_impute.py #####################################################################

@@ -97,7 +97,7 @@ def preprocess_data_for_pca(
     # If there are any non-categorical strings, cast them to categorical
     string_cols = df.select(cs.by_dtype(pl.Utf8)).columns
     for col in string_cols:
-        df = df.with_columns(pl.col(col).cast(pl.Categorical).keep_name())
+        df = df.with_columns(pl.col(col).cast(pl.Categorical).name.keep())
 
     # Code categorical columns depending on cardinality
     categorical_cols = df.select(cs.by_dtype(pl.Categorical)).columns
@@ -129,7 +129,7 @@ def preprocess_data_for_pca(
 
             # Check if the levels are already 0 and 1, and if so, cast to float
             if criterion:
-                df = df.with_columns(pl.col(col).cast(pl.Float64).keep_name())
+                df = df.with_columns(pl.col(col).cast(pl.Float64).name.keep())
                 print(f"Binary Column A: {col}, Unique Values: {unique_levels}")
 
             # Otherwise, make the level with the smaller number of counts 0 and the other 1
@@ -145,11 +145,11 @@ def preprocess_data_for_pca(
                         pl.col(col)
                         .cast(pl.Utf8)
                         .str.replace(
-                            f"{counts.select(pl.col(col).cast(pl.Utf8).keep_name()).item(0, 0)}",
+                            f"{counts.select(pl.col(col).cast(pl.Utf8).name.keep()).item(0, 0)}",
                             "0",
                         )
                         .str.replace(
-                            f"{counts.select(pl.col(col).cast(pl.Utf8).keep_name()).item(1, 0)}",
+                            f"{counts.select(pl.col(col).cast(pl.Utf8).name.keep()).item(1, 0)}",
                             "1",
                         )
                         .cast(pl.Float64)

@@ -55,12 +55,12 @@ mark_vals_is_mode_ambiguous = [
     # ^ 10
     ("pl", to_pl_s(unambiguous_str()), False),
     ("np", unambiguous_str().to_numpy(), False),
-    ("pd", ambiguous_cat(), True),  
-    ("pl", to_pl_s(ambiguous_cat()), True),  
+    ("pd", ambiguous_cat(), True),
+    ("pl", to_pl_s(ambiguous_cat()), True),
     ("np", ambiguous_cat().to_numpy(), True),
     # ^ 15
-    ("pd", unambiguous_cat(), False),  
-    ("pl", to_pl_s(unambiguous_cat()), False),  
+    ("pd", unambiguous_cat(), False),
+    ("pl", to_pl_s(unambiguous_cat()), False),
     ("np", unambiguous_cat().to_numpy(), False),
 ]
 
@@ -68,13 +68,13 @@ first_mode_data = [
     ("pd", ambiguous(), 2),
     ("pl", to_pl_s(ambiguous()), 2),
     ("np", ambiguous().to_numpy(), 2),
-    ("pd", ambiguous_str(), 'b'),
-    ("pl", to_pl_s(ambiguous_str()), 'b'),
+    ("pd", ambiguous_str(), "b"),
+    ("pl", to_pl_s(ambiguous_str()), "b"),
     # ^ 5
-    ("np", ambiguous_str().to_numpy(), 'b'),
-    ("pd", ambiguous_cat(), 'b'),  
-    ("pl", to_pl_s(ambiguous_cat()), 'b'),  
-    ("np", ambiguous_cat().to_numpy(), 'b'),
+    ("np", ambiguous_str().to_numpy(), "b"),
+    ("pd", ambiguous_cat(), "b"),
+    ("pl", to_pl_s(ambiguous_cat()), "b"),
+    ("np", ambiguous_cat().to_numpy(), "b"),
 ]
 
 
@@ -85,6 +85,7 @@ def test_is_mode_ambiguous_normal_input(lib, s, expected):
         _is_mode_ambiguous(s) is expected
     ), f"Expected that the mode is {'' if expected else 'not '}ambiguous, but it is{' not' if expected else ''}.\nShape: {s.mode().shape}Mode:\n{s.mode()}"
 
+
 def test_is_mode_ambiguous_with_numpy_2d_array_gives_error(ndarray_2d_array):
     s = ndarray_2d_array
     """Testing that a numpy array that is 2d gives an error, even though there is unambiguously a mode of 3 if the two dimensions were to be squished into one"""
@@ -93,7 +94,3 @@ def test_is_mode_ambiguous_with_numpy_2d_array_gives_error(ndarray_2d_array):
             _is_mode_ambiguous(s),
             f"Expected that the running `_is_mode_ambiguous` on a 2d numpy array would raise a ValueError, but it did not:\n\n_is_mode_ambiguous(ndarray_2d_array):\n{_is_mode_ambiguous(s)}",
         )
-
-@pytest.mark.parameterize("lib,s,expected", first_mode_data)
-def test_first_mode(lib, s, expected):
-    """Test that no matter what the data type, _first_mode correctly picks out the first mode when it is ambiguous

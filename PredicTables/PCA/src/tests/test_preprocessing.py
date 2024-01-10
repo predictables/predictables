@@ -66,7 +66,7 @@ def test_dropping_high_cardinality_categorical_columns():
         }
     ).select(
         [
-            pl.col(c).cast(pl.Categorical).keep_name()
+            pl.col(c).cast(pl.Categorical).name.keep()
             for c in ["low_card_cat", "high_card_cat"]
         ]
     )

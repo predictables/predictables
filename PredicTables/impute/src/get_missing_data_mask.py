@@ -13,7 +13,7 @@ from PredicTables.util import to_pl_lf
 
 
 def get_missing_data_mask(
-    df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+    df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
 ) -> pl.LazyFrame:
     """
     Get a mask of the missing data in the dataframe.
@@ -61,5 +61,5 @@ def get_missing_data_mask(
     if not isinstance(df, (pd.DataFrame, pl.DataFrame, pl.LazyFrame)):
         raise TypeError("df must be a pandas or polars dataframe.")
     return to_pl_lf(df).with_columns(
-        [pl.col(c).is_null().keep_name() for c in df.columns]
+        [pl.col(c).is_null().name.keep() for c in df.columns]
     )

@@ -20,7 +20,7 @@ def time_series_validation_filter(
     # allowed to pass in a separate validation set, but if none passed (or if doing cross
     # validation (and so validation set is part of the training set)), use the training set
     if df_val is None:
-        df_val_start = None
+        df_val_start = df
     else:
         if fold is None:
             # If no fold passed, assume not doing a cross-validation split here

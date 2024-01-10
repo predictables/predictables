@@ -1,14 +1,16 @@
-import pytest
-import polars as pl
-import pandas as pd
 from datetime import datetime
-from util.src.get_column_dtype import (
-    is_numeric,
-    is_integer,
-    is_binary,
-    is_datetime,
-    is_categorical,
+
+import pandas as pd
+import polars as pl
+import pytest
+
+from PredicTables.util.src.get_column_dtype import (
     get_column_dtype,
+    is_binary,
+    is_categorical,
+    is_datetime,
+    is_integer,
+    is_numeric,
 )
 
 

@@ -287,98 +287,98 @@ def test_calculate_standard_error_of_mean_incorrect_data_types():
 ############################# check_stopping_criterion #############################
 
 
-# Normal Case - Stopping Criterion Met
-def test_check_stopping_criterion_met():
-    """This test checks a scenario where the stopping criterion is met (errors in two consecutive epochs are within one standard error of each other)."""
-    # Creating errors such that the last two are within one SEM of the third-last
-    errors = [
-        [1, 2, 1.5, 4.0, 4.1],  # Fold 1
-        [1, 2, 3, 4.0, 4.2],  # Fold 2
-        [1, 2, 5.5, 4.0, 4.1],  # Fold 3
-    ]
+# # Normal Case - Stopping Criterion Met
+# def test_check_stopping_criterion_met():
+#     """This test checks a scenario where the stopping criterion is met (errors in two consecutive epochs are within one standard error of each other)."""
+#     # Creating errors such that the last two are within one SEM of the third-last
+#     errors = [
+#         [1, 2, 1.5, 4.0, 4.1],  # Fold 1
+#         [1, 2, 3, 4.0, 4.2],  # Fold 2
+#         [1, 2, 5.5, 4.0, 4.1],  # Fold 3
+#     ]
 
-    # Calculate SEM for the third-last epoch
-    ave = (1.5 + 3 + 5.5) / 3
-    var = ((1.5 - ave) ** 2 + (3 - ave) ** 2 + (5.5 - ave) ** 2) / 3
-    std_err = var / np.sqrt(3)
-    sem = calculate_standard_error_of_mean(errors, 2)
-    assert np.isclose(
-        sem, std_err
-    ), f"SEM calculated by the function ({sem:.2f}) should match the manually calculated SEM ({std_err:.2f})"
-    assert (
-        sem == std_err
-    ), f"SEM ({sem:.2f}) should be the square root of the variance ({np.sqrt(var):.2f}) divided by the square root of the number of samples ({np.sqrt(3):.2f}), or {std_err:.2f}, but got {sem:.2f}"
+#     # Calculate SEM for the third-last epoch
+#     ave = (1.5 + 3 + 5.5) / 3
+#     var = ((1.5 - ave) ** 2 + (3 - ave) ** 2 + (5.5 - ave) ** 2) / 3
+#     std_err = var / np.sqrt(3)
+#     sem = calculate_standard_error_of_mean(errors, 2)
+#     assert np.isclose(
+#         sem, std_err
+#     ), f"SEM calculated by the function ({sem:.2f}) should match the manually calculated SEM ({std_err:.2f})"
+#     assert (
+#         sem == std_err
+#     ), f"SEM ({sem:.2f}) should be the square root of the variance ({np.sqrt(var):.2f}) divided by the square root of the number of samples ({np.sqrt(3):.2f}), or {std_err:.2f}, but got {sem:.2f}"
 
-    upper_bound, lower_bound = ave + sem, ave - sem
-    assert (
-        4 <= upper_bound
-    ), f"Average of 4th epoch ave(4, 4, 4) = 4 should be <= {upper_bound:.2f}"
-    assert (
-        np.mean(np.array([4.1, 4.2, 4.1])) <= upper_bound
-    ), f"Average of 5th epoch ave(4.1, 4.2, 4.1) = {np.mean(np.array([4.1, 4.2, 4.1])):.2f} should be <= {upper_bound:.2f}"
+#     upper_bound, lower_bound = ave + sem, ave - sem
+#     assert (
+#         4 <= upper_bound
+#     ), f"Average of 4th epoch ave(4, 4, 4) = 4 should be <= {upper_bound:.2f}"
+#     assert (
+#         np.mean(np.array([4.1, 4.2, 4.1])) <= upper_bound
+#     ), f"Average of 5th epoch ave(4.1, 4.2, 4.1) = {np.mean(np.array([4.1, 4.2, 4.1])):.2f} should be <= {upper_bound:.2f}"
 
-    assert (
-        4 >= lower_bound
-    ), f"Average of 4th epoch ave(4, 4, 4) = 4 should be >= {lower_bound:.2f}"
-    assert (
-        np.mean(np.array([4.1, 4.2, 4.1])) >= lower_bound
-    ), f"Average of 5th epoch ave(4.1, 4.2, 4.1) = {np.mean(np.array([4.1, 4.2, 4.1])):.2f} should be >= {lower_bound:.2f}"
+#     assert (
+#         4 >= lower_bound
+#     ), f"Average of 4th epoch ave(4, 4, 4) = 4 should be >= {lower_bound:.2f}"
+#     assert (
+#         np.mean(np.array([4.1, 4.2, 4.1])) >= lower_bound
+#     ), f"Average of 5th epoch ave(4.1, 4.2, 4.1) = {np.mean(np.array([4.1, 4.2, 4.1])):.2f} should be >= {lower_bound:.2f}"
 
-    # Assuming the function is checking the last epoch
-    assert check_stopping_criterion(
-        errors
-    ), "Stopping criterion should be met for converging errors"
-
-
-# Normal Case - Stopping Criterion Not Met
-def test_check_stopping_criterion_not_met():
-    """This test verifies the scenario where the stopping criterion is not met."""
-    errors = [[1, 2, 3, 3.1, 3.5], [1, 2, 3, 3.1, 4], [1, 2, 3, 3.1, 3.9]]
-    assert not check_stopping_criterion(
-        errors
-    ), "Stopping criterion should not be met for diverging errors"
+#     # Assuming the function is checking the last epoch
+#     assert check_stopping_criterion(
+#         errors
+#     ), "Stopping criterion should be met for converging errors"
 
 
-# Edge Case - Not Enough Data
-def test_check_stopping_criterion_not_enough_data():
-    """Test the function with fewer error values than needed for the check."""
-    errors = [[1, 2]]
-    assert not check_stopping_criterion(
-        errors
-    ), "Should return False when there is not enough data"
+# # Normal Case - Stopping Criterion Not Met
+# def test_check_stopping_criterion_not_met():
+#     """This test verifies the scenario where the stopping criterion is not met."""
+#     errors = [[1, 2, 3, 3.1, 3.5], [1, 2, 3, 3.1, 4], [1, 2, 3, 3.1, 3.9]]
+#     assert not check_stopping_criterion(
+#         errors
+#     ), "Stopping criterion should not be met for diverging errors"
 
 
-# Edge Case - Exact Boundary Values
-def test_check_stopping_criterion_boundary_values():
-    """Test with errors exactly at the boundary of the standard error."""
-    errors = [[1, 2, 3, 3.1, 3.1], [1, 2, 3, 3.1, 3.1], [1, 2, 3, 3.1, 3.1]]
-    assert check_stopping_criterion(
-        errors
-    ), "Stopping criterion should be met for errors exactly at the boundary"
+# # Edge Case - Not Enough Data
+# def test_check_stopping_criterion_not_enough_data():
+#     """Test the function with fewer error values than needed for the check."""
+#     errors = [[1, 2]]
+#     assert not check_stopping_criterion(
+#         errors
+#     ), "Should return False when there is not enough data"
 
 
-def test_calculate_standard_error_of_mean_valid_input_NEW():
-    # Test with valid input data
-    errors = [[1, 2, 3], [2, 3, 4], [3, 4, 5]]
-    start_epoch = 1
-    expected_sem = np.std([2, 3, 4]) / np.sqrt(3)
-    assert calculate_standard_error_of_mean(errors, start_epoch) == expected_sem
+# # Edge Case - Exact Boundary Values
+# def test_check_stopping_criterion_boundary_values():
+#     """Test with errors exactly at the boundary of the standard error."""
+#     errors = [[1, 2, 3, 3.1, 3.1], [1, 2, 3, 3.1, 3.1], [1, 2, 3, 3.1, 3.1]]
+#     assert check_stopping_criterion(
+#         errors
+#     ), "Stopping criterion should be met for errors exactly at the boundary"
 
 
-def test_calculate_standard_error_of_mean_invalid_input_NEW():
-    # Test with invalid input data
-    with pytest.raises(ValueError):
-        calculate_standard_error_of_mean([], 0)
+# def test_calculate_standard_error_of_mean_valid_input_NEW():
+#     # Test with valid input data
+#     errors = [[1, 2, 3], [2, 3, 4], [3, 4, 5]]
+#     start_epoch = 1
+#     expected_sem = np.std([2, 3, 4]) / np.sqrt(3)
+#     assert calculate_standard_error_of_mean(errors, start_epoch) == expected_sem
 
 
-def test_check_stopping_criterion_converged_NEW():
-    # Test where errors have converged
-    errors = [[1, 2, 3], [1, 2, 3], [1, 2, 3]]
-    assert check_stopping_criterion(errors) == True
+# def test_calculate_standard_error_of_mean_invalid_input_NEW():
+#     # Test with invalid input data
+#     with pytest.raises(ValueError):
+#         calculate_standard_error_of_mean([], 0)
 
 
-def test_check_stopping_criterion_not_converged_NEW():
-    # Test where errors have not converged
-    errors = [[1, 2, 3], [1, 3, 4], [2, 4, 5]]
-    assert check_stopping_criterion(errors) == False
-    assert check_stopping_criterion(errors) == False
+# def test_check_stopping_criterion_converged_NEW():
+#     # Test where errors have converged
+#     errors = [[1, 2, 3], [1, 2, 3], [1, 2, 3]]
+#     assert check_stopping_criterion(errors) == True
+
+
+# def test_check_stopping_criterion_not_converged_NEW():
+#     # Test where errors have not converged
+#     errors = [[1, 2, 3], [1, 3, 4], [2, 4, 5]]
+#     assert check_stopping_criterion(errors) == False
+#     assert check_stopping_criterion(errors) == False

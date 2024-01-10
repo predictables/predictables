@@ -129,7 +129,7 @@ def get_mse(act, pred):
         .filter(pl.col("pred").is_not_nan())
         .filter(~pl.col("pred").is_infinite())
         .with_columns([(pl.col("act") - pl.col("pred")).pow(2).alias("mse")])
-        .select([pl.col("mse").mean().keep_name()])
+        .select([pl.col("mse").mean().name.keep()])
         .collect()
         .item()
     )
