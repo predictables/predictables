@@ -1,3 +1,4 @@
+import seaborn as sns
 import warnings
 from collections import namedtuple
 from typing import Callable, Optional, Union
@@ -33,7 +34,7 @@ from sklearn.metrics import (
 from sklearn.metrics import (
     accuracy_score as acc,
 )
-from sklearn.model_selection import KFold, train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from tqdm import tqdm
@@ -197,7 +198,6 @@ class Univariate:
             self.n_unique = self.df.select(
                 [pl.col(self.feature).n_unique().alias(self.feature)]
             )
-        else
 
         # Get the type of the target
         self.target_type = get_column_dtype(
@@ -837,12 +837,6 @@ class Univariate:
         )
         self.fitted["eval"]["coef"].append(coef)
 
-    
-
-    
-
-    
-
     def plot_chi_sqselfred_test(self, ax=None):
         if ax is None:
             _, ax = plt.subplots(figsize=self.figsize)
@@ -1191,129 +1185,129 @@ of\n[{self._plot_label(self.target)}] / [{self._plot_label(self.denom)}]"
 
         return ax
 
-    def plot_density_plot(self, significance_level=0.05, ax=None, opacity=0.5):
-        df = self.train[[self.feature, self.target]]
+    #     def plot_density_plot(self, significance_level=0.05, ax=None, opacity=0.5):
+    #         df = self.train[[self.feature, self.target]]
 
-        if ax is None:
-            _, ax = plt.subplots(figsize=self.figsize)
+    #         if ax is None:
+    #             _, ax = plt.subplots(figsize=self.figsize)
 
-        unique_targets = df[self.target].unique()
+    #         unique_targets = df[self.target].unique()
 
-        data_by_target = {}
-        for target_val in unique_targets:
-            sns.kdeplot(
-                df[df[self.target] == target_val][self.feature],
-                ax=ax,
-                label=f"{self._plot_label(self.target)} = {target_val}",
-                alpha=opacity,
-                fill=True,
-            )
-            data_by_target[target_val] = df[df[self.target] == target_val][self.feature]
+    #         data_by_target = {}
+    #         for target_val in unique_targets:
+    #             sns.kdeplot(
+    #                 df[df[self.target] == target_val][self.feature],
+    #                 ax=ax,
+    #                 label=f"{self._plot_label(self.target)} = {target_val}",
+    #                 alpha=opacity,
+    #                 fill=True,
+    #             )
+    #             data_by_target[target_val] = df[df[self.target] == target_val][self.feature]
 
-        # Mann-Whitney U Test
-        u_stat, p_value = mannwhitneyu(
-            data_by_target[unique_targets[0]], data_by_target[unique_targets[1]]
-        )
+    #         # Mann-Whitney U Test
+    #         u_stat, p_value = mannwhitneyu(
+    #             data_by_target[unique_targets[0]], data_by_target[unique_targets[1]]
+    #         )
 
-        # Print the results of the Mann-Whitney U Test
-        subtitle_message = (
-            f"\nDistributions are the same at the {significance_level:.0%} level"
-            if p_value > significance_level
-            else f"\nDistributions are different at the {significance_level:.0%} level"
-        )
+    #         # Print the results of the Mann-Whitney U Test
+    #         subtitle_message = (
+    #             f"\nDistributions are the same at the {significance_level:.0%} level"
+    #             if p_value > significance_level
+    #             else f"\nDistributions are different at the {significance_level:.0%} level"
+    #         )
 
-        ax.set_title(
-            f"Density Plot of [{self._plot_label(self.feature)}] by \
-[{self._plot_label(self.target)}]{subtitle_message}"
-        )
+    #         ax.set_title(
+    #             f"Density Plot of [{self._plot_label(self.feature)}] by \
+    # [{self._plot_label(self.target)}]{subtitle_message}"
+    #         )
 
-        annotation_text = f"Mann-Whitney\nU-Test Statistic:\n{u_stat:.1f}\n\np-value:\n\
-{p_value:.2f}"
-        ax.annotate(
-            annotation_text,
-            xy=(0.7375, 0.625),
-            xycoords="axes fraction",
-            fontsize=16,
-            bbox=dict(
-                boxstyle="round,pad=0.3",
-                edgecolor="black",
-                facecolor="aliceblue",
-                alpha=0.5,
-            ),
-        )
+    #         annotation_text = f"Mann-Whitney\nU-Test Statistic:\n{u_stat:.1f}\n\np-value:\n\
+    # {p_value:.2f}"
+    #         ax.annotate(
+    #             annotation_text,
+    #             xy=(0.7375, 0.625),
+    #             xycoords="axes fraction",
+    #             fontsize=16,
+    #             bbox=dict(
+    #                 boxstyle="round,pad=0.3",
+    #                 edgecolor="black",
+    #                 facecolor="aliceblue",
+    #                 alpha=0.5,
+    #             ),
+    #         )
 
-        ax.set_xlabel(self._plot_label(self.feature))
-        ax.set_ylabel("Density")
-        ax.legend(loc="upper right", fontsize=16)
+    #         ax.set_xlabel(self._plot_label(self.feature))
+    #         ax.set_ylabel("Density")
+    #         ax.legend(loc="upper right", fontsize=16)
 
-        ax = rotate_x_lab(ax)
-        ax.figure.tight_layout()
-        return ax
+    #         ax = rotate_x_lab(ax)
+    #         ax.figure.tight_layout()
+    #         return ax
 
-    def plotly_density_plot(self, significance_level=0.05, opacity=0.5):
-        df = self.train[[self.feature, self.target]]
-        unique_targets = df[self.target].unique()
+    #     def plotly_density_plot(self, significance_level=0.05, opacity=0.5):
+    #         df = self.train[[self.feature, self.target]]
+    #         unique_targets = df[self.target].unique()
 
-        fig = go.Figure()
+    #         fig = go.Figure()
 
-        data_by_target = {}
-        for target_val in unique_targets:
-            # Filter the data for the current target value
-            filtered_data = df[df[self.target] == target_val][self.feature]
-            data_by_target[target_val] = filtered_data
+    #         data_by_target = {}
+    #         for target_val in unique_targets:
+    #             # Filter the data for the current target value
+    #             filtered_data = df[df[self.target] == target_val][self.feature]
+    #             data_by_target[target_val] = filtered_data
 
-            # Add a KDE trace for the current target value
-            fig.add_trace(
-                go.Histogram(
-                    x=filtered_data,
-                    histnorm="probability density",
-                    opacity=opacity,
-                    name=f"{self._plot_label(self.target)} = {target_val}",
-                )
-            )
+    #             # Add a KDE trace for the current target value
+    #             fig.add_trace(
+    #                 go.Histogram(
+    #                     x=filtered_data,
+    #                     histnorm="probability density",
+    #                     opacity=opacity,
+    #                     name=f"{self._plot_label(self.target)} = {target_val}",
+    #                 )
+    #             )
 
-        # Perform Mann-Whitney U Test between the two groups
-        u_stat, p_value = mannwhitneyu(
-            data_by_target[unique_targets[0]], data_by_target[unique_targets[1]]
-        )
+    #         # Perform Mann-Whitney U Test between the two groups
+    #         u_stat, p_value = mannwhitneyu(
+    #             data_by_target[unique_targets[0]], data_by_target[unique_targets[1]]
+    #         )
 
-        # Determine the subtitle message based on p_value
-        subtitle_message = (
-            f"Distributions are the same at the {significance_level:.0%} significance level"
-            if p_value > significance_level
-            else f"Distributions are different at the {significance_level:.0%} significance level"
-        )
+    #         # Determine the subtitle message based on p_value
+    #         subtitle_message = (
+    #             f"Distributions are the same at the {significance_level:.0%} significance level"
+    #             if p_value > significance_level
+    #             else f"Distributions are different at the {significance_level:.0%} significance level"
+    #         )
 
-        # Add annotations with the Mann-Whitney U Test results
-        fig.add_annotation(
-            xref="paper",
-            yref="paper",
-            x=0.95,
-            y=0.95,
-            text=f"Mann-Whitney U-Test Statistic: {u_stat:.1f}<br>p-value: {p_value:.2f}",
-            showarrow=False,
-            font=dict(size=16),
-            align="right",
-            bgcolor="aliceblue",
-            opacity=0.8,
-            bordercolor="black",
-            borderwidth=1,
-            borderpad=4,
-        )
+    #         # Add annotations with the Mann-Whitney U Test results
+    #         fig.add_annotation(
+    #             xref="paper",
+    #             yref="paper",
+    #             x=0.95,
+    #             y=0.95,
+    #             text=f"Mann-Whitney U-Test Statistic: {u_stat:.1f}<br>p-value: {p_value:.2f}",
+    #             showarrow=False,
+    #             font=dict(size=16),
+    #             align="right",
+    #             bgcolor="aliceblue",
+    #             opacity=0.8,
+    #             bordercolor="black",
+    #             borderwidth=1,
+    #             borderpad=4,
+    #         )
 
-        # Update the layout of the figure
-        fig.update_layout(
-            title=f"Density Plot of {self._plot_label(self.feature)} by {self._plot_label(self.target)}<br><sup>{subtitle_message}</sup>",
-            xaxis_title=self._plot_label(self.feature),
-            yaxis_title="Density",
-            barmode="overlay",  # Overlay the KDE plots
-            legend_title_text="Legend",
-            legend=dict(
-                orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1
-            ),
-        )
+    #         # Update the layout of the figure
+    #         fig.update_layout(
+    #             title=f"Density Plot of {self._plot_label(self.feature)} by {self._plot_label(self.target)}<br><sup>{subtitle_message}</sup>",
+    #             xaxis_title=self._plot_label(self.feature),
+    #             yaxis_title="Density",
+    #             barmode="overlay",  # Overlay the KDE plots
+    #             legend_title_text="Legend",
+    #             legend=dict(
+    #                 orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1
+    #             ),
+    #         )
 
-        return fig
+    #         return fig
 
     def _calculate_empirical_cdf(self, fold_idx=None):
         # Extract train data for this fold
@@ -2081,149 +2075,89 @@ p-value: {pvalue:.2f}
 
         return fig
 
-    def plot_cat_lift_plot(self, ax=None):
-        if ax is None:
-            _, ax = plt.subplots(figsize=self.figsize)
+    #     def plot_cat_lift_plot(self, ax=None):
+    #         if ax is None:
+    #             _, ax = plt.subplots(figsize=self.figsize)
 
-        feature = self.GetVal()[self.feature]
-        if self.type == "categorical":
-            feature = feature.astype("category")
-        observed_target = self.val[self.target]
-        df = pd.DataFrame(
-            {f"{self.feature}": feature, f"{self.target}": observed_target}
-        )
-        ax = _plot_lift_chart(df=df, feature=self.feature, target=self.target, ax=ax)
+    #         feature = self.GetVal()[self.feature]
+    #         if self.type == "categorical":
+    #             feature = feature.astype("category")
+    #         observed_target = self.val[self.target]
+    #         df = pd.DataFrame(
+    #             {f"{self.feature}": feature, f"{self.target}": observed_target}
+    #         )
+    #         ax = _plot_lift_chart(df=df, feature=self.feature, target=self.target, ax=ax)
 
-        ax.set_title(
-            f"Lift Plot - Model Including [{self._plot_label(self.feature)}] \
-vs Null Model"
-        )
-        return ax
+    #         ax.set_title(
+    #             f"Lift Plot - Model Including [{self._plot_label(self.feature)}] \
+    # vs Null Model"
+    #         )
+    #         return ax
 
-    def plotly_cat_lift_plot(self, alpha=0.5):
-        """
-        Plots the lift chart for a given categorical feature and target.
-        """
-        feature = self.feature
-        target = self.target
+    #     def plotly_cat_lift_plot(self, alpha=0.5):
+    #         """
+    #         Plots the lift chart for a given categorical feature and target.
+    #         """
+    #         feature = self.feature
+    #         target = self.target
 
-        # Create a copy of the data
-        df = self.train[[feature, target]].copy()
+    #         # Create a copy of the data
+    #         df = self.train[[feature, target]].copy()
 
-        # Calculate overall positive rate
-        overall_positive_rate = df[target].mean()
+    #         # Calculate overall positive rate
+    #         overall_positive_rate = df[target].mean()
 
-        # Group by the feature and calculate the mean target variable
-        lift_data = df.groupby(feature)[target].mean().reset_index()
-        lift_data["lift"] = lift_data[target] / overall_positive_rate
+    #         # Group by the feature and calculate the mean target variable
+    #         lift_data = df.groupby(feature)[target].mean().reset_index()
+    #         lift_data["lift"] = lift_data[target] / overall_positive_rate
 
-        # Sort by the lift
-        lift_data = lift_data.sort_values("lift", ascending=False)
+    #         # Sort by the lift
+    #         lift_data = lift_data.sort_values("lift", ascending=False)
 
-        # Define the colors based on lift value
-        colors = ["green" if lift > 1 else "red" for lift in lift_data["lift"]]
+    #         # Define the colors based on lift value
+    #         colors = ["green" if lift > 1 else "red" for lift in lift_data["lift"]]
 
-        # Create the figure for the lift chart
-        fig = go.Figure()
+    #         # Create the figure for the lift chart
+    #         fig = go.Figure()
 
-        # Add the lift bars
-        fig.add_trace(
-            go.Bar(
-                x=lift_data[feature],
-                y=lift_data["lift"],
-                marker_color=colors,
-                opacity=alpha,
-            )
-        )
+    #         # Add the lift bars
+    #         fig.add_trace(
+    #             go.Bar(
+    #                 x=lift_data[feature],
+    #                 y=lift_data["lift"],
+    #                 marker_color=colors,
+    #                 opacity=alpha,
+    #             )
+    #         )
 
-        # Add line at lift=1
-        fig.add_hline(
-            y=1, line=dict(color="black", dash="dash"), annotation_text="Baseline"
-        )
+    #         # Add line at lift=1
+    #         fig.add_hline(
+    #             y=1, line=dict(color="black", dash="dash"), annotation_text="Baseline"
+    #         )
 
-        # Add annotations for lift values
-        annotations = []
-        for i, row in lift_data.iterrows():
-            annotations.append(
-                dict(
-                    x=row[feature],
-                    y=row["lift"],
-                    text=f"{row['lift']:.2f}",
-                    font=dict(family="Arial", size=16, color="black"),
-                    showarrow=False,
-                )
-            )
+    #         # Add annotations for lift values
+    #         annotations = []
+    #         for i, row in lift_data.iterrows():
+    #             annotations.append(
+    #                 dict(
+    #                     x=row[feature],
+    #                     y=row["lift"],
+    #                     text=f"{row['lift']:.2f}",
+    #                     font=dict(family="Arial", size=16, color="black"),
+    #                     showarrow=False,
+    #                 )
+    #             )
 
-        # Update layout
-        fig.update_layout(
-            title_text="Lift Chart for " + feature,
-            xaxis_title=feature,
-            yaxis_title="Lift",
-            showlegend=False,
-            annotations=annotations,
-        )
+    #         # Update layout
+    #         fig.update_layout(
+    #             title_text="Lift Chart for " + feature,
+    #             xaxis_title=feature,
+    #             yaxis_title="Lift",
+    #             showlegend=False,
+    #             annotations=annotations,
+    #         )
 
-        return fig
-
-    def plot_density(self, ax=None, cv_alpha=0.2):
-        if ax is None:
-            _, ax = plt.subplots(figsize=self.figsize)
-
-        data = self.GetTrain()[[self.feature, self.target]]
-
-        if self.type == "categorical":
-            data[self.feature] = data[self.feature].astype("category")
-
-        # Plot the violin plot
-        outlier_df = self.train[[self.feature, self.target]]
-
-        ax = _plot_violin(
-            target=data[self.target],
-            feature=data[self.feature],
-            outlier_df=outlier_df,
-            cv_folds_data=self.cv_idx,
-            cv_alpha=cv_alpha,
-            ax=ax,
-            dropvals=[-0.01, -1],
-        )
-
-        return ax
-
-    def plotly_density(self, cv_alpha=0.2):
-        data = self.GetTrain()[[self.feature, self.target]]
-
-        if self.type == "categorical":
-            data[self.feature] = data[self.feature].astype("category")
-
-        # Prepare the data
-        data[self.feature] = data[self.feature].cat.remove_unused_categories()
-        categories = data[self.feature].cat.categories
-
-        # Initialize figure
-        fig = go.Figure()
-
-        # Plot the violin plot
-        for category in categories:
-            category_data = data[data[self.feature] == category]
-            fig.add_trace(
-                go.Violin(
-                    y=category_data[self.target],
-                    name=str(category),
-                    box_visible=True,
-                    meanline_visible=True,
-                    opacity=cv_alpha,
-                    points="outliers",  # or 'all' or False
-                )
-            )
-
-        # Customize layout
-        fig.update_layout(
-            title=f"Lift Plot - Model Including [{self._plot_label(self.feature)}] vs Null Model",
-            yaxis_title=self._plot_label(self.target),
-            xaxis_title=self._plot_label(self.feature),
-        )
-
-        return fig
+    #         return fig
 
     def categorical_plots(self, return_all=False):
         fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(
@@ -2356,8 +2290,8 @@ vs Null Model"
 
         # Calculate the total number of 'good' (target=1) and 'bad' (target=0) in
         # the dataset
-        all_good = len(df[df[target] == 1])
-        all_bad = len(df[df[target] == 0])
+        # all_good = len(df[df[target] == 1])
+        # all_bad = len(df[df[target] == 0])
 
         # Create a cross-tabulation of the feature against the target
         # Normalize by columns to get the proportion of 'good' and 'bad' for each
@@ -2687,18 +2621,18 @@ vs Null Model"
             for i in range(self.n_bins)
         ]
 
-        # 16a. Training Markedness (from markedness(self.fit.y, self.fit.yhat)) for
-        #      each fold
-        binary["train_markedness"] = [
-            markedness(pd.Series(y[i]), pd.Series(yhat[i]).ge(0.5).astype(int))
-            for i in range(self.n_bins)
-        ]
-        # 16b. Validation Markedness (from markedness(self.val[self.target],
-        #      self.fit.model.predict(self.val))) for each fold
-        binary["val_markedness"] = [
-            markedness(pd.Series(y_val[i]), pd.Series(yhat_val[i]).ge(0.5).astype(int))
-            for i in range(self.n_bins)
-        ]
+        # # 16a. Training Markedness (from markedness(self.fit.y, self.fit.yhat)) for
+        # #      each fold
+        # binary["train_markedness"] = [
+        #     markedness(pd.Series(y[i]), pd.Series(yhat[i]).ge(0.5).astype(int))
+        #     for i in range(self.n_bins)
+        # ]
+        # # 16b. Validation Markedness (from markedness(self.val[self.target],
+        # #      self.fit.model.predict(self.val))) for each fold
+        # binary["val_markedness"] = [
+        #     markedness(pd.Series(y_val[i]), pd.Series(yhat_val[i]).ge(0.5).astype(int))
+        #     for i in range(self.n_bins)
+        # ]
 
         return pd.DataFrame(binary)
 
@@ -2738,8 +2672,8 @@ vs Null Model"
         y = self.fit.y
         yhat = self.fit.yhat
 
-        y_val = self.val[self.target]
-        yhat_val = self.fit.model.predict(self.val[self.feature])
+        # y_val = self.val[self.target]
+        # yhat_val = self.fit.model.predict(self.val[self.feature])
 
         binary = {}
         binary["n_obs"] = [self.train.shape[0]]
@@ -2767,15 +2701,15 @@ vs Null Model"
                 self.fit.model.predict(self.val).gt(threshold).astype(int),
             )
         ]
-        binary["training_markedness"] = [
-            markedness(self.fit.y, self.fit.yhat.gt(threshold).astype(int))
-        ]
-        binary["validation_markedness"] = [
-            markedness(
-                self.val[self.target],
-                self.fit.model.predict(self.val).gt(threshold).astype(int),
-            )
-        ]
+        # binary["training_markedness"] = [
+        #     markedness(self.fit.y, self.fit.yhat.gt(threshold).astype(int))
+        # ]
+        # binary["validation_markedness"] = [
+        #     markedness(
+        #         self.val[self.target],
+        #         self.fit.model.predict(self.val).gt(threshold).astype(int),
+        #     )
+        # ]
         binary["training_accuracy"] = [
             acc(self.fit.y, self.fit.yhat.gt(threshold).astype(int))
         ]
