@@ -33,10 +33,7 @@ def mean_encode_df(
     return df
 
 
-from tqdm import tqdm
-
-
-def mean_encode_df(
+def mean_encode_df2(
     df: pl.DataFrame,
     cat_cols: List[str],
     col1: str,

@@ -1,7 +1,9 @@
 import numpy as np
 from sklearn.datasets import make_classification
 
-from ..select_principal_components import select_n_components_for_variance
+from predictables.pca.src.select_principal_components import (
+    select_n_components_for_variance,
+)
 
 
 def test_select_n_components_for_variance():

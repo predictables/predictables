@@ -17,7 +17,6 @@ def perform_pca(
     return_pca_obj: bool = False,
     preprocess_data: bool = True,
     random_state: int = 42,
-    *args,
     **kwargs,
 ) -> tuple:
     """
@@ -45,8 +44,8 @@ def perform_pca(
         Whether to preprocess the data before applying PCA, by default True.
     random_state : int, optional
         Random state for reproducibility, by default 42.
-    args, kwargs : optional
-        Additional arguments to pass to the PCA object.
+    kwargs : optional
+        Additional keyword arguments to pass to the PCA object.
 
     Returns
     -------
@@ -100,7 +99,7 @@ def perform_pca(
     if n_components > X_train.shape[1]:
         raise ValueError("n_components cannot be greater than the number of features")
 
-    pca = PCA(n_components=n_components, random_state=random_state, *args, **kwargs)
+    pca = PCA(n_components=n_components, random_state=random_state, **kwargs)
 
     # Preprocess the data
     if preprocess_data:

@@ -20,6 +20,107 @@ from predictables.util import to_pd_df
 class PCA:
     """
     Principal Components Analysis class.
+
+    Parameters
+    ----------
+    n_components : int, optional
+        Number of components to retain, by default 10.
+    df : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], optional
+        Dataset to fit PCA to, by default None. If None, pca.fit() must be called
+        before any other methods.
+    preprocess_data : bool, optional
+        Whether to preprocess the data before fitting the PCA model, by default True.
+    random_state : int, optional
+        Random state for reproducibility, by default 42.
+    pca : sklearn.decomposition.PCA, optional
+        A fitted PCA object, by default None. If None, pca.fit() must be called
+        before any other methods.
+    features : list, optional
+        A list of feature names, by default None. If None, the feature names are
+        set to the column names of df.
+    plotting_backend : str, optional
+        The plotting backend to use, by default "matplotlib". "plotly" integration is
+        planned, but not yet implemented.
+    **kwargs
+        Keyword arguments to pass to sklearn.decomposition.PCA.
+
+    Attributes
+    ----------
+    n_components : int
+        Number of components to retain.
+    df : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+        Dataset to fit PCA to.
+    preprocess_data : bool
+        Whether to preprocess the data before fitting the PCA model.
+    random_state : int
+        Random state for reproducibility.
+    pca : sklearn.decomposition.PCA
+        A fitted PCA object.
+    features : list
+        A list of feature names.
+    plotting_backend : str
+        The plotting backend to use.
+    explained_variance : list
+        The explained variance for each component.
+
+    Methods
+    -------
+    set_n_components(n_components: int = None, variance_threshold: float = None) -> None
+        Sets the number of components to retain. Can either pass `n_components` or
+        `variance_threshold`.
+    _refitPCA() -> None
+        Refits the PCA model. Private method.
+    fit_pca(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] = None, return_pca_obj: bool = False) -> sklearn.decomposition.PCA
+        Fits a PCA model to the provided dataset.
+    transform_pca(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] = None) -> pd.DataFrame
+        Transforms the provided dataset using the fitted PCA model.
+    get_principal_components(components: Union[List[int], int, None] = None) -> pd.DataFrame
+        Returns the principal components.
+    scree(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] = None, variance_levels: List[float] = None, y_pos_adjustment: float = 0.1, ax: matplotlib.axes.Axes = None, figsize: Tuple[int, int] = (10, 7)) -> matplotlib.axes.Axes
+        Creates a scree plot to help determine the number of principal components to retain.
+    biplot(loading_threshold: float = 0.2, ax: matplotlib.axes.Axes = None, figsize: Tuple[int, int] = (10, 10), use_limits: bool = True) -> matplotlib.axes.Axes
+        Creates a biplot to visualize the features in the first two principal components.
+    loading_plot(n_components=10, max_features=50, average_loading_threshold=0.01, ax=None, fig=None, figsize=(10, 7), bar_alpha=0.8, bar_width=0.9, main_title_fontsize=13, main_title_fontweight='bold', sub_title_fontsize=10, legend_fontsize=9, x_ticks_rotation=45, x_label_fontsize=10, y_label_fontsize=10, include_legend=True, drop_legend_when_n_features=15, return_ax=False) -> matplotlib.axes.Axes
+        Original plot from Andy's noggin. Stacks the absolute value loadings for each feature across the first `n_components` principal components. The features are sorted by the magnitude of their average loading across the first `n_components` principal components. The size of the bars in total is a measure of the feature importance (for explaining the variance in the dataset).
+    feature_importance() -> pd.DataFrame
+        Returns a sorted table of features sorted by the magnitude of their loading vectors with `self.n_components` components after being scaled by the explained variance of each component.
+
+    Examples
+    --------
+    >>> from predictables.pca import PCA
+    >>> from sklearn.datasets import load_breast_cancer
+
+    >>> # Load the breast cancer dataset from sklearn
+    >>> X = load_breast_cancer()['data']
+    >>> X.shape
+    (569, 30)
+
+    >>> # Create a PCA object
+    >>> pca = PCA(X, n_components=10)
+    >>> # Call the object to see the number of components:
+    >>> pca
+    PCA[10 components]
+
+    >>> # Set a more reasonable number of components to retain
+    >>> pca.set_n_components(3)
+    >>> pca
+    PCA[3 components]
+
+    >>> # Change your mind, decide to reset the number of components to retain 95% of the variance in the data
+    >>> pca.set_n_components(variance_threshold=0.95)
+    >>> pca
+    PCA[10 components]
+
+    >>> # Confirm that the explained variance is 95% by printing the explained variance
+    >>> pca.explained_variance
+
+
+    checking the `scree` plot
+
+
+
+
+
     """
 
     def __init__(
@@ -30,8 +131,7 @@ class PCA:
         random_state: int = 42,
         pca: sklearn_PCA = None,
         features: list = None,
-        plotting_backend: str = "matplotlib",
-        *args,
+        plotting_backend: str = "matplotlib",  # TODO: Add plotly support
         **kwargs,
     ):
         # Set attributes
@@ -43,7 +143,7 @@ class PCA:
 
         # Fit PCA if df is provided and pca is not provided
         if df is not None and pca is None:
-            self.pca = self.fit_pca(df=df, return_pca_obj=True, *args, **kwargs)
+            self.pca = self.fit_pca(df=df, return_pca_obj=True, **kwargs)
         else:
             self.pca = pca
 
@@ -91,7 +191,7 @@ class PCA:
         # Set n_components using variance_threshold
         elif variance_threshold is not None:
             self.n_components = select_n_components_for_variance(
-                variance_threshold=variance_threshold
+                X=self.df, variance_threshold=variance_threshold
             )
             self._refitPCA()
 
@@ -142,8 +242,7 @@ class PCA:
 
         return pca
 
-    # TODO: rename this to transform_pca to be like the fit_pca method above
-    def transform(self, df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] = None):
+    def transform_pca(self, df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] = None):
         """
         Transforms the provided dataset using the fitted PCA model.
 

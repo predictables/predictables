@@ -1,6 +1,6 @@
 import os
 
-import pyperclip
+# import pyperclip
 
 
 def read_file_code(filepath: str) -> str:
@@ -54,12 +54,12 @@ def get_files_from_folder(folder_path: str, file_type: str = None) -> list:
     return files
 
 
-def copy_folder_code(folder_path: str, file_type: str) -> None:
-    """Takes a folder path and copies the code as a string to the clipboard."""
-    files = get_files_from_folder(folder_path, file_type)
-    code = ""
-    for i, file in enumerate(files):
-        if i > 0:
-            code += "\n"
-        code += read_file_code(os.path.join(folder_path, file))
-    pyperclip.copy(code)
+# def copy_folder_code(folder_path: str, file_type: str) -> None:
+#     """Takes a folder path and copies the code as a string to the clipboard."""
+#     files = get_files_from_folder(folder_path, file_type)
+#     code = ""
+#     for i, file in enumerate(files):
+#         if i > 0:
+#             code += "\n"
+#         code += read_file_code(os.path.join(folder_path, file))
+#     pyperclip.copy(code)
