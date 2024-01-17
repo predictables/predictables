@@ -165,13 +165,13 @@ class PCA:
 
         return transformed_df
 
-    def get_principal_components(self, components: List[int] | int = None):
+    def get_principal_components(self, components: Union[List[int], int, None] = None):
         """
         Returns the principal components.
 
         Parameters
         ----------
-        components : List[int] | int, optional
+        components : Union[List[int], int, None], optional
             The components to return. If None, returns all components, by default None.
 
         Returns
