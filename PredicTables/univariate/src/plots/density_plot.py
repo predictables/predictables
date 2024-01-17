@@ -1,9 +1,10 @@
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 from scipy.stats import gaussian_kde
 
-def density_by(x:pd.Series, by:pd.Series, ax=None):
+
+def density_by(x: pd.Series, by: pd.Series, ax=None):
     """
     Plot the density of x by the levels of by.
 
@@ -25,5 +26,5 @@ def density_by(x:pd.Series, by:pd.Series, ax=None):
     for level in by.drop_duplicates().sort_values():
         x = x[by == level]
         density[level] = gaussian_kde(x)
-        
+
     return density
