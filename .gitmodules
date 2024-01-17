@@ -1,0 +1,12 @@
+# Git Submodule Configuration
+
+# BEGIN: Submodule 1
+[submodule "PredicTables"]
+  path = PredicTables
+  url = https://github.com/aaweaver-actuary/predictables.git
+# END: Submodule 1
+
+# BEGIN: Submodule 2
+[submodule "predictables-plot"]
+  path = predictables-plot
+# END: Submodule 2
