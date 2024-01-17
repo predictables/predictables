@@ -4,9 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.interpolate import interp1d
-from scipy.stats import ttest_ind
-
-from predictables.util.stats import gini_coefficient, kl_divergence
 
 
 def _plot_lift_chart(df, feature, target, ax=None, alpha=0.5):
@@ -52,7 +49,7 @@ def _plot_lift_chart(df, feature, target, ax=None, alpha=0.5):
             zorder=5,
         )
 
-    ax = _rotate_x_labels_if_overlap(ax)
+    # ax = _rotate_x_labels_if_overlap(ax)
     ax.figure.tight_layout()
     return ax
 
@@ -183,36 +180,36 @@ def plot_violin_with_outliers(
         x_vals_0.append(x_val_0)
         x_vals_1.append(x_val_1)
 
-    # Calculate the standard deviation of the densities for each target class
-    densities_0, densities_1 = np.array(densities_0), np.array(densities_1)
-    # return densities_0, densities_1
-    sd_0, sd_1 = _calculate_density_sd(densities_0), _calculate_density_sd(densities_1)
+    #     # Calculate the standard deviation of the densities for each target class
+    #     densities_0, densities_1 = np.array(densities_0), np.array(densities_1)
+    #     # return densities_0, densities_1
+    #     sd_0, sd_1 = _calculate_density_sd(densities_0), _calculate_density_sd(densities_1)
 
-    # Plot the density of the feature variable for the full data set for each
-    # target class
-    density0, x0 = _plot_violin(ax, feature[target == 0], "left", 1.0, linestyle="--")
-    density1, x1 = _plot_violin(ax, feature[target == 1], "right", 1.0, linestyle="--")
+    #     # Plot the density of the feature variable for the full data set for each
+    #     # target class
+    #     density0, x0 = _plot_violin(ax, feature[target == 0], "left", 1.0, linestyle="--")
+    #     density1, x1 = _plot_violin(ax, feature[target == 1], "right", 1.0, linestyle="--")
 
-    # Add Mean/Median annotations
-    ax = _annotate_mean_median(ax, feature, target)
+    #     # Add Mean/Median annotations
+    #     ax = _annotate_mean_median(ax, feature, target)
 
-    # Add t-test annotations
-    ax = _annotate_ttest_means(ax, feature, target)
+    #     # Add t-test annotations
+    #     ax = _annotate_ttest_means(ax, feature, target)
 
-    # Add shaded regions +/- 1 standard deviation for the density of the feature
-    # variable for each target class
-    ax = _add_shaded_sd(ax, x0, density0, sd_0, "blue", 0)
-    ax = _add_shaded_sd(ax, x1, density1, sd_1, "orange", 1)
+    #     # Add shaded regions +/- 1 standard deviation for the density of the feature
+    #     # variable for each target class
+    #     ax = _add_shaded_sd(ax, x0, density0, sd_0, "blue", 0)
+    #     ax = _add_shaded_sd(ax, x1, density1, sd_1, "orange", 1)
 
-    # # Annotate the outliers in the plot for each target class
-    # _annotate_outliers(ax, feature[target == 0], outlier_df, 'left')
-    # _annotate_outliers(ax, feature[target == 1], outlier_df, 'right')
+    #     # # Annotate the outliers in the plot for each target class
+    #     # _annotate_outliers(ax, feature[target == 0], outlier_df, 'left')
+    #     # _annotate_outliers(ax, feature[target == 1], outlier_df, 'right')
 
-    # Set the title of the plot
-    ax.set_title(
-        f"Density Plot of [{_plot_label(feature.name)}] by \
-[{_plot_label(target.name)}]"
-    )
+    #     # Set the title of the plot
+    #     ax.set_title(
+    #         f"Density Plot of [{_plot_label(feature.name)}] by \
+    # [{_plot_label(target.name)}]"
+    # )
 
     ax.legend()
 

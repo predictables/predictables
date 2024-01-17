@@ -137,7 +137,7 @@ def cross_validate_model(
         y_train, y_val = y[train_index], y[val_index]
 
         epoch_errors = []
-        for epoch in range(n_epochs):
+        for _epoch in range(n_epochs):
             model.fit(X_train, y_train)  # Assuming model retains state across epochs
             predictions = model.predict(X_val)
             error = error_metric(y_val, predictions)

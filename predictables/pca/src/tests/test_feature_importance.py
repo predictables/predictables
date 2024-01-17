@@ -1,10 +1,8 @@
 import numpy as np
 import pytest
-from sklearn.decomposition import PCA
 
 from ..feature_importance import pca_feature_importance
 from ..perform_pca import perform_pca
-from ..preprocessing import preprocess_data_for_pca
 
 
 @pytest.fixture

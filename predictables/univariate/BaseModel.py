@@ -7,11 +7,8 @@ from sklearn.metrics import (
     f1_score,
     log_loss,
     matthews_corrcoef,
-    mean_absolute_error,
-    mean_squared_error,
     precision_recall_curve,
     precision_score,
-    r2_score,
     recall_score,
     roc_auc_score,
     roc_curve,
@@ -94,84 +91,36 @@ class Model:
         self.sk_coef = self.sk_model.coef_
 
         if self.is_binary:
-            setattr(
-                self,
-                "acc_train",
-                accuracy_score(self.y_train, self.yhat_train.round(0)),
+            self.acc_train = accuracy_score(self.y_train, self.yhat_train.round(0))
+            self.acc_test = accuracy_score(self.y_test, self.yhat_test.round(0))
+            self.f1_train = f1_score(self.y_train, self.yhat_train.round(0))
+            self.f1_test = f1_score(self.y_test, self.yhat_test.round(0))
+            self.recall_train = recall_score(self.y_train, self.yhat_train.round(0))
+            self.recall_test = recall_score(self.y_test, self.yhat_test.round(0))
+
+            self.logloss_train = log_loss(self.y_train, self.yhat_train.round(0))
+            self.logloss_test = log_loss(self.y_test, self.yhat_test.round(0))
+            self.auc_train = roc_auc_score(self.y_train, self.yhat_train.round(0))
+            self.auc_test = roc_auc_score(self.y_test, self.yhat_test.round(0))
+
+            self.precision_train = precision_score(
+                self.y_train, self.yhat_train.round(0)
             )
-            setattr(
-                self,
-                "acc_test",
-                accuracy_score(self.y_test, self.yhat_test.round(0)),
+            self.precision_test = precision_score(self.y_test, self.yhat_test.round(0))
+            self.mcc_train = matthews_corrcoef(
+                self.y_train.replace(0, -1), self.yhat_train.round(0).replace(0, -1)
             )
-            setattr(self, "f1_train", f1_score(self.y_train, self.yhat_train.round(0)))
-            setattr(self, "f1_test", f1_score(self.y_test, self.yhat_test.round(0)))
-            setattr(
-                self,
-                "recall_train",
-                recall_score(self.y_train, self.yhat_train.round(0)),
-            )
-            setattr(
-                self,
-                "recall_test",
-                recall_score(self.y_test, self.yhat_test.round(0)),
+            self.mcc_test = matthews_corrcoef(
+                self.y_test.replace(0, -1), self.yhat_test.round(0).replace(0, -1)
             )
 
-            setattr(
-                self, "logloss_train", log_loss(self.y_train, self.yhat_train.round(0))
+            self.roc_curve_train = roc_curve(self.y_train, self.yhat_train.round(0))
+            self.roc_curve_test = roc_curve(self.y_test, self.yhat_test.round(0))
+            self.pr_curve_train = precision_recall_curve(
+                self.y_train, self.yhat_train.round(0)
             )
-            setattr(
-                self, "logloss_test", log_loss(self.y_test, self.yhat_test.round(0))
-            )
-            setattr(
-                self, "auc_train", roc_auc_score(self.y_train, self.yhat_train.round(0))
-            )
-            setattr(
-                self, "auc_test", roc_auc_score(self.y_test, self.yhat_test.round(0))
-            )
-
-            setattr(
-                self,
-                "precision_train",
-                precision_score(self.y_train, self.yhat_train.round(0)),
-            )
-            setattr(
-                self,
-                "precision_test",
-                precision_score(self.y_test, self.yhat_test.round(0)),
-            )
-            setattr(
-                self,
-                "mcc_train",
-                matthews_corrcoef(
-                    self.y_train.replace(0, -1), self.yhat_train.round(0).replace(0, -1)
-                ),
-            )
-            setattr(
-                self,
-                "mcc_test",
-                matthews_corrcoef(
-                    self.y_test.replace(0, -1), self.yhat_test.round(0).replace(0, -1)
-                ),
-            )
-
-            setattr(
-                self,
-                "roc_curve_train",
-                roc_curve(self.y_train, self.yhat_train.round(0)),
-            )
-            setattr(
-                self, "roc_curve_test", roc_curve(self.y_test, self.yhat_test.round(0))
-            )
-            setattr(
-                self,
-                "pr_curve_train",
-                precision_recall_curve(self.y_train, self.yhat_train.round(0)),
-            )
-            setattr(
-                self,
-                "pr_curve_test",
-                precision_recall_curve(self.y_test, self.yhat_test.round(0)),
+            self.pr_curve_test = precision_recall_curve(
+                self.y_test, self.yhat_test.round(0)
             )
 
         # else:

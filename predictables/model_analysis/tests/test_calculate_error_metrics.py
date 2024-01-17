@@ -1,15 +1,7 @@
 import numpy as np
 import pytest
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import (
-    accuracy_score,
-    confusion_matrix,
-    f1_score,
-    log_loss,
-    precision_score,
-    recall_score,
-    roc_auc_score,
-)
+from sklearn.metrics import confusion_matrix, log_loss, roc_auc_score
 
 from predictables.model_analysis import calculate_error_metrics
 

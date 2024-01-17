@@ -1,12 +1,10 @@
 import pandas as pd
-import polars as pl
 import pytest
 from pandas.testing import assert_frame_equal, assert_series_equal
 
 from predictables.univariate.src.time_series_validation_filter import (
     time_series_validation_filter,
 )
-from predictables.util import to_pl_lf
 
 
 # Define a synthetic dataset

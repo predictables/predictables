@@ -1,11 +1,8 @@
 import numpy as np
 import pandas as pd
-import polars as pl
 import pytest
 
-from predictables.impute.src.get_missing_data_mask import get_missing_data_mask
 from predictables.impute.src.train_catboost_model import train_catboost_model
-from predictables.util import to_pl_df, to_pl_s
 
 
 @pytest.fixture

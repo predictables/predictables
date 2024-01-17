@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 
 from predictables.util.src.harmonic_mean import harmonic_mean
 

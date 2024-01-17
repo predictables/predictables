@@ -4,7 +4,7 @@ import pandas as pd
 import polars as pl
 import polars.selectors as cs
 
-from predictables.util import to_pd_df, to_pl_lf
+from predictables.util import to_pl_lf
 
 
 def preprocess_data_for_pca(
@@ -104,7 +104,7 @@ def preprocess_data_for_pca(
     # Code categorical columns depending on cardinality
     categorical_cols = df.select(cs.by_dtype(pl.Categorical)).columns
     for col in categorical_cols:
-        c = df.select(pl.col(col)).collect()
+        df.select(pl.col(col)).collect()
         unique_count = df.select(pl.col(col)).collect().n_unique()
         unique_levels = df.select(pl.col(col)).collect().unique().sort(by=col)
         print(f"Column: {col}, Unique Count: {unique_count}")

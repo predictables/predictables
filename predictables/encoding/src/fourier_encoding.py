@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import polars as pl
 
 date_lookup = pd.DataFrame({"date": pd.date_range("2021-01-01", "2021-12-31")})
 date_lookup["month"] = date_lookup["date"].dt.month

@@ -32,7 +32,7 @@ from sklearn.metrics import (
     roc_auc_score,
     roc_curve,
 )
-from sklearn.model_selection import KFold, train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from tqdm import tqdm
@@ -42,7 +42,7 @@ from predictables.univariate.plots import _plot_lift_chart, _quintile_lift_plot
 from predictables.univariate.plots import _rotate_x_labels_if_overlap as rotate_x_lab
 from predictables.univariate.plots import plot_violin_with_outliers as _plot_violin
 from predictables.univariate.plots import set_rc_params
-from predictables.util import get_column_dtype, to_pl_lf
+from predictables.util import get_column_dtype
 from predictables.util.stats import gini_coefficient, informedness, kl_divergence
 
 warnings.filterwarnings("ignore")
@@ -889,7 +889,7 @@ significant"
         target_name = target if isinstance(target, str) else target.name
 
         # For each bar in each container
-        for i, bar in enumerate(ax.patches):
+        for _i, bar in enumerate(ax.patches):
             # Get the y position and height of the bar
             y = bar.get_y() + bar.get_height()
 
@@ -2324,7 +2324,7 @@ vs Null Model"
 
         # Add annotations for lift values
         annotations = []
-        for i, row in lift_data.iterrows():
+        for _i, row in lift_data.iterrows():
             annotations.append(
                 dict(
                     x=row[feature],
@@ -2537,8 +2537,8 @@ vs Null Model"
 
         # Calculate the total number of 'good' (target=1) and 'bad' (target=0) in
         # the dataset
-        all_good = len(df[df[target] == 1])
-        all_bad = len(df[df[target] == 0])
+        len(df[df[target] == 1])
+        len(df[df[target] == 0])
 
         # Create a cross-tabulation of the feature against the target
         # Normalize by columns to get the proportion of 'good' and 'bad' for each
@@ -2919,8 +2919,8 @@ vs Null Model"
         y = self.fit.y
         yhat = self.fit.yhat
 
-        y_val = self.val[self.target]
-        yhat_val = self.fit.model.predict(self.val[self.feature])
+        self.val[self.target]
+        self.fit.model.predict(self.val[self.feature])
 
         binary = {}
         binary["n_obs"] = [self.train.shape[0]]

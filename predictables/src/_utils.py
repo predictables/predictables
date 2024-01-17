@@ -215,7 +215,7 @@ def _to_pandas(
             return data
         elif to == "lazyframe":
             raise ValueError(
-                f"Cannot convert to pandas lazy frame. \
+                "Cannot convert to pandas lazy frame. \
 There is no such thing as a lazy pandas frame."
             )
         else:

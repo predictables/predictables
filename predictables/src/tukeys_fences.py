@@ -1,4 +1,3 @@
-import pandas as pd
 import polars as pl
 
 from predictables.src._utils import _to_polars

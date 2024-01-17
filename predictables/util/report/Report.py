@@ -75,9 +75,15 @@ class Report:
     def __init__(
         self,
         filename: str,
-        margins: List[float] = [0.5, 0.5, 0.5, 0.5],
+        margins: List[float] = None,
         pagesize=letter,
     ):
+        if margins is None:
+            margins = [0.5, 0.5, 0.5, 0.5]
+        if margins is None:
+            margins = [0.5, 0.5, 0.5, 0.5]
+        if margins is None:
+            margins = [0.5, 0.5, 0.5, 0.5]
         self.doc = SimpleDocTemplate(filename, pagesize=pagesize)
         self.elements = []
         self.styles = getSampleStyleSheet()
@@ -500,7 +506,7 @@ class Report:
 
         """
         styled_numbers = self._number_style(len(text), number_style)
-        for i, t in enumerate(text):
+        for _i, t in enumerate(text):
             self.elements.append(
                 Paragraph(f"{next(styled_numbers)}. {t}", self.styles["Normal"])
             )

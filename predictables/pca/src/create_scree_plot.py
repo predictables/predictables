@@ -3,7 +3,6 @@ from typing import List, Tuple
 import matplotlib.axes as Axes
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 from sklearn.decomposition import PCA
 
 from predictables.util import to_pd_df

@@ -14,9 +14,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import polars as pl
-from numba import float64, jit, vectorize
 
-from predictables.src._utils import _select_binary_columns, _to_numpy, _to_pandas
+from predictables.src._utils import _to_numpy, _to_pandas
 
 
 def _pearson_correlation_matrix(

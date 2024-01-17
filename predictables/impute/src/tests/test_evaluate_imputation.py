@@ -6,7 +6,6 @@ from sklearn.linear_model import LinearRegression
 from predictables.impute import (
     calculate_fold_error,
     calculate_standard_error_of_mean,
-    check_stopping_criterion,
     cross_validate_model,
     evaluate_imputation_one_column,
     train_model_on_fold,

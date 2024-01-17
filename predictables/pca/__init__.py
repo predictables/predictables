@@ -1,1 +1,1 @@
-from .PCA import PCA
+from .PCA import PCA  # noqa F401

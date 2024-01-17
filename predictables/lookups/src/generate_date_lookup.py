@@ -1,10 +1,7 @@
 import datetime
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import polars as pl
-import polars.selectors as cs
 
 default_start_date = datetime.datetime(1970, 1, 1)
 default_end_date = datetime.datetime(2100, 1, 1)

@@ -24,4 +24,4 @@ Example Usage
 
 
 """
-from .src import *
+from .src import *  # noqa F401

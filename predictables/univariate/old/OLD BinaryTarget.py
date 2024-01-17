@@ -945,7 +945,7 @@ significant"
         target_name = target if isinstance(target, str) else target.name
 
         # For each bar in each container
-        for i, bar in enumerate(ax.patches):
+        for _i, bar in enumerate(ax.patches):
             # Get the y position and height of the bar
             y = bar.get_y() + bar.get_height()
 
@@ -2380,7 +2380,7 @@ vs Null Model"
 
         # Add annotations for lift values
         annotations = []
-        for i, row in lift_data.iterrows():
+        for _i, row in lift_data.iterrows():
             annotations.append(
                 dict(
                     x=row[feature],
@@ -2593,8 +2593,8 @@ vs Null Model"
 
         # Calculate the total number of 'good' (target=1) and 'bad' (target=0) in
         # the dataset
-        all_good = len(df[df[target] == 1])
-        all_bad = len(df[df[target] == 0])
+        len(df[df[target] == 1])
+        len(df[df[target] == 0])
 
         # Create a cross-tabulation of the feature against the target
         # Normalize by columns to get the proportion of 'good' and 'bad' for each
@@ -2975,8 +2975,8 @@ vs Null Model"
         y = self.fit.y
         yhat = self.fit.yhat
 
-        y_val = self.val[self.target]
-        yhat_val = self.fit.model.predict(self.val[self.feature])
+        self.val[self.target]
+        self.fit.model.predict(self.val[self.feature])
 
         binary = {}
         binary["n_obs"] = [self.train.shape[0]]

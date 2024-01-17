@@ -179,7 +179,7 @@ class ModelImputer:
         process.
         """
         # Get the function to call in parallel
-        f = getattr(self, "_fit_model")
+        f = self._fit_model
 
         # Call the function in parallel
         Parallel(
@@ -276,7 +276,7 @@ class ModelImputer:
         current_df = self.imputed_df.copy()
 
         # Get the function to call in parallel
-        f = getattr(self, "_impute_model")
+        f = self._impute_model
 
         # Call the function in parallel and get the updated columns
         updated_cols = Parallel(

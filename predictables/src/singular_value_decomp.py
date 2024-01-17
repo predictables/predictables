@@ -23,7 +23,6 @@ class SingularValueDecomposition:
         Perform subspace iteration to find the singular values and vectors of A.
         """
         # Initial values
-        A = self.A
         V = pl.DataFrame(
             pl.Series([1] + ([0] * (self.n_rows - 1))).cast(pl.Float32).alias("Col0")
         )

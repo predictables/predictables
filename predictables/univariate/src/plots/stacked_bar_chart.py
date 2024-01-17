@@ -82,7 +82,7 @@ def plot_stacked_bar_chart(
     target_name = target if isinstance(target, str) else target.name
 
     # For each bar in each container
-    for i, bar in enumerate(ax.patches):
+    for _i, bar in enumerate(ax.patches):
         # Get the y position and height of the bar
         y = bar.get_y() + bar.get_height()
 

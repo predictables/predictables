@@ -3,12 +3,7 @@ import pandas as pd
 import polars as pl
 import pytest
 
-from predictables.src._utils import (
-    _select_binary_columns,
-    _to_numpy,
-    _to_pandas,
-    _to_polars,
-)
+from predictables.src._utils import _to_numpy, _to_pandas, _to_polars
 
 
 # Create test data
@@ -75,7 +70,7 @@ def test_to_numpy(pddf, pds, pldf, plser, pllf, arr, lst):
     except TypeError:
         pass
     else:
-        assert False, "Expected TypeError"
+        raise AssertionError("Expected TypeError")
 
 
 def test_to_polars(pddf, pds, pldf, plser, pllf, arr, lst):
@@ -91,7 +86,7 @@ def test_to_polars(pddf, pds, pldf, plser, pllf, arr, lst):
     except ValueError:
         pass
     else:
-        assert False, "Expected ValueError"
+        raise AssertionError("Expected ValueError")
 
     # Test pandas Series to polars DataFrame
     assert isinstance(_to_polars(pds, to="dataframe"), pl.DataFrame)
@@ -114,7 +109,7 @@ def test_to_polars(pddf, pds, pldf, plser, pllf, arr, lst):
     except ValueError:
         pass
     else:
-        assert False, "Expected ValueError"
+        raise AssertionError("Expected ValueError")
 
     # Test polars Series to polars DataFrame
     assert isinstance(_to_polars(plser, to="dataframe"), pl.DataFrame)
@@ -137,7 +132,7 @@ def test_to_polars(pddf, pds, pldf, plser, pllf, arr, lst):
     except ValueError:
         pass
     else:
-        assert False, "Expected ValueError"
+        raise AssertionError("Expected ValueError")
 
     # Test numpy array to polars DataFrame
     assert isinstance(_to_polars(arr, to="dataframe"), pl.DataFrame)
@@ -151,7 +146,7 @@ def test_to_polars(pddf, pds, pldf, plser, pllf, arr, lst):
     except ValueError:
         pass
     else:
-        assert False, "Expected ValueError"
+        raise AssertionError("Expected ValueError")
 
     # Test list to polars DataFrame
     assert isinstance(_to_polars(lst, to="dataframe"), pl.DataFrame)
@@ -165,7 +160,7 @@ def test_to_polars(pddf, pds, pldf, plser, pllf, arr, lst):
     except ValueError:
         pass
     else:
-        assert False, "Expected ValueError"
+        raise AssertionError("Expected ValueError")
 
     # Test unsupported type (should raise TypeError)
     try:
@@ -173,7 +168,7 @@ def test_to_polars(pddf, pds, pldf, plser, pllf, arr, lst):
     except TypeError:
         pass
     else:
-        assert False, "Expected TypeError"
+        raise AssertionError("Expected TypeError")
 
 
 def test_to_pandas(pddf, pds, pldf, plser, pllf, arr, lst):
@@ -186,7 +181,7 @@ def test_to_pandas(pddf, pds, pldf, plser, pllf, arr, lst):
     except ValueError:
         pass
     else:
-        assert False, "Expected ValueError"
+        raise AssertionError("Expected ValueError")
 
     # Test pandas Series to pandas DataFrame
     assert isinstance(_to_pandas(pds, to="dataframe"), pd.DataFrame)
@@ -203,7 +198,7 @@ def test_to_pandas(pddf, pds, pldf, plser, pllf, arr, lst):
     except ValueError:
         pass
     else:
-        assert False, "Expected ValueError"
+        raise AssertionError("Expected ValueError")
 
     # Test polars Series to pandas DataFrame
     assert isinstance(_to_pandas(plser, to="dataframe"), pd.DataFrame)
@@ -220,7 +215,7 @@ def test_to_pandas(pddf, pds, pldf, plser, pllf, arr, lst):
     except ValueError:
         pass
     else:
-        assert False, "Expected ValueError"
+        raise AssertionError("Expected ValueError")
 
     # Test numpy array to pandas DataFrame
     assert isinstance(_to_pandas(arr, to="dataframe"), pd.DataFrame)
@@ -231,7 +226,7 @@ def test_to_pandas(pddf, pds, pldf, plser, pllf, arr, lst):
     except ValueError:
         pass
     else:
-        assert False, "Expected ValueError"
+        raise AssertionError("Expected ValueError")
 
     # Test list to pandas DataFrame
     assert isinstance(_to_pandas(lst, to="dataframe"), pd.DataFrame)
@@ -242,7 +237,7 @@ def test_to_pandas(pddf, pds, pldf, plser, pllf, arr, lst):
     except ValueError:
         pass
     else:
-        assert False, "Expected ValueError"
+        raise AssertionError("Expected ValueError")
 
     # Test unsupported type (should raise TypeError)
     try:
@@ -250,7 +245,7 @@ def test_to_pandas(pddf, pds, pldf, plser, pllf, arr, lst):
     except TypeError:
         pass
     else:
-        assert False, "Expected TypeError"
+        raise AssertionError("Expected TypeError")
 
 
 # Create test data

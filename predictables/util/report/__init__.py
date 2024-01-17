@@ -1,1 +1,1 @@
-from .Report import *
+from .Report import *  # noqa F401

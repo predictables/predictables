@@ -1,7 +1,6 @@
 from datetime import date, datetime
 
 import polars as pl
-import polars.selectors as cs
 import pytest
 
 from ..preprocessing import preprocess_data_for_pca
