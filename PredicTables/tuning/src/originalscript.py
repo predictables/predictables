@@ -1,7 +1,7 @@
-import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.model_selection import cross_val_score
+import numpy as np
 from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.model_selection import cross_val_score
 
 # Mock data for demonstration
 X_train, y_train = np.random.rand(100, 10), np.random.rand(100)

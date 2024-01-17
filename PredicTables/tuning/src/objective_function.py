@@ -1,19 +1,25 @@
-from typing import Union, Dict, List
-from sklearn.model_selection import cross_val_score
-from sklearn.metrics import make_scorer
-import numpy as np
+from typing import Dict, List, Union
+
+import pandas as pd
 from sklearn.base import BaseEstimator
+from sklearn.metrics import make_scorer
+from sklearn.model_selection import cross_val_score
+
 from PredicTables.util import harmonic_mean
 
 
 def objective_function(
     params: Dict[str, Union[int, float]],
-    model_class,
+    model_class: BaseEstimator,
     evaluation_metric: Union[str, List[str]],
+    X: pd.DataFrame,
+    y: pd.Series,
 ) -> float:
     """
     Fits a generic model (implementing the sklearn API) with the given parameters,
     and returns a given evaluation metric.
+
+    Any evaluation metric should be configured such that a smaller value is better.
 
     Parameters
     ----------
@@ -31,6 +37,10 @@ def objective_function(
 
         If a list of strings representing valid sklearn metrics is passed, the
         harmonic mean of the scores will be returned.
+    X : pandas.DataFrame
+        The feature matrix.
+    y : pandas.Series
+        The target vector.
 
     Returns
     -------
@@ -44,13 +54,13 @@ def objective_function(
     # and for each individual metric if it is a list of strings
     if isinstance(evaluation_metric, str):
         scorer = make_scorer(evaluation_metric)
-    else:
+    elif isinstance(evaluation_metric, list):
         scorers = [make_scorer(metric) for metric in evaluation_metric]
-        scorer = make_scorer(hmean, scorers=scorers)
+        scorer = make_scorer(map(harmonic_mean, *scorers))
 
     # Evaluate the model using cross-validation
     scores = cross_val_score(
-        model, X_train, y_train, cv=5, scoring="neg_mean_squared_error"
+        model, X, y, cv=5, scoring=scorer, n_jobs=-1, error_score="raise"
     )
 
     # Return the negative mean of the scores (since we want to minimize the metric)
