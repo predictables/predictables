@@ -7,6 +7,10 @@
 # from PredicTables.util import to_pl_df
 
 
+def test_nothing():
+    assert 1 == 1
+
+
 # @pytest.fixture
 # def mock_data():
 #     # Create mock data
