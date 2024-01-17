@@ -5,50 +5,66 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from matplotlib.axes import Axes
-from matplotlib.lines import Line2D
-from matplotlib.patches import Patch
 from sklearn.metrics import RocCurveDisplay, roc_auc_score, roc_curve
 
-# Here's an outline of the refactoring plan:
 
-#     Data Preparation for Plotting: Isolating the logic that prepares the data for the ROC curve plot.
-#     Plotting Individual ROC Curves: Creating a function to plot the ROC curve for each fold.
-#     Calculating Mean and Standard Deviation: Computing mean and standard deviation of the True Positive Rates (TPR) across all folds.
-#     Plotting Mean ROC Curve and Confidence Band: A function to plot the mean ROC curve with the confidence band.
-#     Annotation and Legend Configuration: Separating the code for annotating the plot and configuring the legend.
-#     Statistical Analysis and Annotation: Including DeLong test and other statistical annotations on the plot.
-#     Model Fit Information Annotation: A function to annotate the plot with logistic regression model fit information.
-#     Final Plot Adjustments and Rendering: Adjusting final plot settings like axis labels, title, and layout.
-#     Main Function Integration: Integrating all these components in the main plot_cv_roc_auc function.
+def roc_curve_plot(
+    y: pd.Series,
+    yhat_proba: pd.DataFrame,
+    fold: pd.Series,
+    figsize: Tuple[int, int] = (8, 8),
+    n_bins: int = 200,
+    coef: Union[float, None] = None,
+    se: Union[float, None] = None,
+    pvalue: Union[float, None] = None,
+    cv_alpha: float = 0.4,
+    ax: Axes = None,
+    backend: str = "matplotlib",
+) -> Union[go.Figure, Axes]:
+    """
+    Plot the ROC curve for a single model.
 
+    Parameters
+    ----------
+    y : pd.Series
+        The true labels.
+    yhat_proba : pd.DataFrame
+        The predicted probabilities.
+    fold : pd.Series
+        The fold number for each observation.
+    figsize : Tuple[int, int], optional
+        The figure size to use. Defaults to (8, 8).
+    n_bins : int, optional
+        The number of bins to use when calculating the ROC curve. Generally, the
+        more bins, the smoother the curve. Defaults to 200.
+    cv_alpha : float, optional
+        The opacity of the individual ROC curves.
+    ax : matplotlib.axes.Axes, optional
+        The Axes object to be configured. If provided, the figure will be plotted on the provided Axes object.
+    backend : str, optional
+        The plotting backend to use. Either "matplotlib" or "plotly". Defaults to "matplotlib".
 
-# def roc_curve_plot(
-#     y: pd.Series, yhat: pd.Series, backend: str = "matplotlib", **kwargs
-# ):
-#     """
-#     Plot the ROC curve for a single model.
-
-#     Parameters
-#     ----------
-#     y : pd.Series
-#         The true labels.
-#     yhat : pd.Series
-#         The predicted labels.
-#     backend : str
-#         The plotting backend to use. Either "matplotlib" or "plotly". Defaults to "matplotlib".
-#     **kwargs
-#         Additional keyword arguments to pass to the plotting function.
-
-#     Returns
-#     -------
-#     figax : Union[go.Figure, Axes]
-#         The plot.
-#     """
-#     if backend == "plotly":
-#         # return plot_cv_roc_auc_plotly(y, yhat, **kwargs)
-#         raise NotImplementedError("Plotly backend not implemented yet.")
-#     else:
-#         return plot_cv_roc_auc_mpl(y, yhat, **kwargs)
+    Returns
+    -------
+    ax : matplotlib.Axes.Axes
+        The configured Axes object.
+    """
+    if backend == "plotly":
+        # return plot_cv_roc_auc_plotly(y, yhat, **kwargs)
+        raise NotImplementedError("Plotly backend not implemented yet.")
+    else:
+        return roc_curve_plot_mpl(
+            y=y,
+            yhat_proba=yhat_proba,
+            fold=fold,
+            figsize=figsize,
+            n_bins=n_bins,
+            coef=coef,
+            se=se,
+            pvalue=pvalue,
+            cv_alpha=cv_alpha,
+            ax=ax,
+        )
 
 
 def create_auc_data(
@@ -95,7 +111,6 @@ def plot_individual_roc_curves(
     figsize: Tuple[int, int] = (15, 7),
     ax: Axes = None,
     fig: go.Figure = None,
-    plot_title: str = "ROC Curve (AUC = [AUC])\nROC AUC is [significance_stmnt]",
     backend: str = "matplotlib",
 ) -> Union[go.Figure, Axes]:
     """
@@ -426,7 +441,7 @@ def plot_roc_auc_curves_and_confidence_bands(
         return figax
 
 
-def delong_statistic_annotation(y: pd.Series, yhat_proba: pd.Series, ax: Axes):
+def delong_statistic_annotation_mpl(y: pd.Series, yhat_proba: pd.Series, ax: Axes):
     """
     Implement the DeLong test to compare the ROC AUC against the 45-degree
     line (AUC=0.5).
@@ -453,99 +468,97 @@ def delong_statistic_annotation(y: pd.Series, yhat_proba: pd.Series, ax: Axes):
     """
     z, p = _delong_test_against_chance(y, yhat_proba)
 
-    significance_message = (
-        f"DeLong Test Statistic\nAgainst the 45-degree Line:\n\nz = {z:.3f}\np-value = {p:.3f}"
-    )
+    significance_message = "DeLong Test Statistic\nAgainst the 45-degree Line:\n\n"
+    significance_message += f"z = {z:.3f}\n"
+    significance_message += f"p-value = {p:.1e}" if p < 1e-3 else f"p-value = {p:.3f}"
     significance_message += "\n" + (
-        "\nThe indicated AUC is\nsignificantly different\nfrom random guessing at \nthe 95\% confidence level."
+        "\nThe indicated AUC is\nsignificantly different\nfrom random guessing at \nthe 95% confidence level."
         if p < 0.05
-        else "The indicated AUC is not significantly different from random guessing at the 95\% confidence level."
+        else "The indicated AUC is not significantly different from random guessing at the 95% confidence level."
     )
 
     # add annotation
     ax.annotate(
         significance_message,
-        xy=(0.6, 0.5),
+        xy=(0.6, 0.2),
         xycoords="axes fraction",
         fontsize=12,
         bbox=dict(
-            boxstyle="round,pad=0.3", edgecolor="black", facecolor="white", alpha=0.5
+            boxstyle="round,pad=0.3", edgecolor="black", facecolor="white", alpha=0.8
         ),
     )
 
     return ax
 
 
-def add_statistical_analysis_annotation_mpl(
-    ax: Axes, dl_stat, p_value, significance_level
-):
-    # Annotate the plot with hypothesis testing information
-    significance_message = f"DeLong Test Statistic Against the 45-degree Line: {dl_stat:.3f}, p-value = {p_value:.3f}"
-    ax.annotate(
-        significance_message,
-        xy=(0.6, 0.6),
-        xycoords="Axes fraction",
-        fontsize=12,
-        bbox=dict(
-            boxstyle="round,pad=0.3", edgecolor="black", facecolor="white", alpha=0.5
-        ),
-    )
-
-    # Additional message based on significance level
-    if p_value < significance_level:
-        ax.annotate(
-            "Significantly different from random",
-            xy=(0.6, 0.55),
-            xycoords="Axes fraction",
-            fontsize=10,
-        )
-    else:
-        ax.annotate(
-            "Not significantly different from random",
-            xy=(0.6, 0.55),
-            xycoords="Axes fraction",
-            fontsize=10,
-        )
-
-    return ax
-
-
-def add_model_fit_annotation_mpl(
-    ax: Axes,
+def coefficient_annotation_mpl(
     coef: float,
     std_error: float,
     pvalue: float,
+    ax: Axes,
     alpha: float = 0.05,
 ):
+    """
+    Annotate the plot with logistic regression model fit information.
+
+    Parameters
+    ----------
+    coef : float
+        The estimated coefficient.
+    std_error : float
+        The standard error of the estimated coefficient.
+    pvalue : float
+        The p-value of the estimated coefficient.
+    ax : Axes
+        The Axes object to be configured.
+    alpha : float
+        The significance level to use. Defaults to 0.05.
+
+    Returns
+    -------
+    ax : matplotlib.Axes.Axes
+        The Axes object annotated with the model fit information.
+    """
     from scipy.stats import norm
 
     z_alpha = norm.ppf(1 - alpha / 2)
     ci_lower = coef - z_alpha * std_error
     ci_upper = coef + z_alpha * std_error
-    pct = f"{1 - alpha:.1%}"
 
-    significance_stmnt = (
-        f"Coefficient is significantly different from 0 at the {pct} level"
+    significance_statement = (
+        f"Coefficient is significantly\ndifferent from 0 at the {1 - alpha:.1%} level"
         if pvalue < alpha
-        else f"Coefficient is not significantly different from 0 at the {pct} level"
+        else f"Coefficient is not significantly\ndifferent from 0 at the {1 - alpha:.1%} level"
     )
 
-    # Annotation text
-    text = (
-        f"Estimated Coefficient: {coef:.2f}\n"
-        f"{pct} Confidence Interval: [{ci_lower:.2f}, {ci_upper:.2f}]\n"
-        f"p-value: {pvalue:.2f}\n"
-        f"{significance_stmnt}"
+    annotation_text = "Logistic Regression Fit Statistics\n======================\n\n"
+    annotation_text += (
+        f"Estimated Coefficient: {coef:.1e}\n"
+        if coef < 1e-3
+        else f"Estimated Coefficient: {coef:.2f}\n"
     )
+    annotation_text += (
+        f"SE(Coefficient): {std_error:.1e}\n"
+        if std_error < 1e-3
+        else f"SE(Coefficient): {std_error:.2f}\n"
+    )
+    annotation_text += (
+        f"95% Confidence Interval:\n[{ci_lower:.1e}, {ci_upper:.1e}]\n"
+        if ci_lower < 1e-3
+        else f"95% Confidence Interval:\n[{ci_lower:.2f}, {ci_upper:.2f}]\n"
+    )
+    annotation_text += (
+        f"p-value: {pvalue:.1e}\n\n" if pvalue < 1e-3 else f"p-value: {pvalue:.2f}\n\n"
+    )
+    annotation_text += f"{significance_statement}"
 
-    # Add annotation to the plot
     ax.annotate(
-        text,
-        xy=(0.05, 0.05),
-        xycoords="Axes fraction",
+        annotation_text,
+        xy=(0.1, 0.05),
+        xycoords="axes fraction",
         fontsize=12,
         bbox=dict(
-            boxstyle="round,pad=0.3", edgecolor="black", facecolor="white", alpha=0.5
+            boxstyle="round,pad=0.3", edgecolor="black", facecolor="white", alpha=0.8
         ),
     )
 
@@ -573,36 +586,12 @@ def auc(y: pd.Series, yhat: pd.Series) -> float:
     return roc_auc_score(y, yhat)
 
 
-def calculate_interpolated_mean_std_tpr(
-    mean_fpr: pd.Series, tprs: pd.DataFrame
-) -> Tuple[pd.Series, pd.Series]:
-    """
-    Calculate the mean and standard deviation of the TPR (true positive rate)
-    across all folds.
-
-    Parameters
-    ----------
-    mean_fpr : pd.Series
-        The mean false positive rate across all folds.
-    tprs : pd.DataFrame
-        The true positive rates across all folds.
-
-    Returns
-    -------
-    mean_tpr : pd.Series
-        The mean true positive rate across all folds.
-    """
-    mean_tpr, std_tpr = calculate_mean_std_tpr(tprs)
-
-    # Interpolate mean_tpr to match the length of mean_fpr
-    mean_tpr_interpolated = np.interp(
-        mean_fpr, np.linspace(0, 1, len(mean_tpr)), mean_tpr
-    )
-
-    return mean_tpr_interpolated, std_tpr
-
-
-def finalize_plot(ax: Axes, figsize: Tuple[int, int]) -> Axes:
+def finalize_plot(
+    ax: Axes,
+    figsize: Tuple[int, int],
+    auc: Union[float, None] = None,
+    auc_p_value: Union[float, None] = None,
+) -> Axes:
     """
     Finalize the plot by adjusting the figure size and layout.
 
@@ -612,68 +601,95 @@ def finalize_plot(ax: Axes, figsize: Tuple[int, int]) -> Axes:
         The Axes object to be configured.
     figsize : Tuple[int, int]
         The figure size to use.
+    auc : float
+        The area under the ROC curve. Defaults to None. Used to format the plot title.
+    auc_p_value : float
+        The p-value of the area under the ROC curve. Defaults to None. Used to format the plot title.
 
     Returns
     -------
     ax : matplotlib.Axes.Axes
         The configured Axes object.
     """
-    # Adjust figure size and layout
+    title = f"ROC Curve (AUC = {auc:.1%})\n"
+    title += (
+        "ROC AUC is significantly different from 0.5 at the 95% level."
+        if auc_p_value < 0.05
+        else "ROC AUC is not significantly different from 50% at the 95% level."
+    )
+    ax.set_title(title, fontsize=14)
+    ax.set_xlabel("False Positive Rate", fontsize=12)
+    ax.set_ylabel("True Positive Rate", fontsize=12)
     plt.gcf().set_size_inches(figsize)
     plt.tight_layout()
+
+    # show gridlines
+    ax.grid(True)
+    plt.legend(loc="lower right", fontsize=12)
 
     return ax
 
 
-# def plot_cv_roc_auc_mpl(
-#     n_bins: int,
-#     y: pd.Series,
-#     yhat_proba: pd.Series,
-#     fold: Union[pd.Series, None] = None,
-#     alpha: float = 0.05,
-#     figsize: Tuple[int, int] = (10, 6),
-#     coef: float = None,
-#     std_error: float = None,
-#     pvalue: float = None,
-# ) -> Axes:
-#     # Data preparation
-#     fpr, tpr = create_auc_data(y, yhat, n_bins)
+def roc_curve_plot_mpl(
+    y: pd.Series,
+    yhat_proba: pd.DataFrame,
+    fold: pd.Series,
+    figsize: Tuple[int, int] = (8, 8),
+    n_bins: int = 200,
+    coef: Union[float, None] = None,
+    se: Union[float, None] = None,
+    pvalue: Union[float, None] = None,
+    cv_alpha: float = 0.4,
+    ax: Axes = None,
+) -> Axes:
+    """
+    Plot the ROC curve for each fold. Filters the data for each fold label,
+    then plots the ROC curve for a model trained on that fold.
 
-#     # Plot creation
-#     _, ax = plt.subplots()
+    Parameters
+    ----------
+    y : pd.Series
+        The true labels.
+    yhat_proba : pd.DataFrame
+        The predicted probabilities.
+    fold : pd.Series
+        The fold number for each observation.
+    figsize : Tuple[int, int], optional
+        The figure size to use. Defaults to (8, 8).
+    n_bins : int, optional
+        The number of bins to use when calculating the ROC curve. Generally, the
+        more bins, the smoother the curve. Defaults to 200.
+    cv_alpha : float, optional
+        The opacity of the individual ROC curves.
+    ax : matplotlib.axes.Axes, optional
+        The Axes object to be configured. If provided, the figure will be plotted on the provided Axes object.
 
-#     # Plot individual ROC curves
-#     if fold is not None:
-#         for f in fold.drop_duplicates().sort_values().values:
-#             plot_individual_roc_curves(
-#                 ax=ax,
-#                 y=y[fold == f],
-#                 yhat_proba=yhat_proba[fold == f],
-#                 curve_name=f"Fold {f}",
-#                 alpha=alpha,
-#                 legendgroup="Folds",
-#             )
-#     plot_individual_roc_curves(ax, fpr, tprs)
+    Returns
+    -------
+    ax : matplotlib.Axes.Axes
+        The configured Axes object.
+    """
+    if ax is not None:
+        pass
+    else:
+        _, ax = plt.subplots(figsize=figsize)
 
-#     # Calculate and plot mean ROC curve and confidence band
-#     mean_tpr, std_tpr = calculate_interpolated_mean_std_tpr(fpr, tprs)
-#     mean_auc = auc(fpr, mean_tpr)
-#     plot_mean_roc_and_confidence_band_mpl(ax, fpr, mean_tpr, std_tpr, mean_auc)
-
-#     # Configure annotations and legend
-#     configure_annotations_and_legend_mpl(ax, mean_auc, std_tpr)
-
-#     # Statistical analysis and annotation
-#     (dl_stat, p_value) = _delong_test_against_chance(y, yhat)
-#     add_statistical_analysis_annotation_mpl(ax, dl_stat, p_value, alpha)
-
-#     # Model fit information annotation
-#     add_model_fit_annotation_mpl(ax=ax, coef=coef, std_error=std_error, pvalue=pvalue)
-
-#     # Finalize the plot
-#     ax = finalize_plot(ax, figsize)
-
-#     return ax
+    ax = plot_roc_auc_curves_and_confidence_bands(
+        y,
+        yhat_proba,
+        fold,
+        ax=ax,
+        n_bins=n_bins,
+        backend="matplotlib",
+        figsize=figsize,
+        cv_alpha=cv_alpha,
+    )
+    ax = delong_statistic_annotation_mpl(y=y, yhat_proba=yhat_proba, ax=ax)
+    ax = coefficient_annotation_mpl(coef=coef, std_error=se, pvalue=pvalue, ax=ax)
+    a = auc(y, yhat_proba)
+    _, p = _delong_test_against_chance(y, yhat_proba)
+    ax = finalize_plot(ax, figsize=figsize, auc=a, auc_p_value=p)
+    return ax
 
 
 def _compute_auc_variance(y: pd.Series, yhat: pd.Series):
