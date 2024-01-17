@@ -1,12 +1,12 @@
-from typing import Union, Tuple
+from typing import Tuple, Union
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from matplotlib.axes import Axes
 import plotly.graph_objects as go
+from matplotlib.axes import Axes
 
-from PredicTables.util import get_column_dtype
 from PredicTables.univariate.src.plots.util import plot_label
+from PredicTables.util import get_column_dtype
 
 
 def categorical_lift_plot(

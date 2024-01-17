@@ -1,4 +1,3 @@
-import seaborn as sns
 import warnings
 from collections import namedtuple
 from typing import Callable, Optional, Union
@@ -6,20 +5,19 @@ from typing import Callable, Optional, Union
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import polars as pl
 import plotly.graph_objects as go
+import polars as pl
+import seaborn as sns
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
 from matplotlib import rcParams
-from matplotlib.lines import Line2D
-from matplotlib.patches import Patch
 from scipy.interpolate import interp1d
 from scipy.spatial.distance import jensenshannon as js
-from scipy.stats import chi2_contingency, entropy, mannwhitneyu, norm, ttest_ind
-from sklearn.linear_model import LogisticRegressionCV, ElasticNetCV
+from scipy.stats import chi2_contingency, entropy, ttest_ind
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.linear_model import ElasticNetCV, LogisticRegressionCV
+from sklearn.metrics import accuracy_score as acc
 from sklearn.metrics import (
-    RocCurveDisplay,
     balanced_accuracy_score,
     f1_score,
     hinge_loss,
@@ -31,29 +29,17 @@ from sklearn.metrics import (
     roc_auc_score,
     roc_curve,
 )
-from sklearn.metrics import (
-    accuracy_score as acc,
-)
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from tqdm import tqdm
 
 from PredicTables.univariate import reconcile_train_test_val_sizes
-
-from PredicTables.univariate.plots import (
-    _plot_lift_chart,
-    _quintile_lift_plot,
-    set_rc_params,
-)
-from PredicTables.univariate.plots import (
-    _rotate_x_labels_if_overlap as rotate_x_lab,
-)
-from PredicTables.univariate.plots import (
-    plot_violin_with_outliers as _plot_violin,
-)
+from PredicTables.univariate.plots import _quintile_lift_plot
+from PredicTables.univariate.plots import _rotate_x_labels_if_overlap as rotate_x_lab
+from PredicTables.univariate.plots import set_rc_params
+from PredicTables.util import get_column_dtype
 from PredicTables.util.stats import gini_coefficient, informedness, kl_divergence
-from PredicTables.util import get_column_dtype, to_pl_lf
 
 warnings.filterwarnings("ignore")
 
@@ -329,17 +315,23 @@ class Univariate:
 
         # Make sure there are no client_id's in both train and test sets by
         # taking the intersection of the two sets and making sure the length is 0
-        assert len(set(self.train_id).intersection(set(self.test_id))) == 0, f"There are client_id's in both train and test: \
+        assert (
+            len(set(self.train_id).intersection(set(self.test_id))) == 0
+        ), f"There are client_id's in both train and test: \
                 \n  {set(self.train_id).intersection(set(self.test_id))}"
 
         # Make sure there are no client_id's in both train and val sets by
         # taking the intersection of the two sets and making sure the length is 0
-        assert len(set(self.train_id).intersection(set(self.val_id))) == 0, f"There are client_id's in both train and val: \
+        assert (
+            len(set(self.train_id).intersection(set(self.val_id))) == 0
+        ), f"There are client_id's in both train and val: \
                 \n  {set(self.train_id).intersection(set(self.val_id))}"
 
         # Make sure there are no client_id's in both val and test sets by
         # taking the intersection of the two sets and making sure the length is 0
-        assert len(set(self.val_id).intersection(set(self.test_id))) == 0, f"There are client_id's in both val and test: \
+        assert (
+            len(set(self.val_id).intersection(set(self.test_id))) == 0
+        ), f"There are client_id's in both val and test: \
                 \n  {set(self.val_id).intersection(set(self.test_id))}"
 
     def set_up_cross_validation(self):
