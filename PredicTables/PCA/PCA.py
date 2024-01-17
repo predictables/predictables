@@ -141,6 +141,7 @@ class PCA:
 
         return pca
 
+    # TODO: rename this to transform_pca to be like the fit_pca method above
     def transform(self, df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] = None):
         """
         Transforms the provided dataset using the fitted PCA model.
