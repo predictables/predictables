@@ -1,11 +1,12 @@
+from typing import Union
+
+import numpy as np
 import pandas as pd
 import polars as pl
-import numpy as np
-from typing import Union
-from scipy import stats
 import statsmodels.api as sm
+from scipy import stats
 
-from PredicTables.util import to_pd_df, to_pd_s, select_cols_by_dtype, get_column_dtype
+from PredicTables.util import get_column_dtype, select_cols_by_dtype, to_pd_df, to_pd_s
 
 
 def calc_continuous_categorical_corr(
@@ -173,7 +174,7 @@ def calc_continuous_categorical_corr_series(
 def anova_correlation_coef_df(
     df: Union[pd.DataFrame, pl.DataFrame],
 ) -> pd.DataFrame:
-    """
+    r"""
     Calculate the correlation between continuous and categorical variables in a df.
     This function uses ANOVA to compute the correlation.
 
@@ -199,7 +200,7 @@ def anova_correlation_coef_df(
     the 'total sum of squares' (SS_total):
 
     $$
-    η² = \\frac{SS_{between}}{SS_{total}}
+    η² = \frac{SS_{between}}{SS_{total}}
     $$
 
     ### Interpretation
@@ -255,7 +256,7 @@ def anova_correlation_coef_series(
     s1: Union[pd.Series, pl.Series],
     s2: Union[pd.Series, pl.Series],
 ) -> float:
-    """
+    r"""
     Calculate the correlation between a continuous and categorical variable.
     This function uses ANOVA to compute the eta squared correlation.
 
@@ -278,26 +279,29 @@ def anova_correlation_coef_series(
 
     ### Calculation
 
-    η² is calculated as the ratio of the 'sum of squares between groups' (SS_between) to
-    the 'total sum of squares' (SS_total):
+    :math:`\eta^2` is calculated as the ratio of the 'sum of squares between groups' :math:`(SS_{\text{between}})` to
+    the 'total sum of squares' :math:`(SS_{\text{total}})`:
 
-    $$
-    η² = \\frac{SS_{between}}{SS_{total}}
-    $$
+    .. math::
+        \eta^2 = \frac{SS_{\text{between}}}{SS_{\text{total}}}
 
     ### Interpretation
 
-    η² represents the proportion of the variance in the continuous variable that is attributable
-    to the categorical variable. It ranges from 0 to 1, where 0 indicates no variance explained
-    by the categorical variable (no effect), and 1 indicates complete variance explanation
+    :math:`\eta^2` represents the proportion of the variance in the continuous variable that is attributable
+    to the categorical variable. It ranges from :math:`0` to :math:`1`, where :math:`0` indicates no variance explained
+    by the categorical variable (no effect), and :math:`1` indicates complete variance explanation
     (maximum effect).
 
     ### Remark
 
-    η² is a measure of effect size, not a direct correlation coefficient. It should
-    not be interpreted as a measure of linear correlation like Pearson's r. The square root
-    of η² does not represent a correlation coefficient and should be used cautiously.
-    η² is valuable in quantifying the relative importance of factors in ANOVA.
+    :math:`\eta^2` is a measure of effect size, not a direct correlation coefficient. It should
+    not be interpreted as a measure of linear correlation like Pearson's :math:`r`. The square root
+    of :math:`\eta^2` does not represent a correlation coefficient and should be used cautiously.
+    :math:`\eta^2` is valuable in quantifying the relative importance of factors in ANOVA, given these assumptions:
+
+    - The data are at least approximately normally distributed.
+    - The groups have approximately equal sample sizes.
+    - The groups have approximately equal variance.
 
     References
     ----------
@@ -336,7 +340,7 @@ def anova_correlation_coef_series(
 def ancova_correlation_coef_df(
     df: Union[pd.DataFrame, pl.DataFrame],
 ) -> pd.DataFrame:
-    """
+    r"""
     Calculate the correlation between continuous and categorical variables in a df.
     This function uses ANCOVA to compute the correlation.
 
@@ -353,33 +357,33 @@ def ancova_correlation_coef_df(
 
     Notes
     -----
-    Partial Eta Squared (η²_partial) is used to assess the effect size in ANCOVA,
+    Partial Eta Squared :math:`(\eta^2_{\text{partial}})` is used to assess the effect size in ANCOVA,
     accounting for the influence of covariates.
 
     ### Calculation
 
-    η²_partial is calculated as the ratio of the 'sum of squares due to
-    the factor' (SS_factor) to the sum of SS_factor and the 'error sum of squares'
-    (SS_error):
+    :math:`\eta^2_{\text{partial}}` is calculated as the ratio of the 'sum of squares due to
+    the factor' :math:`(SS_{\text{factor}})` to the sum of :math:`SS_{\text{factor}}` and the 'error sum of squares'
+    :math:`(SS_{\text{error}})`:
 
-    $$
-    η²_{partial} = \\frac{SS_{factor}}{SS_{factor} + SS_{error}}
-    $$
+    .. math::
+
+        \eta^2_{\text{partial}} = \frac{SS_{\text{factor}}}{SS_{\text{factor}} + SS_{\text{error}}}
 
     ### Interpretation
 
-    η²_partial indicates the proportion of the total variance in the
+    :math:`\eta^2_{\text{partial}}` indicates the proportion of the total variance in the
     continuous variable that is attributable to a categorical variable, after controlling
-    for covariates. Its values range from 0 to 1. A value of 0 suggests no explanatory
-    power of the categorical variable over and above the covariates, whereas a value of 1
+    for covariates. Its values range from :math:`0` to :math:`1`. A value of :math:`0` suggests no explanatory
+    power of the categorical variable over and above the covariates, whereas a value of :math:`1`
     indicates that the categorical variable accounts for all the variance in the continuous
     variable, beyond what is already explained by the covariates.
 
     ### Remark
 
-    Similar to η², η²_partial is not a correlation coefficient and does not imply a
+    Similar to :math:`\eta^2`, :math:`\eta^2_{\text{partial}}` is not a correlation coefficient and does not imply a
     linear relationship. It quantifies the relative importance of a categorical variable in
-    the presence of other covariates. The square root of η²_partial should not be interpreted
+    the presence of other covariates. The square root of :math:`\eta^2_{\text{partial}}` should not be interpreted
     as a correlation coefficient. This measure is particularly useful in multivariate contexts
     where the effects of multiple variables are considered simultaneously.
 
@@ -416,7 +420,7 @@ def ancova_correlation_coef_series(
     s1: Union[pd.Series, pl.Series],
     s2: Union[pd.Series, pl.Series],
 ) -> float:
-    """
+    r"""
     Calculate the correlation between a continuous and categorical variable.
     This function uses ANCOVA to compute the correlation.
 
@@ -434,33 +438,33 @@ def ancova_correlation_coef_series(
 
     Notes
     -----
-    Partial Eta Squared (η²_partial) is used to assess the effect size in ANCOVA,
+    Partial Eta Squared :math:`(\eta^2_{\text{partial}})` is used to assess the effect size in ANCOVA,
     accounting for the influence of covariates.
 
     ### Calculation
 
-    η²_partial is calculated as the ratio of the 'sum of squares due to
-    the factor' (SS_factor) to the sum of SS_factor and the 'error sum of squares'
-    (SS_error):
+    :math:`\eta^2_{\text{partial}}` is calculated as the ratio of the 'sum of squares due to
+    the factor' :math:`(SS_{\text{factor}})` to the sum of :math:`SS_{\text{factor}}` and the 'error sum of squares'
+    :math:`(SS_{\text{error}})`:
 
-    $$
-    η²_{partial} = \\frac{SS_{factor}}{SS_{factor} + SS_{error}}
-    $$
+    .. math::
+
+        \eta^2_{\text{partial}} = \frac{SS_{\text{factor}}}{SS_{\text{factor}} + SS_{\text{error}}}
 
     ### Interpretation
 
-    η²_partial indicates the proportion of the total variance in the
+    :math:`\eta^2_{\text{partial}}` indicates the proportion of the total variance in the
     continuous variable that is attributable to a categorical variable, after controlling
-    for covariates. Its values range from 0 to 1. A value of 0 suggests no explanatory
-    power of the categorical variable over and above the covariates, whereas a value of 1
+    for covariates. Its values range from :math:`0` to :math:`1`. A value of :math:`0` suggests no explanatory
+    power of the categorical variable over and above the covariates, whereas a value of :math:`1`
     indicates that the categorical variable accounts for all the variance in the continuous
     variable, beyond what is already explained by the covariates.
 
     ### Remark
 
-    Similar to η², η²_partial is not a correlation coefficient and does not imply a
+    Similar to :math:`\eta^2`, :math:`\eta^2_{\text{partial}}` is not a correlation coefficient and does not imply a
     linear relationship. It quantifies the relative importance of a categorical variable in
-    the presence of other covariates. The square root of η²_partial should not be interpreted
+    the presence of other covariates. The square root of :math:`\eta^2_{\text{partial}}` should not be interpreted
     as a correlation coefficient. This measure is particularly useful in multivariate contexts
     where the effects of multiple variables are considered simultaneously.
 
@@ -502,7 +506,7 @@ def ancova_correlation_coef_series(
 def spearmans_rank_correlation_coef_df(
     df: Union[pd.DataFrame, pl.DataFrame],
 ) -> pd.DataFrame:
-    """
+    r"""
     Calculate a rank-based correlation between continuous and categorical variables in a df.
 
     Parameters
@@ -513,40 +517,28 @@ def spearmans_rank_correlation_coef_df(
     Returns
     -------
     pd.DataFrame
-        A data frame containing the correlation coefficients between continuous and
-        categorical variables.
+        A data frame containing the correlation coefficients between continuous and categorical variables.
 
     Notes
     -----
-    Spearman's Rank Correlation Coefficient is utilized to evaluate the strength and
-    direction of the monotonic relationship between a continuous variable and a
-    numerically encoded categorical variable.
+    Spearman's Rank Correlation Coefficient is utilized to evaluate the strength and direction of the monotonic relationship between a continuous variable and a numerically encoded categorical variable.
 
     ### Calculation
 
-    Spearman's correlation coefficient (rho) is computed as the Pearson correlation
-    coefficient between the rank values of the two variables:
+    Spearman's correlation coefficient :math:`\rho` is computed as the Pearson correlation coefficient :math:`(r)` between the rank values of the two variables:
 
-    $$
-    rho = 1 - \\frac{6 \sum d_i^2}{n(n^2 - 1)}
-    $$
+    .. math::
+        rho = 1 - \frac{6 \sum d_i^2}{n(n^2 - 1)}
 
-    where \(d_i\) is the difference between the ranks of corresponding values, and \(n\)
-    is the number of observations.
+    where :math:`d_i` is the difference between the ranks of corresponding values, and :math:`n` is the number of observations.
 
     ### Interpretation
 
-    Spearman's rho ranges from -1 to +1. A rho value of +1 indicates a perfect
-    positive monotonic relationship, -1 indicates a perfect negative monotonic relationship,
-    and 0 implies no monotonic relationship. It assesses how well the relationship between
-    two variables can be described using a monotonic function.
+    Spearman's :math:`\rho` ranges from :math:`-1` to :math:`+1`. A :math:`rho` value of :math:`+1` indicates a perfect positive monotonic relationship, :math:`-1` indicates a perfect negative monotonic relationship, and :math:`0` implies no monotonic relationship. It assesses how well the relationship between two variables can be described using a monotonic function.
 
     ### Applicability
 
-    This non-parametric measure is suitable when the data do not meet the
-    assumptions of normality required for Pearson's correlation. It is especially useful
-    in exploratory data analysis to identify potential monotonic relationships without
-    making assumptions about the linearity of the relationship.
+    This non-parametric measure is suitable when the data do not meet the assumptions of normality required for Pearson's correlation. It is especially useful in exploratory data analysis to identify potential monotonic relationships without making assumptions about the linearity of the relationship.
 
     ### Remark
 
@@ -597,7 +589,7 @@ def spearmans_rank_correlation_coef_series(
     s1: Union[pd.Series, pl.Series],
     s2: Union[pd.Series, pl.Series],
 ) -> float:
-    """
+    r"""
     Calculate a rank-based correlation between a continuous and categorical variable.
 
     Parameters
@@ -624,7 +616,7 @@ def spearmans_rank_correlation_coef_series(
     coefficient between the rank values of the two variables:
 
     $$
-    rho = 1 - \\frac{6 \sum d_i^2}{n(n^2 - 1)}
+    rho = 1 - \frac{6 \sum d_i^2}{n(n^2 - 1)}
     $$
 
     where \(d_i\) is the difference between the ranks of corresponding values, and \(n\)

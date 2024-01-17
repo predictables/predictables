@@ -1,6 +1,7 @@
+from typing import Union
+
 import pandas as pd
 import polars as pl
-from typing import Union
 
 from PredicTables.util import get_column_dtype, to_pd_df, to_pd_s
 
@@ -8,7 +9,7 @@ from PredicTables.util import get_column_dtype, to_pd_df, to_pd_s
 def calc_continuous_binary_corr(
     *args: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame],
 ) -> Union[float, pd.DataFrame]:
-    """
+    r"""
     Calculate the point-biserial correlation coefficient either between two
     continuous-binary variables or between all pairs of continuous-binary variables
     in a data frame.
@@ -36,14 +37,15 @@ def calc_continuous_binary_corr(
     coefficient between the continuous variable and a dummy variable representing the
     binary variable:
 
-    $$
-    r_{pb} = \frac{\bar{x}_1 - \bar{x}_0}{s} \sqrt{\frac{n_1 n_0}{n^2}}
-    $$
+    .. math::
 
-    where $\bar{x}_1$ and $\bar{x}_0$ are the means of the continuous variable for the
-    two groups defined by the binary variable, $s$ is the standard deviation of the
-    continuous variable, $n_1$ and $n_0$ are the number of observations in the two
-    groups, and $n$ is the total number of observations.
+        r_{pb} = \frac{\bar{x}_1 -\bar{x}_0}{s} \sqrt{\frac{n_1 n_0}{n^2}}
+
+
+    where :math:`\bar{x}_1` and :math:`\bar{x}_0` are the means of the continuous variable for the
+    two groups defined by the binary variable, :math:`s` is the standard deviation of the
+    continuous variable, :math:`n_1` and :math:`n_0` are the number of observations in the two
+    groups, and :math:`n = n_0 + n_1` is the total number of observations.
 
     References
     ----------
@@ -63,7 +65,7 @@ def calc_continuous_binary_corr(
 def calc_continuous_binary_corr_df(
     df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
 ) -> pd.DataFrame:
-    """
+    r"""
     Calculate the point-biserial correlation coefficient for continuous-binary variable pairs in a df.
 
     Parameters
@@ -84,14 +86,14 @@ def calc_continuous_binary_corr_df(
     coefficient between the continuous variable and a dummy variable representing the
     binary variable:
 
-    $$
-    r_{pb} = \frac{\bar{x}_1 - \bar{x}_0}{s} \sqrt{\frac{n_1 n_0}{n^2}}
-    $$
+    .. math::
 
-    where $\bar{x}_1$ and $\bar{x}_0$ are the means of the continuous variable for the
-    two groups defined by the binary variable, $s$ is the standard deviation of the
-    continuous variable, $n_1$ and $n_0$ are the number of observations in the two
-    groups, and $n$ is the total number of observations.
+        r_{pb} = \frac{\bar{x}_1 - \bar{x}_0}{s} \sqrt{\frac{n_1 n_0}{n^2}}
+
+    where :math:`\bar{x}_1` and :math:`\bar{x}_0` are the means of the continuous variable for the
+    two groups defined by the binary variable, :math:`s` is the standard deviation of the
+    continuous variable, :math:`n_1` and :math:`n_0` are the number of observations in the two
+    groups, and :math:`n` is the total number of observations.
 
     References
     ----------
@@ -140,7 +142,7 @@ def calc_continuous_binary_corr_df(
 def calc_continuous_binary_corr_series(
     s1: Union[pd.Series, pl.Series], s2: Union[pd.Series, pl.Series]
 ) -> float:
-    """
+    r"""
     Calculate the point-biserial correlation coefficient for a continuous-binary variable pair.
 
     Parameters
@@ -162,14 +164,14 @@ def calc_continuous_binary_corr_series(
     coefficient between the continuous variable and a dummy variable representing the
     binary variable:
 
-    $$
-    r_{pb} = \frac{\bar{x}_1 - \bar{x}_0}{s} \sqrt{\frac{n_1 n_0}{n^2}}
-    $$
+    .. math::
 
-    where $\bar{x}_1$ and $\bar{x}_0$ are the means of the continuous variable for the
-    two groups defined by the binary variable, $s$ is the standard deviation of the
-    continuous variable, $n_1$ and $n_0$ are the number of observations in the two
-    groups, and $n$ is the total number of observations.
+        r_{pb} = \frac{\bar{x}_1 - \bar{x}_0}{s} \sqrt{\frac{n_1 n_0}{n^2}}
+
+    where :math:`\bar{x}_1` and :math:`\bar{x}_0` are the means of the continuous variable for the
+    two groups defined by the binary variable, :math:`s` is the standard deviation of the
+    continuous variable, :math:`n_1` and :math:`n_0` are the number of observations in the two
+    groups, and :math:`n` is the total number of observations.
 
     References
     ----------
