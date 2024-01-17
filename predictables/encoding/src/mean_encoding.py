@@ -86,7 +86,7 @@ def mean_encoding_with_ratio_lazy(
     laplace_label = f"(laplace_alpha={laplace_alpha})" if laplace_alpha > 0 else ""
 
     # Add a row number column to the dataframe (so you can resort it later)
-    lazy_df = df.lazy().with_columns(pl.arange(0, pl.count()).alias("row_ord"))
+    lazy_df = df.lazy().with_columns(pl.arange(0, pl.len()).alias("row_ord"))
 
     lazy_df = (
         # Sort by the categorical column and the date column

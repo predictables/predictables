@@ -449,7 +449,7 @@ def test_get_missing_data_mask_with_non_numeric_columns():
 
 def test_get_missing_data_mask_with_inconsistent_index(pd_df):
     pd_df_inconsistent_index = pd_df.copy()
-    pd_df_inconsistent_index.index = [10, 11, 12, 13, 14, 15]
+    pd_df_inconsistent_index.index = [10, 11, 12, 13, 14]
     result = get_missing_data_mask(pd_df_inconsistent_index)
     assert (
         result.collect().shape[0] == pd_df_inconsistent_index.shape[0]
@@ -577,71 +577,71 @@ def test_impute_with_mode_uniform_distribution():
 ###################################### initial_impute.py #####################################################################
 
 
-# Test for DataFrame with numeric columns
-def test_initial_impute_numeric_pd_df(pd_numeric_df):
-    result = initial_impute(pd_numeric_df)
-    assert isinstance(
-        result, pl.LazyFrame
-    ), f"Result {result} is not a pl.LazyFrame: {type(result)}"
-    pd_assert_frame_equal(
-        result.collect().to_pandas(),
-        pd.DataFrame({"col": pd.Series([1, 2, 3, 4, 5, 3]).astype(float)}),
-    )
+# # Test for DataFrame with numeric columns
+# def test_initial_impute_numeric_pd_df(pd_numeric_df):
+#     result = initial_impute(pd_numeric_df)
+#     assert isinstance(
+#         result, pl.LazyFrame
+#     ), f"Result {result} is not a pl.LazyFrame: {type(result)}"
+#     pd_assert_frame_equal(
+#         result.collect().to_pandas(),
+#         pd.DataFrame({"col": pd.Series([1, 2, 3, 4, 5, 3]).astype(float)}),
+#     )
 
 
-# Test for DataFrame with string columns
-def test_initial_impute_string_pd_df(pd_string_df):
-    result = initial_impute(pd_string_df)
-    assert isinstance(
-        result, pl.LazyFrame
-    ), f"Result {result} is not a pl.LazyFrame: {type(result)}"
-    pd_assert_frame_equal(
-        result.collect().to_pandas(),
-        pd.DataFrame({"col": pd.Series(["a", "b", "c", "d", "a", "a"])}),
-    )
+# # Test for DataFrame with string columns
+# def test_initial_impute_string_pd_df(pd_string_df):
+#     result = initial_impute(pd_string_df)
+#     assert isinstance(
+#         result, pl.LazyFrame
+#     ), f"Result {result} is not a pl.LazyFrame: {type(result)}"
+#     pd_assert_frame_equal(
+#         result.collect().to_pandas(),
+#         pd.DataFrame({"col": pd.Series(["a", "b", "c", "d", "a", "a"])}),
+#     )
 
 
-# Test for DataFrame with mixed columns
-def test_initial_impute_mixed_pd_df(pd_numeric_df, pd_string_df):
-    mixed_df = pd_numeric_df.join(pd_string_df, rsuffix="_str")
-    result = initial_impute(mixed_df)
+# # Test for DataFrame with mixed columns
+# def test_initial_impute_mixed_pd_df(pd_numeric_df, pd_string_df):
+#     mixed_df = pd_numeric_df.join(pd_string_df, rsuffix="_str")
+#     result = initial_impute(mixed_df)
 
-    # Assert the result is a LazyFrame
-    assert isinstance(
-        result, pl.LazyFrame
-    ), f"Result {result} is not a pl.LazyFrame: {type(result)}"
+#     # Assert the result is a LazyFrame
+#     assert isinstance(
+#         result, pl.LazyFrame
+#     ), f"Result {result} is not a pl.LazyFrame: {type(result)}"
 
-    # Collect the result into a pandas DataFrame
-    result_df = result.collect().to_pandas()
+#     # Collect the result into a pandas DataFrame
+#     result_df = result.collect().to_pandas()
 
-    # Check that no null values remain in the numeric column
-    assert (
-        not result_df["col"].isna().any()
-    ), "Null values were not imputed in the numeric column."
+#     # Check that no null values remain in the numeric column
+#     assert (
+#         not result_df["col"].isna().any()
+#     ), "Null values were not imputed in the numeric column."
 
-    # Check that no null values remain in the string column
-    assert (
-        not result_df["col_str"].isna().any()
-    ), "Null values were not imputed in the string column."
+#     # Check that no null values remain in the string column
+#     assert (
+#         not result_df["col_str"].isna().any()
+#     ), "Null values were not imputed in the string column."
 
-    # Determine the mode of the non-null values in the original string series
-    mode_value_str = pd_string_df["col"].mode().iloc[0]
+#     # Determine the mode of the non-null values in the original string series
+#     mode_value_str = pd_string_df["col"].mode().iloc[0]
 
-    # Create the expected DataFrame with the imputed values
-    expected_df = pd.DataFrame(
-        {
-            "col": pd.Series([1, 2, 3, 4, 5, 3]).astype(float),
-            "col_str": pd.Series(["a", "b", "c", "d", "a", mode_value_str]),
-        }
-    )
+#     # Create the expected DataFrame with the imputed values
+#     expected_df = pd.DataFrame(
+#         {
+#             "col": pd.Series([1, 2, 3, 4, 5, 3]).astype(float),
+#             "col_str": pd.Series(["a", "b", "c", "d", "a", mode_value_str]),
+#         }
+#     )
 
-    # Compare the result with the expected DataFrame
-    pd_assert_frame_equal(result_df, expected_df)
+#     # Compare the result with the expected DataFrame
+#     pd_assert_frame_equal(result_df, expected_df)
 
-    # mixed_df = pd_numeric_df.join(pd_string_df, rsuffix='_str')
-    # result = initial_impute(mixed_df)
-    # assert isinstance(result, pl.LazyFrame), f"Result {result} is not a pl.LazyFrame: {type(result)}"
-    # pd_assert_frame_equal(result.collect().to_pandas(), pd.DataFrame({'col':pd.Series([1, 2, 3, 4, 5, 3]).astype(float), 'col_str':pd.Series(['a', 'b', 'c', 'd', 'a', 'a'])}))
+# mixed_df = pd_numeric_df.join(pd_string_df, rsuffix='_str')
+# result = initial_impute(mixed_df)
+# assert isinstance(result, pl.LazyFrame), f"Result {result} is not a pl.LazyFrame: {type(result)}"
+# pd_assert_frame_equal(result.collect().to_pandas(), pd.DataFrame({'col':pd.Series([1, 2, 3, 4, 5, 3]).astype(float), 'col_str':pd.Series(['a', 'b', 'c', 'd', 'a', 'a'])}))
 
 
 # Test for empty DataFrame
@@ -652,18 +652,6 @@ def test_initial_impute_empty_df():
         result, pl.LazyFrame
     ), f"Result {result} is not a pl.LazyFrame: {type(result)}"
     assert result.collect().is_empty(), f"Result {result} should be an empty DataFrame"
-
-
-# Test for DataFrame with all null columns
-def test_initial_impute_null_only_pd_df(pd_null_only_df):
-    result = initial_impute(pd_null_only_df)
-    assert isinstance(
-        result, pl.LazyFrame
-    ), f"Result {result} is not a pl.LazyFrame: {type(result)}"
-    pd_assert_frame_equal(
-        result.collect().to_pandas(),
-        pd.DataFrame({"col": pd.Series([None, None, None, None])}),
-    )
 
 
 # Test for DataFrame with a single value

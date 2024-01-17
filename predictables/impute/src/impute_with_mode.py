@@ -131,7 +131,7 @@ def _impute_col_with_mode(df: pl.DataFrame, col: str) -> pl.DataFrame:
     if _check_if_categorical(df, col):
         mode = (
             df.group_by(col)
-            .agg(pl.count().alias("count"))
+            .agg(pl.len().alias("count"))
             .sort("count")
             .reverse()[col]
             .head(1)[0]

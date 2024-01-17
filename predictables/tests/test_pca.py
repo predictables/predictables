@@ -29,6 +29,11 @@ def pca(df):
     return PCA(df=df)
 
 
+@pytest.fixture
+def empty_pca():
+    return PCA(n_components=2)
+
+
 def test_pca_initialization(pca):
     """Test that PCA object is initialized correctly"""
     assert pca is not None, f"PCA object: {pca} is None"
@@ -64,7 +69,9 @@ def test_pca_preprocess_data_attr(pca):
     assert (
         pca.preprocess_data is not None
     ), f"PCA object: {pca} has no preprocess_data attribute: {pca.preprocess_data}"
-    assert pca.preprocess_data, f"PCA object: {pca} should default to having preprocess_data == True, not {pca.preprocess_data}"
+    assert (
+        pca.preprocess_data
+    ), f"PCA object: {pca} should default to having preprocess_data == True, not {pca.preprocess_data}"
 
 
 def test_pca_plotting_backend_attr(pca):
@@ -77,11 +84,16 @@ def test_pca_plotting_backend_attr(pca):
     ), f"PCA object: {pca} should default to having plotting_backend == 'matplotlib', not {pca.plotting_backend}"
 
 
-def test_pca_random_seed_attr(pca):
-    """Test that PCA object has random_seed attribute as expected"""
+def test_pca_random_state_attr(pca):
+    """Test that PCA object has random_state attribute as expected"""
     assert (
-        pca.random_seed is not None
-    ), f"PCA object: {pca} has no random_seed attribute: {pca.random_seed}"
+        pca.random_state is not None
+    ), f"PCA object: {pca} has no random_state attribute: {pca.random_state}"
     assert (
-        pca.random_seed == 42
-    ), f"PCA object: {pca} should default to having random_seed == 42, not {pca.random_seed}"
+        pca.random_state == 42
+    ), f"PCA object: {pca} should default to having random_state == 42, not {pca.random_state}"
+
+
+def test_pca_pca_attr(pca, skpca):
+    """Test that PCA object has pca attribute as expected"""
+    assert pca.pca is not None, f"PCA object: {pca} has no pca attribute: {pca.pca}"

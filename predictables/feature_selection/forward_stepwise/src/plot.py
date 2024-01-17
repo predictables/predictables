@@ -53,7 +53,7 @@ def plot(
     )
 
     coefficients = {feature: [] for feature, _ in model_history}
-    for feature, mdl in model_history:
+    for _, mdl in model_history:
         for f in coefficients:
             coefficients[f].append(mdl.params.get(f, 0))
 
