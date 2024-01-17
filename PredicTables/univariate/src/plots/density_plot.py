@@ -380,7 +380,6 @@ def _plot_single_density_pm_standard_deviation(
     ax.fill_between(df.x, df.lower, df.upper, alpha=fill_alpha, label=label, **kwargs)
 
 
-
 def _annotate_mean_median(
     ax: plt.Axes, feature: pd.Series, target: pd.Series
 ) -> plt.Axes:
@@ -456,77 +455,77 @@ def _annotate_mean_median(
     return ax
 
 
-def plot_density_pm_standard_deviation(
-    x: pd.Series,
-    x_min: Union[float, None] = None,
-    x_max: Union[float, None] = None,
-    by: Union[pd.Series, None] = None,
-    cv_fold: Union[pd.Series, None] = None,
-    grid_bins: int = 200,
-    ax: Union[Axes, None] = None,
-    use_labels: bool = True,
-    line_width: float = 0.5,
-    alpha: float = 0.5,
-):
-    """
-    Plot a shaded region around the density of x by the levels of by, using
-    matplotlib, all on the same axes. The shaded region is the standard
-    deviation of the density, which is calculated using the cross-validation
-    folds.
-    """
-    std_dev = calculate_density_sd(x, by=by, cv_fold=None, grid_bins=grid_bins)
+# def plot_density_pm_standard_deviation(
+#     x: pd.Series,
+#     x_min: Union[float, None] = None,
+#     x_max: Union[float, None] = None,
+#     by: Union[pd.Series, None] = None,
+#     cv_fold: Union[pd.Series, None] = None,
+#     grid_bins: int = 200,
+#     ax: Union[Axes, None] = None,
+#     use_labels: bool = True,
+#     line_width: float = 0.5,
+#     alpha: float = 0.5,
+# ):
+#     """
+#     Plot a shaded region around the density of x by the levels of by, using
+#     matplotlib, all on the same axes. The shaded region is the standard
+#     deviation of the density, which is calculated using the cross-validation
+#     folds.
+#     """
+#     std_dev = calculate_density_sd(x, by=by, cv_fold=None, grid_bins=grid_bins)
 
-def _annotate_ttest_means(
-    ax: plt.Axes, feature: pd.Series, target: pd.Series
-) -> plt.Axes:
-    """
-    Annotates the t-test results comparing the means of the feature
-    variable for each target class.
+# def _annotate_ttest_means(
+#     ax: plt.Axes, feature: pd.Series, target: pd.Series
+# ) -> plt.Axes:
+#     """
+#     Annotates the t-test results comparing the means of the feature
+#     variable for each target class.
 
-    Parameters:
-    -----------
-    ax (matplotlib.axes.Axes): The axis to add the annotations to.
-    feature (pandas.Series): The feature variable data.
-    target (pandas.Series): The target variable data.
+#     Parameters:
+#     -----------
+#     ax (matplotlib.axes.Axes): The axis to add the annotations to.
+#     feature (pandas.Series): The feature variable data.
+#     target (pandas.Series): The target variable data.
 
-    Returns:
-    --------
-    ax (matplotlib.axes.Axes): The axis with the annotations added.
-    """
+#     Returns:
+#     --------
+#     ax (matplotlib.axes.Axes): The axis with the annotations added.
+#     """
 
-    # Conduct the t-test
-    t_stat, p_val = ttest_ind(
-        feature[target == 0], feature[target == 1], equal_var=False
-    )
+#     # Conduct the t-test
+#     t_stat, p_val = ttest_ind(
+#         feature[target == 0], feature[target == 1], equal_var=False
+#     )
 
-    # Prepare the text for the annotation
-    ttest_text = f"Results of a t-test:\n============\nt-statistic: {t_stat:.3f}\n\
-p-value: {p_val:.3f}"
+#     # Prepare the text for the annotation
+#     ttest_text = f"Results of a t-test:\n============\nt-statistic: {t_stat:.3f}\n\
+# p-value: {p_val:.3f}"
 
-    # Interpret the p-value
-    if p_val < 0.01:
-        p_interpret = "Extremely likely to be from\ndifferent distributions"
-    elif p_val < 0.05:
-        p_interpret = "Likely to be from\ndifferent distributions"
-    else:
-        p_interpret = "Unlikely to be from\ndifferent distributions"
+#     # Interpret the p-value
+#     if p_val < 0.01:
+#         p_interpret = "Extremely likely to be from\ndifferent distributions"
+#     elif p_val < 0.05:
+#         p_interpret = "Likely to be from\ndifferent distributions"
+#     else:
+#         p_interpret = "Unlikely to be from\ndifferent distributions"
 
-    # Update the text for the annotation
-    ttest_text += f"\n\n{p_interpret}"
+#     # Update the text for the annotation
+#     ttest_text += f"\n\n{p_interpret}"
 
-    # Add the annotation box
-    ax.annotate(
-        ttest_text,
-        xy=(0.15, 0.8),
-        xycoords="axes fraction",
-        xytext=(20, 20),
-        textcoords="offset points",
-        ha="center",
-        va="center",
-        fontsize=16,
-        bbox=dict(
-            boxstyle="round,pad=0.3", edgecolor="black", facecolor="white", alpha=0.5
-        ),
-    )
+#     # Add the annotation box
+#     ax.annotate(
+#         ttest_text,
+#         xy=(0.15, 0.8),
+#         xycoords="axes fraction",
+#         xytext=(20, 20),
+#         textcoords="offset points",
+#         ha="center",
+#         va="center",
+#         fontsize=16,
+#         bbox=dict(
+#             boxstyle="round,pad=0.3", edgecolor="black", facecolor="white", alpha=0.5
+#         ),
+#     )
 
-    return ax
+#     return ax
