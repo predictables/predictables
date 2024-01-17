@@ -9,5 +9,5 @@
 # BEGIN: Submodule 2
 [submodule "predictables-plot"]
   path = predictables-plot
-  url = https://github.com/aaweaver-actuary/predictables.git
+  url = https://github.com/aaweaver-actuary/predictables-plot.git
 # END: Submodule 2
