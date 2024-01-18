@@ -18,5 +18,11 @@ def harmonic_mean(*args: float) -> float:
     # if all arguments are zero, return zero
     if all(arg == 0 for arg in args):
         return 0
+
+    denom = sum((1 / np.float64(arg)) for arg in args if arg != 0)
+
     # Return the harmonic mean
-    return len(args) / sum((1 / np.float64(arg)) for arg in args if arg != 0)
+    if denom != 0:
+        return len(args) / denom
+    else:
+        return 0

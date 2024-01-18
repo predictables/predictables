@@ -1,15 +1,46 @@
-from typing import Union, Dict, List
-from sklearn.model_selection import cross_val_score
-from sklearn.metrics import make_scorer
+from typing import Callable, Dict, List, Union
+
 import numpy as np
+import pandas as pd
 from sklearn.base import BaseEstimator
+from sklearn.metrics import make_scorer
+from sklearn.model_selection import cross_val_score
+
 from PredicTables.util import harmonic_mean
+
+
+def standardize_scores(scores: List[float]) -> List[float]:
+    """
+    Standardize a list of scores.
+
+    Parameters
+    ----------
+    scores : List[float]
+        List of scores to be standardized.
+
+    Returns
+    -------
+    List[float]
+        List of standardized scores.
+    """
+    mean = np.mean(scores)
+    std = np.std(scores)
+    out = []
+    for s in scores:
+        if std != 0:
+            out.append((s - mean) / std)
+        else:
+            out.append(0)
+    return out
 
 
 def objective_function(
     params: Dict[str, Union[int, float]],
-    model_class,
-    evaluation_metric: Union[str, List[str]],
+    model_class: BaseEstimator,
+    evaluation_metric: Union[Callable, str, List[Callable], List[str]],
+    X: pd.DataFrame,
+    y: pd.Series,
+    cv_folds: int = 5,
 ) -> float:
     """
     Fits a generic model (implementing the sklearn API) with the given parameters,
@@ -17,41 +48,41 @@ def objective_function(
 
     Parameters
     ----------
-    params : dict
-        Parameters to be passed to the model. In the form of a dictionary with
-        keys as the parameter names and values as the parameter values.
-    model_class : inherited from BaseEstimator
-        A class implementing the sklearn API. Must implement the fit and predict
-        methods for the cross-validation to work.
-    evaluation_metric : str or list of str
-        The evaluation metric to be used. Must be a valid sklearn metric.
-
-        - A good default for regression problems is "neg_mean_squared_error".
-        - A good default for classification problems is "accuracy".
-
-        If a list of strings representing valid sklearn metrics is passed, the
-        harmonic mean of the scores will be returned.
+    params : Dict[str, Union[int, float]]
+        Parameters to be passed to the model.
+    model_class : BaseEstimator
+        A class implementing the sklearn API.
+    evaluation_metric : Union[Callable, str, List[Callable], List[str]]
+        The evaluation metric to be used.
+    X : pd.DataFrame
+        The feature matrix.
+    y : pd.Series
+        The target vector.
+    cv_folds : int
+        The number of cross-validation folds.
 
     Returns
     -------
     float
-        The evaluation metric score.
+        The harmonic mean of the standardized evaluation metric scores.
     """
-    # Create a model instance
+
     model = model_class(**params)
 
-    # Create a scorer instance for the evaluation metric if it is a string,
-    # and for each individual metric if it is a list of strings
-    if isinstance(evaluation_metric, str):
-        scorer = make_scorer(evaluation_metric)
-    else:
-        scorers = [make_scorer(metric) for metric in evaluation_metric]
-        scorer = make_scorer(hmean, scorers=scorers)
+    if not isinstance(evaluation_metric, list):
+        evaluation_metric = [evaluation_metric]
 
-    # Evaluate the model using cross-validation
-    scores = cross_val_score(
-        model, X_train, y_train, cv=5, scoring="neg_mean_squared_error"
-    )
+    scores = []
+    for metric in evaluation_metric:
+        if callable(metric):
+            scorer = make_scorer(metric, greater_is_better=False)
+        else:
+            scorer = metric
 
-    # Return the negative mean of the scores (since we want to minimize the metric)
-    return -scores.mean()
+        score = cross_val_score(
+            model, X, y, cv=cv_folds, scoring=scorer, n_jobs=-1, error_score="raise"
+        )
+        scores.append(score.mean())
+
+    standardized_scores = standardize_scores(scores)
+    return harmonic_mean(*standardized_scores)
