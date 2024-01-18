@@ -10,3 +10,4 @@ from .to_pd import to_pd_df, to_pd_s
 from .to_pl import to_pl_df, to_pl_lf, to_pl_s
 from .get_column_dtype import get_column_dtype
 from .select_cols_by_dtype import select_cols_by_dtype
+from .harmonic_mean import harmonic_mean

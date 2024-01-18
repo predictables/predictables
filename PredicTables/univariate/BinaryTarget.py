@@ -5,20 +5,19 @@ from typing import Callable, Optional, Union
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import polars as pl
 import plotly.graph_objects as go
+import polars as pl
+import seaborn as sns
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
 from matplotlib import rcParams
-from matplotlib.lines import Line2D
-from matplotlib.patches import Patch
 from scipy.interpolate import interp1d
 from scipy.spatial.distance import jensenshannon as js
-from scipy.stats import chi2_contingency, entropy, mannwhitneyu, norm, ttest_ind
-from sklearn.linear_model import LogisticRegressionCV, ElasticNetCV
+from scipy.stats import chi2_contingency, entropy, ttest_ind
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.linear_model import ElasticNetCV, LogisticRegressionCV
+from sklearn.metrics import accuracy_score as acc
 from sklearn.metrics import (
-    RocCurveDisplay,
     balanced_accuracy_score,
     f1_score,
     hinge_loss,
@@ -30,29 +29,17 @@ from sklearn.metrics import (
     roc_auc_score,
     roc_curve,
 )
-from sklearn.metrics import (
-    accuracy_score as acc,
-)
-from sklearn.model_selection import KFold, train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from tqdm import tqdm
 
 from PredicTables.univariate import reconcile_train_test_val_sizes
-
-from PredicTables.univariate.plots import (
-    _plot_lift_chart,
-    _quintile_lift_plot,
-    set_rc_params,
-)
-from PredicTables.univariate.plots import (
-    _rotate_x_labels_if_overlap as rotate_x_lab,
-)
-from PredicTables.univariate.plots import (
-    plot_violin_with_outliers as _plot_violin,
-)
+from PredicTables.univariate.plots import _quintile_lift_plot
+from PredicTables.univariate.plots import _rotate_x_labels_if_overlap as rotate_x_lab
+from PredicTables.univariate.plots import set_rc_params
+from PredicTables.util import get_column_dtype
 from PredicTables.util.stats import gini_coefficient, informedness, kl_divergence
-from PredicTables.util import get_column_dtype, to_pl_lf
 
 warnings.filterwarnings("ignore")
 
@@ -197,7 +184,6 @@ class Univariate:
             self.n_unique = self.df.select(
                 [pl.col(self.feature).n_unique().alias(self.feature)]
             )
-        else
 
         # Get the type of the target
         self.target_type = get_column_dtype(
@@ -329,17 +315,23 @@ class Univariate:
 
         # Make sure there are no client_id's in both train and test sets by
         # taking the intersection of the two sets and making sure the length is 0
-        assert len(set(self.train_id).intersection(set(self.test_id))) == 0, f"There are client_id's in both train and test: \
+        assert (
+            len(set(self.train_id).intersection(set(self.test_id))) == 0
+        ), f"There are client_id's in both train and test: \
                 \n  {set(self.train_id).intersection(set(self.test_id))}"
 
         # Make sure there are no client_id's in both train and val sets by
         # taking the intersection of the two sets and making sure the length is 0
-        assert len(set(self.train_id).intersection(set(self.val_id))) == 0, f"There are client_id's in both train and val: \
+        assert (
+            len(set(self.train_id).intersection(set(self.val_id))) == 0
+        ), f"There are client_id's in both train and val: \
                 \n  {set(self.train_id).intersection(set(self.val_id))}"
 
         # Make sure there are no client_id's in both val and test sets by
         # taking the intersection of the two sets and making sure the length is 0
-        assert len(set(self.val_id).intersection(set(self.test_id))) == 0, f"There are client_id's in both val and test: \
+        assert (
+            len(set(self.val_id).intersection(set(self.test_id))) == 0
+        ), f"There are client_id's in both val and test: \
                 \n  {set(self.val_id).intersection(set(self.test_id))}"
 
     def set_up_cross_validation(self):
@@ -837,12 +829,6 @@ class Univariate:
         )
         self.fitted["eval"]["coef"].append(coef)
 
-    
-
-    
-
-    
-
     def plot_chi_sqselfred_test(self, ax=None):
         if ax is None:
             _, ax = plt.subplots(figsize=self.figsize)
@@ -1191,129 +1177,129 @@ of\n[{self._plot_label(self.target)}] / [{self._plot_label(self.denom)}]"
 
         return ax
 
-    def plot_density_plot(self, significance_level=0.05, ax=None, opacity=0.5):
-        df = self.train[[self.feature, self.target]]
+    #     def plot_density_plot(self, significance_level=0.05, ax=None, opacity=0.5):
+    #         df = self.train[[self.feature, self.target]]
 
-        if ax is None:
-            _, ax = plt.subplots(figsize=self.figsize)
+    #         if ax is None:
+    #             _, ax = plt.subplots(figsize=self.figsize)
 
-        unique_targets = df[self.target].unique()
+    #         unique_targets = df[self.target].unique()
 
-        data_by_target = {}
-        for target_val in unique_targets:
-            sns.kdeplot(
-                df[df[self.target] == target_val][self.feature],
-                ax=ax,
-                label=f"{self._plot_label(self.target)} = {target_val}",
-                alpha=opacity,
-                fill=True,
-            )
-            data_by_target[target_val] = df[df[self.target] == target_val][self.feature]
+    #         data_by_target = {}
+    #         for target_val in unique_targets:
+    #             sns.kdeplot(
+    #                 df[df[self.target] == target_val][self.feature],
+    #                 ax=ax,
+    #                 label=f"{self._plot_label(self.target)} = {target_val}",
+    #                 alpha=opacity,
+    #                 fill=True,
+    #             )
+    #             data_by_target[target_val] = df[df[self.target] == target_val][self.feature]
 
-        # Mann-Whitney U Test
-        u_stat, p_value = mannwhitneyu(
-            data_by_target[unique_targets[0]], data_by_target[unique_targets[1]]
-        )
+    #         # Mann-Whitney U Test
+    #         u_stat, p_value = mannwhitneyu(
+    #             data_by_target[unique_targets[0]], data_by_target[unique_targets[1]]
+    #         )
 
-        # Print the results of the Mann-Whitney U Test
-        subtitle_message = (
-            f"\nDistributions are the same at the {significance_level:.0%} level"
-            if p_value > significance_level
-            else f"\nDistributions are different at the {significance_level:.0%} level"
-        )
+    #         # Print the results of the Mann-Whitney U Test
+    #         subtitle_message = (
+    #             f"\nDistributions are the same at the {significance_level:.0%} level"
+    #             if p_value > significance_level
+    #             else f"\nDistributions are different at the {significance_level:.0%} level"
+    #         )
 
-        ax.set_title(
-            f"Density Plot of [{self._plot_label(self.feature)}] by \
-[{self._plot_label(self.target)}]{subtitle_message}"
-        )
+    #         ax.set_title(
+    #             f"Density Plot of [{self._plot_label(self.feature)}] by \
+    # [{self._plot_label(self.target)}]{subtitle_message}"
+    #         )
 
-        annotation_text = f"Mann-Whitney\nU-Test Statistic:\n{u_stat:.1f}\n\np-value:\n\
-{p_value:.2f}"
-        ax.annotate(
-            annotation_text,
-            xy=(0.7375, 0.625),
-            xycoords="axes fraction",
-            fontsize=16,
-            bbox=dict(
-                boxstyle="round,pad=0.3",
-                edgecolor="black",
-                facecolor="aliceblue",
-                alpha=0.5,
-            ),
-        )
+    #         annotation_text = f"Mann-Whitney\nU-Test Statistic:\n{u_stat:.1f}\n\np-value:\n\
+    # {p_value:.2f}"
+    #         ax.annotate(
+    #             annotation_text,
+    #             xy=(0.7375, 0.625),
+    #             xycoords="axes fraction",
+    #             fontsize=16,
+    #             bbox=dict(
+    #                 boxstyle="round,pad=0.3",
+    #                 edgecolor="black",
+    #                 facecolor="aliceblue",
+    #                 alpha=0.5,
+    #             ),
+    #         )
 
-        ax.set_xlabel(self._plot_label(self.feature))
-        ax.set_ylabel("Density")
-        ax.legend(loc="upper right", fontsize=16)
+    #         ax.set_xlabel(self._plot_label(self.feature))
+    #         ax.set_ylabel("Density")
+    #         ax.legend(loc="upper right", fontsize=16)
 
-        ax = rotate_x_lab(ax)
-        ax.figure.tight_layout()
-        return ax
+    #         ax = rotate_x_lab(ax)
+    #         ax.figure.tight_layout()
+    #         return ax
 
-    def plotly_density_plot(self, significance_level=0.05, opacity=0.5):
-        df = self.train[[self.feature, self.target]]
-        unique_targets = df[self.target].unique()
+    #     def plotly_density_plot(self, significance_level=0.05, opacity=0.5):
+    #         df = self.train[[self.feature, self.target]]
+    #         unique_targets = df[self.target].unique()
 
-        fig = go.Figure()
+    #         fig = go.Figure()
 
-        data_by_target = {}
-        for target_val in unique_targets:
-            # Filter the data for the current target value
-            filtered_data = df[df[self.target] == target_val][self.feature]
-            data_by_target[target_val] = filtered_data
+    #         data_by_target = {}
+    #         for target_val in unique_targets:
+    #             # Filter the data for the current target value
+    #             filtered_data = df[df[self.target] == target_val][self.feature]
+    #             data_by_target[target_val] = filtered_data
 
-            # Add a KDE trace for the current target value
-            fig.add_trace(
-                go.Histogram(
-                    x=filtered_data,
-                    histnorm="probability density",
-                    opacity=opacity,
-                    name=f"{self._plot_label(self.target)} = {target_val}",
-                )
-            )
+    #             # Add a KDE trace for the current target value
+    #             fig.add_trace(
+    #                 go.Histogram(
+    #                     x=filtered_data,
+    #                     histnorm="probability density",
+    #                     opacity=opacity,
+    #                     name=f"{self._plot_label(self.target)} = {target_val}",
+    #                 )
+    #             )
 
-        # Perform Mann-Whitney U Test between the two groups
-        u_stat, p_value = mannwhitneyu(
-            data_by_target[unique_targets[0]], data_by_target[unique_targets[1]]
-        )
+    #         # Perform Mann-Whitney U Test between the two groups
+    #         u_stat, p_value = mannwhitneyu(
+    #             data_by_target[unique_targets[0]], data_by_target[unique_targets[1]]
+    #         )
 
-        # Determine the subtitle message based on p_value
-        subtitle_message = (
-            f"Distributions are the same at the {significance_level:.0%} significance level"
-            if p_value > significance_level
-            else f"Distributions are different at the {significance_level:.0%} significance level"
-        )
+    #         # Determine the subtitle message based on p_value
+    #         subtitle_message = (
+    #             f"Distributions are the same at the {significance_level:.0%} significance level"
+    #             if p_value > significance_level
+    #             else f"Distributions are different at the {significance_level:.0%} significance level"
+    #         )
 
-        # Add annotations with the Mann-Whitney U Test results
-        fig.add_annotation(
-            xref="paper",
-            yref="paper",
-            x=0.95,
-            y=0.95,
-            text=f"Mann-Whitney U-Test Statistic: {u_stat:.1f}<br>p-value: {p_value:.2f}",
-            showarrow=False,
-            font=dict(size=16),
-            align="right",
-            bgcolor="aliceblue",
-            opacity=0.8,
-            bordercolor="black",
-            borderwidth=1,
-            borderpad=4,
-        )
+    #         # Add annotations with the Mann-Whitney U Test results
+    #         fig.add_annotation(
+    #             xref="paper",
+    #             yref="paper",
+    #             x=0.95,
+    #             y=0.95,
+    #             text=f"Mann-Whitney U-Test Statistic: {u_stat:.1f}<br>p-value: {p_value:.2f}",
+    #             showarrow=False,
+    #             font=dict(size=16),
+    #             align="right",
+    #             bgcolor="aliceblue",
+    #             opacity=0.8,
+    #             bordercolor="black",
+    #             borderwidth=1,
+    #             borderpad=4,
+    #         )
 
-        # Update the layout of the figure
-        fig.update_layout(
-            title=f"Density Plot of {self._plot_label(self.feature)} by {self._plot_label(self.target)}<br><sup>{subtitle_message}</sup>",
-            xaxis_title=self._plot_label(self.feature),
-            yaxis_title="Density",
-            barmode="overlay",  # Overlay the KDE plots
-            legend_title_text="Legend",
-            legend=dict(
-                orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1
-            ),
-        )
+    #         # Update the layout of the figure
+    #         fig.update_layout(
+    #             title=f"Density Plot of {self._plot_label(self.feature)} by {self._plot_label(self.target)}<br><sup>{subtitle_message}</sup>",
+    #             xaxis_title=self._plot_label(self.feature),
+    #             yaxis_title="Density",
+    #             barmode="overlay",  # Overlay the KDE plots
+    #             legend_title_text="Legend",
+    #             legend=dict(
+    #                 orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1
+    #             ),
+    #         )
 
-        return fig
+    #         return fig
 
     def _calculate_empirical_cdf(self, fold_idx=None):
         # Extract train data for this fold
@@ -1566,414 +1552,6 @@ of\n[{self._plot_label(self.target)}] / [{self._plot_label(self.denom)}]"
 
         return fig
 
-    def plotly_cv_roc_auc(self, significance_level=0.05, width=800, height=800):
-        mean_fpr = np.linspace(0, 1, 100)
-        tprs = []
-
-        # Loop through each fold
-        for i in range(self.n_bins):
-            y_true = self.fitted[i]["val"][self.target]
-            y_pred = self.fitted[i]["val"]["prob"]
-
-            fpr, tpr, _ = roc_curve(y_true, y_pred)
-            tprs.append(np.interp(mean_fpr, fpr, tpr))
-
-        # Create empty figure
-        fig = go.Figure()
-
-        mean_tpr = np.mean(tprs, axis=0)
-        mean_auc = np.trapz(mean_tpr, mean_fpr)
-
-        std_tpr = np.std(tprs, axis=0)
-        tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
-        tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
-
-        # Add the shaded region
-        fig.add_trace(
-            go.Scatter(
-                x=np.concatenate((mean_fpr, mean_fpr[::-1])),
-                y=np.concatenate((tprs_upper, tprs_lower[::-1])),
-                fill="toself",
-                fillcolor="rgba(0,100,80,0.2)",
-                line=dict(color="rgba(255,255,255,0)"),
-                name="Mean ROC Curve +/- 1 SD",
-            )
-        )
-
-        # Loop through each fold
-        for i in range(self.n_bins):
-            y_true = self.fitted[i]["val"][self.target]
-            y_pred = self.fitted[i]["val"]["prob"]
-
-            fpr, tpr, _ = roc_curve(y_true, y_pred)
-            tprs.append(np.interp(mean_fpr, fpr, tpr))
-
-            # Add individselfl ROC lines with hover info, no legend
-            fig.add_trace(
-                go.Scatter(
-                    x=fpr,
-                    y=tpr,
-                    mode="lines",
-                    hovertemplate=f"Fold {i+1}"
-                    + "<br>FPR: %{x:.3f}\
-<br>TPR: %{y:.3f}<extra></extra>",
-                    legendgroup="Folds",
-                    opacity=0.5,
-                    line=dict(dash="dot"),
-                    showlegend=False,
-                )
-            )
-
-        # Add mean ROC line
-        fig.add_trace(
-            go.Scatter(
-                x=mean_fpr,
-                y=mean_tpr,
-                mode="lines+markers",
-                name=f"Mean ROC (AUC = {mean_auc:.2f})",
-                hovertemplate="Mean FPR: %{x:.3f}<br>Mean TPR: %{y:.3f}\
-<extra></extra>",
-                line=dict(color="royalblue", width=1),
-                marker=dict(color="royalblue", size=5, symbol="circle-open"),
-            )
-        )
-
-        # Add random guess line
-        fig.add_trace(
-            go.Scatter(
-                x=[0, 1],
-                y=[0, 1],
-                mode="lines",
-                name="Random Guess",
-                hovertext="Random Guess",
-                line=dict(color="black", dash="dash"),
-            )
-        )
-
-        # Add titles and labels
-        fig.update_layout(
-            title=f"ROC Curve (AUC = {mean_auc:.2f})",
-            xaxis_title="False Positive Rate (FPR) \
-(= 1 - Specificity = FP / (FP + TN))",
-            yaxis_title="True Positive Rate (TPR) (= Sensitivity = TP / (TP + FN))",
-            width=width,
-            height=height,
-            legend=dict(
-                x=0.65,
-                y=0.9,
-                # fontsize=16,
-                bordercolor="Black",
-                borderwidth=1,
-            ),
-        )
-
-        # Add coefficient estimate and significance statement
-        coef, std_err, pvalue = self.fit.params[1], self.fit.se[1], self.fit.pvalues[1]
-        significance_statement = self._get_significance_band(pvalue, "coefficient")
-
-        # 95% confidence interval assuming normal distribution
-        ci_lower = coef - 1.96 * std_err
-        ci_upper = coef + 1.96 * std_err
-
-        # Add annotation inside a box
-        fig.add_annotation(
-            x=0.75,
-            y=0.25,
-            text=f"Estimated Coefficient: {coef:.2f}<br>\
-95% Confidence Interval: [{ci_lower:.2f}, {ci_upper:.2f}]<br>\
-p-value: {pvalue:.2f}<br>\
-{significance_statement}",
-            showarrow=False,
-            font=dict(size=14),
-            bgcolor="white",
-            bordercolor="black",
-            borderwidth=1,
-            borderpad=2,
-        )
-
-        fig.show()
-
-    def _compute_auc_variance(self):
-        """
-        Compute the variance of the AUC estimator. This is used in the
-        computation of the DeLong test, and is based on the following paper:
-        
-        @article{delong1988comparing,
-        title={Comparing the areas under two or more correlated receiver operating \
-            characteristic curves: a nonparametric approach},
-        author={DeLong, Elizabeth R and DeLong, David M and Clarke-Pearson, Daniel L},
-        journal={Biometrics},
-        pages={837--845},
-        year={1988},
-        publisher={JSTOR}
-        }
-
-        Var(AUC) = (V1 + V2 + V3) / (n1 * n0)
-
-        where
-        - V1 = AUC * (1 - AUC)
-        - V2 = (n1 - 1) * (Q1 - AUC^2)
-        - V3 = (n0 - 1) * (Q0 - AUC^2)
-        - Q1 = AUC / (2 - AUC)
-        - Q0 = (2 * AUC^2) / (1 + AUC)
-        - n1 = number of positive classes
-        - n0 = number of negative classes
-
-        Parameters
-        ----------
-        None. Relies on the following class attributes:
-            - self.fitted: dictionary of fitted models and metrics
-            - self.target: name of the target variable
-            
-        Returns
-        -------
-        var_auc : variance of the AUC estimator
-        """
-        y_true = self.fit.y
-        auc = roc_auc_score(self.fit.y, self.fit.yhat)
-
-        # Count of positive and negative classes
-        n1 = np.sum(y_true == 1)
-        n0 = np.sum(y_true == 0)
-
-        # Q1 and Q2 for variance calculation
-        Q1 = auc / (2 - auc)
-        Q0 = (2 * auc**2) / (1 + auc)
-
-        # Compute the variance
-        var_auc = (
-            auc * (1 - auc) + (n1 - 1) * (Q1 - auc**2) + (n0 - 1) * (Q0 - auc**2)
-        ) / (n1 * n0)
-
-        return var_auc
-
-    def _delong_test_against_chance(self):
-        """
-        Implement the DeLong test to compare the ROC AUC against the 45-degree
-        line (AUC = 0.5).
-
-        The DeLong test uses the Central Limit Theorem (CLT) to approximate
-        the distribution of the AUC as normal. The test computes the covariance
-        matrix of the paired AUC differences and uses it to generate a Z-statistic.
-        According to CLT, this Z-statistic will be approximately normally distributed
-        for sufficiently large sample sizes (typically n > 30).
-
-        Parameters
-        ----------
-        None. Relies on the following class attributes:
-            - self.fitted: dictionary of fitted models and metrics
-            - self.target: name of the target variable
-
-        Returns:
-        z_stat : Z-statistic
-        p_value : p-value of the test
-        """
-        # Get the true and predicted values
-        y_true = self.fit.y
-        y_pred = self.fit.yhat
-
-        # Calculate the AUC of the model
-        auc = roc_auc_score(y_true, y_pred)
-
-        # Compute the variance of the AUC estimator
-        var_auc = self._compute_auc_variance()
-
-        # Calculate the Z-statistic against the 45-degree line (AUC=0.5)
-        z_stat = (auc - 0.5) / np.sqrt(var_auc)
-
-        # Calculate the p-value
-        p_value = 2 * (1 - norm.cdf(abs(z_stat)))
-
-        return z_stat[0], p_value[0]
-
-    def plot_cv_roc_auc(self, ax=None, return_all=False, significance_level=0.05):
-        if ax is None:
-            _, ax = plt.subplots(figsize=self.figsize)
-
-        # Plotting the ROC Curve - Mean FPR and TPR
-
-        # FPR = False Positive Rate, and is the x-axis
-        mean_fpr = np.linspace(0, 1, 100)
-
-        # TPR = True Positive Rate, and is the y-axis
-        tprs = []
-
-        # We need to calculate the TPR for each fold at each FPR:
-        # 1. Get the true and predicted values for each fold
-        # 2. Calculate the FPR and TPR for each fold
-        # 3. Interpolate the TPR for each fold at the mean FPR
-        # 4. Calculate the mean TPR across all folds
-
-        # Loop through each fold
-        for i in range(self.n_bins):
-            # Get the true and predicted values for the current fold
-            y_true = self.fitted[i]["val"][self.target]
-            y_pred = self.fitted[i]["val"]["prob"]
-
-            # Calculate the FPR and TPR for the current fold using the
-            # sklearn roc_curve function
-            fpr, tpr, _ = roc_curve(y_true, y_pred)
-
-            # Interpolate the TPR for the current fold at the mean FPR
-            tprs.append(np.interp(mean_fpr, fpr, tpr))
-
-            # Plot the ROC curve for the current fold
-            RocCurveDisplay(
-                fpr=fpr,
-                tpr=tpr,
-            ).plot(
-                ax=ax,
-                # to ensure that the legend is not repeated
-                # for each fold
-                # label=None,
-                alpha=0.4,
-            )
-
-        # Calculate the mean TPR across all folds
-        mean_tpr = np.mean(tprs, axis=0)
-
-        # Calculate the mean AUC across all folds, using the trapezoidal rule
-        # to approximate the integral of the ROC curve
-        mean_auc = np.trapz(mean_tpr, mean_fpr)
-        self.mean_auc = mean_auc
-        self.sd_auc = np.std(
-            [
-                roc_auc_score(
-                    self.fitted[i]["val"][self.target], self.fitted[i]["val"]["prob"]
-                )
-                for i in range(self.n_bins)
-            ]
-        )
-
-        # Calculate the standard deviation of the TPR across all folds
-        std_tpr = np.std(tprs, axis=0)
-
-        # Our SD band will be mean_tpr +/- 1 std_tpr
-        tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
-        tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
-
-        # Plotting the ROC Curve - ax.fill_between gives us the SD band
-        ax.fill_between(mean_fpr, tprs_lower, tprs_upper, color="grey", alpha=0.2)
-
-        # Set the border on the SD band to be darker and thicker
-        ax.spines["bottom"].set_color("grey")
-        ax.spines["left"].set_color("grey")
-        ax.spines["bottom"].set_linewidth(1.5)
-        ax.spines["left"].set_linewidth(1.5)
-
-        # Plotting the ROC Curve - ax.plot plots the mean ROC curve
-        # ax.plot(mean_fpr, mean_tpr, "b--")
-        ax.plot(mean_fpr, mean_tpr, "b--", label=f"Mean ROC (AUC = {mean_auc:.2f})")
-
-        # Plotting the random guess line to compare against
-        # ax.plot([0, 1], [0, 1], "k--")
-        ax.plot([0, 1], [0, 1], "k--", label="Random Guess")
-
-        # Adding a blank bar to the legend to show the SD band
-        # ax.plot([], [], " ")
-        ax.plot([], [], " ", label="Grey band = +/- 1 SD")
-
-        # Set x and y labels
-        ax.set_xlabel("False Positive Rate")
-        ax.set_ylabel("True Positive Rate")
-
-        # Perform the DeLong test against the 45-degree line (AUC=0.5)
-        dl_stat, p_value = self._delong_test_against_chance()
-
-        # Annotating the plot with hypothesis testing info
-        significance_message = f"DeLong Test Statistic\nAgainst the\n45-degree Line=\
-\n{dl_stat:.3f}\n\n\
-p-value = {p_value:.2f}"
-        subtitle_message = (
-            f"\nROC AUC is significantly different from 0.5 at the \
-{significance_level:.0%} level"
-            if p_value < significance_level
-            else f"\nROC AUC is not significantly different from 0.5 at the \
-{significance_level:.0%} level"
-        )
-
-        ax.annotate(
-            significance_message,
-            xy=(0.7, 0.43),
-            xycoords="axes fraction",
-            fontsize=16,
-            bbox=dict(
-                boxstyle="round,pad=0.3",
-                edgecolor="black",
-                facecolor="aliceblue",
-                alpha=0.5,
-            ),
-        )
-
-        ax.set_title(f"ROC Curve (AUC = {mean_auc:.2f}){subtitle_message}")
-
-        # Add coefficient estimate and significance statement
-        coef, std_err, pvalue = self.fit.params[1], self.fit.se[1], self.fit.pvalues[1]
-        significance_statement = self._get_significance_band(pvalue, "coefficient")
-
-        # 95% confidence interval assuming normal distribution
-        ci_lower = coef - 1.96 * std_err
-        ci_upper = coef + 1.96 * std_err
-
-        text = f"""Logistic Regression Model Fit
------------------------------
-Estimated Coefficient: {coef:.2f}
-95% Confidence Interval: [{ci_lower:.2f}, {ci_upper:.2f}]
-p-value: {pvalue:.2f}
-{significance_statement}"""
-
-        # Add annotation inside a box
-        ax.annotate(
-            text,
-            xy=(0.36, 0.19),
-            xycoords="axes fraction",
-            fontsize=16,
-            bbox=dict(
-                boxstyle="round,pad=0.3",
-                edgecolor="black",
-                facecolor="white",
-                alpha=0.5,
-            ),
-        )
-
-        # Create custom legend
-        legend_elements = [
-            Line2D(
-                [0],
-                [0],
-                color="b",
-                lw=2,
-                linestyle="--",
-                label=f"Mean ROC (AUC = {mean_auc:.2f})",
-            ),
-            Line2D([0], [0], color="k", lw=2, linestyle="--", label="Random Guess"),
-            Patch(
-                facecolor="grey",
-                edgecolor="grey",
-                alpha=0.2,
-                label="Mean(ROC) +/- 1 SD(ROC)",
-            ),
-        ]
-
-        # ax.legend(loc="lower right", fontsize=16)
-        ax.legend(handles=legend_elements, loc="lower right")
-
-        ax = rotate_x_lab(ax)
-        ax.figure.tight_layout()
-        if return_all:
-            return (
-                ax,
-                mean_fpr,
-                tprs,
-                tprs_lower,
-                tprs_upper,
-                mean_auc,
-                mean_tpr,
-                std_tpr,
-            )
-        else:
-            return ax
-
     def plot_quintile_plot(self, ax=None):
         if ax is None:
             _, ax = plt.subplots(figsize=self.figsize)
@@ -2081,149 +1659,89 @@ p-value: {pvalue:.2f}
 
         return fig
 
-    def plot_cat_lift_plot(self, ax=None):
-        if ax is None:
-            _, ax = plt.subplots(figsize=self.figsize)
+    #     def plot_cat_lift_plot(self, ax=None):
+    #         if ax is None:
+    #             _, ax = plt.subplots(figsize=self.figsize)
 
-        feature = self.GetVal()[self.feature]
-        if self.type == "categorical":
-            feature = feature.astype("category")
-        observed_target = self.val[self.target]
-        df = pd.DataFrame(
-            {f"{self.feature}": feature, f"{self.target}": observed_target}
-        )
-        ax = _plot_lift_chart(df=df, feature=self.feature, target=self.target, ax=ax)
+    #         feature = self.GetVal()[self.feature]
+    #         if self.type == "categorical":
+    #             feature = feature.astype("category")
+    #         observed_target = self.val[self.target]
+    #         df = pd.DataFrame(
+    #             {f"{self.feature}": feature, f"{self.target}": observed_target}
+    #         )
+    #         ax = _plot_lift_chart(df=df, feature=self.feature, target=self.target, ax=ax)
 
-        ax.set_title(
-            f"Lift Plot - Model Including [{self._plot_label(self.feature)}] \
-vs Null Model"
-        )
-        return ax
+    #         ax.set_title(
+    #             f"Lift Plot - Model Including [{self._plot_label(self.feature)}] \
+    # vs Null Model"
+    #         )
+    #         return ax
 
-    def plotly_cat_lift_plot(self, alpha=0.5):
-        """
-        Plots the lift chart for a given categorical feature and target.
-        """
-        feature = self.feature
-        target = self.target
+    #     def plotly_cat_lift_plot(self, alpha=0.5):
+    #         """
+    #         Plots the lift chart for a given categorical feature and target.
+    #         """
+    #         feature = self.feature
+    #         target = self.target
 
-        # Create a copy of the data
-        df = self.train[[feature, target]].copy()
+    #         # Create a copy of the data
+    #         df = self.train[[feature, target]].copy()
 
-        # Calculate overall positive rate
-        overall_positive_rate = df[target].mean()
+    #         # Calculate overall positive rate
+    #         overall_positive_rate = df[target].mean()
 
-        # Group by the feature and calculate the mean target variable
-        lift_data = df.groupby(feature)[target].mean().reset_index()
-        lift_data["lift"] = lift_data[target] / overall_positive_rate
+    #         # Group by the feature and calculate the mean target variable
+    #         lift_data = df.groupby(feature)[target].mean().reset_index()
+    #         lift_data["lift"] = lift_data[target] / overall_positive_rate
 
-        # Sort by the lift
-        lift_data = lift_data.sort_values("lift", ascending=False)
+    #         # Sort by the lift
+    #         lift_data = lift_data.sort_values("lift", ascending=False)
 
-        # Define the colors based on lift value
-        colors = ["green" if lift > 1 else "red" for lift in lift_data["lift"]]
+    #         # Define the colors based on lift value
+    #         colors = ["green" if lift > 1 else "red" for lift in lift_data["lift"]]
 
-        # Create the figure for the lift chart
-        fig = go.Figure()
+    #         # Create the figure for the lift chart
+    #         fig = go.Figure()
 
-        # Add the lift bars
-        fig.add_trace(
-            go.Bar(
-                x=lift_data[feature],
-                y=lift_data["lift"],
-                marker_color=colors,
-                opacity=alpha,
-            )
-        )
+    #         # Add the lift bars
+    #         fig.add_trace(
+    #             go.Bar(
+    #                 x=lift_data[feature],
+    #                 y=lift_data["lift"],
+    #                 marker_color=colors,
+    #                 opacity=alpha,
+    #             )
+    #         )
 
-        # Add line at lift=1
-        fig.add_hline(
-            y=1, line=dict(color="black", dash="dash"), annotation_text="Baseline"
-        )
+    #         # Add line at lift=1
+    #         fig.add_hline(
+    #             y=1, line=dict(color="black", dash="dash"), annotation_text="Baseline"
+    #         )
 
-        # Add annotations for lift values
-        annotations = []
-        for i, row in lift_data.iterrows():
-            annotations.append(
-                dict(
-                    x=row[feature],
-                    y=row["lift"],
-                    text=f"{row['lift']:.2f}",
-                    font=dict(family="Arial", size=16, color="black"),
-                    showarrow=False,
-                )
-            )
+    #         # Add annotations for lift values
+    #         annotations = []
+    #         for i, row in lift_data.iterrows():
+    #             annotations.append(
+    #                 dict(
+    #                     x=row[feature],
+    #                     y=row["lift"],
+    #                     text=f"{row['lift']:.2f}",
+    #                     font=dict(family="Arial", size=16, color="black"),
+    #                     showarrow=False,
+    #                 )
+    #             )
 
-        # Update layout
-        fig.update_layout(
-            title_text="Lift Chart for " + feature,
-            xaxis_title=feature,
-            yaxis_title="Lift",
-            showlegend=False,
-            annotations=annotations,
-        )
+    #         # Update layout
+    #         fig.update_layout(
+    #             title_text="Lift Chart for " + feature,
+    #             xaxis_title=feature,
+    #             yaxis_title="Lift",
+    #             showlegend=False,
+    #             annotations=annotations,
+    #         )
 
-        return fig
-
-    def plot_density(self, ax=None, cv_alpha=0.2):
-        if ax is None:
-            _, ax = plt.subplots(figsize=self.figsize)
-
-        data = self.GetTrain()[[self.feature, self.target]]
-
-        if self.type == "categorical":
-            data[self.feature] = data[self.feature].astype("category")
-
-        # Plot the violin plot
-        outlier_df = self.train[[self.feature, self.target]]
-
-        ax = _plot_violin(
-            target=data[self.target],
-            feature=data[self.feature],
-            outlier_df=outlier_df,
-            cv_folds_data=self.cv_idx,
-            cv_alpha=cv_alpha,
-            ax=ax,
-            dropvals=[-0.01, -1],
-        )
-
-        return ax
-
-    def plotly_density(self, cv_alpha=0.2):
-        data = self.GetTrain()[[self.feature, self.target]]
-
-        if self.type == "categorical":
-            data[self.feature] = data[self.feature].astype("category")
-
-        # Prepare the data
-        data[self.feature] = data[self.feature].cat.remove_unused_categories()
-        categories = data[self.feature].cat.categories
-
-        # Initialize figure
-        fig = go.Figure()
-
-        # Plot the violin plot
-        for category in categories:
-            category_data = data[data[self.feature] == category]
-            fig.add_trace(
-                go.Violin(
-                    y=category_data[self.target],
-                    name=str(category),
-                    box_visible=True,
-                    meanline_visible=True,
-                    opacity=cv_alpha,
-                    points="outliers",  # or 'all' or False
-                )
-            )
-
-        # Customize layout
-        fig.update_layout(
-            title=f"Lift Plot - Model Including [{self._plot_label(self.feature)}] vs Null Model",
-            yaxis_title=self._plot_label(self.target),
-            xaxis_title=self._plot_label(self.feature),
-        )
-
-        return fig
+    #         return fig
 
     def categorical_plots(self, return_all=False):
         fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(
@@ -2356,8 +1874,8 @@ vs Null Model"
 
         # Calculate the total number of 'good' (target=1) and 'bad' (target=0) in
         # the dataset
-        all_good = len(df[df[target] == 1])
-        all_bad = len(df[df[target] == 0])
+        # all_good = len(df[df[target] == 1])
+        # all_bad = len(df[df[target] == 0])
 
         # Create a cross-tabulation of the feature against the target
         # Normalize by columns to get the proportion of 'good' and 'bad' for each
@@ -2687,18 +2205,18 @@ vs Null Model"
             for i in range(self.n_bins)
         ]
 
-        # 16a. Training Markedness (from markedness(self.fit.y, self.fit.yhat)) for
-        #      each fold
-        binary["train_markedness"] = [
-            markedness(pd.Series(y[i]), pd.Series(yhat[i]).ge(0.5).astype(int))
-            for i in range(self.n_bins)
-        ]
-        # 16b. Validation Markedness (from markedness(self.val[self.target],
-        #      self.fit.model.predict(self.val))) for each fold
-        binary["val_markedness"] = [
-            markedness(pd.Series(y_val[i]), pd.Series(yhat_val[i]).ge(0.5).astype(int))
-            for i in range(self.n_bins)
-        ]
+        # # 16a. Training Markedness (from markedness(self.fit.y, self.fit.yhat)) for
+        # #      each fold
+        # binary["train_markedness"] = [
+        #     markedness(pd.Series(y[i]), pd.Series(yhat[i]).ge(0.5).astype(int))
+        #     for i in range(self.n_bins)
+        # ]
+        # # 16b. Validation Markedness (from markedness(self.val[self.target],
+        # #      self.fit.model.predict(self.val))) for each fold
+        # binary["val_markedness"] = [
+        #     markedness(pd.Series(y_val[i]), pd.Series(yhat_val[i]).ge(0.5).astype(int))
+        #     for i in range(self.n_bins)
+        # ]
 
         return pd.DataFrame(binary)
 
@@ -2738,8 +2256,8 @@ vs Null Model"
         y = self.fit.y
         yhat = self.fit.yhat
 
-        y_val = self.val[self.target]
-        yhat_val = self.fit.model.predict(self.val[self.feature])
+        # y_val = self.val[self.target]
+        # yhat_val = self.fit.model.predict(self.val[self.feature])
 
         binary = {}
         binary["n_obs"] = [self.train.shape[0]]
@@ -2767,15 +2285,15 @@ vs Null Model"
                 self.fit.model.predict(self.val).gt(threshold).astype(int),
             )
         ]
-        binary["training_markedness"] = [
-            markedness(self.fit.y, self.fit.yhat.gt(threshold).astype(int))
-        ]
-        binary["validation_markedness"] = [
-            markedness(
-                self.val[self.target],
-                self.fit.model.predict(self.val).gt(threshold).astype(int),
-            )
-        ]
+        # binary["training_markedness"] = [
+        #     markedness(self.fit.y, self.fit.yhat.gt(threshold).astype(int))
+        # ]
+        # binary["validation_markedness"] = [
+        #     markedness(
+        #         self.val[self.target],
+        #         self.fit.model.predict(self.val).gt(threshold).astype(int),
+        #     )
+        # ]
         binary["training_accuracy"] = [
             acc(self.fit.y, self.fit.yhat.gt(threshold).astype(int))
         ]
