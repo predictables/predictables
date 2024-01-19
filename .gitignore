@@ -164,3 +164,5 @@ logs/
 # Node 
 npm_modules/
 node_modules/
+
+.vscode/
