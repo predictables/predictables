@@ -38,7 +38,8 @@ jobs:
     - name: Test with pytest & generate a tests badge
       run: |
         # Generate testing report and badge (must have >95% of tests pass)
-        pytest --junitxml=reports/junit/junit.xml --html=reports/junit/report.html
+        pytest --junitxml=reports/junit/junit.xml
+        # --html=reports/junit/report.html TODO: why isn't this available??
         genbadge tests -t 95
 
         # Generate the coverage report and badge
