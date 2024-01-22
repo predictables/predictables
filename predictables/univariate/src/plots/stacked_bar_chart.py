@@ -128,7 +128,9 @@ def plot_stacked_bar_chart(
     ax.set_ylabel("Count")
 
     # Set y ticks to percentage
-    ax.set_yticklabels([f"{y:.1%}" for y in ax.get_yticks()])
+    yticks = ax.get_yticks()
+    ax.set_yticks(yticks)
+    ax.set_yticklabels([f"{y:.1%}" for y in yticks])
 
     # Set title
     ax.set_title(

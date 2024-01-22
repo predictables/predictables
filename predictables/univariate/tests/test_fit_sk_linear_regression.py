@@ -92,3 +92,39 @@ def test_fit_sk_linear_regression_coef(X, y):
     assert (
         np.round(regression_result.coef_[0], 3) == 0.512
     ), f"Expected the coefficient to be 0.512, but got {np.round(regression_result.coef_[0], 3)}"
+
+
+# input validation tests
+# X: Union[np.ndarray, pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+# y: Union[np.ndarray, pd.Series, pl.Series],
+# fit_intercept: bool = False,
+def test_input_validation_sk_linear_regression_coef():
+    pd_df_X1, pd_series_y1 = pd_df_X(), pd_series_y()
+    with pytest.raises(TypeError) as e:
+        fit_sk_linear_regression(X=1, y=1)
+    assert (
+        str(e.value)
+        == "X must be one of np.ndarray, pd.DataFrame, pl.DataFrame, pl.LazyFrame. Got <class 'int'>"
+    ), f"Expected TypeError to be raised, but got {e.value}"
+
+    # test one right one wrong
+    with pytest.raises(TypeError) as e:
+        fit_sk_linear_regression(X=pd_df_X1, y=1)
+    assert (
+        str(e.value)
+        == "y must be one of np.ndarray, pd.Series, pl.Series. Got <class 'int'>"
+    ), f"Expected TypeError to be raised, but got {e.value}"
+
+    with pytest.raises(TypeError) as e:
+        fit_sk_linear_regression(X=1, y=pd_series_y1)
+    assert (
+        str(e.value)
+        == "X must be one of np.ndarray, pd.DataFrame, pl.DataFrame, pl.LazyFrame. Got <class 'int'>"
+    ), f"Expected TypeError to be raised, but got {e.value}"
+
+    # test fit_intercept
+    with pytest.raises(TypeError) as e:
+        fit_sk_linear_regression(X=pd_df_X1, y=pd_series_y1, fit_intercept=1)
+    assert (
+        str(e.value) == "fit_intercept must be a bool. Got <class 'int'>"
+    ), f"Expected TypeError to be raised, but got {e.value}"

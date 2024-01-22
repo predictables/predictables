@@ -32,6 +32,29 @@ def fit_sk_linear_regression(
     sklearn.linear_model.LinearRegression
         The fitted model
     """
+    # Validate X input
+    if not (
+        isinstance(X, np.ndarray)
+        | isinstance(X, pd.DataFrame)
+        | isinstance(X, pl.DataFrame)
+        | isinstance(X, pl.LazyFrame)
+    ):
+        raise TypeError(
+            f"X must be one of np.ndarray, pd.DataFrame, pl.DataFrame, pl.LazyFrame. Got {type(X)}"
+        )
+
+    # Validate y input
+    if not (
+        isinstance(y, np.ndarray) | isinstance(y, pd.Series) | isinstance(y, pl.Series)
+    ):
+        raise TypeError(
+            f"y must be one of np.ndarray, pd.Series, pl.Series. Got {type(y)}"
+        )
+
+    # Validate fit_intercept input
+    if not isinstance(fit_intercept, bool):
+        raise TypeError(f"fit_intercept must be a bool. Got {type(fit_intercept)}")
+
     X = to_pd_df(X)
     y = to_pd_s(y).values.ravel()
 
