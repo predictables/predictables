@@ -7,7 +7,7 @@ import polars as pl
 from matplotlib.axes import Axes
 from scipy.stats import gaussian_kde, ttest_ind
 
-from predictables.univariate.src.plots.util import plot_label
+from predictables.univariate.src.plots.util import binary_color, plot_label
 from predictables.util import get_column_dtype, to_pd_s
 
 
@@ -289,28 +289,6 @@ def _density_t_test_binary_target(
         significance_statement += f"The test indicates no significant\ndifference between the distributions\n(p={p:.3f}) at the {1-alpha:.0%} level."
 
     return t, p, significance_statement
-
-
-def binary_color(x: int) -> pd.Series:
-    """
-    Return a color for each value in x, based on whether it is 0 or 1.
-
-    Parameters
-    ----------
-    x : int
-        The value to get the color for.
-
-    Returns
-    -------
-    int
-        The color for x.
-    """
-    if x == 0:
-        return "blue"
-    elif x == 1:
-        return "orange"
-    else:
-        raise ValueError(f"Invalid value {x} for binary variable.")
 
 
 def _plot_density_mpl(

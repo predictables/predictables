@@ -53,7 +53,7 @@ def roc_curve_plot(
         # return plot_cv_roc_auc_plotly(y, yhat, **kwargs)
         raise NotImplementedError("Plotly backend not implemented yet.")
     else:
-        return roc_curve_plot_mpl(
+        ax = roc_curve_plot_mpl(
             y=y,
             yhat_proba=yhat_proba,
             fold=fold,
@@ -65,6 +65,8 @@ def roc_curve_plot(
             cv_alpha=cv_alpha,
             ax=ax,
         )
+
+        return ax
 
 
 def create_auc_data(
