@@ -7,7 +7,7 @@ import polars as pl
 from matplotlib.axes import Axes
 from scipy.stats import gaussian_kde, ttest_ind
 
-from predictables.univariate.src.plots.util import plot_label
+from predictables.univariate.src.plots.util import binary_color, plot_label
 from predictables.util import get_column_dtype, to_pd_s
 
 
@@ -64,6 +64,28 @@ def density_plot(
         The axes the plot was drawn on.
 
     """
+
+    if backend == "matplotlib":
+        return density_plot_mpl(
+            x,
+            plot_by,
+            cv_label,
+            x_min=x_min,
+            x_max=x_max,
+            ax=ax,
+            label=label,
+            grid_bins=grid_bins,
+            cv_alpha=cv_alpha,
+            cv_line_width=cv_line_width,
+            t_test_alpha=t_test_alpha,
+            figsize=figsize,
+        )
+    elif backend == "plotly":
+        raise NotImplementedError(
+            "Plotly backend not yet implemented. Use 'matplotlib' for now."
+        )
+    else:
+        raise ValueError(f"Invalid backend {backend}.")
 
 
 def density_plot_mpl(
@@ -204,6 +226,8 @@ def density_plot_mpl(
 
     ax.set_title(title)
 
+    plt.legend()
+
     return ax
 
 
@@ -267,28 +291,6 @@ def _density_t_test_binary_target(
     return t, p, significance_statement
 
 
-def binary_color(x: int) -> pd.Series:
-    """
-    Return a color for each value in x, based on whether it is 0 or 1.
-
-    Parameters
-    ----------
-    x : int
-        The value to get the color for.
-
-    Returns
-    -------
-    int
-        The color for x.
-    """
-    if x == 0:
-        return "blue"
-    elif x == 1:
-        return "orange"
-    else:
-        raise ValueError(f"Invalid value {x} for binary variable.")
-
-
 def _plot_density_mpl(
     x: pd.Series,
     x_min: Union[float, None] = None,
@@ -297,6 +299,7 @@ def _plot_density_mpl(
     label: Union[str, None] = None,
     grid_bins: int = 200,
     line_width: float = 1,
+    line_color: Union[str, None] = None,
     line_style: str = "-",
     alpha: float = 1,
     fill_under: bool = True,
@@ -359,6 +362,7 @@ def _plot_density_mpl(
             x_grid,
             density(x_grid),
             linewidth=line_width,
+            color=line_color,
             ls=line_style,
             alpha=alpha,
         )  # don't label the plot if we're filling under
@@ -374,6 +378,7 @@ def _plot_density_mpl(
             density(x_grid),
             label=label,
             linewidth=line_width,
+            color=line_color,
             ls=line_style,
             alpha=alpha,
         )
@@ -391,6 +396,7 @@ def density_by_mpl(
     use_labels: bool = True,
     grid_bins: int = 200,
     line_width: float = 1,
+    line_color: Union[str, None] = None,
     alpha: float = 1,
     fill_under: bool = True,
     fill_alpha: float = 0.3,
@@ -419,10 +425,11 @@ def density_by_mpl(
     use_labels : bool, optional
         Whether to use the labels of by. Defaults to True.
     grid_bins : int, optional
-        The number of bins to use for the density. Defaults to 200. Controls
-        how smooth the density plot is.
+        The number of bins to use for the density. Defaults to 200. Controls how smooth the density plot is.
     line_width : float, optional
         The width of the line to use for the density. Defaults to 1.
+    line_color : str, optional
+        The color of the line to use for the density. Defaults to None.
     alpha : float, optional
         Global alpha value to use for the plot. Defaults to 1.
     fill_under : bool, optional
@@ -466,11 +473,11 @@ def density_by_mpl(
                 label=(label if use_labels else None),
                 grid_bins=grid_bins,
                 line_width=line_width,
+                line_color=color,
                 alpha=alpha,
                 fill_under=fill_under,
                 fill_alpha=fill_alpha,
                 figsize=figsize,
-                color=color,
             )
     else:
         for f in cv_fold.drop_duplicates().sort_values():
@@ -488,11 +495,11 @@ def density_by_mpl(
                     label=(label if use_labels else None),
                     grid_bins=grid_bins,
                     line_width=line_width,
+                    line_color=color,
                     alpha=alpha,
                     fill_under=fill_under,
                     fill_alpha=fill_alpha,
                     figsize=figsize,
-                    color=color,
                 )
 
     return ax
