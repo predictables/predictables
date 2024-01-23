@@ -39,8 +39,8 @@ jobs:
     - name: Test with pytest & generate a tests badge
       run: |
         # Generate testing report and badge (must have >95% of tests pass)
-        pytest --junitxml=reports/test/junit.xml
-        # --html=reports/test/report.html TODO: why isn't this available??
+        pytest --junitxml=reports/junit/junit.xml
+        # --html=reports/junit/report.html TODO: why isn't this available??
         genbadge tests -t 95
 
     - name: Copy pytest badge to root
@@ -51,10 +51,10 @@ jobs:
 
     - name: Generate coverage badge
       run: |
-        coverage report -m --omit="*/tests/*"
-        coverage xml -o reports/coverage/coverage.xml --omit="*/tests/*"
-        coverage html -d reports/coverage --omit="*/tests/*"
-        genbadge coverage -t 95
+        coverage report
+        coverage xml -o reports/coverage/coverage.xml
+        coverage html -d reports/coverage
+        genbadge coverage
         
     - name: Copy coverage badge to root of repo
       uses: actions/upload-artifact@v2
