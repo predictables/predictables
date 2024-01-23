@@ -78,8 +78,8 @@ def quintile_lift_plot_matplotlib(
     feature: Union[pd.Series, pl.Series],
     observed_target: Union[pd.Series, pl.Series],
     modeled_target: Union[pd.Series, pl.Series],
-    ax: plt.Axes = None,
-    figsize: Tuple[int, int] = (8, 8),
+    ax: Optional[Union[plt.Axes, None]] = None,
+    figsize: Optional[Tuple[int, int]] = (8, 8),
 ):
     """
     Plots the quintile lift for a given feature and target.
@@ -109,7 +109,7 @@ def quintile_lift_plot_matplotlib(
     alpha : float, optional
         The transparency of the bars. Default is 0.5.
     figsize : Tuple[int, int], optional
-        The figure size. Default is (15, 8).
+        The figure size. Default is (8, 8).
 
     Returns:
     --------
@@ -120,6 +120,8 @@ def quintile_lift_plot_matplotlib(
 
     if ax is None:
         _, ax = plt.subplots(figsize=figsize)
+
+    font_scale_fct = figsize[0] / 16 if figsize is not None else 1
 
     bars1, bars2 = _make_bars(lift_df, ax)
 
@@ -134,9 +136,9 @@ def quintile_lift_plot_matplotlib(
                 textcoords="offset points",
                 ha="center",
                 va="bottom",
-                fontsize=14 * (figsize[0] / 8),
+                fontsize=20 * font_scale_fct,
                 bbox=dict(
-                    boxstyle="round,pad=0.1",
+                    boxstyle="round,pad=0.2",
                     edgecolor="black",
                     facecolor="white",
                     alpha=0.9,
@@ -144,9 +146,9 @@ def quintile_lift_plot_matplotlib(
             )
 
     ax.set_xticks(lift_df["quintile"])
-    ax.set_xlabel("Modeled Quintile")
-    ax.set_ylabel("Mean Target")
-    ax.legend()
+    ax.set_xlabel("Modeled Quintile", fontsize=20 * font_scale_fct)
+    ax.set_ylabel("Mean Target", fontsize=20 * font_scale_fct)
+    ax.legend(fontsize=20 * font_scale_fct)
 
     # KL Divergence calculation
     kl_div = _kl_divergence(lift_df)
@@ -157,10 +159,10 @@ def quintile_lift_plot_matplotlib(
         f"KL Divergence: {kl_div:.3f}\nGini Coefficient: {gini_coeff:.3f}",
         xy=(0.75, 0.05),
         xycoords="axes fraction",
-        fontsize=16 * (figsize[0] / 8),
+        fontsize=20 * font_scale_fct,
         ha="center",
         bbox=dict(
-            boxstyle="round,pad=0.25", edgecolor="black", facecolor="white", alpha=0.95
+            boxstyle="round,pad=0.25", edgecolor="black", facecolor="white", alpha=0.85
         ),
     )
 
@@ -177,7 +179,7 @@ def quintile_lift_plot_plotly(
     feature: Union[pd.Series, pl.Series],
     observed_target: Union[pd.Series, pl.Series],
     modeled_target: Union[pd.Series, pl.Series],
-    figsize: Tuple[int, int] = (15, 8),
+    figsize: Optional[Tuple[int, int]] = (8, 8),
 ):
     """
     Plots the quintile lift for a given feature and target.

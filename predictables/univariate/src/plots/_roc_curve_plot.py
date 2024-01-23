@@ -16,11 +16,11 @@ def roc_curve_plot(
     coef: float,
     se: float,
     pvalue: float,
-    figsize: Optional[Tuple[int, int]] = (8, 8),
-    n_bins: Optional[int] = 200,
-    cv_alpha: Optional[float] = 0.4,
-    ax: Optional[Union[Axes, None]] = None,
-    backend: Optional[str] = "matplotlib",
+    figsize: Tuple[int, int] = (8, 8),
+    n_bins: int = 200,
+    cv_alpha: float = 0.4,
+    ax: Optional[Axes] = None,
+    backend: str = "matplotlib",
 ) -> Union[go.Figure, Axes]:
     """
     Plot the ROC curve for a single model.
@@ -56,24 +56,23 @@ def roc_curve_plot(
     ax : matplotlib.Axes.Axes
         The configured Axes object.
     """
-    if backend == "plotly":
-        # return plot_cv_roc_auc_plotly(y, yhat, **kwargs)
-        raise NotImplementedError("Plotly backend not implemented yet.")
-    elif backend == "matplotlib":
-        ax = roc_curve_plot_mpl(
-            y=y,
-            yhat_proba=yhat_proba,
-            fold=fold,
-            figsize=figsize if figsize is not None else (8, 8),
-            n_bins=n_bins if n_bins is not None else 200,
-            coef=coef,
-            se=se,
-            pvalue=pvalue,
-            cv_alpha=cv_alpha if cv_alpha is not None else 0.4,
-            ax=ax,
-        )
+    params = dict(
+        y=y,
+        yhat_proba=yhat_proba,
+        fold=fold,
+        figsize=figsize if figsize is not None else (8, 8),
+        n_bins=n_bins if n_bins is not None else 200,
+        cv_alpha=cv_alpha if cv_alpha is not None else 0.4,
+        ax=ax,
+        coef=coef,
+        se=se,
+        pvalue=pvalue,
+    )
 
-        return ax
+    if backend == "matplotlib":
+        return roc_curve_plot_mpl(**params)
+    elif backend == "plotly":
+        return roc_curve_plot_plotly(**params)
     else:
         raise ValueError(
             f"Invalid backend (expecting either 'matplotlib' or 'plotly'): {backend}"
@@ -81,7 +80,7 @@ def roc_curve_plot(
 
 
 def create_auc_data(
-    y: pd.Series, yhat_proba: pd.Series, n_bins: Optional[int] = 200
+    y: pd.Series, yhat_proba: pd.Series, n_bins: int = 200
 ) -> Tuple[pd.Series, pd.Series]:
     """
     Create the data for plotting an ROC curve. Calculates the false positive rate
@@ -113,18 +112,22 @@ def create_auc_data(
     return fpr, tpr
 
 
+def roc_curve_plot_plotly():
+    return plt.plot([1, 2, 3], [1, 2, 3])
+
+
 def plot_individual_roc_curves(
     y: pd.Series,
     yhat_proba: pd.DataFrame,
-    curve_name: Optional[str] = "ROC Curve",
-    figax: Optional[Union[go.Figure, Axes, None]] = None,
-    n_bins: Optional[int] = 200,
-    alpha: Optional[float] = 0.4,
-    legendgroup: Optional[Union[str, None]] = None,
-    figsize: Optional[Tuple[int, int]] = (8, 8),
-    ax: Optional[Union[Axes, None]] = None,
-    fig: Optional[Union[go.Figure, None]] = None,
-    backend: Optional[str] = "matplotlib",
+    curve_name: str = "ROC Curve",
+    figax: Optional[Union[go.Figure, Axes]] = None,
+    n_bins: int = 200,
+    alpha: float = 0.4,
+    legendgroup: Optional[str] = None,
+    figsize: Tuple[int, int] = (8, 8),
+    ax: Optional[Axes] = None,
+    fig: Optional[go.Figure] = None,
+    backend: str = "matplotlib",
 ) -> Union[go.Figure, Axes]:
     """
     Plot the ROC curve for each fold.
@@ -170,10 +173,27 @@ def plot_individual_roc_curves(
     # Handle the case where figax is an alias for either fig or ax
     if (backend == "matplotlib") and (ax is not None):
         figax = ax
+        if isinstance(figax, Axes):
+            RocCurveDisplay(
+                fpr=fpr,
+                tpr=tpr,
+            ).plot(ax=figax, alpha=alpha, label=curve_name)
+
+            return figax
+        elif figax is None:
+            _, ax = plt.subplots(figsize=figsize)
+            RocCurveDisplay(
+                fpr=fpr,
+                tpr=tpr,
+            ).plot(ax=ax, alpha=alpha, label=curve_name)
+
+            return ax
+        else:
+            raise TypeError(
+                "figax must be a matplotlib.axes.Axes object when using the matplotlib backend"
+            )
     elif (backend == "plotly") and (fig is not None):
         figax = fig
-
-    if backend == "plotly":
         params = dict(
             x=fpr,
             y=tpr,
@@ -197,28 +217,6 @@ def plot_individual_roc_curves(
             raise TypeError(
                 "figax must be a plotly.graph_objects.Figure object when using the plotly backend"
             )
-    elif backend == "matplotlib":
-        if isinstance(figax, Axes):
-            RocCurveDisplay(
-                fpr=fpr,
-                tpr=tpr,
-            ).plot(ax=figax, alpha=alpha, label=curve_name)
-
-            return figax
-        elif figax is None:
-            _, ax = plt.subplots(figsize=figsize)
-            RocCurveDisplay(
-                fpr=fpr,
-                tpr=tpr,
-            ).plot(ax=ax, alpha=alpha, label=curve_name)
-
-            return ax
-
-        else:
-            raise TypeError(
-                "figax must be a matplotlib.axes.Axes object when using the matplotlib backend"
-            )
-
     else:
         raise ValueError(
             f"Invalid backend (expecting either 'matplotlib' or 'plotly'): {backend}"
@@ -230,11 +228,11 @@ def plot_cv_roc_curves(
     yhat_proba: pd.DataFrame,
     fold: pd.Series,
     figax: Optional[Union[go.Figure, Axes, None]] = None,
-    n_bins: Optional[int] = 200,
-    cv_alpha: Optional[float] = 0.4,
-    ax: Optional[Union[Axes, None]] = None,
-    fig: Optional[Union[go.Figure, None]] = None,
-    backend: Optional[str] = "matplotlib",
+    n_bins: int = 200,
+    cv_alpha: float = 0.4,
+    ax: Optional[Axes] = None,
+    fig: Optional[go.Figure] = None,
+    backend: str = "matplotlib",
 ) -> Union[go.Figure, Axes]:
     """
     Plot the ROC curve for each fold. Filters the data for each fold label,
@@ -289,7 +287,7 @@ def plot_cv_roc_curves(
 
 
 def calc_auc_curve_data_from_folds(
-    y: pd.Series, yhat_proba: pd.DataFrame, fold: pd.Series, n_bins: Optional[int] = 200
+    y: pd.Series, yhat_proba: pd.DataFrame, fold: pd.Series, n_bins: int = 200
 ):
     """
     Calculate the standard error of the ROC curve for each fold. Filters the data for each fold label,
@@ -363,14 +361,14 @@ def plot_roc_auc_curves_and_confidence_bands(
     yhat_proba: pd.DataFrame,
     fold: pd.Series,
     figax: Optional[Union[go.Figure, Axes, None]] = None,
-    n_bins: Optional[int] = 200,
-    cv_alpha: Optional[float] = 0.4,
-    ax: Optional[Union[Axes, None]] = None,
-    fig: Optional[Union[go.Figure, None]] = None,
-    figsize: Optional[Tuple[int, int]] = (8, 8),
-    call_legend: Optional[bool] = True,
-    backend: Optional[str] = "matplotlib",
-) -> Union[go.Figure, Axes, None]:
+    n_bins: int = 200,
+    cv_alpha: float = 0.4,
+    ax: Optional[Axes] = None,
+    fig: Optional[go.Figure] = None,
+    figsize: Tuple[int, int] = (8, 8),
+    call_legend: bool = True,
+    backend: str = "matplotlib",
+) -> Union[go.Figure, Axes]:
     """
     Plot the ROC curve for each fold. Filters the data for each fold label,
     then plots the ROC curve for a model trained on that fold.
@@ -512,9 +510,12 @@ def delong_statistic_annotation_mpl(y: pd.Series, yhat_proba: pd.Series, ax: Axe
         significance_message,
         xy=(0.6, 0.2),
         xycoords="axes fraction",
-        fontsize=12 * (figsize[0] / 8),
+        fontsize=24 * (figsize[0] / 16),
         bbox=dict(
-            boxstyle="round,pad=0.3", edgecolor="black", facecolor="white", alpha=0.8
+            boxstyle="round,pad=0.3",
+            edgecolor="lightgrey",
+            facecolor="white",
+            alpha=0.8,
         ),
     )
 
@@ -527,6 +528,7 @@ def coefficient_annotation_mpl(
     pvalue: float,
     ax: Axes,
     alpha: float = 0.05,
+    figsize: Tuple[int, int] = (8, 8),
 ):
     """
     Annotate the plot with logistic regression model fit information.
@@ -541,8 +543,10 @@ def coefficient_annotation_mpl(
         The p-value of the estimated coefficient.
     ax : Axes
         The Axes object to be configured.
-    alpha : float
+    alpha : float, optional
         The significance level to use. Defaults to 0.05.
+    figsize : Tuple[int, int], optional
+        The figure size to use. Defaults to (8, 8).
 
     Returns
     -------
@@ -597,12 +601,13 @@ def coefficient_annotation_mpl(
         annotation_text,
         xy=(0.1, 0.05),
         xycoords="axes fraction",
-        fontsize=12
-        * (
-            ax.figure.get_size_inches()[0] / 8
-        ),  # scale the font size depending on the figure size
+        fontsize=24
+        * (figsize[0] / 16),  # scale the font size depending on the figure size
         bbox=dict(
-            boxstyle="round,pad=0.3", edgecolor="black", facecolor="white", alpha=0.8
+            boxstyle="round,pad=0.3",
+            edgecolor="lightgrey",
+            facecolor="white",
+            alpha=0.8,
         ),
     )
 
@@ -626,16 +631,14 @@ def auc(y: pd.Series, yhat: pd.Series) -> float:
     auc : float
         The area under the ROC curve.
     """
-    from sklearn.metrics import roc_auc_score
-
     return float(roc_auc_score(y, yhat))
 
 
 def finalize_plot(
     ax: Axes,
     figsize: Tuple[int, int],
-    auc: Union[float, None] = None,
-    auc_p_value: Union[float, None] = None,
+    auc: Optional[float] = None,
+    auc_p_value: Optional[float] = None,
 ) -> Axes:
     """
     Finalize the plot by adjusting the figure size and layout.
@@ -667,15 +670,15 @@ def finalize_plot(
         if auc_p_value < 0.05
         else "ROC AUC is not significantly different from 50% at the 95% level."
     )
-    ax.set_title(title, fontsize=14 * (figsize[0] / 8))
-    ax.set_xlabel("False Positive Rate", fontsize=12 * (figsize[0] / 8))
-    ax.set_ylabel("True Positive Rate", fontsize=12 * (figsize[0] / 8))
+    ax.set_title(title, fontsize=30 * (figsize[0] / 16))
+    ax.set_xlabel("False Positive Rate", fontsize=24 * (figsize[0] / 16))
+    ax.set_ylabel("True Positive Rate", fontsize=24 * (figsize[0] / 16))
     plt.gcf().set_size_inches(figsize)
     plt.tight_layout()
 
     # show gridlines
     ax.grid(True)
-    plt.legend(loc="lower right", fontsize=12 * (figsize[0] / 8))
+    plt.legend(loc="lower right", fontsize=24 * (figsize[0] / 16))
 
     return ax
 
@@ -690,8 +693,8 @@ def roc_curve_plot_mpl(
     figsize: Tuple[int, int] = (8, 8),
     n_bins: int = 200,
     cv_alpha: float = 0.4,
-    ax: Union[Axes, None] = None,
-) -> Union[Axes, None]:
+    ax: Optional[Axes] = None,
+) -> Axes:
     """
     Plot the ROC curve for each fold. Filters the data for each fold label,
     then plots the ROC curve for a model trained on that fold.
@@ -744,7 +747,9 @@ def roc_curve_plot_mpl(
         cv_alpha=cv_alpha,
     )
     ax = delong_statistic_annotation_mpl(y=y, yhat_proba=yhat_proba, ax=ax)
-    ax = coefficient_annotation_mpl(coef=coef, std_error=se, pvalue=pvalue, ax=ax)
+    ax = coefficient_annotation_mpl(
+        coef=coef, std_error=se, pvalue=pvalue, ax=ax, figsize=figsize
+    )
     a = auc(y, yhat_proba)
     _, p = _delong_test_against_chance(y, yhat_proba)
     ax = finalize_plot(ax, figsize=figsize, auc=a, auc_p_value=p)
@@ -752,7 +757,7 @@ def roc_curve_plot_mpl(
     return ax
 
 
-def _compute_auc_variance(y: pd.Series, yhat: pd.Series):
+def _compute_auc_variance(y: pd.Series, yhat: pd.Series) -> float:
     """
     Compute the variance of the AUC estimator. This is used in the
     computation of the DeLong test, and is based on the following paper:
@@ -805,7 +810,7 @@ def _compute_auc_variance(y: pd.Series, yhat: pd.Series):
     ) / (n1 * n0)
 
 
-def _delong_test_against_chance(y: pd.Series, yhat: pd.Series):
+def _delong_test_against_chance(y: pd.Series, yhat: pd.Series) -> Tuple[float, float]:
     """
     Implement the DeLong test to compare the ROC AUC against the 45-degree
     line (AUC = 0.5).

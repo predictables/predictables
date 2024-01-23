@@ -213,7 +213,7 @@ def density_plot_mpl(
         textcoords="axes fraction",
         ha="left",
         va="center",
-        fontsize=10 * (figsize[0] / 8),
+        fontsize=10 * (figsize[0] / 16),
         bbox=dict(
             boxstyle="round,pad=0.3",
             edgecolor="lightgrey",
@@ -230,7 +230,7 @@ def density_plot_mpl(
     ax.set_title(title)
 
     if call_legend:
-        plt.legend()
+        plt.legend(fontsize=12 * (figsize[0] / 16))
 
     return ax
 
@@ -467,7 +467,6 @@ def density_by_mpl(
         "x_min": x_min,
         "x_max": x_max,
         "ax": ax,
-        "use_labels": use_labels,
         "grid_bins": grid_bins,
         "line_width": line_width,
         "alpha": alpha,
@@ -721,7 +720,7 @@ def _annotate_mean_median(
         textcoords="offset points",
         ha=pos0,
         va="bottom",
-        fontsize=16 * (figsize[0] / 8),
+        fontsize=16 * (figsize[0] / 16),
         bbox=dict(
             boxstyle="round,pad=0.3", edgecolor="black", facecolor="blue", alpha=0.2
         ),
@@ -737,7 +736,7 @@ def _annotate_mean_median(
         textcoords="offset points",
         ha=pos1,
         va="bottom",
-        fontsize=16 * (figsize[0] / 8),
+        fontsize=16 * (figsize[0] / 16),
         bbox=dict(
             boxstyle="round,pad=0.3", edgecolor="black", facecolor="orange", alpha=0.2
         ),

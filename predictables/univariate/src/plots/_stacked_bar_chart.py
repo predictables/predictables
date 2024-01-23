@@ -21,27 +21,21 @@ def stacked_bar_chart(
     fontsize: int = 16,
     facecolor: str = "white",
 ):
+    params = dict(
+        feature=feature,
+        target=target,
+        y_offset=y_offset,
+        ax=ax,
+        figsize=figsize,
+        alpha=alpha,
+        bar_width=bar_width,
+        fontsize=fontsize,
+        facecolor=facecolor,
+    )
     if backend == "matplotlib":
-        return plot_stacked_bar_chart(
-            feature=feature,
-            target=target,
-            y_offset=y_offset,
-            ax=ax,
-            figsize=figsize,
-            alpha=alpha,
-            bar_width=bar_width,
-            fontsize=fontsize,
-            facecolor=facecolor,
-        )
+        return plot_stacked_bar_chart(**params, ax=ax, figsize=figsize)
     elif backend == "plotly":
-        return plotly_stacked_bar_chart(
-            feature=feature,
-            target=target,
-            y_offset=y_offset,
-            bar_width=bar_width,
-            fontsize=fontsize,
-            facecolor=facecolor,
-        )
+        return plotly_stacked_bar_chart(**params, bar_width=bar_width)
     else:
         raise ValueError(f"Unknown backend: {backend}")
 
@@ -82,7 +76,7 @@ def plot_stacked_bar_chart(
     target_name = target if isinstance(target, str) else target.name
 
     # For each bar in each container
-    for _i, bar in enumerate(ax.patches):
+    for bar in ax.patches:
         # Get the y position and height of the bar
         y = bar.get_y() + bar.get_height()
 
