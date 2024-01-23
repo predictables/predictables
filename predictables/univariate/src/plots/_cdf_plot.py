@@ -1,4 +1,4 @@
-from typing import Tuple, Union
+from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,15 +15,17 @@ def cdf_plot(
     x: Union[pl.Series, pd.Series, np.ndarray],
     plot_by: Union[pl.Series, pd.Series, np.ndarray],
     cv_folds: Union[pl.Series, pd.Series, np.ndarray],
-    x_label: str = None,
+    x_label: Union[str, None] = None,
     y_label: str = "Empirical Cumulative Distribution Function",
-    ax: Axes = None,
+    ax: Union[Axes, None] = None,
     figsize: Tuple[int, int] = (8, 8),
     backend: str = "matplotlib",
     **kwargs,
 ) -> Axes:
     """
-    Plots the empirical CDF of the given data for each level in `plot_by` and each fold in `cv_folds`. This plot is meant to show a "distribution" of possible CDF plots that could have been pulled from the real distribution.
+    Plots the empirical CDF of the given data for each level in `plot_by` and each fold in
+    `cv_folds`. This plot is meant to show a "distribution" of possible CDF plots that
+    could have been pulled from the real distribution.
 
     Parameters
     ----------
@@ -72,23 +74,28 @@ def cdf_plot_matplotlib(
     x: Union[pl.Series, pd.Series, np.ndarray],
     plot_by: Union[pl.Series, pd.Series, np.ndarray],
     cv_folds: Union[pl.Series, pd.Series, np.ndarray],
-    x_label: str = None,
-    y_label: str = "Empirical Cumulative Distribution Function",
-    ax: Axes = None,
+    x_label: Union[str, None] = None,
+    y_label: Union[str, None] = "Empirical Cumulative Distribution Function",
+    ax: Union[Axes, None] = None,
     **kwargs,
 ) -> Axes:
+    """
+    Plots the empirical CDF of the given data for each level in `plot_by` and each fold in `cv_folds`. This plot is meant to show a "distribution" of possible CDF plots that could have been pulled from the real distribution. This plot is rendered using matplotlib.
+    """
     x = to_pd_s(x)
     plot_by = to_pd_s(plot_by)
 
     if ax is None:
-        fig, ax = plt.subplots()
+        _, ax = plt.subplots()
 
     # Plot the total CDFs
     ax = cdf_plot_matplotlib_levels(
         x=x,
         plot_by=plot_by,
-        x_label=x_label,
-        y_label=y_label,
+        x_label=x_label if x_label is not None else x.name,
+        y_label=y_label
+        if y_label is not None
+        else "Empirical Cumulative Distribution Function",
         ax=ax,
         **kwargs,
     )
@@ -98,8 +105,10 @@ def cdf_plot_matplotlib(
         x=x,
         plot_by=plot_by,
         cv_folds=cv_folds,
-        x_label=x_label,
-        y_label=y_label,
+        x_label=x_label if x_label is not None else x.name,
+        y_label=y_label
+        if y_label is not None
+        else "Empirical Cumulative Distribution Function",
         ax=ax,
         alpha=0.3,
         **kwargs,
@@ -133,10 +142,10 @@ def cdf_plot_matplotlib(
 def cdf_plot_matplotlib_levels(
     x: Union[pl.Series, pd.Series, np.ndarray],
     plot_by: Union[pl.Series, pd.Series, np.ndarray],
-    x_label: str = None,
-    y_label: str = "Empirical Cumulative Distribution Function",
-    ax: Axes = None,
-    figsize: Tuple[int, int] = (8, 8),
+    x_label: Optional[Union[str, None]] = None,
+    y_label: Optional[str] = "Empirical Cumulative Distribution Function",
+    ax: Optional[Axes] = None,
+    figsize: Optional[Tuple[int, int]] = (8, 8),
     **kwargs,
 ) -> Axes:
     """
@@ -187,13 +196,15 @@ def cdf_plot_matplotlib_levels_cv(
     x: Union[pl.Series, pd.Series, np.ndarray],
     plot_by: Union[pl.Series, pd.Series, np.ndarray],
     cv_folds: Union[pl.Series, pd.Series, np.ndarray],
-    x_label: str = None,
-    y_label: str = "Empirical Cumulative Distribution Function",
-    ax: Axes = None,
+    x_label: Optional[Union[str, None]] = None,
+    y_label: Optional[str] = "Empirical Cumulative Distribution Function",
+    ax: Optional[Union[Axes, None]] = None,
     **kwargs,
 ) -> Axes:
     """
-    Plots the empirical CDF of the given data for each level in `plot_by` and each fold in `cv_folds`. This plot is meant to show a "distribution" of possible CDF plots that could have been pulled from the real distribution.
+    Plots the empirical CDF of the given data for each level in `plot_by` and each fold in
+    `cv_folds`. This plot is meant to show a "distribution" of possible CDF plots that could
+    have been pulled from the real distribution.
 
     Parameters
     ----------
@@ -227,11 +238,10 @@ def cdf_plot_matplotlib_levels_cv(
             x_cdf = calculate_cdf(x[(plot_by == level) & (cv_folds == fold)])
             ax = x_cdf.plot.line(ax=ax, color=binary_color(level), **kwargs)
 
-    if x_label is not None:
-        ax.set_xlabel(x_label)
-    if y_label is not None:
-        ax.set_ylabel(y_label)
-
+    ax.set_xlabel(x_label) if x_label is not None else ax.set_xlabel(x.name)
+    ax.set_ylabel(y_label) if y_label is not None else ax.set_ylabel(
+        "Empirical Cumulative Distribution Function"
+    )
     return ax
 
 
@@ -274,6 +284,8 @@ def js_divergence_annotation(jsd: float) -> str:
         return "The distributions are somewhat different"
     elif jsd < 0.7:
         return "The distributions are very different"
+    else:
+        return "The distributions are extremely different"
 
 
 def calculate_cdf(

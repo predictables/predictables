@@ -5,7 +5,7 @@ import pytest
 import statsmodels.api as sm
 from sklearn.datasets import load_breast_cancer
 
-from predictables.univariate.src.fit_sm_logistic_regression import (
+from predictables.univariate.src._fit_sm_logistic_regression import (
     fit_sm_logistic_regression,
 )
 

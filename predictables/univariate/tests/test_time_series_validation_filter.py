@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal, assert_series_equal
 
-from predictables.univariate.src.time_series_validation_filter import (
+from predictables.univariate.src._time_series_validation_filter import (
     time_series_validation_filter,
 )
 

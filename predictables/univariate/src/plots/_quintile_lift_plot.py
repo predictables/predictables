@@ -1,9 +1,10 @@
-from typing import Tuple, Union
+from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import plotly.graph_objs as go
 import polars as pl
+from matplotlib.axes import Axes
 from scipy.stats import entropy as kl_divergence
 
 from predictables.util import to_pd_s
@@ -16,8 +17,9 @@ def quintile_lift_plot(
     feature: Union[pd.Series, pl.Series],
     observed_target: Union[pd.Series, pl.Series],
     modeled_target: Union[pd.Series, pl.Series],
-    backend: str = "matplotlib",
-    figsize: Tuple[int, int] = (15, 8),
+    ax: Optional[Union[Axes, None]] = None,
+    backend: Optional[str] = "matplotlib",
+    figsize: Optional[Tuple[int, int]] = (8, 8),
     **kwargs,
 ):
     """
@@ -36,10 +38,13 @@ def quintile_lift_plot(
         A Pandas Series containing the observed target data.
     modeled_target : Union[pd.Series, pl.Series],
         A Pandas Series containing the modeled target data.
+    ax: Axes, optional
+        The Matplotlib axis object to plot the quintile lift on. If not provided,
+        a new figure and axis object will be created.
     backend : str, optional
         The plotting backend to use. Default is 'matplotlib'.
     figsize : Tuple[int, int], optional
-        The figure size. Default is (15, 8).
+        The figure size. Default is (8, 8).
     **kwargs
         Additional keyword arguments to pass to the plotting function.
 
@@ -48,24 +53,25 @@ def quintile_lift_plot(
     matplotlib.axes.Axes or plotly.graph_objs._figure.Figure
         The plot.
     """
-    if backend == "matplotlib":
-        return quintile_lift_plot_matplotlib(
-            feature=feature,
-            observed_target=observed_target,
-            modeled_target=modeled_target,
-            figsize=figsize,
-            **kwargs,
-        )
-    elif backend == "plotly":
-        return quintile_lift_plot_plotly(
-            feature=feature,
-            observed_target=observed_target,
-            modeled_target=modeled_target,
-            figsize=figsize,
-            **kwargs,
-        )
-    else:
+    if backend not in ["matplotlib", "plotly"]:
         raise ValueError(f"Unknown backend: {backend}")
+
+    if ax is None:
+        _, ax = plt.subplots(figsize=figsize)
+
+    params = dict(
+        feature=feature,
+        observed_target=observed_target,
+        modeled_target=modeled_target,
+        figsize=figsize,
+        **kwargs,
+    )
+
+    return (
+        quintile_lift_plot_matplotlib(**params, ax=ax)
+        if backend == "matplotlib"
+        else quintile_lift_plot_plotly(**params)
+    )
 
 
 def quintile_lift_plot_matplotlib(
@@ -73,7 +79,7 @@ def quintile_lift_plot_matplotlib(
     observed_target: Union[pd.Series, pl.Series],
     modeled_target: Union[pd.Series, pl.Series],
     ax: plt.Axes = None,
-    figsize: Tuple[int, int] = (15, 8),
+    figsize: Tuple[int, int] = (8, 8),
 ):
     """
     Plots the quintile lift for a given feature and target.
@@ -128,9 +134,9 @@ def quintile_lift_plot_matplotlib(
                 textcoords="offset points",
                 ha="center",
                 va="bottom",
-                fontsize=16,
+                fontsize=14 * (figsize[0] / 8),
                 bbox=dict(
-                    boxstyle="round,pad=0.25",
+                    boxstyle="round,pad=0.1",
                     edgecolor="black",
                     facecolor="white",
                     alpha=0.9,
@@ -151,7 +157,7 @@ def quintile_lift_plot_matplotlib(
         f"KL Divergence: {kl_div:.3f}\nGini Coefficient: {gini_coeff:.3f}",
         xy=(0.75, 0.05),
         xycoords="axes fraction",
-        fontsize=16,
+        fontsize=16 * (figsize[0] / 8),
         ha="center",
         bbox=dict(
             boxstyle="round,pad=0.25", edgecolor="black", facecolor="white", alpha=0.95
@@ -270,7 +276,7 @@ def _prep_data(
     df["quintile"] = _make_quintiles(df["modeled_target"])
 
     # Calculate the mean target and modeled target for each quintile
-    lift_df = (
+    return (
         df.groupby("quintile")
         .agg(
             observed_target_mean=("observed_target", "mean"),
@@ -278,8 +284,6 @@ def _prep_data(
         )
         .reset_index()
     )
-
-    return lift_df
 
 
 def _make_quintiles(modeled_target: Union[pd.Series, pl.Series]) -> pd.Series:
@@ -298,9 +302,19 @@ def _make_quintiles(modeled_target: Union[pd.Series, pl.Series]) -> pd.Series:
     pd.Series
         A Pandas Series containing the quintile bins.
     """
+    # Validate inputs
+    if not isinstance(modeled_target, pd.Series) and not isinstance(
+        modeled_target, pl.Series
+    ):
+        raise TypeError(
+            f"Expected modeled_target to be a Pandas or Polars Series, got {type(modeled_target)}"
+        )
+
     modeled_target = to_pd_s(modeled_target)
-    if len(modeled_target.unique()) < 5:
-        quintile = (
+
+    # Return quintile bins
+    return (
+        (
             pd.qcut(
                 modeled_target,
                 len(modeled_target.unique()),
@@ -309,10 +323,9 @@ def _make_quintiles(modeled_target: Union[pd.Series, pl.Series]) -> pd.Series:
             )
             + 1
         )
-    else:
-        quintile = pd.qcut(modeled_target, 5, labels=False, duplicates="drop") + 1
-
-    return quintile
+        if len(modeled_target.unique()) < 5
+        else pd.qcut(modeled_target, 5, labels=False, duplicates="drop") + 1
+    )
 
 
 def _make_bars(

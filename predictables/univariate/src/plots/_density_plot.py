@@ -1,4 +1,4 @@
-from typing import Tuple, Union
+from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -18,12 +18,12 @@ def density_plot(
     x_min: Union[float, None] = None,
     x_max: Union[float, None] = None,
     ax: Union[Axes, None] = None,
-    label: Union[str, None] = None,
     grid_bins: int = 200,
     cv_alpha: float = 0.5,
     cv_line_width: float = 0.5,
     t_test_alpha: float = 0.05,
     figsize: Tuple[int, int] = (8, 8),
+    call_legend: bool = True,
     backend: str = "matplotlib",
 ) -> Axes:
     """
@@ -34,17 +34,18 @@ def density_plot(
     x : Union[pd.Series, pl.Series]
         The variable to plot the density of.
     plot_by : Union[pd.Series, pl.Series]
-        The variable to group by. For a binary target, this is the target. The plot will generate a density for each level of the target.
+        The variable to group by. For a binary target, this is the target. The plot will
+        generate a density for each level of the target.
     cv_label : Union[pd.Series, pl.Series]
         The cross-validation fold to group by. If None, no grouping is done. Defaults to None.
     x_min : float, optional
-        The minimum value to plot. If None, defaults to the minimum of x before grouping by any variables. Used to extend the curve to the edges of the plot.
+        The minimum value to plot. If None, defaults to the minimum of x before grouping by
+        any variables. Used to extend the curve to the edges of the plot.
     x_max : float, optional
-        The maximum value to plot. If None, defaults to the maximum of x before grouping by any variables. Used to extend the curve to the edges of the plot.
+        The maximum value to plot. If None, defaults to the maximum of x before grouping by
+        any variables. Used to extend the curve to the edges of the plot.
     ax : matplotlib.axes.Axes, optional
         The axes to plot on. If None, a new figure and axes is created.
-    label : str, optional
-        The label for the plot. If None, no label is used.
     grid_bins : int, optional
         The number of bins to use for the density. Defaults to 200.
     cv_alpha : float, optional
@@ -55,6 +56,8 @@ def density_plot(
         The alpha value to use for the t-test. Defaults to 0.05.
     figsize : tuple, optional
         The size of the figure to create. Defaults to (8, 8). Only used if ax is None.
+    call_legend : bool, optional
+        Whether to call plt.legend() at the end of the function. Defaults to True.
     backend : str, optional
         The backend to use for plotting. Defaults to "matplotlib".
 
@@ -73,12 +76,12 @@ def density_plot(
             x_min=x_min,
             x_max=x_max,
             ax=ax,
-            label=label,
             grid_bins=grid_bins,
             cv_alpha=cv_alpha,
             cv_line_width=cv_line_width,
             t_test_alpha=t_test_alpha,
             figsize=figsize,
+            call_legend=call_legend,
         )
     elif backend == "plotly":
         raise NotImplementedError(
@@ -95,12 +98,12 @@ def density_plot_mpl(
     x_min: Union[float, None] = None,
     x_max: Union[float, None] = None,
     ax: Union[Axes, None] = None,
-    label: Union[str, None] = None,
     grid_bins: int = 200,
     cv_alpha: float = 0.5,
     cv_line_width: float = 0.5,
     t_test_alpha: float = 0.05,
     figsize: Tuple[int, int] = (8, 8),
+    call_legend: bool = True,
 ) -> Axes:
     """
     Plot density function as well as cross-validation densities.
@@ -119,8 +122,6 @@ def density_plot_mpl(
         The maximum value to plot. If None, defaults to the maximum of x before grouping by any variables. Used to extend the curve to the edges of the plot.
     ax : matplotlib.axes.Axes, optional
         The axes to plot on. If None, a new figure and axes is created.
-    label : str, optional
-        The label for the plot. If None, no label is used.
     grid_bins : int, optional
         The number of bins to use for the density. Defaults to 200.
     cv_alpha : float, optional
@@ -131,6 +132,8 @@ def density_plot_mpl(
         The alpha value to use for the t-test. Defaults to 0.05.
     figsize : tuple, optional
         The size of the figure to create. Defaults to (8, 8). Only used if ax is None.
+    call_legend : bool, optional
+        Whether to call plt.legend() at the end of the function. Defaults to True.
 
     Returns
     -------
@@ -199,7 +202,7 @@ def density_plot_mpl(
     ax = _annotate_mean_median(ax, x, plot_by)
 
     # Annotate the t-test results:
-    t, p, significance_statement = _density_t_test_binary_target(
+    _, p, significance_statement = _density_t_test_binary_target(
         x, plot_by, t_test_alpha
     )
     ax.annotate(
@@ -210,7 +213,7 @@ def density_plot_mpl(
         textcoords="axes fraction",
         ha="left",
         va="center",
-        fontsize=10,
+        fontsize=10 * (figsize[0] / 8),
         bbox=dict(
             boxstyle="round,pad=0.3",
             edgecolor="lightgrey",
@@ -226,7 +229,8 @@ def density_plot_mpl(
 
     ax.set_title(title)
 
-    plt.legend()
+    if call_legend:
+        plt.legend()
 
     return ax
 
@@ -282,9 +286,9 @@ def _density_t_test_binary_target(
     significance_statement = "Results of a Student's t-test:\n=================\n\n"
     if p < alpha:
         if p < 1e-3:
-            significance_statement += f"The test indicates that the\ndistributions are significant\n(p={p:.1e})."
+            significance_statement += f"The test indicates that the\ndistributions are significantly\ndifferent (p={p:.1e})."
         else:
-            significance_statement += f"The test indicates that the\ndistributions are significant\n(p={p:.3f})."
+            significance_statement += f"The test indicates that the\ndistributions are significantly\ndifferent (p={p:.3f})."
     else:
         significance_statement += f"The test indicates no significant\ndifference between the distributions\n(p={p:.3f}) at the {1-alpha:.0%} level."
 
@@ -357,6 +361,9 @@ def _plot_density_mpl(
     density = gaussian_kde(x)
     x_grid = np.linspace(x_min, x_max, grid_bins)
 
+    if label is None:
+        label = x.name
+
     if fill_under:
         ax.plot(
             x_grid,
@@ -389,18 +396,17 @@ def _plot_density_mpl(
 def density_by_mpl(
     x: pd.Series,
     by: pd.Series,
-    cv_fold: Union[pd.Series, None] = None,
-    x_min: Union[float, None] = None,
-    x_max: Union[float, None] = None,
-    ax: Union[Axes, None] = None,
-    use_labels: bool = True,
-    grid_bins: int = 200,
-    line_width: float = 1,
-    line_color: Union[str, None] = None,
-    alpha: float = 1,
-    fill_under: bool = True,
-    fill_alpha: float = 0.3,
-    figsize: Tuple[int, int] = (8, 8),
+    cv_fold: Optional[Union[pd.Series, None]] = None,
+    x_min: Optional[Union[float, None]] = None,
+    x_max: Optional[Union[float, None]] = None,
+    ax: Optional[Union[Axes, None]] = None,
+    use_labels: Optional[bool] = True,
+    grid_bins: Optional[int] = 200,
+    line_width: Optional[float] = 1.0,
+    alpha: Optional[float] = 1.0,
+    fill_under: Optional[bool] = True,
+    fill_alpha: Optional[float] = 0.3,
+    figsize: Optional[Tuple[int, int]] = (8, 8),
 ):
     """
     Plot the density of x by the levels of by, using matplotlib,
@@ -450,56 +456,49 @@ def density_by_mpl(
     1. I want to have the CV curves calculate a standard deviation, and provide a +/- 1 SD
        band.
     """
+    # If no axis passed, create one
     if ax is None:
         _, ax = plt.subplots(figsize=figsize)
 
-    if x_min is None:
-        x_min = x.dropna().min()
-    if x_max is None:
-        x_max = x.dropna().max()
+    # Set min and max if not set, and build params dict
+    x_min = x_min if x_min is not None else x.dropna().min()
+    x_max = x_max if x_max is not None else x.dropna().max()
+    params = {
+        "x_min": x_min,
+        "x_max": x_max,
+        "ax": ax,
+        "use_labels": use_labels,
+        "grid_bins": grid_bins,
+        "line_width": line_width,
+        "alpha": alpha,
+        "fill_under": fill_under,
+        "fill_alpha": fill_alpha,
+        "figsize": figsize,
+    }
 
+    # If not grouping by CV fold, just plot the density
     if cv_fold is None:
         for level, group in x.groupby(by):
-            if get_column_dtype(by) == "binary":
-                color = binary_color(level)
-            else:
-                color = None
+            color = binary_color(level) if get_column_dtype(by) == "binary" else None
             label = f"{plot_label(by.name)} = {level}"
             _plot_density_mpl(
                 group,
-                x_min=x_min,
-                x_max=x_max,
-                ax=ax,
-                label=(label if use_labels else None),
-                grid_bins=grid_bins,
-                line_width=line_width,
+                label=label,
                 line_color=color,
-                alpha=alpha,
-                fill_under=fill_under,
-                fill_alpha=fill_alpha,
-                figsize=figsize,
+                **params,
             )
+    # Otherwise, plot the density by CV fold
     else:
-        for f in cv_fold.drop_duplicates().sort_values():
+        for f in cv_fold.drop_duplicates().sort_values():  # loop over CV fold
             for level, group in x[cv_fold == f].groupby(by[cv_fold == f]):
-                if get_column_dtype(by) == "binary":
-                    color = binary_color(level)
-                else:
-                    color = None
-                label = f"{plot_label(by.name)}(Fold {f}) = {level}"
+                color = (
+                    binary_color(level) if get_column_dtype(by) == "binary" else None
+                )
                 _plot_density_mpl(
                     group,
-                    x_min=x_min,
-                    x_max=x_max,
-                    ax=ax,
-                    label=(label if use_labels else None),
-                    grid_bins=grid_bins,
-                    line_width=line_width,
+                    label="_nolegend_",  # don't label the plot if we're filling under
                     line_color=color,
-                    alpha=alpha,
-                    fill_under=fill_under,
-                    fill_alpha=fill_alpha,
-                    figsize=figsize,
+                    **params,
                 )
 
     return ax
@@ -517,62 +516,59 @@ def calculate_density_sd(
     """
     if cv_fold is None:
         raise ValueError("cv_fold cannot be None.")
-    else:
-        sd = pd.DataFrame(
-            {"x": np.linspace(x.min(), x.max(), grid_bins)}, index=range(grid_bins)
-        )
-        for f in cv_fold.drop_duplicates().sort_values():
-            for level, group in x[cv_fold == f].groupby(by[cv_fold == f]):
-                density = gaussian_kde(group)
-                sd[f"{f}_{level}"] = density(sd["x"])
 
-        sd = sd.drop(columns=["x"])
-        sd = sd.std(axis=1)
+    sd = pd.DataFrame(
+        {"x": np.linspace(x.min(), x.max(), grid_bins)}, index=range(grid_bins)
+    )
+    for f in cv_fold.drop_duplicates().sort_values():
+        for level, group in x[cv_fold == f].groupby(by[cv_fold == f]):
+            density = gaussian_kde(group)
+            sd[f"{f}_{level}"] = density(sd["x"])
 
-        # smooth the standard deviation (should not deviate much from one
-        # x value to the next)
-        sd_smooth = sd.rolling(window=5, center=True).mean()
-        sd_smooth[0] = np.mean(sd[:2])
-        sd_smooth[1] = np.mean(sd[:3])
+    sd = sd.drop(columns=["x"])
+    sd = sd.std(axis=1)
 
-        sd_smooth[len(sd_smooth) - 1] = np.mean(sd[-2:])
-        sd_smooth[len(sd_smooth) - 2] = np.mean(sd[-3:])
+    # smooth the standard deviation (should not deviate much from one
+    # x value to the next)
+    sd_smooth = sd.rolling(window=5, center=True).mean()
+    sd_smooth[0] = np.mean(sd[:2])
+    sd_smooth[1] = np.mean(sd[:3])
 
-        return sd_smooth, sd
+    sd_smooth[len(sd_smooth) - 1] = np.mean(sd[-2:])
+    sd_smooth[len(sd_smooth) - 2] = np.mean(sd[-3:])
+
+    return sd_smooth, sd
 
 
 def _calculate_single_density_sd(
     x: pd.Series,
-    cv_fold: Union[pd.Series, None] = None,
+    cv_fold: pd.Series,
     grid_bins: int = 200,
 ) -> pd.Series:
     """
     Using the cross-validation folds, calculate the standard deviation of the
     density of x.
     """
-    if cv_fold is None:
-        raise ValueError("cv_fold cannot be None.")
-    else:
-        sd = pd.DataFrame(
-            {"x": np.linspace(x.min(), x.max(), grid_bins)}, index=range(grid_bins)
-        )
-        for f in cv_fold.drop_duplicates().sort_values():
-            density = gaussian_kde(x[cv_fold == f])
-            sd[f"{f}"] = density(sd["x"])
+    sd = pd.DataFrame(
+        {"x": np.linspace(x.min(), x.max(), grid_bins)}, index=range(grid_bins)
+    )
+    for f in cv_fold.drop_duplicates().sort_values():
+        density = gaussian_kde(x[cv_fold == f])
+        sd[f"{f}"] = density(sd["x"])
 
-        sd = sd.drop(columns=["x"])
-        sd = sd.std(axis=1)
+    sd = sd.drop(columns=["x"])
+    sd = sd.std(axis=1)
 
-        # smooth the standard deviation (should not deviate much from one
-        # x value to the next)
-        sd_smooth = sd.rolling(window=5, center=True).mean()
-        sd_smooth[0] = np.mean(sd[:2])
-        sd_smooth[1] = np.mean(sd[:3])
+    # smooth the standard deviation (should not deviate much from one
+    # x value to the next)
+    sd_smooth = sd.rolling(window=5, center=True).mean()
+    sd_smooth[0] = np.mean(sd[:2])
+    sd_smooth[1] = np.mean(sd[:3])
 
-        sd_smooth[len(sd_smooth) - 1] = np.mean(sd[-2:])
-        sd_smooth[len(sd_smooth) - 2] = np.mean(sd[-3:])
+    sd_smooth[len(sd_smooth) - 1] = np.mean(sd[-2:])
+    sd_smooth[len(sd_smooth) - 2] = np.mean(sd[-3:])
 
-        return sd_smooth, sd
+    return sd_smooth, sd
 
 
 def _plot_single_density_pm_standard_deviation(
@@ -713,6 +709,9 @@ def _annotate_mean_median(
     arrowprops0 = dict(arrowstyle="->", lw=1)
     arrowprops1 = dict(arrowstyle="->", lw=1)
 
+    # Extract the figure size
+    figsize = ax.get_figure().get_size_inches()
+
     # Annotate for target=0
     ax.annotate(
         f"{target.name}=0\n===========\nMean / Median =\n{mean0 / median0:.2f}",
@@ -722,7 +721,7 @@ def _annotate_mean_median(
         textcoords="offset points",
         ha=pos0,
         va="bottom",
-        fontsize=16,
+        fontsize=16 * (figsize[0] / 8),
         bbox=dict(
             boxstyle="round,pad=0.3", edgecolor="black", facecolor="blue", alpha=0.2
         ),
@@ -738,7 +737,7 @@ def _annotate_mean_median(
         textcoords="offset points",
         ha=pos1,
         va="bottom",
-        fontsize=16,
+        fontsize=16 * (figsize[0] / 8),
         bbox=dict(
             boxstyle="round,pad=0.3", edgecolor="black", facecolor="orange", alpha=0.2
         ),

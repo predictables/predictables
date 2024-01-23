@@ -75,7 +75,7 @@ def plot_cat_lift_plot(
     feature_name: str,
     target_name: str,
     ax: Union[Axes, None] = None,
-    figsize: Tuple[int, int] = (15, 7),
+    figsize: Tuple[int, int] = (8, 8),
 ) -> Union[Axes, None]:
     """
     Plots the lift chart for a given categorical feature and target. Returns a
@@ -100,44 +100,43 @@ def plot_cat_lift_plot(
     if ax is None:
         _, ax = plt.subplots(figsize=figsize)
 
+    if ax is None:
+        return None
     colors = ["green" if lift > 1 else "red" for lift in lift_data["lift"]]
 
-    if ax is not None:
-        ax.bar(lift_data["Feature"], lift_data["lift"], color=colors, alpha=0.6)
-        ax.axhline(1, color="black", linestyle="--")
-        ax.set_xlabel(feature_name)
-        ax.set_ylabel("Lift")
-        ax.set_title(f"Lift Plot - Model Including {feature_name} vs Null Model")
+    ax.bar(lift_data["Feature"], lift_data["lift"], color=colors, alpha=0.6)
+    ax.axhline(1, color="black", linestyle="--")
+    ax.set_xlabel(feature_name)
+    ax.set_ylabel("Lift")
+    ax.set_title(f"Lift Plot - Model Including {feature_name} vs Null Model")
 
-        plt.tight_layout()
+    plt.tight_layout()
 
-        # Add data label annotations
-        for i, lift in enumerate(lift_data["lift"]):
-            if lift != 0:
-                ax.annotate(
-                    f"{lift:.2f}",
-                    xy=(i, lift),
-                    xytext=(0, -10),
-                    textcoords="offset points",
-                    ha="center",
-                    va="bottom",
-                    font=dict(size=16),
-                    bbox=dict(boxstyle="round", facecolor="white", alpha=0.9),
-                )
-            else:
-                ax.annotate(
-                    f"{0:.2f}",
-                    xy=(i, 0),
-                    xytext=(0, 5),
-                    textcoords="offset points",
-                    ha="center",
-                    va="bottom",
-                    font=dict(size=16),
-                    bbox=dict(boxstyle="round", facecolor="white", alpha=0.9),
-                )
-        return ax
-    else:
-        return None
+    # Add data label annotations
+    for i, lift in enumerate(lift_data["lift"]):
+        if lift != 0:
+            ax.annotate(
+                f"{lift:.2f}",
+                xy=(i, lift),
+                xytext=(0, -10),
+                textcoords="offset points",
+                ha="center",
+                va="bottom",
+                font=dict(size=14 * (figsize[0] / 8)),
+                bbox=dict(boxstyle="round", facecolor="white", alpha=0.9),
+            )
+        else:
+            ax.annotate(
+                f"{0:.2f}",
+                xy=(i, 0),
+                xytext=(0, 5),
+                textcoords="offset points",
+                ha="center",
+                va="bottom",
+                font=dict(size=14 * (figsize[0] / 8)),
+                bbox=dict(boxstyle="round", facecolor="white", alpha=0.9),
+            )
+    return ax
 
 
 def plotly_cat_lift_plot(
@@ -188,23 +187,20 @@ def plotly_cat_lift_plot(
         y=1, line=dict(color="black", dash="dash"), annotation_text="Baseline"
     )
 
-    # Add annotations for lift values
-    annotations = []
-    for _, row in lift_data.iterrows():
-        annotations.append(
-            dict(
-                x=row[feature_name],
-                y=row["lift"],
-                text=f"{row['lift']:.2f}",
-                font=dict(family="Arial", size=16, color="black"),
-                showarrow=False,
-                bgcolor="white",
-                bordercolor="black",
-                borderwidth=1,
-                borderpad=4,
-            )
+    annotations = [
+        dict(
+            x=row[feature_name],
+            y=row["lift"],
+            text=f"{row['lift']:.2f}",
+            font=dict(family="Arial", size=16, color="black"),
+            showarrow=False,
+            bgcolor="white",
+            bordercolor="black",
+            borderwidth=1,
+            borderpad=4,
         )
-
+        for _, row in lift_data.iterrows()
+    ]
     # Update layout
     fig.update_layout(
         title_text=f"Lift Plot - Model Including {feature_name} vs Null Model",
@@ -236,9 +232,9 @@ def calculate_lift(feature: pd.Series, target: pd.Series) -> pd.DataFrame:
     # Check for empty inputs and valid data types
     if feature.empty or target.empty:
         raise ValueError("Feature and target series must not be empty.")
-    if not get_column_dtype(feature) == "categorical":
+    if get_column_dtype(feature) != "categorical":
         raise TypeError("Feature must be a categorical series.")
-    if not get_column_dtype(target) == "binary":
+    if get_column_dtype(target) != "binary":
         raise TypeError("Target must be a binary (boolean) series.")
 
     overall_positive_rate = target.mean()

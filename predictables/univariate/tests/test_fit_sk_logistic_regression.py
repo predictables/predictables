@@ -5,7 +5,7 @@ import pytest
 from sklearn.datasets import load_breast_cancer
 from sklearn.linear_model import LogisticRegression
 
-from predictables.univariate.src.fit_sk_logistic_regression import (
+from predictables.univariate.src._fit_sk_logistic_regression import (
     fit_sk_logistic_regression,
 )
 
