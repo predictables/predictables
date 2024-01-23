@@ -129,13 +129,23 @@ def _impute_col_with_mode(df: pl.DataFrame, col: str) -> pl.DataFrame:
     :rtype: pl.DataFrame
     """
     if _check_if_categorical(df, col):
-        mode = (
-            df.group_by(col)
-            .agg(pl.len().alias("count"))
-            .sort("count")
-            .reverse()[col]
-            .head(1)[0]
-        )
+        if pl.__version__ >= "0.20.5":
+            mode = (
+                df.group_by(col)
+                .agg(pl.len().alias("count"))
+                .sort("count")
+                .reverse()[col]
+                .head(1)[0]
+            )
+        else:
+            mode = (
+                df.group_by(col)
+                .agg(pl.count().alias("count"))
+                .sort("count")
+                .reverse()[col]
+                .head(1)[0]
+            )
+
         # Use fill_null on the Series object, not on Expr
 
         # if there are multiple modes, return the first

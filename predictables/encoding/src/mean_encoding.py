@@ -85,8 +85,12 @@ def mean_encoding_with_ratio_lazy(
     # Laplace label for new column name - only when laplace_alpha > 0 and keep_cat_col = True
     laplace_label = f"(laplace_alpha={laplace_alpha})" if laplace_alpha > 0 else ""
 
+    # polars>=0.20.5 requires .len() instead of .count()
     # Add a row number column to the dataframe (so you can resort it later)
-    lazy_df = df.lazy().with_columns(pl.arange(0, pl.len()).alias("row_ord"))
+    if pl.__version__ >= "0.20.5":
+        lazy_df = df.lazy().with_columns(pl.arange(0, pl.len()).alias("row_ord"))
+    else:
+        lazy_df = df.lazy().with_columns(pl.arange(0, pl.count()).alias("row_ord"))
 
     lazy_df = (
         # Sort by the categorical column and the date column
@@ -131,13 +135,11 @@ def mean_encoding_with_ratio_lazy(
                 .then(
                     (
                         # numerator gets 1 * alpha
-                        pl.col("sum_col1")
-                        + laplace_alpha
+                        pl.col("sum_col1") + laplace_alpha
                     )
                     / (
                         # denominator gets n_cats * alpha
-                        pl.col("sum_col2")
-                        + (n_cats * laplace_alpha)
+                        pl.col("sum_col2") + (n_cats * laplace_alpha)
                     )
                 )
                 .otherwise(pl.col("mean_ratio"))
@@ -150,13 +152,11 @@ def mean_encoding_with_ratio_lazy(
                 .then(
                     (
                         # numerator gets 1 * alpha
-                        pl.col("sum_col1")
-                        + laplace_alpha
+                        pl.col("sum_col1") + laplace_alpha
                     )
                     / (
                         # denominator gets n_cats * alpha
-                        pl.col("sum_col2")
-                        + (n_cats * laplace_alpha)
+                        pl.col("sum_col2") + (n_cats * laplace_alpha)
                     )
                 )
                 .otherwise(pl.col("mean_ratio"))
