@@ -35,31 +35,32 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
     - name: Test with pytest & generate a tests badge
       run: |
         # Generate testing report and badge (must have >95% of tests pass)
-        pytest --junitxml=reports/junit/junit.xml
-        # --html=reports/junit/report.html TODO: why isn't this available??
+        pytest --junitxml=reports/test/junit.xml
+        # --html=reports/test/report.html TODO: why isn't this available??
         genbadge tests -t 95
 
     - name: Copy pytest badge to root
       uses: actions/upload-artifact@v2
       with:
         name: pytest-badge
-        path: pytest-badge.svg        
-    
+        path: reports/test/pytest-badge.svg
+
     - name: Generate coverage badge
       run: |
-        coverage report
-        coverage xml
-        coverage html
-        genbadge coverage     
+        coverage report -m --omit="*/tests/*"
+        coverage xml -o reports/coverage/coverage.xml --omit="*/tests/*"
+        coverage html -d reports/coverage --omit="*/tests/*"
+        genbadge coverage -t 95
         
     - name: Copy coverage badge to root of repo
       uses: actions/upload-artifact@v2
       with:
         name: coverage-badge
-        path: coverage-badge.svg
+        path: reports/coverage/coverage-badge.svg
         
     - name: Generate flake8 badge
       run: |
@@ -70,6 +71,6 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: flake8-badge
-        path: flake8-badge.svg
+        path: reports/flake8/flake8-badge.svg
 
         
