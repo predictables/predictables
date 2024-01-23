@@ -43,9 +43,10 @@ jobs:
         genbadge tests -t 95
 
     - name: Copy pytest badge to root
-      run: |
-        cp /home/runner/work/predictables/predictables/tests-badge.svg tests-badge.svg
-        
+      uses: actions/upload-artifact@v2
+      with:
+        name: pytest-badge
+        path: pytest-badge.svg        
     
     - name: Generate coverage badge
       run: |
@@ -54,17 +55,21 @@ jobs:
         coverage html
         genbadge coverage     
         
-    - name: Copy coverage badge to root
-      run: |
-        cp /home/runner/work/predictables/predictables/coverage-badge.svg coverage-badge.svg
-
+    - name: Copy coverage badge to root of repo
+      uses: actions/upload-artifact@v2
+      with:
+        name: coverage-badge
+        path: coverage-badge.svg
+        
     - name: Generate flake8 badge
       run: |
         flake8 . --exit-zero --format=html --htmldir ./reports/flake8 --statistics --tee --output-file flake8stats.txt
         genbadge flake8
 
-    - name: Copy flake8 badge to root
-      run: |
-        cp /home/runner/work/predictables/predictables/flake8-badge.svg flake8-badge.svg
+    - name: Copy flake8 badge to root of repo
+      uses: actions/upload-artifact@v2
+      with:
+        name: flake8-badge
+        path: flake8-badge.svg
 
         
