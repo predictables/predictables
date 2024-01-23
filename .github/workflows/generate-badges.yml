@@ -42,14 +42,29 @@ jobs:
         # --html=reports/junit/report.html TODO: why isn't this available??
         genbadge tests -t 95
 
-        # Generate the coverage report and badge
+    - name: Copy pytest badge to root
+      run: |
+        cp /home/runner/work/predictables/predictables/tests-badge.svg tests-badge.svg
+        
+    
+    - name: Generate coverage badge
+      run: |
         coverage report
         coverage xml
         coverage html
-        genbadge coverage        
+        genbadge coverage     
+        
+    - name: Copy coverage badge to root
+      run: |
+        cp /home/runner/work/predictables/predictables/coverage-badge.svg coverage-badge.svg
 
-        # Generate flake8 report and then the badge:
+    - name: Generate flake8 badge
+      run: |
         flake8 . --exit-zero --format=html --htmldir ./reports/flake8 --statistics --tee --output-file flake8stats.txt
         genbadge flake8
+
+    - name: Copy flake8 badge to root
+      run: |
+        cp /home/runner/work/predictables/predictables/flake8-badge.svg flake8-badge.svg
 
         
