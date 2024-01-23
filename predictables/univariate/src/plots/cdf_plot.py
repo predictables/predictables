@@ -52,10 +52,10 @@ def cdf_plot(
     x = to_pd_s(x)
     plot_by = to_pd_s(plot_by)
 
-    if ax is None:
-        _, ax = plt.subplots(figsize=figsize)
-
     if backend == "matplotlib":
+        if ax is None:
+            _, ax = plt.subplots(figsize=figsize)
+
         ax = cdf_plot_matplotlib(
             x=x,
             plot_by=plot_by,
@@ -107,12 +107,20 @@ def cdf_plot_matplotlib(
 
     if x_label is not None:
         ax.set_xlabel(x_label)
+    else:
+        ax.set_xlabel(x.name)
     if y_label is not None:
         ax.set_ylabel(y_label)
+    else:
+        ax.set_ylabel("Empirical Cumulative Distribution Function")
 
     # js_divergence_test = jenson_shannon_divergence()
 
     # js_divergence_annotation = js_divergence_annotation()
+
+    # Add horizontal line at 0 and 1
+    ax.axhline(0, color="black", linestyle="--", linewidth=1, label="_nolegend_")
+    ax.axhline(1, color="black", linestyle="--", linewidth=1, label="_nolegend_")
 
     title = create_title(x.name, plot_by.name)
     ax.set_title(title)
