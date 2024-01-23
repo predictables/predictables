@@ -1,7 +1,6 @@
-def a_function():
-    """Am I able to document this function???"""
-    print("Hi")
-
+# def a_function():
+#     """Am I able to document this function???"""
+#     print("Hi")
 
 # from .src import *
 # from .rpt import *
@@ -145,7 +144,10 @@ def a_function():
 #         # Error handling
 #         if not self.has_x or not self.has_y:
 #             raise ValueError(
-#                 f"Cannot calculate correlation between two variables:\nx: {self.x}\ny: {self.y}\nPass {missing_vars} to this method to proceed."
+#                 f"Cannot calculate correlation between two variables:\n"
+#                 f"x: {self.x}\n"
+#                 f"y: {self.y}\n"
+#                 f"Pass {missing_vars} to this method to proceed."
 #             )
 
 #         # Handle different cases based on the types of x and y
