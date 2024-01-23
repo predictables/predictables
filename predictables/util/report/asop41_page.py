@@ -54,7 +54,6 @@
 # from datetime import datetime
 # from typing import Union
 
-
 # def correlation_report(
 #     ## ASOP 41 Disclosures
 #     # 4.1.3a - Intended users of the actuarial report
@@ -125,7 +124,6 @@
 #         raise ValueError(
 #             "`are_there_any_conflicts_of_interest` must be specified per ASOP 41. You must explicitly state True or False for this."
 #         )
-
 
 #     # Information date of the report
 #     if based_on_data_through is None:

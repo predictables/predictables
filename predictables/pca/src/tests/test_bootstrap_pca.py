@@ -19,7 +19,6 @@ def test_nothing():
 #     n_components = 5
 #     return data, n_components
 
-
 # def test_bootstrap_pca(mock_data):
 #     """Test that bootstrap_pca is performed correctly"""
 #     # Mock data
@@ -44,7 +43,6 @@ def test_nothing():
 #         len(bootstrapped_results["explained_variance"][0]) == n_components
 #     ), f"Number of components ({len(bootstrapped_results['explained_variance'][0])}) is incorrect - expected {n_components}"
 
-
 # def test_invalid_data():
 #     """Test that the function raises an error when the data is not a 2-dimensional array"""
 #     # Create invalid mock data (1D array)
@@ -54,7 +52,6 @@ def test_nothing():
 #     with pytest.raises(ValueError):
 #         _ = bootstrap_pca(data, n_components)
 
-
 # def test_invalid_n_components(mock_data):
 #     """Test that the function raises an error when the number of components is greater than the number of features"""
 #     # Mock data
@@ -62,7 +59,6 @@ def test_nothing():
 
 #     with pytest.raises(ValueError):
 #         _ = bootstrap_pca(data, 11)
-
 
 # def test_bootstrap_pca_stability(mock_data):
 #     data, n_components = mock_data

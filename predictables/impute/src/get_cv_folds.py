@@ -41,7 +41,7 @@ def get_cv_folds(
     if n_folds < 1:
         raise ValueError("n_folds must be greater than 0.")
 
-    ## Assuming to_pd_df efficiently converts dataframe types
+    # Assuming to_pd_df efficiently converts dataframe types
     df = to_pd_df(df)
     kf = KFold(n_splits=n_folds)
 

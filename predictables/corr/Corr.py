@@ -12,7 +12,6 @@ def a_function():
 # from PredicTables.util import get_column_dtype, to_pd_df, to_pd_s
 # from typing import Union, List, Dict, Callable
 
-
 # @dataclass
 # class CorrResult:
 #     """
@@ -128,7 +127,6 @@ def a_function():
 #         >>> c._calc_corr()
 #         ValueError: Cannot calculate correlation between two variables.
 
-
 #         """
 #         # Set x or y if provided
 #         if x is not None:
@@ -165,7 +163,6 @@ def a_function():
 #             return self._calc_phi()
 #         else:
 #             return None
-
 
 # class Corr:
 #     def __init__(self, X, y):

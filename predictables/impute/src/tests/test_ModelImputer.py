@@ -2,7 +2,6 @@
 # import pandas as pd
 # from PredicTables.impute import ModelImputer
 
-
 # @pytest.fixture
 # def synthetic_data():
 #     # X, y = generate_synthetic_data_cat(between_correlation=0.1)
@@ -100,19 +99,16 @@
 
 #     return Xm, missing_mask
 
-
 # @pytest.fixture
 # def model_imputer(synthetic_data):
 #     Xm, missing_mask = synthetic_data
 #     mi = ModelImputer(Xm, missing_mask)
 #     return mi
 
-
 # @pytest.fixture
 # def fitted_model_imputer(mi):
 #     mi.fit_models()
 #     return mi
-
 
 # def test_ModelImputer_init(synthetic_data):
 #     Xm, missing_mask = synthetic_data
