@@ -67,7 +67,9 @@ def test_dropping_high_cardinality_categorical_columns():
         }
     ).select(
         [
-            pl.col(c).cast(pl.Categorical).name.keep()
+            (pl.col(c).cast(pl.Categorical).name.keep()
+            if pl.__version__ >= "0.19.12"
+            else pl.col(c).cast(pl.Categorical).keep_name())
             for c in ["low_card_cat", "high_card_cat"]
         ]
     )

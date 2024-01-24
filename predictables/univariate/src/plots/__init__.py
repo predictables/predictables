@@ -1,4 +1,3 @@
-# from .density_plot import density_plot
 from ._categorical_lift_plot import categorical_lift_plot  # noqa: F401
 from ._cdf_plot import cdf_plot  # noqa: F401
 from ._density_plot import density_plot  # noqa: F401

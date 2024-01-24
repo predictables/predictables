@@ -7,6 +7,7 @@ from predictables.util import get_unique
 
 def _get_data(
     df: pd.DataFrame,
+    df_val: Optional[pd.DataFrame],
     element: str = "x",
     data: str = "train",
     fold_n: int = None,
@@ -55,8 +56,21 @@ def _get_data(
     if element == "fold" and fold_n not in unique_folds:
         raise ValueError(f"fold_n must be one of {unique_folds}. Got {fold_n}.")
 
-    
-def _filter_df_for_cv(df: pd.DataFrame, fold: int, fold_col: str, data: str = "all") -> pd.DataFrame:
+    # Use the cv function if we're getting a fold
+    if element == "fold":
+        return _filter_df_for_cv(df, fold_n, fold_col_name, data)[
+            feature_col_name
+        ].tolist()
+
+    # Otherwise, get the data for the requested fold
+    return _filter_df_for_train_test(df, df_val, data)[
+        feature_col_name if element == "x" else target_col_name
+    ]
+
+
+def _filter_df_for_cv(
+    df: pd.DataFrame, fold: int, fold_col: str, data: str = "all"
+) -> pd.DataFrame:
     """
     Get the data for the requested fold. This means that we only return
     rows having the cv label of the fold.
@@ -99,7 +113,11 @@ def _filter_df_for_cv(df: pd.DataFrame, fold: int, fold_col: str, data: str = "a
     if data == "all":
         return df
     else:
-        return df.loc[df[fold_col].ne(fold), :] if data=="train" else df.loc[df[fold_col].eq(fold), :]
+        return (
+            df.loc[df[fold_col].ne(fold), :]
+            if data == "train"
+            else df.loc[df[fold_col].eq(fold), :]
+        )
 
 
 def _filter_df_for_cv_train(df: pd.DataFrame, fold: int, fold_col: str) -> pd.DataFrame:

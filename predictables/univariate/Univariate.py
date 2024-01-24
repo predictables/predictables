@@ -1,8 +1,10 @@
 from typing import List, Union
 
+import matplotlib.pyplot as plt
 import pandas as pd
 import polars as pl
 
+from predictables.univariate.src._get_data import _get_data
 from predictables.univariate.src.plots import (
     cdf_plot,
     density_plot,
@@ -21,7 +23,28 @@ def get_col(self, col: str) -> List[Union[int, float, str]]:
     Parameters
     ----------
     col : str
-        The name of the column to get. Choices are "coef", "pvalues", "se", "lower_ci", "upper_ci", "acc_train", "acc_test", "auc_train", "auc_test", "f1_train", "f1_test", "precision_train", "precision_test", "recall_train", "recall_test", "mcc_train", "mcc_test", "logloss_train", "logloss_test", "auc_train", "auc_test".
+        The name of the column to get. Choices are
+            - "coef"
+            - "pvalues",
+            - "se"
+            - "lower_ci"
+            - "upper_ci"
+            - "acc_train"
+            - "acc_test"
+            - "auc_train"
+            - "auc_test"
+            - "f1_train"
+            - "f1_test"
+            - "precision_train"
+            - "precision_test"
+            - "recall_train"
+            - "recall_test"
+            - "mcc_train"
+            - "mcc_test"
+            - "logloss_train"
+            - "logloss_test"
+            - "auc_train"
+            - "auc_test"
 
     Returns
     -------
@@ -54,6 +77,7 @@ class Univariate(SingleUnivariate):
         fold_col: str = "cv",
         feature_col: str = None,
         target_col: str = None,
+        **kwargs,
     ):
         super().__init__(
             df, fold_col=fold_col, feature_col=feature_col, target_col=target_col
@@ -109,6 +133,8 @@ class Univariate(SingleUnivariate):
             self.df if self.df_val is None else pd.concat([self.df, self.df_val])
         )
 
+        self.figsize = (6, 6) if "figsize" not in kwargs else kwargs["figsize"]
+
     def _get_folds(self) -> List[Union[int, float, str]]:
         """
         Helper method that returns an ordered list of the unique elements of
@@ -116,7 +142,7 @@ class Univariate(SingleUnivariate):
         """
         return get_unique(self.cv)
 
-    def _get_data(
+    def get_data(
         self, element: str = "x", data: str = "train", fold_n: int = None
     ) -> List[Union[int, float, str]]:
         """
@@ -141,57 +167,16 @@ class Univariate(SingleUnivariate):
         List[Union[int, float, str]]
             The values for the requested column.
         """
-        element = element.lower()
-        data = data.lower()
-
-        if data not in ["train", "test", "all"]:
-            raise ValueError(
-                f"data must be one of 'train', 'test', or 'all'. Got {data}."
-            )
-        if element not in ["x", "y", "fold"]:
-            raise ValueError(
-                f"element must be one of 'x', 'y', or 'fold'. Got {element}."
-            )
-        if element == "fold" and fold_n not in self._get_folds():
-            raise ValueError(
-                f"fold_n must be one of {self._get_folds()}. Got {fold_n}."
-            )
-
-        # Extract the fold number if provided
-        if element.startswith("fold-"):
-            fold = int(element.split("-")[1])
-            element = "fold"
-        else:
-            fold = None
-
-        def row_filter(data, element, fold=None):
-            if data == "all":
-                return self.df_all
-            elif data == "train":
-                return self.df.loc[self.fold.eq(fold)] if fold is not None else self.df
-            elif data == "test":
-                if fold is not None:
-                    return self.df.loc[self.fold.ne(fold)]
-                else:
-                    return self.df_val if self.df_val is not None else self.df
-            else:
-                raise ValueError(
-                    f"data must be one of 'train', 'test', or 'all'. Got {data}."
-                )
-
-        def col_filter(data, element, fold=None):
-            if element == "x":
-                return row_filter(data, element, fold).loc[:, self.feature_col]
-            elif element == "y":
-                return row_filter(data, element, fold).loc[:, self.target_col]
-            elif element == "fold":
-                return row_filter(data, element, fold).loc[:, self.fold_col]
-            else:
-                raise ValueError(
-                    f"element must be one of 'x', 'y', or 'fold'. Got {element}."
-                )
-
-        return col_filter(data, element, fold)
+        return _get_data(
+            self.df,
+            self.df_val,
+            element,
+            data,
+            fold_n,
+            self.feature_name,
+            self.target_name,
+            "cv",
+        )
 
     def plot_cdf(self, data: str = "train"):
         """
@@ -202,5 +187,24 @@ class Univariate(SingleUnivariate):
         data : str, optional
             What data to use for the plot. Choices are "train", "test", and "all", "fold-n".
         """
+        if data not in ["train", "test", "all"]:
+            raise ValueError(
+                f"data must be one of 'train', 'test', or 'all'. Got {data}."
+            )
+
         # Set the data
-        ax = cdf_plot(x=self.X)
+        if data == "train":
+            df = self.df
+        elif data == "test":
+            df = self.df_val
+        else:
+            df = pd.concat([self.df, self.df_val.assign(cv=-42)])
+
+        X = df[self.feature_name]
+        y = df[self.target_name]
+        cv = df[self.fold_col]
+
+        # make plot
+        fig, ax = plt.subplots(figsize=self.figsize)
+        ax = cdf_plot(X, y, cv, self.feature_name, ax=ax)
+        return ax

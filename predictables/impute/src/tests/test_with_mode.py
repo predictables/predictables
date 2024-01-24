@@ -216,6 +216,8 @@ def test_impute_with_median_empty_dataframe():
     result = impute_with_median(empty_df)
     expected = pl.DataFrame({"col": []}).with_columns(
         pl.col("col").cast(pl.Float64).name.keep()
+        if pl.__version__ >= "0.19.12"
+        else pl.col("col").cast(pl.Float64).keep_name()
     )
     pl_assert_frame_equal(result.collect(), expected)
 
@@ -234,5 +236,9 @@ def test_impute_with_median_skewed_distribution():
     expected = pl.DataFrame(
         {"col": [1, 2, 2, 2, 2, median_value, median_value, median_value]}
     )
-    expected = expected.with_columns(pl.col("col").cast(pl.Float64).name.keep())
+    expected = expected.with_columns(
+        pl.col("col").cast(pl.Float64).name.keep()
+        if pl.__version__ >= "0.19.12"
+        else pl.col("col").cast(pl.Float64).keep_name()
+    )
     pl_assert_frame_equal(result.collect(), expected)

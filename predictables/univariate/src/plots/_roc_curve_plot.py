@@ -60,7 +60,7 @@ def roc_curve_plot(
         y=y,
         yhat_proba=yhat_proba,
         fold=fold,
-        figsize=figsize if figsize is not None else (8, 8),
+        figsize=figsize if (figsize is not None) & (ax is not None) else (8, 8),
         n_bins=n_bins if n_bins is not None else 200,
         cv_alpha=cv_alpha if cv_alpha is not None else 0.4,
         ax=ax,
