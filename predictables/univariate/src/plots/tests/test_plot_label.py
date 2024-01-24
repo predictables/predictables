@@ -1,4 +1,4 @@
-from predictables.univariate.src.plots.util.plot_label import plot_label
+from predictables.univariate.src.plots.util._plot_label import plot_label
 
 
 def test_plot_label_with_spaces():

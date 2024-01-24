@@ -1,6 +1,6 @@
 import numpy as np
 
-from predictables.util.src.harmonic_mean import harmonic_mean
+from predictables.util.src._harmonic_mean import harmonic_mean
 
 
 def test_harmonic_mean_single_value():

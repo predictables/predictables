@@ -4,7 +4,7 @@ import pandas as pd
 import polars as pl
 import pytest
 
-from predictables.util.src.get_column_dtype import (
+from predictables.util.src._get_column_dtype import (
     get_column_dtype,
     is_binary,
     is_categorical,

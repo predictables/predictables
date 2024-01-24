@@ -4,7 +4,7 @@ import polars as pl
 import pytest
 
 from predictables.util import is_all_none
-from predictables.util.src.is_all_none import (
+from predictables.util.src._is_all_none import (
     _is_all_none_np,
     _is_all_none_pd,
     _is_all_none_pl,
@@ -29,21 +29,15 @@ def test_is_all_none_pd(series_input):
             _is_all_none_pd(series_input)
     else:
         result = _is_all_none_pd(series_input)
-        assert (
-            result
-        ), f"Expected True (eg all None), got {result} for {series_input}, with input type {type(series_input)}"
+        assert result, f"Expected True (eg all None), got {result} for {series_input}, with input type {type(series_input)}"
 
 
 def test_is_all_none_pd_not_all_none():
     series = pd.Series([1, None, 3])
     result = _is_all_none_pd(series)
-    assert (
-        not result
-    ), f"Expected False (eg not all None), got {result} for {series}, with input type {type(series)}"
+    assert not result, f"Expected False (eg not all None), got {result} for {series}, with input type {type(series)}"
     result2 = is_all_none(series)
-    assert (
-        not result2
-    ), f"Expected False (eg not all None), got {result2} for {series}, with input type {type(series)}"
+    assert not result2, f"Expected False (eg not all None), got {result2} for {series}, with input type {type(series)}"
 
 
 def test_is_all_none_pl(series_input):
@@ -52,21 +46,15 @@ def test_is_all_none_pl(series_input):
             _is_all_none_pl(series_input)
     else:
         result = _is_all_none_pl(series_input)
-        assert (
-            result
-        ), f"Expected True (eg all None), got {result} for {series_input}, with input type {type(series_input)}"
+        assert result, f"Expected True (eg all None), got {result} for {series_input}, with input type {type(series_input)}"
 
 
 def test_is_all_none_pl_not_all_none():
     series = pl.Series("A", [1, None, 3])
     result = _is_all_none_pl(series)
-    assert (
-        not result
-    ), f"Expected False (eg not all None), got {result} for {series}, with input type {type(series)}"
+    assert not result, f"Expected False (eg not all None), got {result} for {series}, with input type {type(series)}"
     result2 = is_all_none(series)
-    assert (
-        not result2
-    ), f"Expected False (eg not all None), got {result2} for {series}, with input type {type(series)}"
+    assert not result2, f"Expected False (eg not all None), got {result2} for {series}, with input type {type(series)}"
 
 
 # def test_is_all_none_np(series_input):
@@ -81,9 +69,7 @@ def test_is_all_none_pl_not_all_none():
 def test_is_all_none_np_not_all_none():
     series = np.array([1, None, 3])
     result = _is_all_none_np(series)
-    assert (
-        not result
-    ), f"Expected False (eg not all None), got {result} for {series}, with input type {type(series)}"
+    assert not result, f"Expected False (eg not all None), got {result} for {series}, with input type {type(series)}"
 
 
 def test_is_all_none(series_input):
@@ -95,6 +81,4 @@ def test_is_all_none(series_input):
                 is_all_none(series_input)
         else:
             result = is_all_none(series_input)
-            assert (
-                result
-            ), f"Expected True (eg all None), got {result} for {series_input}, with input type {type(series_input)}"
+            assert result, f"Expected True (eg all None), got {result} for {series_input}, with input type {type(series_input)}"
