@@ -178,15 +178,7 @@ class Univariate(SingleUnivariate):
             "cv",
         )
 
-    def plot_cdf(self, data: str = "train"):
-        """
-        Plots the empirical cumulative distribution function for the target variable in total and for each fold.
-
-        Parameters
-        ----------
-        data : str, optional
-            What data to use for the plot. Choices are "train", "test", and "all", "fold-n".
-        """
+    def _plot_data(self, data: str = "train"):
         if data not in ["train", "test", "all"]:
             raise ValueError(
                 f"data must be one of 'train', 'test', or 'all'. Got {data}."
@@ -204,7 +196,46 @@ class Univariate(SingleUnivariate):
         y = df[self.target_name]
         cv = df[self.fold_col]
 
+        return X, y, cv
+
+    def plot_cdf(self, data: str = "train", **kwargs):
+        """
+        Plots the empirical cumulative distribution function for the target variable in total and for each fold.
+
+        Parameters
+        ----------
+        data : str, optional
+            What data to use for the plot. Choices are "train", "test", and "all", "fold-n".
+        **kwargs
+            Additional keyword arguments passed to the plot function.
+
+        """
+        X, y, cv = self._plot_data(data)
+
         # make plot
         fig, ax = plt.subplots(figsize=self.figsize)
-        ax = cdf_plot(X, y, cv, self.feature_name, ax=ax)
+        ax = cdf_plot(X, y, cv, self.feature_name, ax=ax, **kwargs)
         return ax
+
+    def plot_roc_curve(self, data: str = "train", **kwargs):
+        """
+        Plots the ROC curve for the target variable in total and for each fold.
+        """
+
+        fig, ax = plt.subplots(
+            figsize=(6, 6) if "figsize" not in kwargs else kwargs["figsize"]
+        )
+        ax = roc_curve_plot(
+            self.y,
+            self.yhat_train,
+            self.cv,
+            self.coef,
+            self.se,
+            self.pvalues,
+            ax=ax,
+            figsize=fig.get_size_inches(),
+            **kwargs,
+        )
+        return ax
+
+    def plot_density(self, data:str = "train")
