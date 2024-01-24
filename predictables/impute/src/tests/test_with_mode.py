@@ -4,7 +4,7 @@ import pytest
 from pandas.testing import assert_frame_equal as pd_assert_frame_equal
 from polars.testing import assert_frame_equal as pl_assert_frame_equal
 
-from predictables.impute.src.impute_with_median import impute_with_median
+from predictables.impute.src._impute_with_median import impute_with_median
 
 ###################################### impute_with_median.py #########################################################################################################
 
@@ -134,8 +134,8 @@ def test_impute_with_median_with_numeric_pd_df(pd_df):
     assert isinstance(
         result, pl.LazyFrame
     ), f"to_pl_s({type(pd_df)}) is not a pl.LazyFrame"
-    assert result.collect().shape[0] == len(
-        pd_df
+    assert (
+        result.collect().shape[0] == len(pd_df)
     ), f"Length of result ({result.collect().shape[0]}) does not match length of input ({len(pd_df)})."
     assert (
         result.collect().shape == pd_df.shape
@@ -153,8 +153,8 @@ def test_impute_with_median_with_numeric_pl_df(pl_df):
     assert isinstance(
         result, pl.LazyFrame
     ), f"to_pl_s({type(pl_df)}) is not a pl.LazyFrame"
-    assert result.collect().shape[0] == len(
-        pl_df
+    assert (
+        result.collect().shape[0] == len(pl_df)
     ), f"Length of result ({result.collect().shape[0]}) does not match length of input ({len(pl_df)})."
     assert (
         result.collect().shape == pl_df.shape

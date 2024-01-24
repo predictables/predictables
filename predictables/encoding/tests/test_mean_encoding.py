@@ -4,7 +4,7 @@ import numpy as np
 import polars as pl
 import pytest
 
-from predictables.encoding.src import mean_encoding as me
+from predictables.encoding.src import _mean_encoding as me
 
 
 # A fixture for reusable sample data

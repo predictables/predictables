@@ -3,7 +3,7 @@ from datetime import date, datetime
 import polars as pl
 import pytest
 
-from ..preprocessing import preprocess_data_for_pca
+from .._preprocessing import preprocess_data_for_pca
 
 
 def test_date_column_dropping():

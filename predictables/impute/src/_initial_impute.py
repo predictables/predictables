@@ -3,8 +3,8 @@ from typing import Union
 import pandas as pd
 import polars as pl
 
-from predictables.impute.src.impute_with_median import impute_with_median
-from predictables.impute.src.impute_with_mode import impute_with_mode
+from predictables.impute.src._impute_with_median import impute_with_median
+from predictables.impute.src._impute_with_mode import impute_with_mode
 from predictables.util import to_pl_lf
 
 

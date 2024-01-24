@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from predictables.impute.src.impute_with_mode import _is_mode_ambiguous
+from predictables.impute.src._impute_with_mode import _is_mode_ambiguous
 from predictables.util import to_pl_s
 
 

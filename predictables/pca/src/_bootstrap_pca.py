@@ -6,7 +6,7 @@ from sklearn.utils import resample
 
 from predictables.util import to_pl_df
 
-from .perform_pca import perform_pca
+from ._perform_pca import perform_pca
 
 
 def bootstrap_pca(

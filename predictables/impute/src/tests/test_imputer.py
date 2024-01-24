@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from predictables.impute.src.train_catboost_model import train_catboost_model
+from predictables.impute.src._train_catboost_model import train_catboost_model
 
 
 @pytest.fixture

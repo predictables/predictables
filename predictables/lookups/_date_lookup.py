@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from .BaseLookup import BaseLookup
+from ._BaseLookup import BaseLookup
 
 
 @dataclass

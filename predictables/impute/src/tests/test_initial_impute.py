@@ -6,10 +6,10 @@ from pandas.testing import assert_frame_equal as pd_assert_frame_equal
 from polars.testing import assert_frame_equal as pl_assert_frame_equal
 from polars.testing import assert_series_equal as pl_assert_series_equal
 
-from predictables.impute.src.get_cv_folds import get_cv_folds
-from predictables.impute.src.get_missing_data_mask import get_missing_data_mask
-from predictables.impute.src.impute_with_mode import impute_with_mode
-from predictables.impute.src.initial_impute import initial_impute
+from predictables.impute.src._get_cv_folds import get_cv_folds
+from predictables.impute.src._get_missing_data_mask import get_missing_data_mask
+from predictables.impute.src._impute_with_mode import impute_with_mode
+from predictables.impute.src._initial_impute import initial_impute
 
 
 @pytest.fixture
@@ -241,8 +241,8 @@ def test_get_cv_folds_with_invalid_data_type():
 def test_get_cv_folds_with_multiple_columns_and_n_folds(bigger_pd_df):
     bigger_pd_df["c"] = np.random.randn(1000)
     result = get_cv_folds(bigger_pd_df, n_folds=5)
-    assert len(result) == len(
-        bigger_pd_df
+    assert (
+        len(result) == len(bigger_pd_df)
     ), f"Length of result ({len(result)}) does not match length of input ({len(bigger_pd_df)})."
     assert (
         len(result.unique()) == 5

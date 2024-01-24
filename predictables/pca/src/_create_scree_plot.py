@@ -7,7 +7,7 @@ from sklearn.decomposition import PCA
 
 from predictables.util import to_pd_df
 
-from .preprocessing import preprocess_data_for_pca
+from ._preprocessing import preprocess_data_for_pca
 
 
 def create_scree_plot(
