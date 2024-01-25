@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..informedness import informedness
+from .._informedness import informedness
 
 # def test_informedness_all_zeros():
 #     y = np.zeros(10)

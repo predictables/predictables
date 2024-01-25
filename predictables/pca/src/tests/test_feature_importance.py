@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from ..feature_importance import pca_feature_importance
-from ..perform_pca import perform_pca
+from .._feature_importance import pca_feature_importance
+from .._perform_pca import perform_pca
 
 
 @pytest.fixture

@@ -1,4 +1,5 @@
 {
   "search.useIgnoreFiles": false,
-  "esbonio.sphinx.confDir": ""
+  "esbonio.sphinx.confDir": "",
+  "python.linting.enabled": true
 }

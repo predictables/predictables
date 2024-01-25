@@ -5,7 +5,7 @@ import pytest
 import statsmodels.api as sm
 from sklearn.datasets import fetch_california_housing
 
-from predictables.univariate.src.fit_sm_linear_regression import (
+from predictables.univariate.src._fit_sm_linear_regression import (
     fit_sm_linear_regression,
 )
 

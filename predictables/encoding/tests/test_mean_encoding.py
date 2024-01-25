@@ -4,22 +4,42 @@ import numpy as np
 import polars as pl
 import pytest
 
-from predictables.encoding.src import mean_encoding as me
+from predictables.encoding.src import _mean_encoding as me
 
 
 # A fixture for reusable sample data
 @pytest.fixture
 def sample_data():
-    return pl.DataFrame(
-        {
-            "category": ["A", "A", "B", "B", "A", "B"],
-            "hit_count": [2, 3, 1, 4, 5, 6],
-            "quote_count": [10, 12, 8, 10, 15, 20],
-            "date": pl.date_range(
-                start=date(2022, 1, 1), end=date(2022, 1, 6), interval="1d", eager=True
-            ),
-        }
-    ).with_columns(pl.col("category").cast(pl.Categorical).name.keep())
+    if pl.__version__ >= "0.19.12":
+        df = pl.DataFrame(
+            {
+                "category": ["A", "A", "B", "B", "A", "B"],
+                "hit_count": [2, 3, 1, 4, 5, 6],
+                "quote_count": [10, 12, 8, 10, 15, 20],
+                "date": pl.date_range(
+                    start=date(2022, 1, 1),
+                    end=date(2022, 1, 6),
+                    interval="1d",
+                    eager=True,
+                ),
+            }
+        ).with_columns(pl.col("category").cast(pl.Categorical).name.keep())
+    else:
+        df = pl.DataFrame(
+            {
+                "category": ["A", "A", "B", "B", "A", "B"],
+                "hit_count": [2, 3, 1, 4, 5, 6],
+                "quote_count": [10, 12, 8, 10, 15, 20],
+                "date": pl.date_range(
+                    start=date(2022, 1, 1),
+                    end=date(2022, 1, 6),
+                    interval="1d",
+                    eager=True,
+                ),
+            }
+        ).with_columns(pl.col("category").cast(pl.Categorical).keep_name())
+
+    return df
 
 
 def test_mean_encoding_hit_ratio1(sample_data):

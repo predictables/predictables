@@ -5,9 +5,9 @@ from sklearn.decomposition import PCA
 
 from predictables.util import to_pd_df, to_pl_df, to_pl_lf
 
-from ..perform_pca import perform_pca
-from ..preprocessing import preprocess_data_for_pca
-from ..select_principal_components import select_n_components_for_variance
+from .._perform_pca import perform_pca
+from .._preprocessing import preprocess_data_for_pca
+from .._select_principal_components import select_n_components_for_variance
 
 
 @pytest.fixture

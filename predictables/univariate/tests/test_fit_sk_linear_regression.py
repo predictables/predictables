@@ -5,7 +5,7 @@ import pytest
 from sklearn.datasets import fetch_california_housing
 from sklearn.linear_model import LinearRegression
 
-from predictables.univariate.src.fit_sk_linear_regression import (
+from predictables.univariate.src._fit_sk_linear_regression import (
     fit_sk_linear_regression,
 )
 

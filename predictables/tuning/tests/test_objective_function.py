@@ -6,7 +6,7 @@ from sklearn.datasets import make_classification
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, roc_auc_score
 
-from predictables.tuning.src.objective_function import objective_function
+from predictables.tuning.src._objective_function import objective_function
 
 
 # Create a fixture for the model class

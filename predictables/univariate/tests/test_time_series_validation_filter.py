@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal, assert_series_equal
 
-from predictables.univariate.src.time_series_validation_filter import (
+from predictables.univariate.src._time_series_validation_filter import (
     time_series_validation_filter,
 )
 
@@ -11,14 +11,13 @@ from predictables.univariate.src.time_series_validation_filter import (
 @pytest.fixture
 def df():
     # Create a synthetic dataset using pandas
-    df = pd.DataFrame(
+    return pd.DataFrame(
         {
             "feature_col": list(range(50)),
             "target_col": [i * 10 for i in range(50)],
             "cv": 15 * [1] + 15 * [2] + 15 * [3] + 5 * [-1],
         }
     )
-    return df
 
 
 @pytest.fixture

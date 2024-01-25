@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from predictables.impute.src.get_cv_folds import get_cv_folds
+from predictables.impute.src._get_cv_folds import get_cv_folds
 
 
 @pytest.fixture

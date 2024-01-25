@@ -4,7 +4,7 @@ import polars as pl
 import pytest
 
 from predictables.util import is_all_none
-from predictables.util.src.is_all_none import (
+from predictables.util.src._is_all_none import (
     _is_all_none_np,
     _is_all_none_pd,
     _is_all_none_pl,

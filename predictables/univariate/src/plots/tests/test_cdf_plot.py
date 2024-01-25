@@ -3,7 +3,7 @@ import pandas as pd
 import polars as pl
 import pytest
 
-from predictables.univariate.src.plots.cdf_plot import calculate_cdf
+from predictables.univariate.src.plots._cdf_plot import calculate_cdf
 
 
 @pytest.mark.parametrize(

@@ -6,7 +6,7 @@ import pytest
 from pandas.testing import assert_frame_equal
 from scipy.stats import pearsonr
 
-from predictables.corr.src.cts_cts import calc_continuous_continuous_corr
+from predictables.corr.src._cts_cts import calc_continuous_continuous_corr
 
 
 @pytest.fixture
