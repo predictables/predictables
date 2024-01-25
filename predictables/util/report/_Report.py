@@ -1,11 +1,14 @@
 import copy
-from typing import List, Union
+import itertools
+from typing import List, Optional, Union
 
 import pandas as pd
 import polars as pl
+import pygments
 from reportlab.lib.pagesizes import inch, letter
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import (
+    Flowable,
     Image,
     PageBreak,
     Paragraph,
@@ -20,46 +23,79 @@ from predictables.util import to_pd_df
 
 class Report:
     """
-    A PredicTables Report object is used to create a pdf document. It is a wrapper around the reportlab library.
-    It defines standard styles for headings, paragraphs, code blocks, and math blocks. It also defines a standard
-    html-like syntax for creating links and lists. It is meant to be used in a chain, where each method returns
-    the Report object itself. The Report object is then built by calling the `build` method.
+    A predictables Report object is used to create a pdf document. It is a
+    wrapper around the reportlab library. It defines standard styles for
+    headings, paragraphs, code blocks, and math blocks. It also defines a
+    standard html-like syntax for creating links and lists. It is meant to
+    be used in a chain, where each method returns the Report object itself.
+    The Report object is then built by calling the `build` method.
+
+    Attributes
+    ----------
+    filename : str
+        The name of the pdf file to create.
+    margins : Optional[List[float]]
+        The margins of the pdf document. Defaults to [0.5, 0.5, 0.5, 0.5]
+        if not specified. The order is [left, right, top, bottom], and
+        the units are inches.
+    doc : SimpleDocTemplate
+        The reportlab SimpleDocTemplate object that is used to create
+        the pdf.
+    elements : List[Flowable]
+        The list of elements that will be added to the pdf document. Starts
+        blank, and elements are added to it as the Report object is built.
+    styles : SampleStyleSheet
+        The reportlab SampleStyleSheet object that is used to style the
+        pdf document. Starts with default styles, and styles are added to
+        it as the Report object is built.
+
 
     Methods
     -------
     set(**kwargs)
-        Sets the document properties of the pdf document. Does not by itself make any visible changes to the document.
-        Similar in use to `style`, but `set` is used to set document properties, while `style` is used to set stylesheet
-        properties.
+        Sets the document properties of the pdf document. Does not by
+        itself make any visible changes to the document.
+        Similar in use to `style`, but `set` is used to set document
+        properties, while `style` is used to set stylesheet properties.
     style(tag, **kwargs)
-        Styles the pdf document by updating the stylesheet with the keyword arguments passed in. This is used to
-        change the font family, font size, etc. of the document. Similar in use to `set`, but `style` is used to set
-        stylesheet properties, while `set` is used to set document properties.
+        Styles the pdf document by updating the stylesheet with the keyword
+        arguments passed in. This is used to change the font family, font
+        size, etc. of the document. Similar in use to `set`, but `style`
+        is used to set stylesheet properties, while `set` is used to set
+        document properties.
     footer(*args) - NOT IMPLEMENTED
-        Sets the footer of the pdf document. Every page except for the first page will have this footer, which
-        takes the passed args and formats them left to right in the footer.
+        Sets the footer of the pdf document. Every page except for the
+        first page will have this footer, which takes the passed args
+        and formats them left to right in the footer.
     heading(level, text, return_self=True)
-        Adds a heading to the document that says, `text`. The heading is styled according to the level passed in.
-        If `return_self` is True, returns the Report object itself. This is used by the h1, h2, h3, h4, and h5 methods,
-        and is not meant to be called directly.
+        Adds a heading to the document that says, `text`. The heading
+        is styled according to the level passed in. If `return_self` is
+        True, returns the Report object itself. This is used by the h1,
+        h2, h3, h4, and h5 methods, and is not meant to be called directly.
     h1(text, element_id=None)
-        Adds a h1-style heading to the document that says, `text`. If an `element_id` is passed, creates a bookmark
-        location to return to with an inner link.
+        Adds a h1-style heading to the document that says, `text`. If an
+        `element_id` is passed, creates a bookmark location to return to
+        with an inner link.
     h2(text, element_id=None)
-        Adds a h2-style heading to the document that says, `text`. If an `element_id` is passed, creates a bookmark
-        location to return to with an inner link.
+        Adds a h2-style heading to the document that says, `text`. If an
+        `element_id` is passed, creates a bookmark location to return to
+        with an inner link.
     h3(text, element_id=None)
-        Adds a h3-style heading to the document that says, `text`. If an `element_id` is passed, creates a bookmark
-        location to return to with an inner link.
+        Adds a h3-style heading to the document that says, `text`. If an
+        `element_id` is passed, creates a bookmark location to return to
+        with an inner link.
     h4(text, element_id=None)
-        Adds a h4-style heading to the document that says, `text`. If an `element_id` is passed, creates a bookmark
-        location to return to with an inner link.
+        Adds a h4-style heading to the document that says, `text`. If an
+        `element_id` is passed, creates a bookmark location to return to
+        with an inner link.
     h5(text, element_id=None)
-        Adds a h5-style heading to the document that says, `text`. If an `element_id` is passed, creates a bookmark
-        location to return to with an inner link.
+        Adds a h5-style heading to the document that says, `text`. If an
+        `element_id` is passed, creates a bookmark location to return to
+        with an inner link.
     h6(text, element_id=None)
-        Adds a h6-style heading to the document that says, `text`. If an `element_id` is passed, creates a bookmark
-        location to return to with an inner link.
+        Adds a h6-style heading to the document that says, `text`. If an
+        `element_id` is passed, creates a bookmark location to return to
+        with an inner link.
     p(text)
         Adds a paragraph to the document that says, `text`.
     text(text)
@@ -67,17 +103,40 @@ class Report:
     paragraph(text)
         Alias for `p`. Adds a paragraph to the document that says, `text`.
     inner_link(text, inner_link)
-        Creates a link to a defined inner location in the document. The link will say `text` and link to the inner
-        location `inner_link`.
+        Creates a link to a defined inner location in the document. The link
+        will say `text` and link to the inner location `inner_link`.
     ul(text)
     """
 
     def __init__(
         self,
         filename: str,
-        margins: List[float] = None,
+        margins: Optional[List[float]] = None,
         pagesize=letter,
     ):
+        """
+        Creates a Report object that can be used to create a pdf document.
+
+        Parameters
+        ----------
+        filename : str
+            The name of the pdf file to create.
+        margins : Optional[List[float]], optional
+            The margins of the pdf document. Defaults to [0.5, 0.5, 0.5, 0.5]
+            if not specified. The order is [left, right, top, bottom], and
+            the units are inches.
+        pagesize : tuple, optional
+            The size of the pages in the pdf document. Defaults to letter
+            size if not specified. The units are inches.
+
+        Returns
+        -------
+        None. Initializes the Report object, but need to call `build` to
+        actually create the pdf document.
+        """
+        self.filename = filename
+        self.pagesize = pagesize
+
         if margins is None:
             margins = [0.5, 0.5, 0.5, 0.5]
         if margins is None:
@@ -85,7 +144,7 @@ class Report:
         if margins is None:
             margins = [0.5, 0.5, 0.5, 0.5]
         self.doc = SimpleDocTemplate(filename, pagesize=pagesize)
-        self.elements = []
+        self.elements: List[Flowable] = []
         self.styles = getSampleStyleSheet()
         self.doc.leftMargin = margins[0] * inch
         self.doc.rightMargin = margins[1] * inch
@@ -93,7 +152,9 @@ class Report:
         self.doc.bottomMargin = margins[3] * inch
 
     def __copy__(self) -> "Report":
-        new_report = self.__class__()
+        new_report = self.__class__(
+            filename=f"{self.filename.replace('.pdf', '')}-COPY.pdf"
+        )
         new_report.elements = copy.copy(self.elements)
 
         return new_report
@@ -101,8 +162,12 @@ class Report:
     def copy(self) -> "Report":
         return self.__copy__()
 
-    def __deepcopy__(self, memo) -> "Report":
-        new_report = self.__class__()
+    def __deepcopy__(
+        self,
+    ) -> "Report":
+        new_report = self.__class__(
+            filename=f"{self.filename.replace('.pdf', '')}-COPY.pdf"
+        )
         new_report.elements = copy.deepcopy(self.elements)
 
         return new_report
@@ -145,12 +210,34 @@ class Report:
         # TODO: Implement footer
         return self
 
-    def heading(self, level: int, text: str, return_self: bool = True):
-        self.elements.append(Paragraph(text, self.styles["Heading" + str(level)]))
-        if return_self:
-            return self
+    def heading(
+        self, level: int, text: str, return_self: bool = True
+    ) -> Optional["Report"]:
+        """
+        Adds a heading to the document that says, `text`. The heading is
+        styled according to the level passed in.
 
-    def h1(self, text: str, element_id: str = None) -> "Report":
+        Parameters
+        ----------
+        level : int
+            The level of the heading. Must be between 1 and 6, inclusive.
+        text : str
+            The text to display in the heading.
+        return_self : bool, optional
+            Whether or not to return the Report object itself. If True,
+            returns the Report object itself. If False, returns None.
+            Defaults to True.
+
+        Returns
+        -------
+        Optional[Report]
+            The current Report object. This method should be called in a
+            chain.
+        """
+        self.elements.append(Paragraph(text, self.styles[f"Heading{level}"]))
+        return self if return_self else None
+
+    def h1(self, text: str, element_id: Optional[str] = None) -> "Report":
         """
         Adds a h1-style heading to the document that says, `text`. If an `element_id`
         is passed, creates a bookmark location to return to with an inner link.
@@ -166,6 +253,30 @@ class Report:
         -------
         Report
             The current Report object. This method should be called in a chain.
+
+        See Also
+        --------
+        heading : Adds a heading to the document that says, `text`.
+
+        Examples
+        --------
+        >>> from predictables.util import Report
+        >>> (
+        ...    Report("test.pdf")
+        ...     .h1("This is a heading.")
+        ...     .h1("This is another heading.")
+        ...     .build()
+        ... ) # Will create a pdf called test.pdf with two headings.
+
+        >>> (
+        ...    Report("test_with_bookmark.pdf")
+        ...     .h1("This is a heading.", element_id="test")
+        ...     .h1("This is another heading.")
+        ...     .inner_link("Go to the first heading", "test")
+        ...     .build()
+        ... ) # Will create a pdf called test_with_bookmark.pdf with two
+              # headings and a link at the end pointing to the first
+              # heading.
         """
         # Add element to chain
         self.heading(1, text, return_self=False)
@@ -175,7 +286,7 @@ class Report:
             self.elements[-1].addBookmark(element_id, relative=1, level=0)
         return self
 
-    def h2(self, text: str, element_id: str = None) -> "Report":
+    def h2(self, text: str, element_id: Optional[str] = None) -> "Report":
         """
         Adds a h2-style heading to the document that says, `text`. If an `element_id`
         is passed, creates a bookmark location to return to with an inner link.
@@ -191,6 +302,24 @@ class Report:
         -------
         Report
             The current Report object. This method should be called in a chain.
+
+        See Also
+        --------
+        heading : Adds a heading to the document that says, `text`.
+
+        Example
+        -------
+        >>> from predictables.util import Report
+        >>> (
+        ...    Report("test.pdf")
+        ...     .h1("Top-level heading.")
+        ...     .h2("Second-level heading.")
+        ...     .h3("Third-level heading.")
+        ...     .h4("Fourth-level heading.")
+        ...     .h5("Fifth-level heading.")
+        ...     .h6("Sixth-level heading.")
+        ...     .build()
+        ... ) # Will create a pdf called test.pdf with six headings.
         """
         # Add element to chain
         self.heading(2, text, return_self=False)
@@ -200,7 +329,7 @@ class Report:
             self.elements[-1].addBookmark(element_id, relative=1, level=0)
         return self
 
-    def h3(self, text: str, element_id: str = None) -> "Report":
+    def h3(self, text: str, element_id: Optional[str] = None) -> "Report":
         """
         Adds a h3-style heading to the document that says, `text`. If an `element_id`
         is passed, creates a bookmark location to return to with an inner link.
@@ -216,6 +345,24 @@ class Report:
         -------
         Report
             The current Report object. This method should be called in a chain.
+
+        See Also
+        --------
+        heading : Adds a heading to the document that says, `text`.
+
+        Example
+        -------
+        >>> from predictables.util import Report
+        >>> (
+        ...    Report("test.pdf")
+        ...     .h1("Top-level heading.")
+        ...     .h2("Second-level heading.")
+        ...     .h3("Third-level heading.")
+        ...     .h4("Fourth-level heading.")
+        ...     .h5("Fifth-level heading.")
+        ...     .h6("Sixth-level heading.")
+        ...     .build()
+        ... ) # Will create a pdf called test.pdf with six headings.
         """
         # Add element to chain
         self.heading(3, text, return_self=False)
@@ -225,7 +372,7 @@ class Report:
             self.elements[-1].addBookmark(element_id, relative=1, level=0)
         return self
 
-    def h4(self, text: str, element_id: str = None) -> "Report":
+    def h4(self, text: str, element_id: Optional[str] = None) -> "Report":
         """
         Adds a h4-style heading to the document that says, `text`. If an `element_id`
         is passed, creates a bookmark location to return to with an inner link.
@@ -241,6 +388,24 @@ class Report:
         -------
         Report
             The current Report object. This method should be called in a chain.
+
+        See Also
+        --------
+        heading : Adds a heading to the document that says, `text`.
+
+        Example
+        -------
+        >>> from predictables.util import Report
+        >>> (
+        ...    Report("test.pdf")
+        ...     .h1("Top-level heading.")
+        ...     .h2("Second-level heading.")
+        ...     .h3("Third-level heading.")
+        ...     .h4("Fourth-level heading.")
+        ...     .h5("Fifth-level heading.")
+        ...     .h6("Sixth-level heading.")
+        ...     .build()
+        ... ) # Will create a pdf called test.pdf with six headings.
         """
         # Add element to chain
         self.heading(4, text, return_self=False)
@@ -250,7 +415,7 @@ class Report:
             self.elements[-1].addBookmark(element_id, relative=1, level=0)
         return self
 
-    def h5(self, text: str, element_id: str = None) -> "Report":
+    def h5(self, text: str, element_id: Optional[str] = None) -> "Report":
         """
         Adds a h5-style heading to the document that says, `text`. If an `element_id`
         is passed, creates a bookmark location to return to with an inner link.
@@ -269,7 +434,21 @@ class Report:
 
         See Also
         --------
+        heading : Adds a heading to the document that says, `text`.
 
+        Example
+        -------
+        >>> from predictables.util import Report
+        >>> (
+        ...    Report("test.pdf")
+        ...     .h1("Top-level heading.")
+        ...     .h2("Second-level heading.")
+        ...     .h3("Third-level heading.")
+        ...     .h4("Fourth-level heading.")
+        ...     .h5("Fifth-level heading.")
+        ...     .h6("Sixth-level heading.")
+        ...     .build()
+        ... ) # Will create a pdf called test.pdf with six headings.
         """
         # Add element to chain
         self.heading(5, text, return_self=False)
@@ -279,7 +458,7 @@ class Report:
             self.elements[-1].addBookmark(element_id, relative=1, level=0)
         return self
 
-    def h6(self, text: str, element_id: str = None) -> "Report":
+    def h6(self, text: str, element_id: Optional[str] = None) -> "Report":
         """
         Adds a h6-style heading to the document that says, `text`. If an `element_id`
         is passed, creates a bookmark location to return to with an inner link.
@@ -298,7 +477,21 @@ class Report:
 
         See Also
         --------
+        heading : Adds a heading to the document that says, `text`.
 
+        Example
+        -------
+        >>> from predictables.util import Report
+        >>> (
+        ...    Report("test.pdf")
+        ...     .h1("Top-level heading.")
+        ...     .h2("Second-level heading.")
+        ...     .h3("Third-level heading.")
+        ...     .h4("Fourth-level heading.")
+        ...     .h5("Fifth-level heading.")
+        ...     .h6("Sixth-level heading.")
+        ...     .build()
+        ... ) # Will create a pdf called test.pdf with six headings.
         """
         # Add element to chain
         self.heading(6, text, return_self=False)
@@ -325,27 +518,91 @@ class Report:
         See Also
         --------
         text : Alias for `p`. Adds a paragraph to the document that says, `text`.
+        paragraph : Alias for `p`. Adds a paragraph to the document that says, `text`.
 
         Example
         -------
-        >>> from PredicTables.util import Report
+        >>> from predictables.util import Report
         >>> (
         ...    Report("test.pdf")
         ...     .p("This is a paragraph.")
         ...     .p("This is another paragraph.")
+        ...     .text("This is a third paragraph with a different method.")
+        ...     .paragraph("This is a fourth paragraph with a different method.")
         ...     .build()
-        ... ) # Will create a pdf called test.pdf with two paragraphs.
+        ... ) # Will create a pdf called test.pdf with four paragraphs that are
+              # all the same, even though they were created with different methods.
         """
         # Add element to chain
         self.elements.append(Paragraph(text, self.styles["Normal"]))
         return self
 
     def text(self, text: str) -> "Report":
-        """Alias for `p`. Adds a paragraph to the document that says, `text`."""
+        """
+        Alias for `p`. Adds a paragraph to the document that says, `text`.
+
+        Parameters
+        ----------
+        text : str
+            The text to display in the paragraph.
+
+        Returns
+        -------
+        Report
+            The current Report object. This method should be called in a chain.
+
+        See Also
+        --------
+        p : `text` is an alias for `p`. Adds a paragraph to the document that says, `text`.
+        paragraph : Another alias for `p`. Adds a paragraph to the document that says, `text`.
+
+        Example
+        -------
+        >>> from predictables.util import Report
+        >>> (
+        ...    Report("test.pdf")
+        ...     .p("This is a paragraph.")
+        ...     .p("This is another paragraph.")
+        ...     .text("This is a third paragraph with a different method.")
+        ...     .paragraph("This is a fourth paragraph with a different method.")
+        ...     .build()
+        ... ) # Will create a pdf called test.pdf with four paragraphs that are
+              # all the same, even though they were created with different methods.
+        """
         return self.p(text)
 
     def paragraph(self, text: str) -> "Report":
-        """Alias for `p`. Adds a paragraph to the document that says, `text`."""
+        """
+        Alias for `p`. Adds a paragraph to the document that says, `text`.
+
+        Parameters
+        ----------
+        text : str
+            The text to display in the paragraph.
+
+        Returns
+        -------
+        Report
+            The current Report object. This method should be called in a chain.
+
+        See Also
+        --------
+        p : `text` is an alias for `p`. Adds a paragraph to the document that says, `text`.
+        paragraph : Another alias for `p`. Adds a paragraph to the document that says, `text`.
+
+        Example
+        -------
+        >>> from predictables.util import Report
+        >>> (
+        ...    Report("test.pdf")
+        ...     .p("This is a paragraph.")
+        ...     .p("This is another paragraph.")
+        ...     .text("This is a third paragraph with a different method.")
+        ...     .paragraph("This is a fourth paragraph with a different method.")
+        ...     .build()
+        ... ) # Will create a pdf called test.pdf with four paragraphs that are
+              # all the same, even though they were created with different methods.
+        """
         return self.p(text)
 
     def inner_link(self, text: str, inner_link: str):
@@ -390,25 +647,32 @@ class Report:
 
     def ul(self, text: List[str], bullet_char: str = "\u2022") -> "Report":
         """
-        Adds an unordered list to the document. For each item in `text`, a bullet point is added to the list.
-        If a different bullet point character is desired, it can be passed in as `bullet_char`. Will default
-        to the unicode bullet point character.
+        Adds an unordered list to the document. For each item in `text`, a
+        bullet point is added to the list. If a different bullet point
+        character is desired, it can be passed in as `bullet_char`. Will
+        default to the unicode bullet point character.
 
         Parameters
         ----------
         text : List[str]
             The items to add to the list.
         bullet_char : str, optional
-            The character to use for the bullet point, by default "\u2022" (bullet point in unicode)
+            The character to use for the bullet point, by default "\u2022"
+            (bullet point in unicode)
 
         Returns
         -------
         Report
             The current Report object. This method should be called in a chain.
 
+        See Also
+        --------
+        ol : Adds an ordered list to the document. For each item in `text`, an
+             item number is added to the list.
+
         Example
         -------
-        >>> from PredicTables.util import Report
+        >>> from predictables.util import Report
         >>> (
         ...    Report("test.pdf")
         ...     .ul(["Item 1", "Item 2", "Item 3"])
@@ -435,7 +699,6 @@ class Report:
         Iterator[str]
             An iterator of numbers in the given style.
         """
-        import itertools
 
         def decimal_to_roman(number, is_upper=True):
             roman_symbols = [
@@ -492,28 +755,91 @@ class Report:
 
     def ol(self, text: List[str], number_style: str = "decimal") -> "Report":
         """
-        Adds an ordered list to the document. For each item in `text`, an item number is added to the list.
-        If a different number style is desired, it can be passed in as `number_style`. Will default
-        to the decimal number style.
+        Adds an ordered list to the document. For each item in `text`, an item
+        number is added to the list. If a different number style is desired, it
+        can be passed in as `number_style`. Will default to the decimal number
+        style.
 
         Parameters
         ----------
         text : List[str]
             The items to add to the list.
         number_style : str, optional
-            The style to use for the item numbers, by default "decimal", but also accepts "lower-roman",
-            "upper-roman", "lower-alpha", and "upper-alpha".
+            The style to use for the item numbers, by default "decimal", but also
+            accepts "lower-roman", "upper-roman", "lower-alpha", and "upper-alpha".
 
+        Returns
+        -------
+        Report
+            The current Report object. This method should be called in a chain.
+
+        See Also
+        --------
+        ul : Adds an unordered list to the document. For each item in `text`, a
+             bullet point is added to the list.
+
+        Example
+        -------
+        >>> from predictables.util import Report
+        >>> (
+        ...    Report("test.pdf")
+        ...     .ol(["Item 1", "Item 2", "Item 3"])
+        ...     .build()
+        ... ) # Will create a pdf called test.pdf with an ordered list with three items.
         """
         styled_numbers = self._number_style(len(text), number_style)
-        for _i, t in enumerate(text):
+        for t in text:
             self.elements.append(
                 Paragraph(f"{next(styled_numbers)}. {t}", self.styles["Normal"])
             )
         return self
 
-    def code(self, text: str):
-        """Adds a code block to the document. Used for displaying code snippets."""
+    def code(self, text: str, language: Optional[str] = None) -> "Report":
+        """
+        Adds a code block to the document. Used for displaying code snippets.
+
+        Parameters
+        ----------
+        text : str
+            The code to display in the code block.
+        language : str, optional
+            The language of the code, by default None. If a language is provided,
+            it must be one of "py", "r", "c", "cpp", "java", "js", "html", "css",
+            "xml", "json", "yaml", "sql", "bash", "sh", "powershell", "dockerfile",
+            "makefile", "cmake", "latex", "markdown", "plaintext", None. This
+            functionality is provided by the Pygments library.
+
+            Note that passing no language to this argument is functionally
+            equivalent to passing "plaintext", in that either way a plaintext
+            code block with no syntax highlighting will be generated.
+
+        Returns
+        -------
+        Report
+            The current Report object. This method should be called in a chain.
+
+        See Also
+        --------
+        math : Adds a math block to the document. Used for displaying math equations.
+
+        Example
+        -------
+        >>> from predictables.util import Report
+        >>> (
+        ...    Report("test.pdf")
+        ...     .code("print('Hello, world!')")
+        ...     .build()
+        ... ) # Will create a pdf called test.pdf with a plaintext code block that
+              # says print('Hello, world!')
+
+        >>> (
+        ...    Report("test-python.pdf")
+        ...     .code("print('Hello, world!')", language="py")
+        ...     .build()
+        ... ) # Will create a pdf called test-python.pdf with a python code block
+              # that says print('Hello, world!'), and will be syntax highlighted
+              # as python code.
+        """
         self.elements.append(Paragraph(text, self.styles["Code"]))
         return self
 

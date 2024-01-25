@@ -66,8 +66,7 @@ def get_col(self, col: str) -> List[Union[int, float, str]]:
     attributes = [getattr(self.cv[fold], col) for fold in self.unique_folds]
     sd = pd.Series(attributes).std()
 
-    out = attributes + [getattr(self, col)] + [sd]
-    return out
+    return attributes + [getattr(self, col)] + [sd]
 
 
 class Univariate(SingleUnivariate):
@@ -238,4 +237,4 @@ class Univariate(SingleUnivariate):
         )
         return ax
 
-    def plot_density(self, data:str = "train")
+    # def plot_density(self, data:str = "train")

@@ -1,12 +1,13 @@
 import logging
 import os
+from typing import Optional
 
 
 class Logger:
     def __init__(
         self,
         name: str,
-        file_name: str = None,
+        file_name: Optional[str] = None,
         level: int = logging.DEBUG,
         format_str: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         date_fmt_str: str = "%Y-%m-%d",
@@ -53,11 +54,11 @@ class Logger:
             file_name = os.path.dirname(os.path.realpath(__file__))
 
         # add a folder called logs if it doesn't exist
-        if not os.path.exists(file_name + "/logs"):
-            os.makedirs(file_name + "/logs")
+        if not os.path.exists(f"{file_name}/logs"):
+            os.makedirs(f"{file_name}/logs")
 
         # add a file called self.name.log if it doesn't exist
-        file_name = file_name + "/logs/" + name + ".log"
+        file_name = f"{file_name}/logs/{name}.log"
 
         fh = logging.FileHandler(file_name, mode="w")
         fh.setLevel(level)

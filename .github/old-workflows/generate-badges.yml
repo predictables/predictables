@@ -5,72 +5,69 @@ name: Generate unit test, coverage, flake8 badges
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 permissions:
   contents: read
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.11"
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest coverage        
-        pip install genbadge[all]
-        if [ -f requirements-3_11.txt ]; then pip install -r requirements-3_11.txt; fi
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    
-    - name: Test with pytest & generate a tests badge
-      run: |
-        # Generate testing report and badge (must have >95% of tests pass)
-        pytest --junitxml=reports/junit/junit.xml
-        # --html=reports/junit/report.html TODO: why isn't this available??
-        genbadge tests -t 95
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest coverage        
+          pip install genbadge[all]
+          if [ -f requirements-3_11.txt ]; then pip install -r requirements-3_11.txt; fi
+      - name: Lint with flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    - name: Copy pytest badge to root
-      uses: actions/upload-artifact@v2
-      with:
-        name: pytest-badge
-        path: reports/test/pytest-badge.svg
+      - name: Test with pytest & generate a tests badge
+        run: |
+          # Generate testing report and badge (must have >95% of tests pass)
+          pytest --junitxml=reports/junit/junit.xml
+          # --html=reports/junit/report.html TODO: why isn't this available??
+          genbadge tests -t 95
 
-    - name: Generate coverage badge
-      run: |
-        coverage report
-        coverage xml -o reports/coverage/coverage.xml
-        coverage html -d reports/coverage
-        genbadge coverage
-        
-    - name: Copy coverage badge to root of repo
-      uses: actions/upload-artifact@v2
-      with:
-        name: coverage-badge
-        path: reports/coverage/coverage-badge.svg
-        
-    - name: Generate flake8 badge
-      run: |
-        flake8 . --exit-zero --format=html --htmldir ./reports/flake8 --statistics --tee --output-file flake8stats.txt
-        genbadge flake8
+      - name: Copy pytest badge to root
+        uses: actions/upload-artifact@v2
+        with:
+          name: pytest-badge
+          path: reports/test/pytest-badge.svg
 
-    - name: Copy flake8 badge to root of repo
-      uses: actions/upload-artifact@v2
-      with:
-        name: flake8-badge
-        path: reports/flake8/flake8-badge.svg
+      - name: Generate coverage badge
+        run: |
+          coverage report
+          coverage xml -o reports/coverage/coverage.xml
+          coverage html -d reports/coverage
+          genbadge coverage
 
-        
+      - name: Copy coverage badge to root of repo
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-badge
+          path: reports/coverage/coverage-badge.svg
+
+      - name: Generate flake8 badge
+        run: |
+          flake8 . --exit-zero --format=html --htmldir ./reports/flake8 --statistics --tee --output-file flake8stats.txt
+          genbadge flake8
+
+      - name: Copy flake8 badge to root of repo
+        uses: actions/upload-artifact@v2
+        with:
+          name: flake8-badge
+          path: reports/flake8/flake8-badge.svg

@@ -19,6 +19,7 @@ runtimes:
 lint:
   disabled:
     - pyright
+    - pylance
   enabled:
     - prettier@3.2.4
     - actionlint@1.6.26

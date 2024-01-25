@@ -11,6 +11,7 @@ pip install predictables
 ```
 
 ## Features
+
 - **Automated Univariate Analysis:** Quick insights into each variable.
 - **Correlation Matrix:** Understand how your features relate.
 - **Principal Component Analysis (PCA):** Reduce dimensions, retain significance.
@@ -18,6 +19,7 @@ pip install predictables
 - **Bayesian Model Optimization:** Fine-tune models for peak performance.
 
 ## Installation
+
 ```bash
 pip install predictables
 ```
@@ -38,5 +40,3 @@ PredicTables thrives on community contributions. Whether it’s improving code, 
 ## License
 
 PredicTables is released under the MIT License. See the LICENSE file for more details.
-
-

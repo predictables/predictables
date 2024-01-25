@@ -1,4 +1,5 @@
 import os
+import re
 from typing import Optional
 
 
@@ -16,6 +17,11 @@ def read_file_code(filepath: str) -> str:
     str
         The code in the file.
 
+    Raises
+    ------
+    FileNotFoundError
+        If the file path does not exist.
+
     Examples
     --------
     >>> # Will use the print function for prettier output
@@ -27,6 +33,12 @@ def read_file_code(filepath: str) -> str:
     def read_file_code(filepath: str) -> str:
         ...(other code)...
     """
+    if not os.path.exists(filepath):
+        if os.environ.get("PYTEST_CURRENT_TEST"):
+            return "PYTEST_FILE_NOT_FOUND"
+        else:
+            raise FileNotFoundError(f"File {filepath} not found.")
+
     with open(filepath, "r") as f:
         code = f.read()
     return code
@@ -90,7 +102,7 @@ def get_function_docstring(function_name: str, filepath: str) -> str:
     Returns
     -------
     str
-        The docstring for the function.
+        The docstring for the function, or an empty string if the function has no docstring.
 
     Examples
     --------
@@ -117,9 +129,30 @@ def get_function_docstring(function_name: str, filepath: str) -> str:
     >>> # This is just the docstring, copy/pasted from the function above
     """
     code = read_file_code(filepath)
-    code = code.split(f"def {function_name}(")[0]
-    code = code.split('"""')[1]
-    return code
+
+    # Return empty string if function is not found in file
+    if f"def {function_name}(" not in code:
+        return ""
+
+    # Return empty string if function has no docstring
+    function_start = code.split(f"def {function_name}(")[1]
+    if ('"""' not in function_start) and ("'''" not in function_start):
+        return ""
+
+    # If there is a function with a docstring, return the docstring
+
+    # Regular expression to capture the content inside any style
+    # of docstring quotes
+    pattern = r'(?s)(?:"""(.*?)"""|\'\'\'(.*?)\'\'\')'
+    # trunk-ignore(sourcery/use-named-expression)
+    match = re.search(pattern, function_start, re.DOTALL)
+
+    # Return the docstring if found, else return an empty string
+    if match:
+        # Extract and return the docstring content (first non-None group)
+        return next(g for g in match.groups() if g is not None).strip()
+    else:
+        return ""
 
 
 def get_files_from_folder(folder_path: str, file_type: Optional[str] = None) -> list:
