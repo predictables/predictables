@@ -42,32 +42,32 @@ def params():
 def test_objective_function(model_class, evaluation_metric, data, params):
     X, y = data
     score = objective_function(params, model_class, evaluation_metric, X, y)
-    assert (
-        isinstance(score, float) or isinstance(score, int)
+    assert isinstance(score, float) or isinstance(
+        score, int
     ), f"The objective function should return a float or an integer:\nexpected: float or int\nactual: {type(score)}"
 
 
 def test_single_string(model_class, data, params):
     X, y = data
     score = objective_function(params, model_class, "accuracy", X, y)
-    assert (
-        isinstance(score, float) or isinstance(score, int)
+    assert isinstance(score, float) or isinstance(
+        score, int
     ), f"The objective function should return a float or an integer:\nexpected: float or int\nactual: {type(score)}"
 
 
 def test_single_callable(model_class, data, params):
     X, y = data
     score = objective_function(params, model_class, accuracy_score, X, y)
-    assert (
-        isinstance(score, float) or isinstance(score, int)
+    assert isinstance(score, float) or isinstance(
+        score, int
     ), f"The objective function should return a float or an integer:\nexpected: float or int\nactual: {type(score)}"
 
 
 def test_list_of_strings(model_class, data, params):
     X, y = data
     score = objective_function(params, model_class, ["accuracy", "roc_auc"], X, y)
-    assert (
-        isinstance(score, float) or isinstance(score, int)
+    assert isinstance(score, float) or isinstance(
+        score, int
     ), f"The objective function should return a float or an integer:\nexpected: float or int\nactual: {type(score)}"
 
 
@@ -76,8 +76,8 @@ def test_list_of_callables(model_class, data, params):
     score = objective_function(
         params, model_class, [accuracy_score, roc_auc_score], X, y
     )
-    assert (
-        isinstance(score, float) or isinstance(score, int)
+    assert isinstance(score, float) or isinstance(
+        score, int
     ), f"The objective function should return a float or an integer:\nexpected: float or int\nactual: {type(score)}"
 
 
@@ -85,8 +85,8 @@ def test_single_string_metric(data):
     X, y = data
     params = {"n_estimators": 10}
     score = objective_function(params, RandomForestClassifier, "accuracy", X, y)
-    assert (
-        isinstance(score, float) or isinstance(score, int)
+    assert isinstance(score, float) or isinstance(
+        score, int
     ), f"The objective function should return a float or an integer:\nexpected: float or int\nactual: {type(score)}"
 
 
@@ -94,8 +94,8 @@ def test_single_callable_metric(data):
     X, y = data
     params = {"n_estimators": 10}
     score = objective_function(params, RandomForestClassifier, accuracy_score, X, y)
-    assert (
-        isinstance(score, float) or isinstance(score, int)
+    assert isinstance(score, float) or isinstance(
+        score, int
     ), f"The objective function should return a float or an integer:\nexpected: float or int\nactual: {type(score)}"
 
 
@@ -104,8 +104,8 @@ def test_multiple_metrics(data):
     params = {"n_estimators": 10}
     metrics = ["accuracy", precision_score]
     score = objective_function(params, RandomForestClassifier, metrics, X, y)
-    assert (
-        isinstance(score, float) or isinstance(score, int)
+    assert isinstance(score, float) or isinstance(
+        score, int
     ), f"The objective function should return a float or an integer:\nexpected: float or int\nactual: {type(score)}"
 
 

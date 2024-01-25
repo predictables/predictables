@@ -135,11 +135,13 @@ def mean_encoding_with_ratio_lazy(
                 .then(
                     (
                         # numerator gets 1 * alpha
-                        pl.col("sum_col1") + laplace_alpha
+                        pl.col("sum_col1")
+                        + laplace_alpha
                     )
                     / (
                         # denominator gets n_cats * alpha
-                        pl.col("sum_col2") + (n_cats * laplace_alpha)
+                        pl.col("sum_col2")
+                        + (n_cats * laplace_alpha)
                     )
                 )
                 .otherwise(pl.col("mean_ratio"))
@@ -152,11 +154,13 @@ def mean_encoding_with_ratio_lazy(
                 .then(
                     (
                         # numerator gets 1 * alpha
-                        pl.col("sum_col1") + laplace_alpha
+                        pl.col("sum_col1")
+                        + laplace_alpha
                     )
                     / (
                         # denominator gets n_cats * alpha
-                        pl.col("sum_col2") + (n_cats * laplace_alpha)
+                        pl.col("sum_col2")
+                        + (n_cats * laplace_alpha)
                     )
                 )
                 .otherwise(pl.col("mean_ratio"))

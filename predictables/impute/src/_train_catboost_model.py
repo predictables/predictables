@@ -41,8 +41,8 @@ def train_one_catboost_model(
     assert isinstance(cv_folds, (int, list)) or (
         cv_folds is None
     ), f"cv_folds must be an integer or list, not {type(cv_folds)}"
-    assert (
-        (cv_folds is None) or (isinstance(cv_folds, int) or len(cv_folds) == len(df))
+    assert (cv_folds is None) or (
+        isinstance(cv_folds, int) or len(cv_folds) == len(df)
     ), f"cv_folds must be an integer or a list of the same length as df. len(cv_folds): {len(cv_folds)}, len(df): {len(df)}"
     assert (cv_folds is None) or (
         isinstance(cv_folds, int) or all(isinstance(i, int) for i in cv_folds)

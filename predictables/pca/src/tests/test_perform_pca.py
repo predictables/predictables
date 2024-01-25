@@ -170,9 +170,8 @@ def test_pca_comparison_with_sklearn(mock_data):
         ), f"PCA component magnitude is not 1: {np.sqrt(np.sum(np.power(comp, 2)))}"
 
     # Compare explained variance
-    assert (
-        pca_custom.explained_variance_
-        == pytest.approx(pca_sklearn.explained_variance_, rel=1e-1)
+    assert pca_custom.explained_variance_ == pytest.approx(
+        pca_sklearn.explained_variance_, rel=1e-1
     ), f"Explained variance differs: {pca_custom.explained_variance_} vs {pca_sklearn.explained_variance_}"
 
 
@@ -232,24 +231,21 @@ def test_pca_data_formats(mock_data, data_format):
     )
 
     # Validate the result
-    assert (
-        pca_result.components_.shape
-        == (
-            n_components,
-            X_train_formatted.shape[1],
-        )
+    assert pca_result.components_.shape == (
+        n_components,
+        X_train_formatted.shape[1],
     ), f"PCA result shape is incorrect for data format. Expected {(n_components, X_train_formatted.shape[1])}, got {pca_result.components_.shape}"
-    assert (
-        pca_result.explained_variance_.shape == (n_components,)
+    assert pca_result.explained_variance_.shape == (
+        n_components,
     ), f"PCA result shape is incorrect for data format. Expected {(n_components,)}, got {pca_result.explained_variance_.shape}"
-    assert (
-        pca_result.explained_variance_ratio_.shape == (n_components,)
+    assert pca_result.explained_variance_ratio_.shape == (
+        n_components,
     ), f"PCA result shape is incorrect for data format. Expected {(n_components,)}, got {pca_result.explained_variance_ratio_.shape}"
-    assert (
-        pca_result.singular_values_.shape == (n_components,)
+    assert pca_result.singular_values_.shape == (
+        n_components,
     ), f"PCA result shape is incorrect for data format. Expected {(n_components,)}, got {pca_result.singular_values_.shape}"
-    assert (
-        pca_result.mean_.shape == (X_train_formatted.shape[1],)
+    assert pca_result.mean_.shape == (
+        X_train_formatted.shape[1],
     ), f"PCA result shape is incorrect for data format. Expected {(X_train_formatted.shape[1],)}, got {pca_result.mean_.shape}"
     assert (
         pca_result.noise_variance_.shape == ()
@@ -296,10 +292,7 @@ def test_pca_high_dimensional_data():
     pca_result = perform_pca(X_train, n_components=n_components, return_pca_obj=True)
 
     # Validate the result
-    assert (
-        pca_result.components_.shape
-        == (
-            n_components,
-            100,
-        )
+    assert pca_result.components_.shape == (
+        n_components,
+        100,
     ), f"PCA result shape ({pca_result.components_.shape}) is incorrect for high-dimensional data - expected {(n_components, 100)}"

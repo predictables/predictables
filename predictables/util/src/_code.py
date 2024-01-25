@@ -1,23 +1,64 @@
 import os
-
-# import pyperclip
+from typing import Optional
 
 
 def read_file_code(filepath: str) -> str:
-    """Takes a file path and returns the code as a string."""
+    """
+    Takes a file path and returns the code as a string. Assumes that the file uses consistent indentation (spaces or tabs).
+
+    Parameters
+    ----------
+    filepath : str
+        The file path to the file to read.
+
+    Returns
+    -------
+    str
+        The code in the file.
+
+    Examples
+    --------
+    >>> # Will use the print function for prettier output
+    >>> print(read_file_code("predictables/util/src/_code.py")) # doctest: skip
+    # Path: predictables/util/src/_code.py
+    import os
+    from typing import Optional
+
+    def read_file_code(filepath: str) -> str:
+        ...(other code)...
+    """
     with open(filepath, "r") as f:
         code = f.read()
     return code
 
 
 def get_functions_from_file(filepath: str) -> list:
-    """Takes a file path and returns a list of functions in that file."""
+    """
+    Takes a file path and returns a list of functions in that file.
+    Assumes that the file uses consistent indentation (spaces or tabs).
+
+    Parameters
+    ----------
+    filepath : str
+        The file path to the file to read.
+
+    Returns
+    -------
+    list
+        A list of functions in the file.
+
+    Examples
+    --------
+    >>> get_functions_from_file("predictables/util/src/_code.py")
+    ['read_file_code', 'get_functions_from_file', 'get_function_code', 'get_function_docstring', 'get_files_from_folder', 'copy_folder_code']
+
+    """
     code = read_file_code(filepath)
-    functions = []
-    for line in code.split("\n"):
-        if "def " in line:
-            functions.append(line.split("def ")[1].split("(")[0])
-    return functions
+    return [
+        line.split("def ")[1].split("(")[0]
+        for line in code.split("\n")
+        if "def " in line
+    ]
 
 
 # def get_function_code(function_name: str, filepath: str) -> str:
@@ -36,15 +77,74 @@ def get_functions_from_file(filepath: str) -> list:
 
 
 def get_function_docstring(function_name: str, filepath: str) -> str:
-    """Takes a function name and file path and returns the docstring as a string."""
+    """
+    Takes a function name and file path and returns the docstring as a string. Assumes that the file uses consistent indentation (spaces or tabs).
+
+    Parameters
+    ----------
+    function_name : str
+        The name of the function to get the docstring for.
+    filepath : str
+        The file path to the file to read.
+
+    Returns
+    -------
+    str
+        The docstring for the function.
+
+    Examples
+    --------
+    >>> # Will use the print function for prettier output
+    >>> print(get_function_docstring("get_functions_from_file", "predictables/util/src/_code.py"))
+    Takes a file path and returns a list of functions in that file.
+    Assumes that the file uses consistent indentation (spaces or tabs).
+
+    Parameters
+    ----------
+    filepath : str
+        The file path to the file to read.
+
+    Returns
+    -------
+    list
+        A list of functions in the file.
+
+    Examples
+    --------
+    >>> get_functions_from_file("predictables/util/src/_code.py")
+    ['read_file_code', 'get_functions_from_file', 'get_function_code', 'get_function_docstring', 'get_files_from_folder', 'copy_folder_code']
+
+    >>> # This is just the docstring, copy/pasted from the function above
+    """
     code = read_file_code(filepath)
     code = code.split(f"def {function_name}(")[0]
     code = code.split('"""')[1]
     return code
 
 
-def get_files_from_folder(folder_path: str, file_type: str = None) -> list:
-    """Takes a folder path and returns a list of files in that folder."""
+def get_files_from_folder(folder_path: str, file_type: Optional[str] = None) -> list:
+    """
+    Takes a folder path and returns a list of files in that folder. If a file type is specified, only files of that type will be returned, otherwise all files will be returned.
+
+    Parameters
+    ----------
+    folder_path : str
+        The folder path to the folder to read.
+    file_type : str, optional
+        The file type to filter by, by default None
+
+    Returns
+    -------
+    list
+        A list of files in the folder.
+
+    Examples
+    --------
+    >>> get_files_from_folder("predictables/util/src", "txt")
+    ['not_a_python_file.txt']
+    >>> get_files_from_folder("predictables/util/src")
+    ['_code.py', 'not_a_python_file.txt', ...(other files)...] # doctest: +ELLIPSIS
+    """
     files = []
     for file in os.listdir(folder_path):
         if file_type is None:
@@ -52,14 +152,3 @@ def get_files_from_folder(folder_path: str, file_type: str = None) -> list:
         elif file.endswith(f".{file_type}"):
             files.append(file)
     return files
-
-
-# def copy_folder_code(folder_path: str, file_type: str) -> None:
-#     """Takes a folder path and copies the code as a string to the clipboard."""
-#     files = get_files_from_folder(folder_path, file_type)
-#     code = ""
-#     for i, file in enumerate(files):
-#         if i > 0:
-#             code += "\n"
-#         code += read_file_code(os.path.join(folder_path, file))
-#     pyperclip.copy(code)

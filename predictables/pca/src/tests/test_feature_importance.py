@@ -37,8 +37,8 @@ def test_no_normalization(pca):
 
 def test_output_shape(pca):
     feature_importances = pca_feature_importance(pca)
-    assert (
-        feature_importances.shape == (3,)
+    assert feature_importances.shape == (
+        3,
     ), f"Feature importances are {feature_importances}. Expected shape (3,), got {feature_importances.shape}"
 
 

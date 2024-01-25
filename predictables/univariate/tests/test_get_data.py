@@ -119,9 +119,10 @@ def test_filter_df_for_cv_train_invalid_input(sample_dataframe, fold, fold_col, 
     # Test with invalid input
     with pytest.raises(KeyError) as err:
         _filter_df_for_cv_train(sample_dataframe, fold, fold_col)
-    assert (
-        f'"{msg.strip().lower()}"'.replace("'", '"')
-        == str(err.value).strip().lower().replace("'", '"')
+    assert f'"{msg.strip().lower()}"'.replace("'", '"') == str(
+        err.value
+    ).strip().lower().replace(
+        "'", '"'
     ), f"Expected the error to be {msg} for [{fold}]/[{fold_col}].\n\nInstead got {err.value}"
 
 
@@ -149,9 +150,10 @@ def test_filter_df_for_cv_test_invalid_input(sample_dataframe, fold, fold_col, m
     # Test with invalid input
     with pytest.raises(KeyError) as err:
         _filter_df_for_cv_test(sample_dataframe, fold, fold_col)
-    assert (
-        f'"{msg.strip().lower()}"'.replace("'", '"')
-        == str(err.value).strip().lower().replace("'", '"')
+    assert f'"{msg.strip().lower()}"'.replace("'", '"') == str(
+        err.value
+    ).strip().lower().replace(
+        "'", '"'
     ), f"Expected the error to be {msg} for [{fold}]/[{fold_col}].\n\nInstead got {err.value}"
 
 
@@ -218,9 +220,10 @@ def test_filter_df_for_cv_invalid_input(sample_dataframe, fold, fold_col, data, 
     # Test with invalid input
     with pytest.raises(KeyError) as err:
         _filter_df_for_cv(sample_dataframe, fold, fold_col, data)
-    assert (
-        f'"{msg.strip().lower()}"'.replace("'", '"')
-        == str(err.value).strip().lower().replace("'", '"')
+    assert f'"{msg.strip().lower()}"'.replace("'", '"') == str(
+        err.value
+    ).strip().lower().replace(
+        "'", '"'
     ), f"Expected the error to be {msg} for [{fold}]/[{fold_col}].\n\nInstead got {err.value}"
 
 
@@ -273,7 +276,8 @@ def test_filter_df_for_train_test_invalid_data(sample_dataframe, sample_val_data
         _filter_df_for_train_test(
             sample_dataframe, sample_val_dataframe, data="invalid"
         )
-    assert (
-        '"data" must be one of ["all", "train", "test"]. got "invalid".'
-        == str(err.value).strip().lower().replace("'", '"')
+    assert '"data" must be one of ["all", "train", "test"]. got "invalid".' == str(
+        err.value
+    ).strip().lower().replace(
+        "'", '"'
     ), f"Expected the error to be \"data\" must be one of ['all', 'train', 'test'].\n\nInstead got {err.value}"
