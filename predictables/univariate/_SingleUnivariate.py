@@ -33,6 +33,6 @@ class SingleUnivariate(Model):
                 self.df,
                 fold=fold,
                 fold_col=self.fold_col,
-                feature_col=self.feature_col,
-                target_col=self.target_col,
+                feature_col=self.feature_col if self.feature_col is not None else None,
+                target_col=self.target_col if self.target_col is not None else None,
             )

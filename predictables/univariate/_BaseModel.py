@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Optional, Union
 
 import pandas as pd
 import polars as pl
@@ -33,11 +33,11 @@ class Model:
     def __init__(
         self,
         df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-        df_val: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] = None,
-        fold: int = None,
+        df_val: Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]] = None,
+        fold: Optional[int] = None,
         fold_col: str = "cv",
-        feature_col: str = None,
-        target_col: str = None,
+        feature_col: Optional[str] = None,
+        target_col: Optional[str] = None,
         time_series_validation: bool = False,
     ):
         self.df = df
@@ -122,15 +122,6 @@ class Model:
             self.pr_curve_test = precision_recall_curve(
                 self.y_test, self.yhat_test.round(0)
             )
-
-        # else:
-        #     setattr(self, "mse", mean_squared_error(self.y_test, self.yhat_test))
-        #     setattr(self, "mae", mean_absolute_error(self.y_test, self.yhat_test))
-        #     setattr(self, "r2", r2_score(self.y_test, self.yhat_test))
-
-        # # if get_column_dtype(self.y_train) in ["categorical", "binary"]:
-        # #     self.auc = roc_curve(self.y_test, self.yhat_test)
-        # #     self.prc = precision_recall_curve(self.y_test, self.yhat_test)
 
     def __repr__(self):
         return f"<Model{'_[CV-' if self.fold is not None else ''}{f'{self.fold}]' if self.fold is not None else ''}({'df' if self.df is not None else ''}{', df-val' if self.df_val is not None else ''})>"

@@ -43,6 +43,9 @@ lint:
     - trivy@0.48.3
     - trufflehog@3.64.0
     - yamllint@1.33.0
+  ignore:
+    - linters: [ALL]
+      paths: [".trunk/**", ".github/**", ".git/**", ".vscode/**", "node_modules/**", "dist/**", "build/**", "coverage/**", "venv/**", "env/**", ".env/**", "mypy_cache/**", "pytest_cache/**", "/home/aweaver/work/predictables/predictables/univariate/src/plots/old_src/_old_plots.py"]
 actions:
   disabled:
     - trunk-announce
