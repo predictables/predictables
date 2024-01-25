@@ -15,9 +15,9 @@ def density_plot(
     x: Union[pd.Series, pl.Series],
     plot_by: Union[pd.Series, pl.Series],
     cv_label: Union[pd.Series, pl.Series],
-    x_min: Union[float, None] = None,
-    x_max: Union[float, None] = None,
-    ax: Union[Axes, None] = None,
+    x_min: Optional[float] = None,
+    x_max: Optional[float] = None,
+    ax: Optional[Axes] = None,
     grid_bins: int = 200,
     cv_alpha: float = 0.5,
     cv_line_width: float = 0.5,
@@ -95,9 +95,9 @@ def density_plot_mpl(
     x: Union[pd.Series, pl.Series],
     plot_by: Union[pd.Series, pl.Series],
     cv_label: Union[pd.Series, pl.Series],
-    x_min: Union[float, None] = None,
-    x_max: Union[float, None] = None,
-    ax: Union[Axes, None] = None,
+    x_min: Optional[float] = None,
+    x_max: Optional[float] = None,
+    ax: Optional[Axes] = None,
     grid_bins: int = 200,
     cv_alpha: float = 0.5,
     cv_line_width: float = 0.5,
@@ -113,27 +113,37 @@ def density_plot_mpl(
     x : Union[pd.Series, pl.Series]
         The variable to plot the density of.
     plot_by : Union[pd.Series, pl.Series]
-        The variable to group by. For a binary target, this is the target. The plot will generate a density for each level of the target.
+        The variable to group by. For a binary target, this is the target.
+        The plot will generate a density for each level of the target.
     cv_label : Union[pd.Series, pl.Series]
-        The cross-validation fold to group by. If None, no grouping is done. Defaults to None.
+        The cross-validation fold to group by. If None, no grouping is
+        done. Defaults to None.
     x_min : float, optional
-        The minimum value to plot. If None, defaults to the minimum of x before grouping by any variables. Used to extend the curve to the edges of the plot.
+        The minimum value to plot. If None, defaults to the minimum of
+        x before grouping by any variables. Used to extend the curve to
+        the edges of the plot.
     x_max : float, optional
-        The maximum value to plot. If None, defaults to the maximum of x before grouping by any variables. Used to extend the curve to the edges of the plot.
+        The maximum value to plot. If None, defaults to the maximum of
+        x before grouping by any variables. Used to extend the curve to
+        the edges of the plot.
     ax : matplotlib.axes.Axes, optional
         The axes to plot on. If None, a new figure and axes is created.
     grid_bins : int, optional
         The number of bins to use for the density. Defaults to 200.
     cv_alpha : float, optional
-        The alpha value to use for the cross-validation folds. Defaults to 0.5.
+        The alpha value to use for the cross-validation folds. Defaults
+        to 0.5.
     cv_line_width : float, optional
-        The width of the line to use for the cross-validation folds. Defaults to 0.5.
+        The width of the line to use for the cross-validation folds.
+        Defaults to 0.5.
     t_test_alpha : float, optional
         The alpha value to use for the t-test. Defaults to 0.05.
     figsize : tuple, optional
-        The size of the figure to create. Defaults to (8, 8). Only used if ax is None.
+        The size of the figure to create. Defaults to (8, 8). Only used
+        if ax is None.
     call_legend : bool, optional
-        Whether to call plt.legend() at the end of the function. Defaults to True.
+        Whether to call plt.legend() at the end of the function.
+        Defaults to True.
 
     Returns
     -------
@@ -180,18 +190,18 @@ def density_plot_mpl(
         raise ValueError(f"figsize must be a tuple, but got {type(figsize)}.")
 
     if ax is None:
-        _, ax = plt.subplots(figsize=figsize)
+        _, ax0 = plt.subplots(figsize=figsize)
 
     # Convert to pandas Series
     x = to_pd_s(x)
     plot_by = to_pd_s(plot_by)
 
-    ax = density_by_mpl(x, plot_by, fill_under=False, ax=ax)
-    ax = density_by_mpl(
+    ax0 = density_by_mpl(x, plot_by, fill_under=False, ax=ax0)
+    ax0 = density_by_mpl(
         x,
         plot_by,
         cv_fold=cv_label,
-        ax=ax,
+        ax=ax0,
         use_labels=False,
         alpha=cv_alpha,
         fill_under=False,
@@ -199,13 +209,13 @@ def density_plot_mpl(
     )
 
     # Add vertical lines at the means and medians of the densities:
-    ax = _annotate_mean_median(ax, x, plot_by)
+    ax0 = _annotate_mean_median(ax0, x, plot_by)
 
     # Annotate the t-test results:
     _, p, significance_statement = _density_t_test_binary_target(
         x, plot_by, t_test_alpha
     )
-    ax.annotate(
+    ax0.annotate(
         significance_statement,
         xy=(0.5, 0.5),
         xycoords="axes fraction",
@@ -227,12 +237,12 @@ def density_plot_mpl(
     title += " not " if p >= t_test_alpha else " "
     title += f"significantly different at the {1 - t_test_alpha:.0%} level."
 
-    ax.set_title(title)
+    ax0.set_title(title)
 
     if call_legend:
         plt.legend(fontsize=12 * (figsize[0] / 16))
 
-    return ax
+    return ax0
 
 
 def _density_t_test_binary_target(
@@ -297,9 +307,9 @@ def _density_t_test_binary_target(
 
 def _plot_density_mpl(
     x: pd.Series,
-    x_min: Union[float, None] = None,
-    x_max: Union[float, None] = None,
-    ax: Union[Axes, None] = None,
+    x_min: Optional[float] = None,
+    x_max: Optional[float] = None,
+    ax: Optional[Axes] = None,
     label: Union[str, None] = None,
     grid_bins: int = 200,
     line_width: float = 1,
@@ -397,9 +407,9 @@ def density_by_mpl(
     x: pd.Series,
     by: pd.Series,
     cv_fold: Optional[Union[pd.Series, None]] = None,
-    x_min: Optional[Union[float, None]] = None,
-    x_max: Optional[Union[float, None]] = None,
-    ax: Optional[Union[Axes, None]] = None,
+    x_min: Optional[Optional[float]] = None,
+    x_max: Optional[Optional[float]] = None,
+    ax: Optional[Optional[Axes]] = None,
     use_labels: Optional[bool] = True,
     grid_bins: Optional[int] = 200,
     line_width: Optional[float] = 1.0,
@@ -573,9 +583,9 @@ def _calculate_single_density_sd(
 def _plot_single_density_pm_standard_deviation(
     x: pd.Series,
     cv_fold: Union[pd.Series, None] = None,
-    x_min: Union[float, None] = None,
-    x_max: Union[float, None] = None,
-    ax: Union[Axes, None] = None,
+    x_min: Optional[float] = None,
+    x_max: Optional[float] = None,
+    ax: Optional[Axes] = None,
     label: Union[str, None] = None,
     grid_bins: int = 200,
     line_width: float = 0.5,

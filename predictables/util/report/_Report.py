@@ -20,6 +20,8 @@ from reportlab.platypus import (
 
 from predictables.util import to_pd_df
 
+# from predictables.util.enums import ProgrammingLanguage as Lang
+
 
 class Report:
     """
@@ -840,7 +842,17 @@ class Report:
               # that says print('Hello, world!'), and will be syntax highlighted
               # as python code.
         """
-        self.elements.append(Paragraph(text, self.styles["Code"]))
+        if language is None:
+            self.elements.append(Paragraph(text, self.styles["Code"]))
+        else:
+            self.elements.append(
+                Paragraph(
+                    pygments.highlight(
+                        text, pygments.lexers.get_lexer_by_name(language)
+                    ),
+                    self.styles["Code"],
+                )
+            )
         return self
 
     def math(self, mathjax: str):

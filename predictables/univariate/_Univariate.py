@@ -1,8 +1,9 @@
-from typing import List, Union
+from typing import List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import polars as pl
+from matplotlib.axes import Axes
 
 from predictables.univariate.src._get_data import _get_data
 from predictables.univariate.src.plots import (
@@ -11,9 +12,10 @@ from predictables.univariate.src.plots import (
     quintile_lift_plot,
     roc_curve_plot,
 )
-from predictables.util import get_unique
+from predictables.util import get_unique, to_pd_df, to_pl_lf
+from predictables.util.report import Report
 
-from .SingleUnivariate import SingleUnivariate
+from ._SingleUnivariate import SingleUnivariate
 
 
 def get_col(self, col: str) -> List[Union[int, float, str]]:
@@ -72,12 +74,18 @@ def get_col(self, col: str) -> List[Union[int, float, str]]:
 class Univariate(SingleUnivariate):
     def __init__(
         self,
-        df: pl.LazyFrame,
+        df: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
         fold_col: str = "cv",
-        feature_col: str = None,
-        target_col: str = None,
+        feature_col: Optional[str] = None,
+        target_col: Optional[str] = None,
         **kwargs,
     ):
+        df = to_pl_lf(df)
+        if feature_col is None:
+            feature_col = df.columns[1]
+        if target_col is None:
+            target_col = df.columns[0]
+
         super().__init__(
             df, fold_col=fold_col, feature_col=feature_col, target_col=target_col
         )
@@ -114,21 +122,48 @@ class Univariate(SingleUnivariate):
         # =======
         # I am going to alias some of the api syntax errors here if they are
         # reasonable guesses. This needs to be as intuitive as possible.
-        self.target_name = self.target_col
-        self.target = self.df[self.target_col]
-        self.y = self.df[self.target_col]
-        self.Y = self.df[self.target_col]
+        self.target_name = (
+            self.target_col if isinstance(self.target_col, str) else self.df.columns[0]
+        )
+        self.target = (
+            to_pd_df(self.df).loc[:, self.target_name] if self.df is not None else None
+        )
+        self.y = (
+            to_pd_df(self.df).loc[:, self.target_name] if self.df is not None else None
+        )
+        self.Y = (
+            to_pd_df(self.df).loc[:, self.target_name] if self.df is not None else None
+        )
 
-        self.feature_name = self.feature_col
-        self.feature = self.df[self.feature_col]
-        self.X = self.df[self.feature_col]
-        self.x = self.df[self.feature_col]
+        self.feature_name = (
+            self.feature_col
+            if isinstance(self.feature_col, str)
+            else self.df.columns[1]
+        )
+        self.feature = (
+            to_pd_df(self.df).loc[:, self.feature_name] if self.df is not None else None
+        )
+        self.X = (
+            to_pd_df(self.df).loc[:, self.feature_name] if self.df is not None else None
+        )
+        self.x = (
+            to_pd_df(self.df).loc[:, self.feature_name] if self.df is not None else None
+        )
 
-        self.folds = self.df[self.fold_col]
-        self.cv = self.df[self.fold_col]
-        self.fold = self.df[self.fold_col]
+        self.fold_name = (
+            self.fold_col if isinstance(self.fold_col, str) else self.df.columns[2]
+        )
+        self.folds = (
+            to_pd_df(self.df).loc[:, self.fold_name] if self.df is not None else None
+        )
+        self.cv = (
+            to_pd_df(self.df).loc[:, self.fold_name] if self.df is not None else None
+        )
+        self.fold = (
+            to_pd_df(self.df).loc[:, self.fold_name] if self.df is not None else None
+        )
 
-        self.df_all = (
+        self.df_all = to_pd_df(
             self.df if self.df_val is None else pd.concat([self.df, self.df_val])
         )
 
@@ -142,7 +177,7 @@ class Univariate(SingleUnivariate):
         return get_unique(self.cv)
 
     def get_data(
-        self, element: str = "x", data: str = "train", fold_n: int = None
+        self, element: str = "x", data: str = "train", fold_n: Optional[int] = None
     ) -> List[Union[int, float, str]]:
         """
         Helper function to get the requested data element.
@@ -185,15 +220,27 @@ class Univariate(SingleUnivariate):
 
         # Set the data
         if data == "train":
-            df = self.df
+            df: pd.DataFrame = to_pd_df(self.df)
         elif data == "test":
-            df = self.df_val
+            df: pd.DataFrame = (
+                to_pd_df(self.df_val) if self.df_val is not None else to_pd_df(self.df)
+            )
         else:
-            df = pd.concat([self.df, self.df_val.assign(cv=-42)])
+            df: pd.DataFrame = (
+                pd.concat([to_pd_df(self.df), to_pd_df(self.df_val.assign(cv=-42))])
+                if to_pd_df(self.df_val)
+                else to_pd_df(self.df)
+            )
 
-        X = df[self.feature_name]
-        y = df[self.target_name]
-        cv = df[self.fold_col]
+        X: Optional[pd.DataFrame] = (
+            df.loc[:, self.feature_name] if df is not None else None
+        )
+        y: Optional[pd.DataFrame] = (
+            df.loc[:, self.target_name] if df is not None else None
+        )
+        cv: Optional[pd.DataFrame] = (
+            df.loc[:, self.fold_col] if df is not None else None
+        )
 
         return X, y, cv
 
@@ -212,29 +259,82 @@ class Univariate(SingleUnivariate):
         X, y, cv = self._plot_data(data)
 
         # make plot
-        fig, ax = plt.subplots(figsize=self.figsize)
-        ax = cdf_plot(X, y, cv, self.feature_name, ax=ax, **kwargs)
-        return ax
-
-    def plot_roc_curve(self, data: str = "train", **kwargs):
-        """
-        Plots the ROC curve for the target variable in total and for each fold.
-        """
-
-        fig, ax = plt.subplots(
-            figsize=(6, 6) if "figsize" not in kwargs else kwargs["figsize"]
+        _, ax = plt.subplots(
+            figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"]
         )
-        ax = roc_curve_plot(
-            self.y,
-            self.yhat_train,
-            self.cv,
-            self.coef,
-            self.se,
-            self.pvalues,
+        ax = cdf_plot(
+            X,
+            y,
+            cv,
+            self.feature_name,
             ax=ax,
-            figsize=fig.get_size_inches(),
+            figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"],
             **kwargs,
         )
         return ax
 
-    # def plot_density(self, data:str = "train")
+    def plot_roc_curve(
+        self,
+        y: Optional[Union[pd.Series, pl.Series]] = None,
+        yhat: Optional[Union[pd.Series, pl.Series]] = None,
+        cv: Optional[Union[pd.Series, pl.Series]] = None,
+        coef: Optional[float] = None,
+        se: Optional[float] = None,
+        pvalues: Optional[float] = None,
+        ax: Optional[Axes] = None,
+        **kwargs,
+    ) -> Axes:
+        """
+        Plots the ROC curve for the target variable in total and for each fold.
+        """
+        if ax is None:
+            _, ax0 = plt.subplots(
+                figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"]
+            )
+        else:
+            ax0 = ax
+
+        ax0 = roc_curve_plot(
+            self.y if y is None else y,
+            self.yhat_train if yhat is None else yhat,
+            self.cv if cv is None else cv,
+            self.coef if coef is None else coef,
+            self.se if se is None else se,
+            self.pvalues if pvalues is None else pvalues,
+            ax=ax0,
+            figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"],
+            **kwargs,
+        )
+        return ax0
+
+    def plot_density(
+        self,
+        data: str = "train",
+        feature_name: Optional[str] = None,
+        ax: Optional[Axes] = None,
+        **kwargs,
+    ) -> Axes:
+        """
+        Plots the density of the feature at each level of the larget variable, both
+        in total and for each fold.
+        """
+        X, y, cv = self._plot_data(data)
+
+        # make plot
+        if ax is None:
+            _, ax0 = plt.subplots(
+                figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"]
+            )
+        else:
+            ax0 = ax
+
+        ax0 = density_plot(
+            X,
+            y,
+            cv,
+            feature_name if feature_name is not None else self.feature_name,
+            ax=ax0,
+            figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"],
+            **kwargs,
+        )
+        return ax0

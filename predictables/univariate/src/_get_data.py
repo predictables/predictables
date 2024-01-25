@@ -2,7 +2,7 @@ from typing import List, Optional, Union
 
 import pandas as pd
 
-from predictables.util import get_unique
+from predictables.util import get_unique, to_pd_df
 
 
 def _get_data(
@@ -10,7 +10,7 @@ def _get_data(
     df_val: Optional[pd.DataFrame],
     element: str = "x",
     data: str = "train",
-    fold_n: int = None,
+    fold_n: Optional[int] = None,
     feature_col_name: str = "feature",
     target_col_name: str = "target",
     fold_col_name: str = "fold",
@@ -47,20 +47,24 @@ def _get_data(
     """
     element = element.lower()
     data = data.lower()
-    unique_folds = get_unique(df[fold_col_name])
+    unique_folds = get_unique(to_pd_df(df)[fold_col_name])
 
     if data not in ["train", "test", "all"]:
         raise ValueError(f"data must be one of 'train', 'test', or 'all'. Got {data}.")
     if element not in ["x", "y", "fold"]:
         raise ValueError(f"element must be one of 'x', 'y', or 'fold'. Got {element}.")
-    if element == "fold" and fold_n not in unique_folds:
-        raise ValueError(f"fold_n must be one of {unique_folds}. Got {fold_n}.")
+    if (element == "fold") and (
+        (fold_n if fold_n is not None else -42) not in unique_folds
+    ):
+        raise ValueError(
+            f"fold_n must be one of {unique_folds}. Got {fold_n if fold_n is not None else -42}."
+        )
 
     # Use the cv function if we're getting a fold
     if element == "fold":
-        return _filter_df_for_cv(df, fold_n, fold_col_name, data)[
-            feature_col_name
-        ].tolist()
+        return _filter_df_for_cv(
+            df, fold_n if fold_n is not None else -42, fold_col_name, data
+        )[feature_col_name].tolist()
 
     # Otherwise, get the data for the requested fold
     return _filter_df_for_train_test(df, df_val, data)[

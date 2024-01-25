@@ -1,17 +1,20 @@
+from typing import Optional, Union
+
+import pandas as pd
 import polars as pl
 
 from predictables.util import to_pl_lf
 
-from .BaseModel import Model
+from ._BaseModel import Model
 
 
 class SingleUnivariate(Model):
     def __init__(
         self,
-        df: pl.LazyFrame,
+        df: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
         fold_col: str = "cv",
-        feature_col: str = None,
-        target_col: str = None,
+        feature_col: Optional[str] = None,
+        target_col: Optional[str] = None,
     ):
         super().__init__(
             df, fold_col=fold_col, feature_col=feature_col, target_col=target_col
