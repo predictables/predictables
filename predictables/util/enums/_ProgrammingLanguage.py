@@ -32,6 +32,7 @@ class ProgrammingLanguage(Enum):
     RUST = "rust"
     SWIFT = "swift"
     SCALA = "scala"
+    TOML = "toml"
     TYPESCRIPT = "typescript"
     VISUALBASIC = "visualbasic"
     WEBASSEMBLY = "webassembly"
@@ -44,91 +45,78 @@ class ProgrammingLanguage(Enum):
             UserWarning("Programming language is None. Defaulting to Python.")
             return ProgrammingLanguage.PYTHON
 
+        programming_language_map = {
+            "c": ProgrammingLanguage.C,
+            "c#": ProgrammingLanguage.CSHARP,
+            "c sharp": ProgrammingLanguage.CSHARP,
+            "csharp": ProgrammingLanguage.CSHARP,
+            "c++": ProgrammingLanguage.CPP,
+            "cpp": ProgrammingLanguage.CPP,
+            "c plus plus": ProgrammingLanguage.CPP,
+            "c plusplus": ProgrammingLanguage.CPP,
+            "cplusplus": ProgrammingLanguage.CPP,
+            "clojure": ProgrammingLanguage.CLOJURE,
+            "elm": ProgrammingLanguage.ELM,
+            "erlang": ProgrammingLanguage.ERLANG,
+            "f#": ProgrammingLanguage.FSHARP,
+            "fsharp": ProgrammingLanguage.FSHARP,
+            "f sharp": ProgrammingLanguage.FSHARP,
+            "go": ProgrammingLanguage.GO,
+            "golang": ProgrammingLanguage.GO,
+            "haskell": ProgrammingLanguage.HASKELL,
+            "kotlin": ProgrammingLanguage.KOTLIN,
+            "java": ProgrammingLanguage.JAVA,
+            "js": ProgrammingLanguage.JAVASCRIPT,
+            "javascript": ProgrammingLanguage.JAVASCRIPT,
+            "ecmascript": ProgrammingLanguage.JAVASCRIPT,
+            "lisp": ProgrammingLanguage.LISP,
+            "lua": ProgrammingLanguage.LUA,
+            "objective-c": ProgrammingLanguage.OBJECTIVEC,
+            "objectivec": ProgrammingLanguage.OBJECTIVEC,
+            "objective c": ProgrammingLanguage.OBJECTIVEC,
+            "ocaml": ProgrammingLanguage.OCAML,
+            "pascal": ProgrammingLanguage.PASCAL,
+            "perl": ProgrammingLanguage.PERL,
+            "php": ProgrammingLanguage.PHP,
+            "py": ProgrammingLanguage.PYTHON,
+            "python": ProgrammingLanguage.PYTHON,
+            "py3": ProgrammingLanguage.PYTHON,
+            "python3": ProgrammingLanguage.PYTHON,
+            "r": ProgrammingLanguage.R,
+            "racket": ProgrammingLanguage.RACKET,
+            "ruby": ProgrammingLanguage.RUBY,
+            "rust": ProgrammingLanguage.RUST,
+            "rustlang": ProgrammingLanguage.RUST,
+            "rust-lang": ProgrammingLanguage.RUST,
+            "rs": ProgrammingLanguage.RUST,
+            "scheme": ProgrammingLanguage.SCHEME,
+            "shell": ProgrammingLanguage.SHELL,
+            "sh": ProgrammingLanguage.SHELL,
+            "sql": ProgrammingLanguage.SQL,
+            "swift": ProgrammingLanguage.SWIFT,
+            "scala": ProgrammingLanguage.SCALA,
+            "toml": ProgrammingLanguage.TOML,
+            "tml": ProgrammingLanguage.TOML,
+            "ts": ProgrammingLanguage.TYPESCRIPT,
+            "typescript": ProgrammingLanguage.TYPESCRIPT,
+            "vb": ProgrammingLanguage.VISUALBASIC,
+            "vb.net": ProgrammingLanguage.VISUALBASIC,
+            "vbnet": ProgrammingLanguage.VISUALBASIC,
+            "vb .net": ProgrammingLanguage.VISUALBASIC,
+            "vba": ProgrammingLanguage.VISUALBASIC,
+            "visualbasic": ProgrammingLanguage.VISUALBASIC,
+            "visual basic": ProgrammingLanguage.VISUALBASIC,
+            "vbs": ProgrammingLanguage.VISUALBASIC,
+            "vb6": ProgrammingLanguage.VISUALBASIC,
+            "vb 6": ProgrammingLanguage.VISUALBASIC,
+            "wasm": ProgrammingLanguage.WEBASSEMBLY,
+            "webassembly": ProgrammingLanguage.WEBASSEMBLY,
+            "xml": ProgrammingLanguage.XML,
+            "html": ProgrammingLanguage.XML,
+            "xhtml": ProgrammingLanguage.XML,
+            "yml": ProgrammingLanguage.YAML,
+            "yaml": ProgrammingLanguage.YAML,
+        }
+
         string = string.lower().strip()
-
-        if string in ["c"]:
-            return ProgrammingLanguage.C
-        elif string in ["c#", "c sharp", "csharp"]:
-            return ProgrammingLanguage.CSHARP
-        elif string in ["c++", "cpp", "c plus plus", "c plusplus", "cplusplus"]:
-            return ProgrammingLanguage.CPP
-        elif string in ["clojure"]:
-            return ProgrammingLanguage.CLOJURE
-        elif string in ["elm"]:
-            return ProgrammingLanguage.ELM
-        elif string in ["erlang"]:
-            return ProgrammingLanguage.ERLANG
-        elif string in ["f#", "fsharp", "f sharp"]:
-            return ProgrammingLanguage.FSHARP
-        elif string in ["go", "golang"]:
-            return ProgrammingLanguage.GO
-        elif string in ["haskell"]:
-            return ProgrammingLanguage.HASKELL
-        elif string in ["kotlin"]:
-            return ProgrammingLanguage.KOTLIN
-        elif string in ["java"]:
-            return ProgrammingLanguage.JAVA
-        elif string in ["js", "javascript", "ecmascript"]:
-            return ProgrammingLanguage.JAVASCRIPT
-        elif string in ["lisp"]:
-            return ProgrammingLanguage.LISP
-        elif string in ["lua"]:
-            return ProgrammingLanguage.LUA
-        elif string in ["objective-c", "objectivec", "objective c"]:
-            return ProgrammingLanguage.OBJECTIVEC
-        elif string in ["ocaml"]:
-            return ProgrammingLanguage.OCAML
-        elif string in ["pascal"]:
-            return ProgrammingLanguage.PASCAL
-        elif string in ["perl"]:
-            return ProgrammingLanguage.PERL
-        elif string in ["php"]:
-            return ProgrammingLanguage.PHP
-        elif string in ["py", "python", "py3", "python3"]:
-            return ProgrammingLanguage.PYTHON
-        elif string in ["r"]:
-            return ProgrammingLanguage.R
-        elif string in ["racket"]:
-            return ProgrammingLanguage.RACKET
-
-        elif string in ["ruby"]:
-            return ProgrammingLanguage.RUBY
-        elif string in ["rust", "rustlang", "rust-lang", "rs"]:
-            return ProgrammingLanguage.RUST
-        elif string in ["scheme"]:
-            return ProgrammingLanguage.SCHEME
-        elif string in ["shell"]:
-            return ProgrammingLanguage.SHELL
-        elif string in ["sql"]:
-            return ProgrammingLanguage.SQL
-        elif string in ["swift"]:
-            return ProgrammingLanguage.SWIFT
-        elif string in ["scala"]:
-            return ProgrammingLanguage.SCALA
-        elif string in ["ts", "typescript"]:
-            return ProgrammingLanguage.TYPESCRIPT
-        elif string in [
-            "visual basic",
-            "vb",
-            "vb.net",
-            "vbnet",
-            "vb .net",
-            "vba",
-            "visualbasic",
-            "vbs",
-            "vb6",
-            "vb 6",
-        ]:
-            return ProgrammingLanguage.VISUALBASIC
-        elif string in ["wasm", "webassembly"]:
-            return ProgrammingLanguage.WEBASSEMBLY
-        elif string in ["xml", "html", "xhtml"]:
-            return ProgrammingLanguage.XML
-        elif string in ["yml", "yaml"]:
-            return ProgrammingLanguage.YAML
-
-        else:
-            UserWarning(
-                f"Programming language {string} not recognized. Defaulting to Python."
-            )
-            return ProgrammingLanguage.PYTHON
+        return programming_language_map.get(string, ProgrammingLanguage.PYTHON)

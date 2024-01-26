@@ -1,0 +1,29 @@
+from plotly.basedatatypes import BaseLayoutHierarchyType as _BaseLayoutHierarchyType
+from typing import Any
+
+class Smith(_BaseLayoutHierarchyType):
+    @property
+    def bgcolor(self): ...
+    @bgcolor.setter
+    def bgcolor(self, val) -> None: ...
+    @property
+    def domain(self): ...
+    @domain.setter
+    def domain(self, val) -> None: ...
+    @property
+    def imaginaryaxis(self): ...
+    @imaginaryaxis.setter
+    def imaginaryaxis(self, val) -> None: ...
+    @property
+    def realaxis(self): ...
+    @realaxis.setter
+    def realaxis(self, val) -> None: ...
+    def __init__(
+        self,
+        arg: Any | None = ...,
+        bgcolor: Any | None = ...,
+        domain: Any | None = ...,
+        imaginaryaxis: Any | None = ...,
+        realaxis: Any | None = ...,
+        **kwargs
+    ) -> None: ...

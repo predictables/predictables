@@ -1,0 +1,29 @@
+from plotly.basedatatypes import BaseTraceHierarchyType as _BaseTraceHierarchyType
+from typing import Any
+
+class Number(_BaseTraceHierarchyType):
+    @property
+    def font(self): ...
+    @font.setter
+    def font(self, val) -> None: ...
+    @property
+    def prefix(self): ...
+    @prefix.setter
+    def prefix(self, val) -> None: ...
+    @property
+    def suffix(self): ...
+    @suffix.setter
+    def suffix(self, val) -> None: ...
+    @property
+    def valueformat(self): ...
+    @valueformat.setter
+    def valueformat(self, val) -> None: ...
+    def __init__(
+        self,
+        arg: Any | None = ...,
+        font: Any | None = ...,
+        prefix: Any | None = ...,
+        suffix: Any | None = ...,
+        valueformat: Any | None = ...,
+        **kwargs
+    ) -> None: ...

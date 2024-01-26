@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -12,7 +12,7 @@ from predictables.univariate.src.plots import (
     quintile_lift_plot,
     roc_curve_plot,
 )
-from predictables.util import get_unique, to_pd_df, to_pl_lf
+from predictables.util import get_unique, to_pd_df
 from predictables.util.report import Report
 
 from ._SingleUnivariate import SingleUnivariate
@@ -72,26 +72,40 @@ def get_col(self, col: str) -> List[Union[int, float, str]]:
 
 
 class Univariate(SingleUnivariate):
+    results: pd.DataFrame
+    target_name: str
+    target: Optional[pd.Series]
+    y: Optional[pd.Series]
+    Y: Optional[pd.Series]
+
+    feature_name: str
+    feature: Optional[pd.Series]
+    X: Optional[pd.Series]
+    x: Optional[pd.Series]
+
+    fold_name: str
+    folds: Optional[pd.Series]
+
+    df_all: pd.DataFrame
+
     def __init__(
         self,
-        df: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
-        fold_col: str = "cv",
-        feature_col: Optional[str] = None,
-        target_col: Optional[str] = None,
+        df_: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
+        fold_col_: str = "cv",
+        feature_col_: Optional[str] = None,
+        target_col_: Optional[str] = None,
         **kwargs,
-    ):
-        df = to_pl_lf(df)
-        if feature_col is None:
-            feature_col = df.columns[1]
-        if target_col is None:
-            target_col = df.columns[0]
+    ) -> None:
+        df = to_pd_df(df_)
+        if feature_col_ is None:
+            feature_col_ = df.columns[1]
+        if target_col_ is None:
+            target_col_ = df.columns[0]
 
         super().__init__(
-            df, fold_col=fold_col, feature_col=feature_col, target_col=target_col
+            df, fold_col=fold_col_, feature_col=feature_col_, target_col=target_col_
         )
-        self.results = pd.DataFrame(
-            index=sorted(self.unique_folds.tolist()) + ["mean", "std"]
-        )
+        self.results = pd.DataFrame(index=self.unique_folds + ["mean", "std"])
         self.results.index.name = "fold"
         for attribute in [
             "coef",
@@ -122,49 +136,48 @@ class Univariate(SingleUnivariate):
         # =======
         # I am going to alias some of the api syntax errors here if they are
         # reasonable guesses. This needs to be as intuitive as possible.
-        self.target_name = (
-            self.target_col if isinstance(self.target_col, str) else self.df.columns[0]
+        dfpd: pd.DataFrame = to_pd_df(df)
+        self.target_name: str = (
+            self.target_col if isinstance(self.target_col, str) else dfpd.columns[0]
         )
-        self.target = (
-            to_pd_df(self.df).loc[:, self.target_name] if self.df is not None else None
+        self.target: Optional[pd.Series] = (
+            dfpd.loc[:, self.target_name] if dfpd is not None else None
         )
-        self.y = (
-            to_pd_df(self.df).loc[:, self.target_name] if self.df is not None else None
+        self.y: Optional[pd.Series] = (
+            dfpd.loc[:, self.target_name] if dfpd is not None else None
         )
-        self.Y = (
-            to_pd_df(self.df).loc[:, self.target_name] if self.df is not None else None
+        self.Y: Optional[pd.Series] = (
+            dfpd.loc[:, self.target_name] if dfpd is not None else None
         )
 
         self.feature_name = (
-            self.feature_col
-            if isinstance(self.feature_col, str)
-            else self.df.columns[1]
+            self.feature_col if isinstance(self.feature_col, str) else dfpd.columns[1]
         )
-        self.feature = (
-            to_pd_df(self.df).loc[:, self.feature_name] if self.df is not None else None
+        self.feature: Optional[pd.Series] = (
+            dfpd.loc[:, self.feature_name] if dfpd is not None else None
         )
-        self.X = (
-            to_pd_df(self.df).loc[:, self.feature_name] if self.df is not None else None
+        self.X: Optional[pd.Series] = (
+            dfpd.loc[:, self.feature_name] if dfpd is not None else None
         )
-        self.x = (
-            to_pd_df(self.df).loc[:, self.feature_name] if self.df is not None else None
+        self.x: Optional[pd.Series] = (
+            dfpd.loc[:, self.feature_name] if dfpd is not None else None
         )
 
-        self.fold_name = (
-            self.fold_col if isinstance(self.fold_col, str) else self.df.columns[2]
+        self.fold_name: str = (
+            self.fold_col if isinstance(self.fold_col, str) else dfpd.columns[2]
         )
-        self.folds = (
-            to_pd_df(self.df).loc[:, self.fold_name] if self.df is not None else None
+        self.folds: Optional[pd.Series[Any]] = (
+            dfpd.loc[:, self.fold_name] if dfpd is not None else None
         )
-        self.cv = (
-            to_pd_df(self.df).loc[:, self.fold_name] if self.df is not None else None
+        self.cv: Optional[pd.Series[Any]] = (
+            dfpd.loc[:, self.fold_name] if dfpd is not None else None
         )
-        self.fold = (
-            to_pd_df(self.df).loc[:, self.fold_name] if self.df is not None else None
+        self.fold: Optional[pd.Series[Any]] = (
+            dfpd.loc[:, self.fold_name] if dfpd is not None else None
         )
 
         self.df_all = to_pd_df(
-            self.df if self.df_val is None else pd.concat([self.df, self.df_val])
+            dfpd if self.df_val is None else pd.concat([dfpd, to_pd_df(self.df_val)])
         )
 
         self.figsize = (6, 6) if "figsize" not in kwargs else kwargs["figsize"]
@@ -220,27 +233,19 @@ class Univariate(SingleUnivariate):
 
         # Set the data
         if data == "train":
-            df: pd.DataFrame = to_pd_df(self.df)
+            df = to_pd_df(self.df)
         elif data == "test":
-            df: pd.DataFrame = (
-                to_pd_df(self.df_val) if self.df_val is not None else to_pd_df(self.df)
-            )
+            df = to_pd_df(self.df_val) if self.df_val is not None else to_pd_df(self.df)
         else:
-            df: pd.DataFrame = (
+            df = (
                 pd.concat([to_pd_df(self.df), to_pd_df(self.df_val.assign(cv=-42))])
                 if to_pd_df(self.df_val)
                 else to_pd_df(self.df)
             )
 
-        X: Optional[pd.DataFrame] = (
-            df.loc[:, self.feature_name] if df is not None else None
-        )
-        y: Optional[pd.DataFrame] = (
-            df.loc[:, self.target_name] if df is not None else None
-        )
-        cv: Optional[pd.DataFrame] = (
-            df.loc[:, self.fold_col] if df is not None else None
-        )
+        X = df.loc[:, self.feature_name] if df is not None else self.df.iloc[:, 1]
+        y = df.loc[:, self.target_name] if df is not None else self.df.iloc[:, 0]
+        cv = df.loc[:, self.fold_col] if df is not None else self.df.iloc[:, 2]
 
         return X, y, cv
 
@@ -332,7 +337,40 @@ class Univariate(SingleUnivariate):
             X,
             y,
             cv,
-            feature_name if feature_name is not None else self.feature_name,
+            X.min(),
+            X.max(),
+            ax=ax0,
+            figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"],
+            **kwargs,
+        )
+        return ax0
+
+    def plot_quintile_lift(
+        self,
+        data: str = "train",
+        feature_name: Optional[str] = None,
+        ax: Optional[Axes] = None,
+        **kwargs,
+    ) -> Axes:
+        """
+        Plots the density of the feature at each level of the larget variable, both
+        in total and for each fold.
+        """
+        X, y, cv = self._plot_data(data)
+        yhat = self.model.predict(X)
+
+        # make plot
+        if ax is None:
+            _, ax0 = plt.subplots(
+                figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"]
+            )
+        else:
+            ax0 = ax
+
+        ax0 = quintile_lift_plot(
+            X,
+            y,
+            yhat,
             ax=ax0,
             figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"],
             **kwargs,

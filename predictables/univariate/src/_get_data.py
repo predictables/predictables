@@ -22,6 +22,8 @@ def _get_data(
     ----------
     df : pd.DataFrame
         The dataframe to get the data from.
+    df_val : pd.DataFrame | None
+        The validation dataframe.
     element : str, optional
         What data element to get. Choices are "x", "y", or "fold"
         for X data (features), y data (target), or data from the nth
@@ -45,15 +47,19 @@ def _get_data(
     List[Union[int, float, str]]
         The values for the requested column.
     """
-    element = element.lower()
-    data = data.lower()
-    unique_folds = get_unique(to_pd_df(df)[fold_col_name])
+    df_validation: pd.DataFrame = (
+        df_val if df_val is not None else pd.DataFrame(columns=df.columns)
+    )
 
-    if data not in ["train", "test", "all"]:
+    element_ = element.lower()
+    data_ = data.lower()
+    unique_folds = get_unique(df.loc[:, fold_col_name])
+
+    if data_ not in ["train", "test", "all"]:
         raise ValueError(f"data must be one of 'train', 'test', or 'all'. Got {data}.")
-    if element not in ["x", "y", "fold"]:
+    if element_ not in ["x", "y", "fold"]:
         raise ValueError(f"element must be one of 'x', 'y', or 'fold'. Got {element}.")
-    if (element == "fold") and (
+    if (element_ == "fold") and (
         (fold_n if fold_n is not None else -42) not in unique_folds
     ):
         raise ValueError(
@@ -61,15 +67,15 @@ def _get_data(
         )
 
     # Use the cv function if we're getting a fold
-    if element == "fold":
+    if element_ == "fold":
         return _filter_df_for_cv(
             df, fold_n if fold_n is not None else -42, fold_col_name, data
         )[feature_col_name].tolist()
 
     # Otherwise, get the data for the requested fold
-    return _filter_df_for_train_test(df, df_val, data)[
-        feature_col_name if element == "x" else target_col_name
-    ]
+    split: pd.DataFrame = _filter_df_for_train_test(df, df_validation, data)
+
+    return split[feature_col_name if element_ == "x" else target_col_name].tolist()
 
 
 def _filter_df_for_cv(
@@ -118,9 +124,9 @@ def _filter_df_for_cv(
         return df
     else:
         return (
-            df.loc[df[fold_col].ne(fold), :]
+            _filter_df_for_cv_train(df, fold, fold_col)
             if data == "train"
-            else df.loc[df[fold_col].eq(fold), :]
+            else _filter_df_for_cv_test(df, fold, fold_col)
         )
 
 
@@ -197,7 +203,7 @@ def _filter_df_for_cv_test(df: pd.DataFrame, fold: int, fold_col: str) -> pd.Dat
 
 
 def _filter_df_for_train_test(
-    df: pd.DataFrame, df_val: Optional[pd.DataFrame], data: str = "all"
+    df: pd.DataFrame, df_val: Optional[pd.DataFrame] = None, data: str = "all"
 ) -> pd.DataFrame:
     """
     Returns a dataframe representing the `data` string input -- one of:
@@ -219,21 +225,16 @@ def _filter_df_for_train_test(
     pd.DataFrame
         The requested dataframe.
     """
-    data = data.lower()
-    if data not in ["all", "train", "test"]:
+    data_: str = data.lower()
+    if data_ not in ["all", "train", "test"]:
         raise ValueError(
             f'"data" must be one of ["all", "train", "test"]. Got "{data}".'
         )
 
-    if data == "all":
-        return (
-            pd.concat([df, df_val.assign(fold_col=-42)], axis=0)
-            if df_val is not None
-            else df
-        )
-    elif data == "train":
+    if (df_val is None) or (data_ == "train"):
         return df
-    elif data == "test":
-        return df_val
+
+    if data_ == "all":
+        return pd.concat([df, df_val.assign(fold_col=-42)])
     else:
-        raise ValueError(f"data must be one of 'all', 'train', or 'test'. Got {data}.")
+        return df_val

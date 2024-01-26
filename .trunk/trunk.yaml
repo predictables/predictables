@@ -45,7 +45,31 @@ lint:
     - yamllint@1.33.0
   ignore:
     - linters: [ALL]
-      paths: [".trunk/**", ".github/**", ".git/**", ".vscode/**", "node_modules/**", "dist/**", "build/**", "coverage/**", "venv/**", "env/**", ".env/**", "mypy_cache/**", "pytest_cache/**", "/home/aweaver/work/predictables/predictables/univariate/src/plots/old_src/_old_plots.py"]
+      paths: [
+          ".github/**",
+          ".git/**",
+          ".vscode/**",
+          ########## ^vv DELETE THIS ONCE BUILDING DOCS vv ################
+          "docs/**",
+          "docs_src/**",
+          ########### ^^ DELETE THIS ONCE BUILDING DOCS ^^ ################
+          "node_modules/**",
+          "dist/**",
+          "build/**",
+          "coverage/**",
+          "htmlcov/**",
+          "venv/**",
+          "env/**",
+          ".env/**",
+          "mypy_cache/**",
+          "pytest_cache/**",
+          "predictables/src/**",
+          "**/fred/**",
+          "**/old/**",
+          "**/old_src/**",
+          "**/tests/**",
+          "/home/aweaver/work/predictables/predictables/univariate/src/plots/util/_get_rc_params.py",
+        ]
 actions:
   disabled:
     - trunk-announce

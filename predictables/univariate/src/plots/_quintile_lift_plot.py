@@ -17,9 +17,8 @@ def quintile_lift_plot(
     feature: Union[pd.Series, pl.Series],
     observed_target: Union[pd.Series, pl.Series],
     modeled_target: Union[pd.Series, pl.Series],
-    ax: Optional[Union[Axes, None]] = None,
-    backend: Optional[str] = "matplotlib",
-    figsize: Optional[Tuple[int, int]] = (8, 8),
+    ax: Optional[Axes] = None,
+    backend: str = "matplotlib",
     **kwargs,
 ):
     """
@@ -43,8 +42,6 @@ def quintile_lift_plot(
         a new figure and axis object will be created.
     backend : str, optional
         The plotting backend to use. Default is 'matplotlib'.
-    figsize : Tuple[int, int], optional
-        The figure size. Default is (8, 8).
     **kwargs
         Additional keyword arguments to pass to the plotting function.
 
@@ -57,13 +54,13 @@ def quintile_lift_plot(
         raise ValueError(f"Unknown backend: {backend}")
 
     if ax is None:
-        _, ax = plt.subplots(figsize=figsize)
+        _, ax = plt.subplots(figsize=kwargs.get("figsize", (8, 8)))
 
     params = dict(
         feature=feature,
         observed_target=observed_target,
         modeled_target=modeled_target,
-        figsize=figsize,
+        figsize=kwargs.get("figsize", (8, 8)),
         **kwargs,
     )
 
@@ -78,8 +75,8 @@ def quintile_lift_plot_matplotlib(
     feature: Union[pd.Series, pl.Series],
     observed_target: Union[pd.Series, pl.Series],
     modeled_target: Union[pd.Series, pl.Series],
-    ax: Optional[Union[plt.Axes, None]] = None,
-    figsize: Optional[Tuple[int, int]] = (8, 8),
+    ax: Optional[Axes] = None,
+    figsize: Tuple[int, int] = (8, 8),
 ):
     """
     Plots the quintile lift for a given feature and target.
@@ -152,7 +149,7 @@ def quintile_lift_plot_matplotlib(
 
     # KL Divergence calculation
     kl_div = _kl_divergence(lift_df)
-    gini_coeff = gini_coefficient(observed_target, modeled_target)
+    gini_coeff = gini_coefficient(observed_target.tolist(), modeled_target.tolist())
 
     # Add KL divergence and Gini coefficient as annotation to the plot
     ax.annotate(
@@ -168,10 +165,7 @@ def quintile_lift_plot_matplotlib(
 
     # plt.tight_layout()
     ax.set_title("Qunitile Lift Plot")
-
     ax = rotate_x_lab(ax)
-    ax.figure.tight_layout()
-
     return ax
 
 
@@ -179,7 +173,7 @@ def quintile_lift_plot_plotly(
     feature: Union[pd.Series, pl.Series],
     observed_target: Union[pd.Series, pl.Series],
     modeled_target: Union[pd.Series, pl.Series],
-    figsize: Optional[Tuple[int, int]] = (8, 8),
+    figsize: Tuple[int, int] = (8, 8),
 ):
     """
     Plots the quintile lift for a given feature and target.
