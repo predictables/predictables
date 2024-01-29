@@ -1,7 +1,10 @@
 import copy
 import itertools
+import os
+from datetime import date
 from typing import List, Optional, Union
 
+import matplotlib.pyplot as plt
 import pandas as pd
 import polars as pl
 import pygments
@@ -21,6 +24,8 @@ from reportlab.platypus import (
 from predictables.util import to_pd_df
 
 # from predictables.util.enums import ProgrammingLanguage as Lang
+
+inch = inch
 
 
 class Report:
@@ -862,17 +867,28 @@ class Report:
 
     def spacer(self, height: float):
         """Adds a spacer to the document. Used for adding vertical space between elements. Height is in inches."""
-        self.elements.append(Spacer(1, height))
+        self.elements.append(Spacer(1, height * inch))
         return self
 
     def image_no_caption(self, filename: str, width: float, height: float):
         """Adds an image to the document. Used for adding images to the document. Width and height are in inches."""
-        self.elements.append(Image(filename, width, height))
+        self.elements.append(Image(filename, width * inch, height * inch))
         return self
 
     def plot_no_caption(self, func, width: float, height: float):
         """Adds a plot to the document. Used for adding plots to the document. Width and height are in inches."""
-        self.elements.append(func(width, height))
+        self.elements.append(func(width * inch, height * inch))
+        return self
+
+    def plot(self, func, width: float, height: float, caption: str):
+        """Adds a plot to the document. Used for adding plots to the document. Width and height are in inches."""
+        fig, ax = func()
+        plt.savefig("temp_plot.png", dpi=300)
+        plt.close()
+
+        self = self.image_no_caption("temp_plot.png", width, height).p(caption)
+
+        os.remove("temp_plot.png")
         return self
 
     def page_break(self):
@@ -881,12 +897,69 @@ class Report:
         return self
 
     def table(
-        self, df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], style: TableStyle
+        self,
+        df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+        style: TableStyle = None,
     ):
+        def create_table_style(font="Helvetica", fontsize=10):
+            from reportlab.lib.colors import black, lightgrey, white
+            from reportlab.platypus import TableStyle
+
+            style = TableStyle(
+                [
+                    # Background color of the first row
+                    ("BACKGROUND", (0, 0), (-1, 0), lightgrey),
+                    # Text color of the first row
+                    ("TEXTCOLOR", (0, 0), (-1, 0), black),
+                    # Font style of the first row
+                    ("FONTNAME", (0, 0), (-1, 0), f"{font}-Bold"),
+                    # Font size of the first row
+                    ("FONTSIZE", (0, 0), (-1, 0), 10),
+                    # Double line under the first row
+                    ("LINEBELOW", (0, 0), (-1, 0), 1, black),
+                    # Background color of the remaining rows
+                    ("BACKGROUND", (0, 1), (-1, -1), white),
+                    # Text color of the remaining rows
+                    ("TEXTCOLOR", (0, 1), (-1, -1), black),
+                    # Font style of the remaining rows
+                    ("FONTNAME", (0, 1), (-1, -1), f"{font}"),
+                    # Font size of the remaining rows
+                    ("FONTSIZE", (0, 1), (-1, -1), 10),
+                    # Single line under the remaining rows
+                    ("LINEBELOW", (0, 1), (-1, -1), 1, black),
+                    # Single line above the remaining rows
+                    ("LINEABOVE", (0, 1), (-1, -1), 0.5, black),
+                    # Single line before the first column
+                    ("LINEBEFORE", (0, 0), (0, -1), 1, black),
+                    # Background color of the first column
+                    ("BACKGROUND", (0, 0), (0, -1), lightgrey),
+                    # Text color of the first column
+                    ("TEXTCOLOR", (0, 0), (0, -1), black),
+                    # Font style of the first column
+                    ("FONTNAME", (0, 0), (0, -1), f"{font}-Bold"),
+                    # Font size of the first column
+                    ("FONTSIZE", (0, 0), (0, -1), 10),
+                    # Single line after the last column:
+                    ("LINEAFTER", (-1, 0), (-1, -1), 1, black),
+                    # Single line before the first column:
+                    ("LINEBEFORE", (0, 0), (0, -1), 1, black),
+                    # Thick black line around the entire table
+                    ("BOX", (0, 0), (-1, -1), 2, black),
+                ]
+            )
+            return style
+
+        if style is None:
+            style = create_table_style()
+
         df = to_pd_df(df)
-        data = [df.columns[:,].tolist()] + df.values.tolist()
+        data = [[""] + df.columns[:,].tolist()] + [
+            [df.index.tolist()[i]] + df.values.tolist()[i]
+            for i, row in enumerate(df.values.tolist())
+        ]
         t = Table(data)
-        t.setStyle(style)
+        if style is not None:
+            t.setStyle(style)
         self.elements.append(t)
         return self
 
@@ -908,6 +981,13 @@ class Report:
         """Sets the subject metadata attribute of the pdf document. Does not by itself make any visible changes to the document."""
         self.doc.subject = text
         return self
+
+    def date(self, date: Optional[date] = None):
+        """Sets the date metadata attribute of the pdf document. Does not by itself make any visible changes to the document."""
+        if date is None:
+            date = date.now()
+
+        self.doc.date = date
 
     def keywords(self, text: str):
         """Sets the keywords metadata attribute of the pdf document. Does not by itself make any visible changes to the document."""

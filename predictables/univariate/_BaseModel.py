@@ -156,9 +156,11 @@ class Model:
             self.auc_test = roc_auc_score(self.y_test, self.yhat_test.round(0))
 
             self.precision_train = precision_score(
-                self.y_train, self.yhat_train.round(0)
+                self.y_train, self.yhat_train.round(0), zero_division=0
             )
-            self.precision_test = precision_score(self.y_test, self.yhat_test.round(0))
+            self.precision_test = precision_score(
+                self.y_test, self.yhat_test.round(0), zero_division=0
+            )
             self.mcc_train = matthews_corrcoef(
                 self.y_train.replace(0, -1), self.yhat_train.round(0).replace(0, -1)
             )

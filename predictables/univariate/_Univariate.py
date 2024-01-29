@@ -12,6 +12,7 @@ from predictables.univariate.src.plots import (
     quintile_lift_plot,
     roc_curve_plot,
 )
+from predictables.univariate.src.plots.util import plot_label
 from predictables.util import get_unique, to_pd_df
 from predictables.util.report import Report
 
@@ -64,7 +65,6 @@ def get_col(self, col: str) -> List[Union[int, float, str]]:
     >>> get_col(self, "std")
     [0.01, 0.01, 0.01, 0.01, 0.01]
     """
-
     attributes = [getattr(self.cv_dict[fold], col) for fold in self.unique_folds]
     sd = pd.Series(attributes).std()
 
@@ -128,8 +128,6 @@ class Univariate(SingleUnivariate):
             "mcc_test",
             "logloss_train",
             "logloss_test",
-            "auc_train",
-            "auc_test",
         ]:
             self.results[attribute] = (
                 get_col(self, attribute) if hasattr(self, attribute) else None
@@ -208,7 +206,7 @@ class Univariate(SingleUnivariate):
             cv fold. Note that `n` must be a named cv fold in the data,
             or an error will be raised.
         data : str, optional
-            What data to use for the plot. Choices are "train", "test",
+            What data to use for the plot. Choices are "train", "Validate",
             "all".
         fold_n : int, optional
             If element is "fold", which fold to get. Must be a named
@@ -231,15 +229,29 @@ class Univariate(SingleUnivariate):
         )
 
     def _plot_data(self, data: str = "train"):
-        if data not in ["train", "test", "all"]:
+        """
+        Helper function to get the data for plotting.
+
+        Parameters
+        ----------
+        data : str, optional
+            What data to use for the plot. Choices are "train", "Validate",
+            "all".
+
+        Returns
+        -------
+        Tuple[pd.Series, pd.Series, pd.Series]
+            The X, y, and cv data.
+        """
+        if data not in ["train", "Validate", "all"]:
             raise ValueError(
-                f"data must be one of 'train', 'test', or 'all'. Got {data}."
+                f"data must be one of 'train', 'Validate', or 'all'. Got {data}."
             )
 
         # Set the data
         if data == "train":
             df = to_pd_df(self.df)
-        elif data == "test":
+        elif data == "Validate":
             df = to_pd_df(self.df_val) if self.df_val is not None else to_pd_df(self.df)
         else:
             df = (
@@ -267,7 +279,7 @@ class Univariate(SingleUnivariate):
         Parameters
         ----------
         data : str, optional
-            What data to use for the plot. Choices are "train", "test", and "all", "fold-n".
+            What data to use for the plot. Choices are "train", "Validate", and "all", "fold-n".
         **kwargs
             Additional keyword arguments passed to the plot function.
 
@@ -386,3 +398,136 @@ class Univariate(SingleUnivariate):
             **kwargs,
         )
         return ax0
+
+    def get_results(self, use_formatting: bool = True) -> pd.DataFrame:
+        """
+        Returns the self.results attribute, formatted for the univariate report.
+
+        Parameters
+        ----------
+        use_formatting : bool, optional
+            Whether to use formatting or not. Defaults to True. If set to False,
+            the unformated results will be returned as a pandas DataFrame.
+
+        Returns
+        -------
+        pd.DataFrame
+            The results dataframe.
+        """
+        results = self.results.copy()
+        col_multi_index = [
+            "Fitted Coef.",
+            "Fitted p-Value",
+            "Fitted Std. Err.",
+            "Conf. Int. Lower",
+            "Conf. Int. Upper",
+            "Train Accuracy",
+            "Val Accuracy",
+            "Train AUC",
+            "Val AUC",
+            "Train F1",
+            "Test F1",
+            "Train Precision",
+            "Val Precision",
+            "Train Recall",
+            "Val Recall",
+            "Train MCC",
+            "Val MCC",
+            "Train Log-Loss",
+            "Val Log-Loss",
+        ]
+
+        row_multi_index = [f"Fold-{i}" for i in self.unique_folds] + [
+            "Agg. Mean",
+            "Agg. SD",
+        ]
+
+        if use_formatting:
+            pct_cols = [
+                "acc_train",
+                "acc_test",
+                "auc_train",
+                "auc_test",
+                "f1_train",
+                "f1_test",
+                "precision_train",
+                "precision_test",
+                "recall_train",
+                "recall_test",
+                "mcc_train",
+                "mcc_test",
+            ]
+
+            # Percent-format with single decimal point:
+            for col in pct_cols:
+                results[col] = results[col].apply(lambda x: f"{x:.1%}")
+
+            # Hierarchy of formatting depending on size of median value in col
+            for col in [c for c in results.columns.tolist() if c not in pct_cols]:
+                m = results[col].median()
+                if m > 1.0:
+                    results[col] = results[col].apply(lambda x: f"{x:.2f}")
+                elif m > 0.1:
+                    results[col] = results[col].apply(lambda x: f"{x:.3f}")
+                else:
+                    results[col] = results[col].apply(lambda x: f"{x:.1e}")
+
+            # Apply the multi-index at the end
+            results.columns = col_multi_index
+            results.index = row_multi_index
+
+        return results.T
+
+    @staticmethod
+    def _rpt_title_page(
+        rpt: Optional[Report] = None,
+        filename: Optional[str] = None,
+        margins: Optional[Tuple[float, float, float, float]] = None,
+    ):
+        if margins is None:
+            margins = [0.5, 0.5, 0.5, 0.5]
+        if filename is None:
+            filename = "univariate_report.pdf"
+        if rpt is None:
+            rpt = Report(filename, margins=margins)
+
+        return (
+            rpt.spacer(4)
+            .h1("Univariate Analysis")
+            .h2("Hit Ratio Model")
+            .style("h3", fontName="Helvetica")
+            .style("h4", fontName="Helvetica")
+            .page_break()
+        )
+
+    def add_to_report(self, rpt: Optional[Report] = None, **kwargs):
+        if rpt is None:
+            rpt = Report(**kwargs)
+
+        return (
+            rpt.h2("Univariate Report")
+            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - Results")
+            .spacer(0.5)
+            .table(self.get_results())
+            .page_break()
+            .h2("Univariate Report")
+            .h3(
+                f"{plot_label(self.feature_name, incl_bracket=False)} - Kernel Density Plot"
+            )
+            # .plot(self.plot_density())
+            .page_break()
+            .h2("Univariate Report")
+            .h3(
+                f"{plot_label(self.feature_name, incl_bracket=False)} - Empirical CDF Plot"
+            )
+            # .plot(self.plot_cdf())
+            .page_break()
+            .h2("Univariate Report")
+            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - ROC Curve")
+            # .plot(self.plot_roc_curve())
+            .page_break()
+            .h2("Univariate Report")
+            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - Quintile Lift")
+            # .plot(self.plot_quintile_lift())
+            .page_break()
+        )

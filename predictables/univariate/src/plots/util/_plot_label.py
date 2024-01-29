@@ -1,4 +1,4 @@
-def plot_label(s: str) -> str:
+def plot_label(s: str, incl_bracket: bool = True) -> str:
     """
     Convert a string to a formatted plot label.
 
@@ -6,6 +6,9 @@ def plot_label(s: str) -> str:
     ----------
     s : str
         The string to convert
+    incl_bracket : bool, optional
+        Whether to include the square brackets around the string.
+        Default is True.
 
     Returns
     -------
@@ -16,4 +19,7 @@ def plot_label(s: str) -> str:
         return ""
     else:
         s = s.replace("_", " ").title()
-        return f"[{s}]" if s[0] != "[" else s
+        if incl_bracket:
+            return f"[{s}]" if s[0] != "[" else s
+        else:
+            return s
