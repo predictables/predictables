@@ -17,9 +17,9 @@ def quintile_lift_plot(
     feature: Union[pd.Series, pl.Series],
     observed_target: Union[pd.Series, pl.Series],
     modeled_target: Union[pd.Series, pl.Series],
-    ax: Optional[Union[Axes, None]] = None,
-    backend: Optional[str] = "matplotlib",
-    figsize: Optional[Tuple[int, int]] = (8, 8),
+    ax: Optional[Axes] = None,
+    backend: str = "matplotlib",
+    figsize: Optional[Tuple[float, float]] = None,
     **kwargs,
 ):
     """
@@ -56,14 +56,17 @@ def quintile_lift_plot(
     if backend not in ["matplotlib", "plotly"]:
         raise ValueError(f"Unknown backend: {backend}")
 
+    # Use the figsize parameter, then kwarg, then default to (8, 8)
+    figsize0 = figsize if figsize is not None else kwargs.get("figsize", (8, 8))
+
     if ax is None:
-        _, ax = plt.subplots(figsize=figsize)
+        _, ax = plt.subplots(figsize=figsize0)
 
     params = dict(
         feature=feature,
         observed_target=observed_target,
         modeled_target=modeled_target,
-        figsize=figsize,
+        figsize=figsize0,
         **kwargs,
     )
 
@@ -78,8 +81,8 @@ def quintile_lift_plot_matplotlib(
     feature: Union[pd.Series, pl.Series],
     observed_target: Union[pd.Series, pl.Series],
     modeled_target: Union[pd.Series, pl.Series],
-    ax: Optional[Union[plt.Axes, None]] = None,
-    figsize: Optional[Tuple[int, int]] = (8, 8),
+    ax: Optional[Axes] = None,
+    figsize: Tuple[int, int] = (8, 8),
 ):
     """
     Plots the quintile lift for a given feature and target.
@@ -121,7 +124,7 @@ def quintile_lift_plot_matplotlib(
     if ax is None:
         _, ax = plt.subplots(figsize=figsize)
 
-    font_scale_fct = figsize[0] / 16 if figsize is not None else 1
+    font_scale_fct = 1.25 * figsize[0] / 16 if figsize is not None else 1
 
     bars1, bars2 = _make_bars(lift_df, ax)
 
@@ -152,7 +155,7 @@ def quintile_lift_plot_matplotlib(
 
     # KL Divergence calculation
     kl_div = _kl_divergence(lift_df)
-    gini_coeff = gini_coefficient(observed_target, modeled_target)
+    gini_coeff = gini_coefficient(observed_target.tolist(), modeled_target.tolist())
 
     # Add KL divergence and Gini coefficient as annotation to the plot
     ax.annotate(
@@ -168,10 +171,7 @@ def quintile_lift_plot_matplotlib(
 
     # plt.tight_layout()
     ax.set_title("Qunitile Lift Plot")
-
     ax = rotate_x_lab(ax)
-    ax.figure.tight_layout()
-
     return ax
 
 
@@ -179,7 +179,7 @@ def quintile_lift_plot_plotly(
     feature: Union[pd.Series, pl.Series],
     observed_target: Union[pd.Series, pl.Series],
     modeled_target: Union[pd.Series, pl.Series],
-    figsize: Optional[Tuple[int, int]] = (8, 8),
+    figsize: Tuple[int, int] = (8, 8),
 ):
     """
     Plots the quintile lift for a given feature and target.

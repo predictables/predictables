@@ -1,0 +1,29 @@
+from plotly.basedatatypes import BaseTraceHierarchyType as _BaseTraceHierarchyType
+from typing import Any
+
+class X(_BaseTraceHierarchyType):
+    @property
+    def fill(self): ...
+    @fill.setter
+    def fill(self, val) -> None: ...
+    @property
+    def locations(self): ...
+    @locations.setter
+    def locations(self, val) -> None: ...
+    @property
+    def locationssrc(self): ...
+    @locationssrc.setter
+    def locationssrc(self, val) -> None: ...
+    @property
+    def show(self): ...
+    @show.setter
+    def show(self, val) -> None: ...
+    def __init__(
+        self,
+        arg: Any | None = ...,
+        fill: Any | None = ...,
+        locations: Any | None = ...,
+        locationssrc: Any | None = ...,
+        show: Any | None = ...,
+        **kwargs
+    ) -> None: ...

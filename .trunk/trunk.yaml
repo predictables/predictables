@@ -43,6 +43,33 @@ lint:
     - trivy@0.48.3
     - trufflehog@3.64.0
     - yamllint@1.33.0
+  ignore:
+    - linters: [ALL]
+      paths: [
+          ".github/**",
+          ".git/**",
+          ".vscode/**",
+          ########## ^vv DELETE THIS ONCE BUILDING DOCS vv ################
+          "docs/**",
+          "docs_src/**",
+          ########### ^^ DELETE THIS ONCE BUILDING DOCS ^^ ################
+          "node_modules/**",
+          "dist/**",
+          "build/**",
+          "coverage/**",
+          "htmlcov/**",
+          "venv/**",
+          "env/**",
+          ".env/**",
+          "mypy_cache/**",
+          "pytest_cache/**",
+          "predictables/src/**",
+          "**/fred/**",
+          "**/old/**",
+          "**/old_src/**",
+          "**/tests/**",
+          "/home/aweaver/work/predictables/predictables/univariate/src/plots/util/_get_rc_params.py",
+        ]
 actions:
   disabled:
     - trunk-announce

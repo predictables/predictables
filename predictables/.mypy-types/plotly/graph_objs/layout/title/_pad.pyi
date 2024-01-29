@@ -1,0 +1,29 @@
+from plotly.basedatatypes import BaseLayoutHierarchyType as _BaseLayoutHierarchyType
+from typing import Any
+
+class Pad(_BaseLayoutHierarchyType):
+    @property
+    def b(self): ...
+    @b.setter
+    def b(self, val) -> None: ...
+    @property
+    def l(self): ...
+    @l.setter
+    def l(self, val) -> None: ...
+    @property
+    def r(self): ...
+    @r.setter
+    def r(self, val) -> None: ...
+    @property
+    def t(self): ...
+    @t.setter
+    def t(self, val) -> None: ...
+    def __init__(
+        self,
+        arg: Any | None = ...,
+        b: Any | None = ...,
+        l: Any | None = ...,
+        r: Any | None = ...,
+        t: Any | None = ...,
+        **kwargs
+    ) -> None: ...

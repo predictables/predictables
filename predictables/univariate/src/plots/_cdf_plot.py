@@ -86,57 +86,61 @@ def cdf_plot_matplotlib(
     plot_by = to_pd_s(plot_by)
 
     if ax is None:
-        _, ax = plt.subplots()
+        _, ax0 = plt.subplots()
+    else:
+        ax0 = ax
 
     # Plot the total CDFs
-    ax = cdf_plot_matplotlib_levels(
+    ax0 = cdf_plot_matplotlib_levels(
         x=x,
         plot_by=plot_by,
-        x_label=x_label if x_label is not None else x.name,
+        x_label=plot_label(x_label) if x_label is not None else plot_label(x.name),
         y_label=y_label
         if y_label is not None
         else "Empirical Cumulative Distribution Function",
-        ax=ax,
+        ax=ax0,
         **kwargs,
     )
 
     # Plot the CV fold CDFs (lower alpha) to show the distribution
-    ax = cdf_plot_matplotlib_levels_cv(
+    ax0 = cdf_plot_matplotlib_levels_cv(
         x=x,
         plot_by=plot_by,
         cv_folds=cv_folds,
-        x_label=x_label if x_label is not None else x.name,
+        x_label=plot_label(x_label) if x_label is not None else plot_label(x.name),
         y_label=y_label
         if y_label is not None
         else "Empirical Cumulative Distribution Function",
-        ax=ax,
+        ax=ax0,
         alpha=0.3,
         **kwargs,
     )
 
     if x_label is not None:
-        ax.set_xlabel(x_label)
+        ax0.set_xlabel(plot_label(x_label))
     else:
-        ax.set_xlabel(x.name)
+        ax0.set_xlabel(plot_label(x.name))
     if y_label is not None:
-        ax.set_ylabel(y_label)
+        ax0.set_ylabel(y_label)
     else:
-        ax.set_ylabel("Empirical Cumulative Distribution Function")
+        ax0.set_ylabel("Empirical Cumulative Distribution Function")
 
     # js_divergence_test = jenson_shannon_divergence()
 
     # js_divergence_annotation = js_divergence_annotation()
 
     # Add horizontal line at 0 and 1
-    ax.axhline(0, color="black", linestyle="--", linewidth=1, label="_nolegend_")
-    ax.axhline(1, color="black", linestyle="--", linewidth=1, label="_nolegend_")
+    ax0.axhline(0, color="black", linestyle="--", linewidth=1, label="_nolegend_")
+    ax0.axhline(1, color="black", linestyle="--", linewidth=1, label="_nolegend_")
 
     title = create_title(x.name, plot_by.name)
-    ax.set_title(title)
+    ax0.set_title(title)
 
-    plt.legend()
+    plt.legend(
+        loc="lower right", bbox_to_anchor=(1 - 0.01, 0 + 0.0575), borderaxespad=0.0
+    )
 
-    return ax
+    return ax0
 
 
 def cdf_plot_matplotlib_levels(

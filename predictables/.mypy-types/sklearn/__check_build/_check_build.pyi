@@ -1,0 +1,3 @@
+from typing import Any
+
+def check_build(*args, **kwargs) -> Any: ...

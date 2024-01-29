@@ -67,3 +67,6 @@ class Logger:
 
     def get_logger(self):
         return self.logger
+
+    def debug(self, msg):
+        self.logger.debug(msg)

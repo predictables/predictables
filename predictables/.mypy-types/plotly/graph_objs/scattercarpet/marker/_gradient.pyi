@@ -1,0 +1,29 @@
+from plotly.basedatatypes import BaseTraceHierarchyType as _BaseTraceHierarchyType
+from typing import Any
+
+class Gradient(_BaseTraceHierarchyType):
+    @property
+    def color(self): ...
+    @color.setter
+    def color(self, val) -> None: ...
+    @property
+    def colorsrc(self): ...
+    @colorsrc.setter
+    def colorsrc(self, val) -> None: ...
+    @property
+    def type(self): ...
+    @type.setter
+    def type(self, val) -> None: ...
+    @property
+    def typesrc(self): ...
+    @typesrc.setter
+    def typesrc(self, val) -> None: ...
+    def __init__(
+        self,
+        arg: Any | None = ...,
+        color: Any | None = ...,
+        colorsrc: Any | None = ...,
+        type: Any | None = ...,
+        typesrc: Any | None = ...,
+        **kwargs
+    ) -> None: ...
