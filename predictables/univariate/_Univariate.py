@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -65,7 +65,7 @@ def get_col(self, col: str) -> List[Union[int, float, str]]:
     [0.01, 0.01, 0.01, 0.01, 0.01]
     """
 
-    attributes = [getattr(self.cv[fold], col) for fold in self.unique_folds]
+    attributes = [getattr(self.cv_dict[fold], col) for fold in self.unique_folds]
     sd = pd.Series(attributes).std()
 
     return attributes + [getattr(self, col)] + [sd]
@@ -105,6 +105,7 @@ class Univariate(SingleUnivariate):
         super().__init__(
             df, fold_col=fold_col_, feature_col=feature_col_, target_col=target_col_
         )
+
         self.results = pd.DataFrame(index=self.unique_folds + ["mean", "std"])
         self.results.index.name = "fold"
         for attribute in [
@@ -130,7 +131,9 @@ class Univariate(SingleUnivariate):
             "auc_train",
             "auc_test",
         ]:
-            self.results[attribute] = get_col(self, attribute)
+            self.results[attribute] = (
+                get_col(self, attribute) if hasattr(self, attribute) else None
+            )
 
         # ALIASES
         # =======
@@ -164,7 +167,9 @@ class Univariate(SingleUnivariate):
         )
 
         self.fold_name: str = (
-            self.fold_col if isinstance(self.fold_col, str) else dfpd.columns[2]
+            self.fold_col
+            if (hasattr(self, "fold_col") and isinstance(self.fold_col, str))
+            else dfpd.columns[2]
         )
         self.folds: Optional[pd.Series[Any]] = (
             dfpd.loc[:, self.fold_name] if dfpd is not None else None
@@ -249,7 +254,13 @@ class Univariate(SingleUnivariate):
 
         return X, y, cv
 
-    def plot_cdf(self, data: str = "train", **kwargs):
+    def plot_cdf(
+        self,
+        data: str = "train",
+        ax: Optional[Axes] = None,
+        figsize: Optional[Tuple[float, float]] = None,
+        **kwargs,
+    ):
         """
         Plots the empirical cumulative distribution function for the target variable in total and for each fold.
 
@@ -264,19 +275,21 @@ class Univariate(SingleUnivariate):
         X, y, cv = self._plot_data(data)
 
         # make plot
-        _, ax = plt.subplots(
-            figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"]
-        )
-        ax = cdf_plot(
+        if ax is None:
+            _, ax1 = plt.subplots(figsize=self.figsize if figsize is None else figsize)
+        else:
+            ax1 = ax
+
+        ax1 = cdf_plot(
             X,
             y,
             cv,
             self.feature_name,
-            ax=ax,
-            figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"],
+            ax=ax1,
+            figsize=self.figsize if figsize is None else figsize,
             **kwargs,
         )
-        return ax
+        return ax1
 
     def plot_roc_curve(
         self,
@@ -287,15 +300,14 @@ class Univariate(SingleUnivariate):
         se: Optional[float] = None,
         pvalues: Optional[float] = None,
         ax: Optional[Axes] = None,
+        figsize: Optional[Tuple[float, float]] = None,
         **kwargs,
     ) -> Axes:
         """
         Plots the ROC curve for the target variable in total and for each fold.
         """
         if ax is None:
-            _, ax0 = plt.subplots(
-                figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"]
-            )
+            _, ax0 = plt.subplots(figsize=self.figsize if figsize is None else figsize)
         else:
             ax0 = ax
 
@@ -307,7 +319,7 @@ class Univariate(SingleUnivariate):
             self.se if se is None else se,
             self.pvalues if pvalues is None else pvalues,
             ax=ax0,
-            figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"],
+            figsize=self.figsize if figsize is None else figsize,
             **kwargs,
         )
         return ax0
@@ -317,6 +329,7 @@ class Univariate(SingleUnivariate):
         data: str = "train",
         feature_name: Optional[str] = None,
         ax: Optional[Axes] = None,
+        figsize: Optional[Tuple[float, float]] = None,
         **kwargs,
     ) -> Axes:
         """
@@ -327,9 +340,7 @@ class Univariate(SingleUnivariate):
 
         # make plot
         if ax is None:
-            _, ax0 = plt.subplots(
-                figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"]
-            )
+            _, ax0 = plt.subplots(figsize=self.figsize if figsize is None else figsize)
         else:
             ax0 = ax
 
@@ -340,7 +351,7 @@ class Univariate(SingleUnivariate):
             X.min(),
             X.max(),
             ax=ax0,
-            figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"],
+            figsize=self.figsize if figsize is None else figsize,
             **kwargs,
         )
         return ax0
@@ -350,6 +361,7 @@ class Univariate(SingleUnivariate):
         data: str = "train",
         feature_name: Optional[str] = None,
         ax: Optional[Axes] = None,
+        figsize: Optional[Tuple[float, float]] = None,
         **kwargs,
     ) -> Axes:
         """
@@ -361,9 +373,7 @@ class Univariate(SingleUnivariate):
 
         # make plot
         if ax is None:
-            _, ax0 = plt.subplots(
-                figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"]
-            )
+            _, ax0 = plt.subplots(figsize=self.figsize if figsize is None else figsize)
         else:
             ax0 = ax
 
@@ -372,7 +382,7 @@ class Univariate(SingleUnivariate):
             y,
             yhat,
             ax=ax0,
-            figsize=self.figsize if "figsize" not in kwargs else kwargs["figsize"],
+            figsize=self.figsize if figsize is None else figsize,
             **kwargs,
         )
         return ax0

@@ -19,6 +19,7 @@ def quintile_lift_plot(
     modeled_target: Union[pd.Series, pl.Series],
     ax: Optional[Axes] = None,
     backend: str = "matplotlib",
+    figsize: Optional[Tuple[float, float]] = None,
     **kwargs,
 ):
     """
@@ -42,6 +43,8 @@ def quintile_lift_plot(
         a new figure and axis object will be created.
     backend : str, optional
         The plotting backend to use. Default is 'matplotlib'.
+    figsize : Tuple[int, int], optional
+        The figure size. Default is (8, 8).
     **kwargs
         Additional keyword arguments to pass to the plotting function.
 
@@ -53,14 +56,17 @@ def quintile_lift_plot(
     if backend not in ["matplotlib", "plotly"]:
         raise ValueError(f"Unknown backend: {backend}")
 
+    # Use the figsize parameter, then kwarg, then default to (8, 8)
+    figsize0 = figsize if figsize is not None else kwargs.get("figsize", (8, 8))
+
     if ax is None:
-        _, ax = plt.subplots(figsize=kwargs.get("figsize", (8, 8)))
+        _, ax = plt.subplots(figsize=figsize0)
 
     params = dict(
         feature=feature,
         observed_target=observed_target,
         modeled_target=modeled_target,
-        figsize=kwargs.get("figsize", (8, 8)),
+        figsize=figsize0,
         **kwargs,
     )
 
@@ -118,7 +124,7 @@ def quintile_lift_plot_matplotlib(
     if ax is None:
         _, ax = plt.subplots(figsize=figsize)
 
-    font_scale_fct = figsize[0] / 16 if figsize is not None else 1
+    font_scale_fct = 1.25 * figsize[0] / 16 if figsize is not None else 1
 
     bars1, bars2 = _make_bars(lift_df, ax)
 

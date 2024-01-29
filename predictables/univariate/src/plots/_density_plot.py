@@ -191,6 +191,8 @@ def density_plot_mpl(
 
     if ax is None:
         _, ax0 = plt.subplots(figsize=figsize)
+    else:
+        ax0 = ax
 
     # Convert to pandas Series
     x = to_pd_s(x)
@@ -219,11 +221,11 @@ def density_plot_mpl(
         significance_statement,
         xy=(0.5, 0.5),
         xycoords="axes fraction",
-        xytext=(0.66, 0.81),
+        xytext=(0.59, 0.77),
         textcoords="axes fraction",
         ha="left",
         va="center",
-        fontsize=10 * (figsize[0] / 16),
+        fontsize=24 * (figsize[0] / 16),
         bbox=dict(
             boxstyle="round,pad=0.3",
             edgecolor="lightgrey",
@@ -240,7 +242,7 @@ def density_plot_mpl(
     ax0.set_title(title)
 
     if call_legend:
-        plt.legend(fontsize=12 * (figsize[0] / 16))
+        plt.legend(fontsize=24 * (figsize[0] / 16))
 
     return ax0
 
@@ -655,25 +657,6 @@ def _plot_single_density_pm_standard_deviation(
 
     df1 = pd.DataFrame({"x": np.linspace(df.x.min(), df.x.max(), grid_bins)})
     df1["density"] = density(np.linspace(df.x.min(), df.x.max(), grid_bins))
-    # df1["sd"] = density(sd)
-    # df1["_plusone"] = (
-    #     density(np.linspace(df.x.min(), df.x.max(), grid_bins)) + sd.values
-    # )
-    # df1["_minusone"] = (
-    #     density(np.linspace(df.x.min(), df.x.max(), grid_bins)) - sd.values
-    # )
-    # df1.plot(
-    #     kind="line",
-    #     x="x",
-    #     y=["_plusone", "_minusone"],
-    #     color="grey",
-    #     ax=ax,
-    #     lw=line_width // 2,
-    # )
-
-    # ax.fill_between(
-    #     df.x, df._minusone, df._plusone, alpha=fill_alpha, label=label,
-    # )
 
     return ax
 
@@ -730,7 +713,7 @@ def _annotate_mean_median(
         textcoords="offset points",
         ha=pos0,
         va="bottom",
-        fontsize=16 * (figsize[0] / 16),
+        fontsize=24 * (figsize[0] / 16),
         bbox=dict(
             boxstyle="round,pad=0.3", edgecolor="black", facecolor="blue", alpha=0.2
         ),
@@ -746,7 +729,7 @@ def _annotate_mean_median(
         textcoords="offset points",
         ha=pos1,
         va="bottom",
-        fontsize=16 * (figsize[0] / 16),
+        fontsize=24 * (figsize[0] / 16),
         bbox=dict(
             boxstyle="round,pad=0.3", edgecolor="black", facecolor="orange", alpha=0.2
         ),
