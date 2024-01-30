@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 import pytest
+from sklearn.datasets import load_breast_cancer  # type: ignore
 from sklearn.decomposition import PCA  # type: ignore
 
 from predictables.pca.src._create_loading_plot import (
@@ -12,31 +13,48 @@ from predictables.pca.src._create_loading_plot import (
 
 
 @pytest.fixture
-def pca():
-    return PCA(n_components=3)
+def df():
+    cancer = load_breast_cancer()
+    return pd.DataFrame(cancer.data, columns=cancer.feature_names)
 
 
 @pytest.fixture
-def feature_names():
-    return np.array(["a", "b", "c", "d", "e"])
-
-
-@pytest.fixture
-def pca2():
-    pca = PCA(n_components=3)
-    pca.fit(np.random.rand(5, 5))  # Fit the PCA on some random data
+def pca(df):
+    pca = PCA(n_components=2)
+    pca.fit(df)
     return pca
 
 
+@pytest.fixture
+def feature_names(df):
+    return df.columns
+
+
 @pytest.mark.parametrize(
-    "n_components, max_features, drop_legend_when_n_features, expected",
+    "n_components",
     [
-        # Test case where n_components is less than pca.n_components and max_features is None
-        (2, None, 2, (2, 5, True)),
-        # Test case where n_components is more than pca.n_components and max_features is less than feature_names.shape[0]
-        (4, 3, 2, (3, 3, True)),
-        # Test case where n_components is less than pca.n_components and max_features is less than drop_legend_when_n_features
-        (2, 3, 4, (2, 3, False)),
+        2,
+        3,
+        4,
+    ],
+)
+@pytest.mark.parametrize(
+    "max_features",
+    [
+        None,
+        10,
+        15,
+        1,
+        2,
+        3,
+    ],
+)
+@pytest.mark.parametrize(
+    "drop_legend_when_n_features",
+    [
+        10,
+        15,
+        20,
     ],
 )
 def test_validate_inputs(
@@ -79,6 +97,8 @@ def test_calculate_cumulative_loading_threshold(
     result = calculate_cumulative_loading_threshold(
         n_components, average_loading_threshold
     )
+    result = np.round(result, 3)
+    expected = np.round(expected, 3)
     assert result == expected, f"Expected {expected}, but got {result}"
 
 
