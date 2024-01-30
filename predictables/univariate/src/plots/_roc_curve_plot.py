@@ -16,7 +16,7 @@ def roc_curve_plot(
     coef: float,
     se: float,
     pvalue: float,
-    figsize: Tuple[int, int] = (8, 8),
+    figsize: Tuple[int, int] = (7, 7),
     n_bins: int = 200,
     cv_alpha: float = 0.4,
     ax: Optional[Axes] = None,
@@ -40,7 +40,7 @@ def roc_curve_plot(
     pvalue : float
         The p-value of the estimated coefficient.
     figsize : Tuple[int, int], optional
-        The figure size to use. Defaults to (8, 8).
+        The figure size to use. Defaults to (7, 7).
     n_bins : int, optional
         The number of bins to use when calculating the ROC curve. Generally, the
         more bins, the smoother the curve. Defaults to 200.
@@ -60,7 +60,7 @@ def roc_curve_plot(
         y=y,
         yhat_proba=yhat_proba,
         fold=fold,
-        figsize=figsize if (figsize is not None) & (ax is not None) else (8, 8),
+        figsize=figsize if (figsize is not None) & (ax is not None) else (7, 7),
         n_bins=n_bins if n_bins is not None else 200,
         cv_alpha=cv_alpha if cv_alpha is not None else 0.4,
         ax=ax,
@@ -124,7 +124,7 @@ def plot_individual_roc_curves(
     n_bins: int = 200,
     alpha: float = 0.4,
     legendgroup: Optional[str] = None,
-    figsize: Tuple[int, int] = (8, 8),
+    figsize: Tuple[int, int] = (7, 7),
     ax: Optional[Axes] = None,
     fig: Optional[go.Figure] = None,
     backend: str = "matplotlib",
@@ -150,7 +150,7 @@ def plot_individual_roc_curves(
     legendgroup : Union[str, None], optional
         The legend group to use for the individual ROC curves. If None, no legend group is used.
     figsize : Tuple[int, int], optional
-        The figure size to use. Defaults to (15, 7).
+        The figure size to use. Defaults to (7, 7).
     ax : matplotlib.axes.Axes, optional
         Alias for figax. If provided and the backend is "matplotlib", figax is ignored.
     fig : plotly.graph_objects.Figure, optional
@@ -365,7 +365,7 @@ def plot_roc_auc_curves_and_confidence_bands(
     cv_alpha: float = 0.4,
     ax: Optional[Axes] = None,
     fig: Optional[go.Figure] = None,
-    figsize: Tuple[int, int] = (8, 8),
+    figsize: Tuple[int, int] = (7, 7),
     call_legend: bool = True,
     backend: str = "matplotlib",
 ) -> Union[go.Figure, Axes]:
@@ -393,7 +393,7 @@ def plot_roc_auc_curves_and_confidence_bands(
     fig : plotly.graph_objects.Figure, optional
         Alias for figax if using plotly. If provided and the backend is "plotly", figax is ignored.
     figsize : Tuple[int, int], optional
-        The figure size to use. Defaults to (8, 8).
+        The figure size to use. Defaults to (7, 7).
     call_legend : bool, optional
         Whether to call plt.legend() after plotting the ROC curves. Defaults to True.
     backend : str, optional
@@ -499,7 +499,7 @@ def delong_statistic_annotation_mpl(y: pd.Series, yhat_proba: pd.Series, ax: Axe
     significance_message += "\n" + (
         "\nThe indicated AUC is\nsignificantly different\nfrom random guessing at \nthe 95% confidence level."
         if p < 0.05
-        else "The indicated AUC is not significantly different from random guessing at the 95% confidence level."
+        else "The indicated AUC\nis not significantly\ndifferent from random\nguessing at the 95%\nconfidence level."
     )
 
     # get the figure size from the Axes object (used to scale the annotation)
@@ -528,7 +528,7 @@ def coefficient_annotation_mpl(
     pvalue: float,
     ax: Axes,
     alpha: float = 0.05,
-    figsize: Tuple[int, int] = (8, 8),
+    figsize: Tuple[int, int] = (7, 7),
 ):
     """
     Annotate the plot with logistic regression model fit information.
@@ -546,7 +546,7 @@ def coefficient_annotation_mpl(
     alpha : float, optional
         The significance level to use. Defaults to 0.05.
     figsize : Tuple[int, int], optional
-        The figure size to use. Defaults to (8, 8).
+        The figure size to use. Defaults to (7, 7).
 
     Returns
     -------
@@ -690,7 +690,7 @@ def roc_curve_plot_mpl(
     coef: float,
     se: float,
     pvalue: float,
-    figsize: Tuple[int, int] = (8, 8),
+    figsize: Tuple[int, int] = (7, 7),
     n_bins: int = 200,
     cv_alpha: float = 0.4,
     ax: Optional[Axes] = None,
@@ -714,7 +714,7 @@ def roc_curve_plot_mpl(
     pvalue : float
         The p-value of the estimated coefficient.
     figsize : Tuple[int, int], optional
-        The figure size to use. Defaults to (8, 8).
+        The figure size to use. Defaults to (7, 7).
     n_bins : int, optional
         The number of bins to use when calculating the ROC curve. Generally, the
         more bins, the smoother the curve. Defaults to 200.

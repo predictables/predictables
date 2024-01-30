@@ -22,7 +22,7 @@ def density_plot(
     cv_alpha: float = 0.5,
     cv_line_width: float = 0.5,
     t_test_alpha: float = 0.05,
-    figsize: Tuple[int, int] = (8, 8),
+    figsize: Tuple[int, int] = (7, 7),
     call_legend: bool = True,
     backend: str = "matplotlib",
 ) -> Axes:
@@ -55,7 +55,7 @@ def density_plot(
     t_test_alpha : float, optional
         The alpha value to use for the t-test. Defaults to 0.05.
     figsize : tuple, optional
-        The size of the figure to create. Defaults to (8, 8). Only used if ax is None.
+        The size of the figure to create. Defaults to (7, 7). Only used if ax is None.
     call_legend : bool, optional
         Whether to call plt.legend() at the end of the function. Defaults to True.
     backend : str, optional
@@ -102,7 +102,7 @@ def density_plot_mpl(
     cv_alpha: float = 0.5,
     cv_line_width: float = 0.5,
     t_test_alpha: float = 0.05,
-    figsize: Tuple[int, int] = (8, 8),
+    figsize: Tuple[int, int] = (7, 7),
     call_legend: bool = True,
 ) -> Axes:
     """
@@ -139,7 +139,7 @@ def density_plot_mpl(
     t_test_alpha : float, optional
         The alpha value to use for the t-test. Defaults to 0.05.
     figsize : tuple, optional
-        The size of the figure to create. Defaults to (8, 8). Only used
+        The size of the figure to create. Defaults to (7, 7). Only used
         if ax is None.
     call_legend : bool, optional
         Whether to call plt.legend() at the end of the function.
@@ -320,7 +320,7 @@ def _plot_density_mpl(
     alpha: float = 1,
     fill_under: bool = True,
     fill_alpha: float = 0.3,
-    figsize: Tuple[int, int] = (8, 8),
+    figsize: Tuple[int, int] = (7, 7),
 ) -> Axes:
     """
     Plot the density of x.
@@ -354,7 +354,7 @@ def _plot_density_mpl(
     fill_alpha : float, optional
         The alpha value to use for the fill. Defaults to 0.3.
     figsize : tuple, optional
-        The size of the figure to create. Defaults to (8, 8). Only used if ax is None.
+        The size of the figure to create. Defaults to (7, 7). Only used if ax is None.
 
     Returns
     -------
@@ -418,7 +418,7 @@ def density_by_mpl(
     alpha: Optional[float] = 1.0,
     fill_under: Optional[bool] = True,
     fill_alpha: Optional[float] = 0.3,
-    figsize: Optional[Tuple[int, int]] = (8, 8),
+    figsize: Optional[Tuple[int, int]] = (7, 7),
 ):
     """
     Plot the density of x by the levels of by, using matplotlib,
@@ -456,7 +456,7 @@ def density_by_mpl(
         The alpha value to use for the fill. Defaults to 0.3. Does nothing if
         fill_under is False.
     figsize : tuple, optional
-        The size of the figure to create. Defaults to (8, 8). Only used if ax is None.
+        The size of the figure to create. Defaults to (7, 7). Only used if ax is None.
 
     Returns
     -------
@@ -594,7 +594,7 @@ def _plot_single_density_pm_standard_deviation(
     line_style: str = "-",
     alpha: float = 0.5,
     fill_alpha: float = 0.3,
-    figsize: Tuple[int, int] = (8, 8),
+    figsize: Tuple[int, int] = (7, 7),
 ) -> Axes:
     """
     Plot the density of x.
@@ -628,7 +628,7 @@ def _plot_single_density_pm_standard_deviation(
     fill_alpha : float, optional
         The alpha value to use for the fill. Defaults to 0.3.
     figsize : tuple, optional
-        The size of the figure to create. Defaults to (8, 8). Only used if ax is None.
+        The size of the figure to create. Defaults to (7, 7). Only used if ax is None.
 
     Returns
     -------

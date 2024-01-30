@@ -44,7 +44,7 @@ def quintile_lift_plot(
     backend : str, optional
         The plotting backend to use. Default is 'matplotlib'.
     figsize : Tuple[int, int], optional
-        The figure size. Default is (8, 8).
+        The figure size. Default is (7, 7).
     **kwargs
         Additional keyword arguments to pass to the plotting function.
 
@@ -56,8 +56,8 @@ def quintile_lift_plot(
     if backend not in ["matplotlib", "plotly"]:
         raise ValueError(f"Unknown backend: {backend}")
 
-    # Use the figsize parameter, then kwarg, then default to (8, 8)
-    figsize0 = figsize if figsize is not None else kwargs.get("figsize", (8, 8))
+    # Use the figsize parameter, then kwarg, then default to (7, 7)
+    figsize0 = figsize if figsize is not None else kwargs.get("figsize", (7, 7))
 
     if ax is None:
         _, ax = plt.subplots(figsize=figsize0)
@@ -82,7 +82,7 @@ def quintile_lift_plot_matplotlib(
     observed_target: Union[pd.Series, pl.Series],
     modeled_target: Union[pd.Series, pl.Series],
     ax: Optional[Axes] = None,
-    figsize: Tuple[int, int] = (8, 8),
+    figsize: Tuple[int, int] = (7, 7),
 ):
     """
     Plots the quintile lift for a given feature and target.
@@ -112,7 +112,7 @@ def quintile_lift_plot_matplotlib(
     alpha : float, optional
         The transparency of the bars. Default is 0.5.
     figsize : Tuple[int, int], optional
-        The figure size. Default is (8, 8).
+        The figure size. Default is (7, 7).
 
     Returns:
     --------
@@ -179,7 +179,7 @@ def quintile_lift_plot_plotly(
     feature: Union[pd.Series, pl.Series],
     observed_target: Union[pd.Series, pl.Series],
     modeled_target: Union[pd.Series, pl.Series],
-    figsize: Tuple[int, int] = (8, 8),
+    figsize: Tuple[int, int] = (7, 7),
 ):
     """
     Plots the quintile lift for a given feature and target.
