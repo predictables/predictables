@@ -1,9 +1,12 @@
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Callable, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import polars as pl
 from matplotlib.axes import Axes
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.model_selection import cross_val_score
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 from predictables.univariate.src._get_data import _get_data
 from predictables.univariate.src.plots import (
@@ -13,7 +16,7 @@ from predictables.univariate.src.plots import (
     roc_curve_plot,
 )
 from predictables.univariate.src.plots.util import plot_label
-from predictables.util import get_unique, to_pd_df
+from predictables.util import get_column_dtype, get_unique, harmonic_mean, to_pd_df
 from predictables.util.report import Report
 
 from ._SingleUnivariate import SingleUnivariate
@@ -103,6 +106,9 @@ class Univariate(SingleUnivariate):
             feature_col_ = df.columns[1]
         if target_col_ is None:
             target_col_ = df.columns[0]
+
+        # Normalize the column if the cross-validated fit is improved
+        df[feature_col_] = self.run_normalization(X=df[feature_col_], y=df[target_col_])
 
         super().__init__(
             df, fold_col=fold_col_, feature_col=feature_col_, target_col=target_col_
@@ -206,9 +212,73 @@ class Univariate(SingleUnivariate):
             pd.Series([v.mcc_test for _, v in self.cv_dict.items()]).std(),
         ]
 
-        self.pareto_sort_vector = [
-            [m, s] for m, s in zip(pareto_sort_mean, pareto_sort_sd)
-        ]
+        self.pareto_sort_vector = (
+            pd.DataFrame([[m, s] for m, s in zip(pareto_sort_mean, pareto_sort_sd)])
+            .apply(harmonic_mean)
+            .values
+        )
+
+    def run_normalization(
+        self,
+        X,
+        y,
+        normalization_methods: Optional[List[Callable]] = None,
+        criterion: Optional[str] = None,
+    ):
+        if normalization_methods is None:
+            normalization_methods = [MinMaxScaler, StandardScaler]
+
+        X = X.values.reshape(-1, 1)
+
+        if get_column_dtype(y) in ["categorical", "binary"]:
+            model = LogisticRegression(penalty=None, max_iter=1000, n_jobs=-1)
+            criterion = "f1" if criterion is None else criterion
+        elif get_column_dtype(y) in ["continuous", "float", "int"]:
+            model = LinearRegression(n_jobs=-1)
+            criterion = (
+                "neg_mean_absolute_percentage_error" if criterion is None else criterion
+            )
+        else:
+            raise ValueError(
+                f"Target column {y} has an unsupported dtype: {get_column_dtype(y)}."
+            )
+
+        method = ["None"]
+        method_obj = [None]
+        results = []
+
+        # fit unadjusted data
+        results.append(
+            cross_val_score(
+                model,
+                X,
+                y,
+                cv=5,
+                scoring=criterion,
+            ).mean()
+        )
+
+        for m in normalization_methods:
+            method.append(m.__name__)
+            method_obj.append(m)
+            results.append(
+                cross_val_score(
+                    model,
+                    m().fit_transform(X),
+                    y,
+                    cv=5,
+                    scoring=criterion,
+                ).mean()
+            )
+
+        best = (
+            pd.DataFrame({"method": method, "obj": method_obj, "score": results})
+            .sort_values(by="score", ascending=False)
+            .iloc[0]
+        )
+
+        # return a fitted instance of the best method
+        return best["obj"].fit_transform(X) if best["obj"] is not None else X
 
     def _get_folds(self) -> List[Union[int, float, str]]:
         """
@@ -502,27 +572,7 @@ class Univariate(SingleUnivariate):
 
         return results.T
 
-    @staticmethod
-    def _rpt_title_page(
-        rpt: Optional[Report] = None,
-        filename: Optional[str] = None,
-        margins: Optional[Tuple[float, float, float, float]] = None,
-    ):
-        if margins is None:
-            margins = [0.5, 0.5, 0.5, 0.5]
-        if filename is None:
-            filename = "univariate_report.pdf"
-        if rpt is None:
-            rpt = Report(filename, margins=margins)
-
-        return (
-            rpt.spacer(4)
-            .h1("Univariate Analysis")
-            .h2("Hit Ratio Model")
-            .style("h3", fontName="Helvetica")
-            .style("h4", fontName="Helvetica")
-            .page_break()
-        )
+    
 
     def _add_to_report(self, rpt: Optional[Report] = None, **kwargs):
         if rpt is None:
