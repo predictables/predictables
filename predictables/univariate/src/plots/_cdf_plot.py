@@ -95,9 +95,11 @@ def cdf_plot_matplotlib(
         x=x,
         plot_by=plot_by,
         x_label=plot_label(x_label) if x_label is not None else plot_label(x.name),
-        y_label=y_label
-        if y_label is not None
-        else "Empirical Cumulative Distribution Function",
+        y_label=(
+            y_label
+            if y_label is not None
+            else "Empirical Cumulative Distribution Function"
+        ),
         ax=ax0,
         **kwargs,
     )
@@ -108,9 +110,11 @@ def cdf_plot_matplotlib(
         plot_by=plot_by,
         cv_folds=cv_folds,
         x_label=plot_label(x_label) if x_label is not None else plot_label(x.name),
-        y_label=y_label
-        if y_label is not None
-        else "Empirical Cumulative Distribution Function",
+        y_label=(
+            y_label
+            if y_label is not None
+            else "Empirical Cumulative Distribution Function"
+        ),
         ax=ax0,
         alpha=0.3,
         **kwargs,
@@ -243,8 +247,10 @@ def cdf_plot_matplotlib_levels_cv(
             ax = x_cdf.plot.line(ax=ax, color=binary_color(level), **kwargs)
 
     ax.set_xlabel(x_label) if x_label is not None else ax.set_xlabel(x.name)
-    ax.set_ylabel(y_label) if y_label is not None else ax.set_ylabel(
-        "Empirical Cumulative Distribution Function"
+    (
+        ax.set_ylabel(y_label)
+        if y_label is not None
+        else ax.set_ylabel("Empirical Cumulative Distribution Function")
     )
     return ax
 

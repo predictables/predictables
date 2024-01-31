@@ -1,32 +1,34 @@
 import copy
+import datetime
 import itertools
 import os
 import uuid
-from datetime import date, datetime
 from typing import List, Optional, Union
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import polars as pl
 import pygments  # type: ignore
+from reportlab.lib.colors import black, lightgrey, white
 
 # type: ignore
 from reportlab.lib.enums import TA_CENTER  # type: ignore
 from reportlab.lib.pagesizes import inch, letter  # type: ignore
 from reportlab.lib.styles import ParagraphStyle  # type: ignore
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import (
-    Flowable,
-    Image,
-    PageBreak,
-    Paragraph,
-    SimpleDocTemplate,
-    Spacer,
-    Table,
-    TableStyle,
-)
+from reportlab.lib.styles import getSampleStyleSheet  # type: ignore
 
-from predictables.util import to_pd_df
+# type: ignore
+from reportlab.platypus import Flowable  # type: ignore
+from reportlab.platypus import Image  # type: ignore
+from reportlab.platypus import PageBreak  # type: ignore
+from reportlab.platypus import Paragraph  # type: ignore
+from reportlab.platypus import SimpleDocTemplate  # type: ignore
+from reportlab.platypus import Spacer  # type: ignore
+from reportlab.platypus import Table  # type: ignore
+from reportlab.platypus import TableStyle  # type: ignore
+
+# type: ignore
+from predictables.util.src._to_pd import to_pd_df
 
 
 class Report:
@@ -1003,10 +1005,7 @@ class Report:
         df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
         style: TableStyle = None,
     ):
-        def create_table_style(font="Helvetica", fontsize=10):
-            from reportlab.lib.colors import black, lightgrey, white
-            from reportlab.platypus import TableStyle
-
+        def create_table_style(font: str = "Helvetica", fontsize: int = 10):
             style = TableStyle(
                 [
                     # Background color of the first row
@@ -1016,7 +1015,7 @@ class Report:
                     # Font style of the first row
                     ("FONTNAME", (0, 0), (-1, 0), f"{font}-Bold"),
                     # Font size of the first row
-                    ("FONTSIZE", (0, 0), (-1, 0), 10),
+                    ("FONTSIZE", (0, 0), (-1, 0), fontsize),
                     # Double line under the first row
                     ("LINEBELOW", (0, 0), (-1, 0), 1, black),
                     # Background color of the remaining rows
@@ -1026,7 +1025,7 @@ class Report:
                     # Font style of the remaining rows
                     ("FONTNAME", (0, 1), (-1, -1), f"{font}"),
                     # Font size of the remaining rows
-                    ("FONTSIZE", (0, 1), (-1, -1), 10),
+                    ("FONTSIZE", (0, 1), (-1, -1), fontsize),
                     # Single line under the remaining rows
                     ("LINEBELOW", (0, 1), (-1, -1), 1, black),
                     # Single line above the remaining rows
@@ -1040,7 +1039,7 @@ class Report:
                     # Font style of the first column
                     ("FONTNAME", (0, 0), (0, -1), f"{font}-Bold"),
                     # Font size of the first column
-                    ("FONTSIZE", (0, 0), (0, -1), 10),
+                    ("FONTSIZE", (0, 0), (0, -1), fontsize),
                     # Single line after the last column:
                     ("LINEAFTER", (-1, 0), (-1, -1), 1, black),
                     # Single line before the first column:
@@ -1089,12 +1088,17 @@ class Report:
         self.doc.subject = text
         return self
 
-    def date(self, date: Optional[date] = None):
+    def date(self, date: Optional[datetime.date] = None):
         """Sets the date metadata attribute of the pdf document. Does not by itself make any visible changes to the document."""
         if date is None:
-            date = datetime.today()
+            date = datetime.datetime.now()
 
-        self.doc.date = date
+        self.doc.date = date.strftime("%Y-%m-%d")
+
+    def date_(self, date: Optional[datetime.date] = None) -> str:
+        """Alias for `date`, it returns the date added to the document metadata. This allows you to ensure they are the same."""
+        self.date(date)
+        return self.doc.date
 
     def keywords(self, text: str):
         """Sets the keywords metadata attribute of the pdf document. Does not by itself make any visible changes to the document."""

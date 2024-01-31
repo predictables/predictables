@@ -48,7 +48,9 @@ class Model:
     is_binary: bool
 
     model: Any  # statsmodels model object -- either GLM for logistic or OLS for linear
-    sk_model: Any  # sklearn model object -- either LogisticRegression or LinearRegression
+    sk_model: (
+        Any  # sklearn model object -- either LogisticRegression or LinearRegression
+    )
 
     yhat_train: pd.Series
     yhat_test: pd.Series

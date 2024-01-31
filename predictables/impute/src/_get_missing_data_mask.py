@@ -62,9 +62,11 @@ def get_missing_data_mask(
         raise TypeError("df must be a pandas or polars dataframe.")
     return to_pl_lf(df).with_columns(
         [
-            pl.col(c).is_null().name.keep()
-            if pl.__version__ >= "0.19.12"
-            else pl.col(c).is_null().keep_name()
+            (
+                pl.col(c).is_null().name.keep()
+                if pl.__version__ >= "0.19.12"
+                else pl.col(c).is_null().keep_name()
+            )
             for c in df.columns
         ]
     )

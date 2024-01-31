@@ -418,9 +418,9 @@ class PCA:
         ax = create_loading_plot(
             pca=self.pca,
             feature_names=self.features,
-            n_components=n_components
-            if n_components is not None
-            else self.n_components,
+            n_components=(
+                n_components if n_components is not None else self.n_components
+            ),
             ax=ax,
             fig=fig,
             max_features=max_features,

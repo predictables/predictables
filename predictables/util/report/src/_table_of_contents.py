@@ -1,6 +1,7 @@
+import os
+
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, SimpleDocTemplate, TableOfContents
-import os
 
 
 def generate_table_of_contents(pdf_file, sections):

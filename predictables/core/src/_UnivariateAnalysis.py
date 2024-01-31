@@ -1,22 +1,27 @@
-from typing import Optional, Tuple
+import datetime
+from typing import List, Optional
 
 import pandas as pd
 from tqdm import tqdm
 
 from predictables.univariate import Univariate
-from predictables.util import Report, to_pd_df
+from predictables.util import Report
+
+current_date = datetime.datetime.now()
 
 
 class UnivariateAnalysis:
     def __init__(
         self,
-        df_train,
-        target_column_name,
-        feature_column_names,
-        cv_folds,
-        has_time_series_structure,
+        model_name: str,
+        df_train: pd.DataFrame,
+        target_column_name: str,
+        feature_column_names: List[str],
+        cv_folds: pd.Series,
+        has_time_series_structure: bool,
     ):
-        self.df = to_pd_df(df_train).assign(cv=cv_folds)
+        self.model_name = model_name
+        self.df = df_train
         self.target_column_name = target_column_name
         self.feature_column_names = feature_column_names
         self.has_time_series_structure = has_time_series_structure
@@ -24,7 +29,7 @@ class UnivariateAnalysis:
         feature_list = []
         for col in tqdm(
             self.feature_column_names,
-            f"Performing univariate analysis on {len(self.feature_column_names)} features.",
+            f"Performing univariate analysis on {len(self.feature_column_names)} features",
         ):
             obj_name = (
                 col.lower()
@@ -45,12 +50,92 @@ class UnivariateAnalysis:
     def get_features(self):
         return self._feature_list
 
+    def _get_file_stem(
+        self,
+        filename: Optional[str] = None,
+        default: str = "Univariate Analysis Report",
+    ) -> str:
+        """
+        Helper function to get the file stem from a filename.
+
+        Parameters
+        ----------
+        filename : str, optional
+            The name of the file. The default is None.
+        default : str, optional
+            The default name of the file. The default is "Univariate Analysis Report".
+
+        Returns
+        -------
+        str
+            The file stem (eg the filename without the extension)
+
+        Examples
+        --------
+        >>> _get_file_stem("Univariate Analysis Report.pdf")
+        "Univariate Analysis Report"
+
+        >>> _get_file_stem("Univariate Analysis Report")
+        "Univariate Analysis Report"
+
+        >>> _get_file_stem("Different Analysis Report.pdf", "Univariate Analysis Report")
+        "Different Analysis Report"
+
+        >>> _get_file_stem("Univariate Analysis Report.pdf", "Different Analysis Report")
+        "Univariate Analysis Report"
+
+        >>> _get_file_stem(None, "Univariate Analysis Report")
+        "Univariate Analysis Report"
+        """
+        return filename.split(".")[0] if filename is not None else default
+
+    def _rpt_filename(
+        self,
+        file_stem: Optional[str] = None,
+        default: str = "Univariate Analysis Report",
+        start_num: Optional[int] = None,
+        end_num: Optional[int] = None,
+    ) -> str:
+        """Helper function to get the file name from a filename."""
+        if file_stem is not None and (start_num is None or end_num is None):
+            return file_stem + ".pdf"
+        if start_num is not None and end_num is not None:
+            return f"{file_stem}_{start_num}_{end_num}.pdf"
+        else:
+            return default
+
+    @staticmethod
+    def _build_desc(total_features: int, max_per_file: int) -> str:
+        return (
+            f"Building {total_features} univariate analysis reports,"
+            f"and packaging in increments of {max_per_file}"
+        )
+
     def build_report(
         self,
         filename: Optional[str] = None,
-        margins: Optional[Tuple[float, float, float, float]] = None,
+        margins: Optional[List[float]] = None,
         max_per_file: int = 25,
-    ):
+    ) -> None:
+        """
+        Builds a report for the univariate analysis.
+
+        Parameters
+        ----------
+        filename : str, optional
+            The name of the file to save the report. The default is None.
+        margins : list, optional
+            The margins of the report. The default is None.
+        max_per_file : int, optional
+            The maximum number of features to include in a single report. The default is 25.
+
+        Returns
+        -------
+        None
+            Creates a report in the current working directory.
+        """
+        # Handle the case when None is passed as the filename
+        filestem_ = self._get_file_stem(filename)
         features = self._sort_features_by_ua().index.tolist()
         if len(features) > max_per_file:
             more_files = True
@@ -64,7 +149,9 @@ class UnivariateAnalysis:
             files.append(
                 {
                     "file_num_start": i * max_per_file + 1,
-                    "file_num_end": (i + 1) * max_per_file,
+                    "file_num_end": min(
+                        (i + 1) * max_per_file, i * max_per_file + len(rem_features)
+                    ),
                     "features": rem_features[: min(max_per_file, len(rem_features))],
                 }
             )
@@ -74,36 +161,29 @@ class UnivariateAnalysis:
             if len(rem_features) == 0:
                 more_files = False
 
+        # Handle the case when None is passed to the margins
+        margins_: List[float] = margins if margins is not None else [0.5, 0.5, 0.5, 0.5]
+        filename_: str
+        i = 0
         if len(features) > max_per_file:
+            # Handle the case when no filename is passed
             counter = 0
-            i = 0
-            filename = filename.split(".")
-            filename = filename[0]
-            rpt = self._rpt_title_page(
-                filename=f"{filename}_{files[i]['file_num_start']}_{files[i]['file_num_end']}.pdf",
-                margins=margins,
-            )
-            for X in tqdm(
-                features,
-                f"Building {len(features)} univariate analysis reports, and packaging in increments of {max_per_file}",
-            ):
+            filename_ = f"{self._rpt_filename(filestem_,files[i]['file_num_start'],files[i]['file_num_end'])}"
+            rpt = self._rpt_title_page(filename_, margins_)
+            for X in tqdm(features, self._build_desc(len(features), max_per_file)):
                 rpt = getattr(self, X)._add_to_report(rpt)
                 counter += 1
 
                 if counter == max_per_file:
                     rpt.build()
                     i += 1
-                    rpt = self._rpt_title_page(
-                        filename=f"{filename}_{files[i]['file_num_start']}_{files[i]['file_num_end']}.pdf",
-                        margins=margins,
-                    )
+                    rpt = self._rpt_title_page(filename_, margins_)
                     counter = 0
 
         else:
-            rpt = self._rpt_title_page(
-                filename=f"{filename}.pdf",
-                margins=margins,
-            )
+            # Handle the case when no filename is passed
+            filename_ = f"{self._rpt_filename(filestem_)}"
+            rpt = self._rpt_title_page(filename_, margins_)
             for X in tqdm(
                 features,
                 f"Building {len(features)} univariate analysis reports.",
@@ -112,25 +192,42 @@ class UnivariateAnalysis:
 
         rpt.build()
 
-    def _rpt_title_page(
-        self,
-        rpt: Optional[Report] = None,
-        filename: Optional[str] = None,
-        margins: Optional[Tuple[float, float, float, float]] = None,
-    ):
-        if margins is None:
-            margins = [0.5, 0.5, 0.5, 0.5]
-        if filename is None:
-            filename = "univariate_report.pdf"
-        if rpt is None:
-            rpt = Report(filename, margins=margins)
+    def _rpt_overview_page(self, rpt: Report, first_idx: int, last_idx: int) -> Report:
+        overview_df = self._sort_features_by_ua().iloc[first_idx:last_idx]
+
+        # Reformat to be a percentage with one decimal
+        overview_df = overview_df.applymap(
+            lambda x: f"{x:.1%}" if x > 0.0001 else f"{x:.2e}"
+        )
 
         return (
-            rpt.spacer(4)
-            .h1("Univariate Analysis")
+            rpt.h1("Overview")
             .h2("Hit Ratio Model")
+            .table(overview_df)
+            .caption(
+                f"This table shows an overview of the results for the variables in this file, representing those whose average test score are ranked between {first_idx} and {last_idx} of the variables passed to the {self.model_name}."
+            )
+            .page_break()
+        )
+
+    def _rpt_title_page(
+        self,
+        filename: Optional[str] = None,
+        margins: Optional[List[float]] = None,
+        date_of_report: datetime.datetime = current_date,
+    ):
+        rpt = Report(
+            filename if filename is not None else "univariate_report.pdf",
+            margins=margins if margins is not None else [0.5, 0.5, 0.5, 0.5],
+        )
+        date = rpt.date_(date_of_report)
+
+        return (
+            rpt.spacer(3)
+            .h1("Univariate Analysis Report")
+            .h2(self.model_name)
             .style("h3", fontName="Helvetica")
-            .style("h4", fontName="Helvetica")
+            .h3(date)
             .page_break()
         )
 
@@ -138,7 +235,10 @@ class UnivariateAnalysis:
         cols = []
         results = []
         total_df = []
-        for col in tqdm(self.feature_column_names):
+        for col in tqdm(
+            self.feature_column_names,
+            "Sorting features by their relevance based on an univariate analysis",
+        ):
             if hasattr(self, col):
                 ua = getattr(self, col)
             else:

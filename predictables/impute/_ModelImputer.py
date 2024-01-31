@@ -223,10 +223,10 @@ class ModelImputer:
                 df=self.imputed_df,  # Start from current imputed df
                 missing_mask=self.missing_mask,  # Only impute missing values
                 column=col,
-                trained_model=getattr(self, col)
-                if hasattr(self, col)
-                else print(
-                    "No model fit for this column"
+                trained_model=(
+                    getattr(self, col)
+                    if hasattr(self, col)
+                    else print("No model fit for this column")
                 ),  # Get the model from the class attribute if it exists
                 learning_rate=learning_rate,
                 only_missing=True,  # Only impute missing values

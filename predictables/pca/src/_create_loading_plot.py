@@ -1,5 +1,5 @@
 # # refactored into smaller sub-functions:
-# from typing import Optional, Tuple
+# from typing import Any, Optional, Tuple, Union
 
 # import matplotlib.pyplot as plt
 # import numpy as np
@@ -168,7 +168,7 @@
 
 # def create_plot_axes(
 #     ax: Optional[Axes] = None, figsize: Tuple[int, int] = (10, 6)
-# ) -> Tuple[plt.Figure, plt.Axes]:
+# ) -> Tuple[Optional[Union[Tuple[plt.Figure, Any], plt.Figure]], plt.Axes]:
 #     """
 #     Create the plot axes.
 
@@ -186,31 +186,25 @@
 #     ax : plt.Axes
 #         The axes.
 #     """
-#     if ax is not None:
-#         return ax.get_figure(), ax
+#     if ax is None:
+#         fig, ax0 = plt.subplots(figsize=figsize)
 #     else:
-#         return plt.subplots(figsize=figsize)
+#         fig = ax.get_figure()  # type: ignore # This cannot be None because of the conditional
+#         ax0 = ax
+#     return fig, ax0
 
 
 # # This function will be large due to the nature of plotting
 # def plot_loadings(df, ax, n_components, include_legend, bar_alpha, bar_width):
-#     if include_legend:
-#         df.iloc[:, :n_components].plot.bar(
-#             stacked=True,
-#             ax=ax,
-#             width=bar_width,
-#             alpha=bar_alpha,
-#             color=[f"C{i}" for i in range(n_components)],
-#             label=[f"PC-{i+1}" for i in range(n_components)],
-#         )
-#     else:
-#         df.iloc[:, :n_components].plot.bar(
-#             stacked=True,
-#             ax=ax,
-#             width=bar_width,
-#             alpha=bar_alpha,
-#             color=[f"C{i}" for i in range(n_components)],
-#         )
+#     params = dict(
+#         stacked=True,
+#         ax=ax,
+#         width=bar_width,
+#         alpha=bar_alpha,
+#         color=[f"C{i}" for i in range(n_components)],
+#         label=[f"{'' if include_legend else '_'}PC-{i+1}" for i in range(n_components)],
+#     )
+#     return df.iloc[:, :n_components].plot.bar(**params)
 
 
 # def format_plot(

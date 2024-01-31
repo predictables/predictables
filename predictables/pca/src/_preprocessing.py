@@ -153,15 +153,19 @@ def preprocess_data_for_pca(
                         pl.col(col)
                         .cast(pl.Utf8)
                         .str.replace(
-                            f"{counts.select(pl.col(col).cast(pl.Utf8).name.keep()).item(0, 0)}"
-                            if pl.__version__ >= "0.19.12"
-                            else f"{counts.select(pl.col(col).cast(pl.Utf8).keep_name()).item(0, 0)}",
+                            (
+                                f"{counts.select(pl.col(col).cast(pl.Utf8).name.keep()).item(0, 0)}"
+                                if pl.__version__ >= "0.19.12"
+                                else f"{counts.select(pl.col(col).cast(pl.Utf8).keep_name()).item(0, 0)}"
+                            ),
                             "0",
                         )
                         .str.replace(
-                            f"{counts.select(pl.col(col).cast(pl.Utf8).name.keep()).item(1, 0)}"
-                            if pl.__version__ >= "0.19.12"
-                            else f"{counts.select(pl.col(col).cast(pl.Utf8).keep_name()).item(1, 0)}",
+                            (
+                                f"{counts.select(pl.col(col).cast(pl.Utf8).name.keep()).item(1, 0)}"
+                                if pl.__version__ >= "0.19.12"
+                                else f"{counts.select(pl.col(col).cast(pl.Utf8).keep_name()).item(1, 0)}"
+                            ),
                             "1",
                         )
                         .cast(pl.Float64)

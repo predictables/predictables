@@ -16,7 +16,13 @@ from predictables.univariate.src.plots import (
     roc_curve_plot,
 )
 from predictables.univariate.src.plots.util import plot_label
-from predictables.util import get_column_dtype, get_unique, harmonic_mean, to_pd_df
+from predictables.util import (
+    get_column_dtype,
+    get_unique,
+    harmonic_mean,
+    to_pd_df,
+    to_pd_s,
+)
 from predictables.util.report import Report
 
 from ._SingleUnivariate import SingleUnivariate
@@ -245,12 +251,10 @@ class Univariate(SingleUnivariate):
                 f"Target column {y} has an unsupported dtype: {get_column_dtype(y)}."
             )
 
-        method = ["None"]
-        method_obj = [None]
-        results = []
-
         # fit unadjusted data
-        results.append(
+        method = ["None"]
+        method_obj: List[Optional[Callable]] = [None]
+        results = [
             cross_val_score(
                 model,
                 X,
@@ -258,8 +262,9 @@ class Univariate(SingleUnivariate):
                 cv=5,
                 scoring=criterion,
             ).mean()
-        )
+        ]
 
+        # fit normalized data
         for m in normalization_methods:
             method.append(m.__name__)
             method_obj.append(m)
@@ -273,21 +278,27 @@ class Univariate(SingleUnivariate):
                 ).mean()
             )
 
-        best = (
-            pd.DataFrame({"method": method, "obj": method_obj, "score": results})
+        best_df = (
+            pd.DataFrame({"method": method, "score": results})
             .sort_values(by="score", ascending=False)
             .iloc[0]
         )
 
+        best_method = best_df["method"]
+
+        best_obj = method_obj[method.index(best_method)]
+
         # return a fitted instance of the best method
-        return best["obj"].fit_transform(X) if best["obj"] is not None else X
+        return best_obj().fit_transform(X) if best_obj is not None else X
 
     def _get_folds(self) -> List[Union[int, float, str]]:
         """
         Helper method that returns an ordered list of the unique elements of
         self.df.cv. Used for reference only.
         """
-        return get_unique(self.cv)
+        return get_unique(
+            to_pd_s(self.cv) if to_pd_s(self.cv) is not None else self.df.iloc[:, 2]
+        )
 
     def get_data(
         self, element: str = "x", data: str = "train", fold_n: Optional[int] = None
@@ -421,9 +432,9 @@ class Univariate(SingleUnivariate):
             ax0 = ax
 
         ax0 = roc_curve_plot(
-            self.y if y is None else y,
-            self.yhat_train if yhat is None else yhat,
-            self.cv if cv is None else cv,
+            to_pd_s(self.y) if y is None else to_pd_s(y),
+            to_pd_s(self.yhat_train) if yhat is None else to_pd_s(yhat),
+            to_pd_s(self.cv) if cv is None else to_pd_s(cv),
             self.coef if coef is None else coef,
             self.se if se is None else se,
             self.pvalues if pvalues is None else pvalues,
