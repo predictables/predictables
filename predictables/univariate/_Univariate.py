@@ -231,10 +231,12 @@ class Univariate(SingleUnivariate):
         X = X.values.reshape(-1, 1)
 
         if get_column_dtype(y) in ["categorical", "binary"]:
-            model = LogisticRegression(penalty=None, max_iter=1000, n_jobs=-1)
+            model = LogisticRegression(
+                penalty=None, max_iter=1000, n_jobs=-1, fit_intercept=False
+            )
             criterion = "f1" if criterion is None else criterion
         elif get_column_dtype(y) in ["continuous", "float", "int"]:
-            model = LinearRegression(n_jobs=-1)
+            model = LinearRegression(n_jobs=-1, fit_intercept=False)
             criterion = (
                 "neg_mean_absolute_percentage_error" if criterion is None else criterion
             )
@@ -571,8 +573,6 @@ class Univariate(SingleUnivariate):
             results.index = row_multi_index
 
         return results.T
-
-    
 
     def _add_to_report(self, rpt: Optional[Report] = None, **kwargs):
         if rpt is None:
