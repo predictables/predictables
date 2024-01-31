@@ -88,6 +88,8 @@ class Univariate(SingleUnivariate):
 
     df_all: pd.DataFrame
 
+    pareto_sort_vector: List[float]
+
     def __init__(
         self,
         df_: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
@@ -184,6 +186,29 @@ class Univariate(SingleUnivariate):
         )
 
         self.figsize = (7, 7) if "figsize" not in kwargs else kwargs["figsize"]
+
+        # Pareto sort vector
+        pareto_sort_mean = [
+            self.auc_test,
+            self.acc_test,
+            self.f1_test,
+            self.precision_test,
+            self.recall_test,
+            self.mcc_test,
+        ]
+
+        pareto_sort_sd = [
+            pd.Series([v.auc_test for _, v in self.cv_dict.items()]).std(),
+            pd.Series([v.acc_test for _, v in self.cv_dict.items()]).std(),
+            pd.Series([v.f1_test for _, v in self.cv_dict.items()]).std(),
+            pd.Series([v.precision_test for _, v in self.cv_dict.items()]).std(),
+            pd.Series([v.recall_test for _, v in self.cv_dict.items()]).std(),
+            pd.Series([v.mcc_test for _, v in self.cv_dict.items()]).std(),
+        ]
+
+        self.pareto_sort_vector = [
+            [m, s] for m, s in zip(pareto_sort_mean, pareto_sort_sd)
+        ]
 
     def _get_folds(self) -> List[Union[int, float, str]]:
         """
