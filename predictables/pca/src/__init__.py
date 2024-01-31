@@ -1,6 +1,6 @@
 from ._bootstrap_pca import bootstrap_pca  # noqa F401
 from ._create_biplot import create_biplot  # noqa F401
-from ._create_loading_plot import create_loading_plot  # noqa F401
+from ._create_loading_plot_ORIGINAL import create_loading_plot  # noqa F401
 from ._create_scree_plot import create_scree_plot  # noqa F401
 from ._feature_importance import (  # noqa F401
     pca_feature_importance as feature_importance,

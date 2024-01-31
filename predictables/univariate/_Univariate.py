@@ -183,7 +183,7 @@ class Univariate(SingleUnivariate):
             dfpd if self.df_val is None else pd.concat([dfpd, to_pd_df(self.df_val)])
         )
 
-        self.figsize = (6, 6) if "figsize" not in kwargs else kwargs["figsize"]
+        self.figsize = (7, 7) if "figsize" not in kwargs else kwargs["figsize"]
 
     def _get_folds(self) -> List[Union[int, float, str]]:
         """
@@ -371,7 +371,6 @@ class Univariate(SingleUnivariate):
     def plot_quintile_lift(
         self,
         data: str = "train",
-        feature_name: Optional[str] = None,
         ax: Optional[Axes] = None,
         figsize: Optional[Tuple[float, float]] = None,
         **kwargs,
@@ -500,9 +499,31 @@ class Univariate(SingleUnivariate):
             .page_break()
         )
 
-    def add_to_report(self, rpt: Optional[Report] = None, **kwargs):
+    def _add_to_report(self, rpt: Optional[Report] = None, **kwargs):
         if rpt is None:
             rpt = Report(**kwargs)
+
+        def density():
+            return self.plot_density(
+                data="train", feature_name=self.feature_name, figsize=self.figsize
+            )
+
+        def cdf():
+            return self.plot_cdf(data="train", figsize=self.figsize)
+
+        def roc():
+            return self.plot_roc_curve(
+                y=self.y,
+                yhat=self.yhat_train,
+                cv=self.df.cv,
+                coef=self.coef,
+                se=self.se,
+                pvalues=self.pvalues,
+                figsize=self.figsize,
+            )
+
+        def quintile():
+            return self.plot_quintile_lift(data="train", figsize=self.figsize)
 
         return (
             rpt.h2("Univariate Report")
@@ -514,20 +535,20 @@ class Univariate(SingleUnivariate):
             .h3(
                 f"{plot_label(self.feature_name, incl_bracket=False)} - Kernel Density Plot"
             )
-            # .plot(self.plot_density())
+            .plot(density)
             .page_break()
             .h2("Univariate Report")
             .h3(
                 f"{plot_label(self.feature_name, incl_bracket=False)} - Empirical CDF Plot"
             )
-            # .plot(self.plot_cdf())
+            .plot(cdf)
             .page_break()
             .h2("Univariate Report")
             .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - ROC Curve")
-            # .plot(self.plot_roc_curve())
+            .plot(roc)
             .page_break()
             .h2("Univariate Report")
             .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - Quintile Lift")
-            # .plot(self.plot_quintile_lift())
+            .plot(quintile)
             .page_break()
         )

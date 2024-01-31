@@ -18,7 +18,7 @@ def cdf_plot(
     x_label: Union[str, None] = None,
     y_label: str = "Empirical Cumulative Distribution Function",
     ax: Union[Axes, None] = None,
-    figsize: Tuple[int, int] = (8, 8),
+    figsize: Tuple[int, int] = (7, 7),
     backend: str = "matplotlib",
     **kwargs,
 ) -> Axes:
@@ -42,7 +42,7 @@ def cdf_plot(
     ax : Axes, optional
         The axes to plot the CDF on, by default None.
     figsize : Tuple[int, int], optional
-        The size of the figure, by default (8, 8).
+        The size of the figure, by default (7, 7).
     backend : str, optional
         The plotting backend to use, by default "matplotlib".
 
@@ -149,7 +149,7 @@ def cdf_plot_matplotlib_levels(
     x_label: Optional[Union[str, None]] = None,
     y_label: Optional[str] = "Empirical Cumulative Distribution Function",
     ax: Optional[Axes] = None,
-    figsize: Optional[Tuple[int, int]] = (8, 8),
+    figsize: Optional[Tuple[int, int]] = (7, 7),
     **kwargs,
 ) -> Axes:
     """
@@ -168,7 +168,7 @@ def cdf_plot_matplotlib_levels(
     ax : Axes, optional
         The axes to plot the CDF on, by default None.
     figsize : Tuple[int, int], optional
-        The size of the figure, by default (8, 8).
+        The size of the figure, by default (7, 7).
 
     Returns
     -------

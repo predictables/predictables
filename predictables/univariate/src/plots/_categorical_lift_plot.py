@@ -16,7 +16,7 @@ def categorical_lift_plot(
     target_name: str,
     backend: str = "matplotlib",
     ax: Union[Axes, None] = None,
-    figsize: Tuple[int, int] = (15, 7),
+    figsize: Tuple[int, int] = (7, 7),
     **kwargs,
 ) -> Union[Axes, go.Figure, None]:
     """
@@ -75,7 +75,7 @@ def plot_cat_lift_plot(
     feature_name: str,
     target_name: str,
     ax: Union[Axes, None] = None,
-    figsize: Tuple[int, int] = (8, 8),
+    figsize: Tuple[int, int] = (7, 7),
 ) -> Union[Axes, None]:
     """
     Plots the lift chart for a given categorical feature and target. Returns a

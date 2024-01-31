@@ -4,7 +4,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
 import polars as pl
-from sklearn.decomposition import PCA as sklearn_PCA
+from sklearn.decomposition import PCA as sklearn_PCA  # type: ignore
 
 from predictables.pca.src import (
     create_biplot,

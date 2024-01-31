@@ -166,3 +166,7 @@ npm_modules/
 node_modules/
 
 .vscode/
+
+# Added by cargo
+
+/target
