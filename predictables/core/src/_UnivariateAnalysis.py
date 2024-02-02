@@ -91,11 +91,10 @@ class UnivariateAnalysis:
         "Univariate Analysis Report"
         """
         if filename is not None:
-            # Use os.path.splitext to split the filename and its extension
             file_stem, _ = os.path.splitext(filename)
             return file_stem
-        else:
-            return default
+
+        return default
 
     def _rpt_filename(
         self,
