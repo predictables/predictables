@@ -15,6 +15,7 @@ class UnivariateAnalysis:
         self,
         model_name: str,
         df_train: pd.DataFrame,
+        df_val: pd.DataFrame,
         target_column_name: str,
         feature_column_names: List[str],
         cv_folds: pd.Series,
@@ -22,6 +23,7 @@ class UnivariateAnalysis:
     ):
         self.model_name = model_name
         self.df = df_train
+        self.df_val = df_val
         self.target_column_name = target_column_name
         self.feature_column_names = feature_column_names
         self.has_time_series_structure = has_time_series_structure
@@ -42,7 +44,7 @@ class UnivariateAnalysis:
             setattr(
                 self,
                 obj_name,
-                Univariate(self.df, "cv", col, self.target_column_name),
+                Univariate(self.df, self.df_val, "cv", col, self.target_column_name),
             )
             feature_list.append(obj_name)
         self._feature_list = feature_list
@@ -150,7 +152,8 @@ class UnivariateAnalysis:
                 {
                     "file_num_start": i * max_per_file + 1,
                     "file_num_end": min(
-                        (i + 1) * max_per_file, i * max_per_file + len(rem_features)
+                        (i + 1) * max_per_file,
+                        (i * max_per_file) + len(rem_features) - 1,
                     ),
                     "features": rem_features[: min(max_per_file, len(rem_features))],
                 }
@@ -168,8 +171,11 @@ class UnivariateAnalysis:
         if len(features) > max_per_file:
             # Handle the case when no filename is passed
             counter = 0
-            filename_ = f"{self._rpt_filename(filestem_,files[i]['file_num_start'],files[i]['file_num_end'])}"
+            filename_ = f"{self._rpt_filename(filestem_,start_num=files[i]['file_num_start'],end_num=files[i]['file_num_end'])}"
             rpt = self._rpt_title_page(filename_, margins_)
+            rpt = self._rpt_overview_page(
+                rpt, files[i]["file_num_start"], files[i]["file_num_end"]
+            )
             for X in tqdm(features, self._build_desc(len(features), max_per_file)):
                 rpt = getattr(self, X)._add_to_report(rpt)
                 counter += 1
@@ -177,35 +183,48 @@ class UnivariateAnalysis:
                 if counter == max_per_file:
                     rpt.build()
                     i += 1
+                    filename_ = f"{self._rpt_filename(filestem_,start_num=files[i]['file_num_start'],end_num=files[i]['file_num_end'])}"
                     rpt = self._rpt_title_page(filename_, margins_)
+                    rpt = self._rpt_overview_page(
+                        rpt, files[i]["file_num_start"], files[i]["file_num_end"]
+                    )
                     counter = 0
 
         else:
             # Handle the case when no filename is passed
             filename_ = f"{self._rpt_filename(filestem_)}"
             rpt = self._rpt_title_page(filename_, margins_)
+            rpt = self._rpt_overview_page(rpt, 0, len(features) - 1)
             for X in tqdm(
-                features,
-                f"Building {len(features)} univariate analysis reports.",
+                self.feature_column_names,
+                f"Building {len(features)} univariate analysis reports",
             ):
                 rpt = getattr(self, X)._add_to_report(rpt)
 
         rpt.build()
 
     def _rpt_overview_page(self, rpt: Report, first_idx: int, last_idx: int) -> Report:
-        overview_df = self._sort_features_by_ua().iloc[first_idx:last_idx]
+        overview_df = self._sort_features_by_ua().iloc[first_idx : last_idx + 1]
 
         # Reformat to be a percentage with one decimal
-        overview_df = overview_df.applymap(
+        overview_df = overview_df.map(
             lambda x: f"{x:.1%}" if x > 0.0001 else f"{x:.2e}"
         )
 
         return (
             rpt.h1("Overview")
-            .h2("Hit Ratio Model")
+            .h2(f"{self.model_name} Univariate Analysis Report")
+            .h3(
+                "These sorted results for the features in this report indicate the average cross-validated test scores for each feature, if it were used as the only predictor in a simple linear model. Keep in mind that these results are based on the average, without considering the standard deviation. This means that the results are not necessarily the best predictors, but they are the best on average, and provide a fine starting point for grouping those predictors that are on average better than others. This means that nothing was done to account for possible sampling variability in the sortied results. This is a limitation of the univariate analysis, and it is important to keep this in mind when interpreting the results. It is also important to consider further that depending on the purpose of the model, the most appropriate features may not be the ones with the highest average test scores, if a different metric is more important."
+            )
+            .h3(
+                "In particular, this should not be taken as an opinion (actuarial or otherwise) regarding the most appropriate features to use in a model, but it rather provides a starting point for further analysis."
+            )
+            .spacer(0.125)
             .table(overview_df)
+            .spacer(0.125)
             .caption(
-                f"This table shows an overview of the results for the variables in this file, representing those whose average test score are ranked between {first_idx} and {last_idx} of the variables passed to the {self.model_name}."
+                f"This table shows an overview of the results for the variables in this file, representing those whose average test score are ranked between {first_idx+1} and {last_idx+1} of the variables passed to the {self.model_name}."
             )
             .page_break()
         )

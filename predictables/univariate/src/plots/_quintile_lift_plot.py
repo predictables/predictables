@@ -2,10 +2,10 @@ from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import plotly.graph_objs as go
+import plotly.graph_objs as go  # type: ignore
 import polars as pl
 from matplotlib.axes import Axes
-from scipy.stats import entropy as kl_divergence
+from scipy.stats import entropy as kl_divergence  # type: ignore
 
 from predictables.util import to_pd_s
 from predictables.util.stats import gini_coefficient
@@ -155,7 +155,7 @@ def quintile_lift_plot_matplotlib(
 
     # KL Divergence calculation
     kl_div = _kl_divergence(lift_df)
-    gini_coeff = gini_coefficient(observed_target.tolist(), modeled_target.tolist())
+    gini_coeff = gini_coefficient(observed_target.to_list(), modeled_target.to_list())
 
     # Add KL divergence and Gini coefficient as annotation to the plot
     ax.annotate(
@@ -207,7 +207,9 @@ def quintile_lift_plot_plotly(
     """
     lift_df = _prep_data(feature, observed_target, modeled_target)
 
-    bars1, bars2 = _make_bars(lift_df, None, backend="plotly")
+    ax = plt.gca()  # Create a dummy axis to pass to _make_bars
+
+    bars1, bars2 = _make_bars(lift_df, ax, backend="plotly")
 
     fig = go.Figure(data=[bars1, bars2])
 
@@ -231,7 +233,7 @@ def quintile_lift_plot_plotly(
 
     # KL Divergence calculation
     kl_div = _kl_divergence(lift_df)
-    gini_coeff = gini_coefficient(observed_target, modeled_target)
+    gini_coeff = gini_coefficient(observed_target.to_list(), modeled_target.to_list())
 
     # Add KL divergence and Gini coefficient as annotation to the plot
     fig.add_annotation(
@@ -331,7 +333,7 @@ def _make_quintiles(modeled_target: Union[pd.Series, pl.Series]) -> pd.Series:
 
 
 def _make_bars(
-    df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+    df: pd.DataFrame,
     ax: plt.Axes,
     backend: str = "matplotlib",
     modeled_color: str = "red",

@@ -8,12 +8,12 @@ from predictables.util import to_pl_lf
 
 def time_series_validation_filter(
     df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-    df_val: Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame, None]] = None,
-    fold: Optional[Union[int, None]] = None,
-    fold_col: Optional[str] = "cv",
-    feature_col: Optional[Union[str, None]] = None,
-    target_col: Optional[Union[str, None]] = None,
-    time_series_validation: Optional[bool] = False,
+    df_val: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+    fold: Optional[int] = None,
+    fold_col: str = "cv",
+    feature_col: Optional[str] = None,
+    target_col: Optional[str] = None,
+    time_series_validation: bool = False,
 ) -> tuple:
     """
     Filter a dataframe into train and test sets for time series validation.
@@ -29,7 +29,11 @@ def time_series_validation_filter(
     if fold is None:
         # If no fold passed, assume not doing a cross-validation split here
         df_train = df.select([feature_col, target_col])
-        df_test = df_val_start.select([feature_col, target_col])
+        df_test = (
+            df_val_start.select([feature_col, target_col])
+            if df_val_start is not None
+            else None
+        )
     else:
         # If a fold is passed, we are doing cross validation so don't use any
         # validation set
@@ -42,9 +46,16 @@ def time_series_validation_filter(
             df_test = df.filter(pl.col(fold_col) == fold)
 
     # Split into X, y and train, test
-    X_train = df_train.select([feature_col]).collect().to_pandas()
+    X_test = (
+        df_test.collect().to_pandas()[[feature_col]] if df_test is not None else None
+    )
+    y_test = (
+        df_test.select([target_col]).collect().to_pandas()[target_col]
+        if df_test is not None
+        else None
+    )
+
+    X_train = df_train.collect().to_pandas()[[feature_col]]
     y_train = df_train.select([target_col]).collect().to_pandas()[target_col]
-    X_test = df_test.select([feature_col]).collect().to_pandas()
-    y_test = df_test.select([target_col]).collect().to_pandas()[target_col]
 
     return X_train, y_train, X_test, y_test

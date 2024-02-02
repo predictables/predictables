@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import polars as pl
 from matplotlib.axes import Axes
-from scipy.stats import gaussian_kde, ttest_ind
+from scipy.stats import gaussian_kde, ttest_ind  # type: ignore
 
 from predictables.univariate.src.plots.util import binary_color, plot_label
 from predictables.util import get_column_dtype, to_pd_s
@@ -91,6 +91,7 @@ def density_plot(
         raise ValueError(f"Invalid backend {backend}.")
 
 
+# trunk-ignore(sourcery/low-code-quality)
 def density_plot_mpl(
     x: Union[pd.Series, pl.Series],
     plot_by: Union[pd.Series, pl.Series],
@@ -235,11 +236,14 @@ def density_plot_mpl(
     )
 
     # Add a title reflecting the t-test results
-    title = f"Density Plot of [{plot_label(x.name)}] by [{plot_label(plot_by.name)}]\nDistributions by level are"
+    title = f"Kernel Density Plot of {plot_label(x.name)} by {plot_label(plot_by.name)}\nDistributions by level are"
     title += " not " if p >= t_test_alpha else " "
     title += f"significantly different at the {1 - t_test_alpha:.0%} level."
 
     ax0.set_title(title)
+
+    # Set the x-axis label
+    ax0.set_xlabel(plot_label(x.name, False))
 
     if call_legend:
         plt.legend(fontsize=24 * (figsize[0] / 16))

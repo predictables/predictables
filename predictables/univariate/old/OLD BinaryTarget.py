@@ -2226,7 +2226,7 @@
 #         if self.type == "categorical":
 #             feature = feature.astype("category")
 #         observed_target = self.val[self.target]
-#         predicted_target = self.fit.model.predict(self.val[[self.feature]])
+#         predicted_target = self.predict(self.val[[self.feature]])
 #         ax = _quintile_lift_plot(feature, observed_target, predicted_target, ax=ax)
 #         return ax
 
@@ -2686,28 +2686,28 @@
 #         6d. Fitted intercept p-value (from self.fit.pvalues_) for each fold
 #         7a. Training Accuracy (from acc(self.fit.y, self.fit.yhat)) for each fold
 #         7b. Validation Accuracy (from acc(self.val[self.target],
-#             self.fit.model.predict(self.val))) for each fold
+#             self.predict(self.val))) for each fold
 #         7c. p-value from a t-test comparing training and validation accuracy
 #             distributions (only one value here - uses the entire training and
 #             validation sets)
 #         8a. Training Precision (from precision_score(self.fit.y, self.fit.yhat)) for
 #             each fold
 #         8b. Validation Precision (from precision_score(self.val[self.target],
-#             self.fit.model.predict(self.val)))
+#             self.predict(self.val)))
 #         8c. p-value from a t-test comparing training and validation precision
 #             distributions (only one value here - uses the entire training and
 #             validation sets)
 #         9a. Training Recall (from recall_score(self.fit.y, self.fit.yhat)) for
 #             each fold
 #         9b. Validation Recall (from recall_score(self.val[self.target],
-#             self.fit.model.predict(self.val)))
+#             self.predict(self.val)))
 #         9c. p-value from a t-test comparing training and validation recall
 #             distributions (only one value here - uses the entire training and
 #             validation sets)
 #         10a. Training F1 Score (from f1_score(self.fit.y, self.fit.yhat)) for
 #              each fold
 #         10b. Validation F1 Score (from f1_score(self.val[self.target],
-#              self.fit.model.predict(self.val)))
+#              self.predict(self.val)))
 #         10c. p-value from a t-test comparing training and validation F1 score
 #              distributions (only one value here - uses the entire training and
 #              validation sets)
@@ -2715,21 +2715,21 @@
 #              self.fit.yhat)) for each fold
 #         11b. Validation balanced accuracy score (from
 #              balanced_accuracy_score(self.val[self.target],
-#              self.fit.model.predict(self.val)))
+#              self.predict(self.val)))
 #         11c. p-value from a t-test comparing training and validation balanced accuracy
 #              score distributions (only one value here - uses the entire training and
 #              validation sets)
 #         12a. Training negative log loss (from log_loss(self.fit.y, self.fit.yhat)) for
 #              each fold
 #         12b. Validation negative log loss (from log_loss(self.val[self.target],
-#              self.fit.model.predict(self.val)))
+#              self.predict(self.val)))
 #         12c. p-value from a t-test comparing training and validation negative log
 #              loss distributions (only one value here - uses the entire training and
 #              validation sets)
 #         13a. Training hinge loss (from hinge_loss(self.fit.y, self.fit.yhat)) for
 #              each fold
 #         13b. Validation hinge loss (from hinge_loss(self.val[self.target],
-#              self.fit.model.predict(self.val))) for each fold
+#              self.predict(self.val))) for each fold
 #         13c. p-value from a t-test comparing training and validation hinge loss
 #              distributions (only one value here - uses the entire training and
 #              validation sets)
@@ -2737,21 +2737,21 @@
 #              (from matthews_corrcoef(self.fit.y, self.fit.yhat)) for each fold
 #         14b. Validation Matthews correlation coefficient
 #              (from matthews_corrcoef(self.val[self.target],
-#              self.fit.model.predict(self.val))) for each fold
+#              self.predict(self.val))) for each fold
 #         14c. p-value from a t-test comparing training and validation Matthews
 #              correlation coefficient distributions (only one value here - uses the
 #              entire training and validation sets)
 #         15a. Training Informedness (from informedness(self.fit.y, self.fit.yhat)) for
 #              each fold
 #         15b. Validation Informedness (from informedness(self.val[self.target],
-#              self.fit.model.predict(self.val))) for each fold
+#              self.predict(self.val))) for each fold
 #         15c. p-value from a t-test comparing training and validation Informedness
 #              distributions (only one value here - uses the entire training and
 #              validation sets) for each fold
 #         16a. Training Markedness (from markedness(self.fit.y, self.fit.yhat)) for
 #              each fold
 #         16b. Validation Markedness (from markedness(self.val[self.target],
-#              self.fit.model.predict(self.val))) for each fold
+#              self.predict(self.val))) for each fold
 #         16c. p-value from a t-test comparing training and validation Markedness
 #                 distributions (only one value here - uses the entire training and
 #                 validation sets) for each fold
@@ -2807,7 +2807,7 @@
 #             for i in range(self.n_bins)
 #         ]
 #         # 7b. Validation Accuracy (from acc(self.val[self.target],
-#         #     self.fit.model.predict(self.val))) for each fold
+#         #     self.predict(self.val))) for each fold
 #         binary["val_acc"] = [
 #             acc(pd.Series(y_val[i]), pd.Series(yhat_val[i]).ge(0.5).astype(int))
 #             for i in range(self.n_bins)
@@ -2820,7 +2820,7 @@
 #             for i in range(self.n_bins)
 #         ]
 #         # 8b. Validation Precision (from precision_score(self.val[self.target],
-#         #     self.fit.model.predict(self.val)))
+#         #     self.predict(self.val)))
 #         binary["val_precision"] = [
 #             precision_score(
 #                 pd.Series(y_val[i]), pd.Series(yhat_val[i]).ge(0.5).astype(int)
@@ -2835,7 +2835,7 @@
 #             for i in range(self.n_bins)
 #         ]
 #         # 9b. Validation Recall (from recall_score(self.val[self.target],
-#         #     self.fit.model.predict(self.val)))
+#         #     self.predict(self.val)))
 #         binary["val_recall"] = [
 #             recall_score(
 #                 pd.Series(y_val[i]), pd.Series(yhat_val[i]).ge(0.5).astype(int)
@@ -2850,7 +2850,7 @@
 #             for i in range(self.n_bins)
 #         ]
 #         # 10b. Validation F1 Score (from f1_score(self.val[self.target],
-#         #      self.fit.model.predict(self.val)))
+#         #      self.predict(self.val)))
 #         binary["val_f1"] = [
 #             f1_score(pd.Series(y_val[i]), pd.Series(yhat_val[i]).ge(0.5).astype(int))
 #             for i in range(self.n_bins)
@@ -2866,7 +2866,7 @@
 #         ]
 #         # 11b. Validation balanced accuracy score (from
 #         #      balanced_accuracy_score(self.val[self.target],
-#         #      self.fit.model.predict(self.val)))
+#         #      self.predict(self.val)))
 #         binary["val_bal_acc"] = [
 #             balanced_accuracy_score(
 #                 pd.Series(y_val[i]), pd.Series(yhat_val[i]).ge(0.5).astype(int)
@@ -2881,7 +2881,7 @@
 #             for i in range(self.n_bins)
 #         ]
 #         # 12b. Validation negative log loss (from log_loss(self.val[self.target],
-#         #      self.fit.model.predict(self.val)))
+#         #      self.predict(self.val)))
 #         binary["val_neg_log_loss"] = [
 #             log_loss(pd.Series(y_val[i]), pd.Series(yhat_val[i]).ge(0.5).astype(int))
 #             for i in range(self.n_bins)
@@ -2894,7 +2894,7 @@
 #             for i in range(self.n_bins)
 #         ]
 #         # 13b. Validation hinge loss (from hinge_loss(self.val[self.target],
-#         #      self.fit.model.predict(self.val))) for each fold
+#         #      self.predict(self.val))) for each fold
 #         binary["val_hinge_loss"] = [
 #             hinge_loss(pd.Series(y_val[i]), pd.Series(yhat_val[i]).ge(0.5).astype(int))
 #             for i in range(self.n_bins)
@@ -2908,7 +2908,7 @@
 #         ]
 #         # 14b. Validation Matthews correlation coefficient
 #         #      (from matthews_corrcoef(self.val[self.target],
-#         #      self.fit.model.predict(self.val))) for each fold
+#         #      self.predict(self.val))) for each fold
 #         binary["val_mcc"] = [
 #             matthews_corrcoef(
 #                 pd.Series(y_val[i]), pd.Series(yhat_val[i]).ge(0.5).astype(int)
@@ -2923,7 +2923,7 @@
 #             for i in range(self.n_bins)
 #         ]
 #         # 15b. Validation Informedness (from informedness(self.val[self.target],
-#         #      self.fit.model.predict(self.val))) for each fold
+#         #      self.predict(self.val))) for each fold
 #         binary["val_informedness"] = [
 #             informedness(
 #                 pd.Series(y_val[i]), pd.Series(yhat_val[i]).ge(0.5).astype(int)
@@ -2938,7 +2938,7 @@
 #             for i in range(self.n_bins)
 #         ]
 #         # 16b. Validation Markedness (from markedness(self.val[self.target],
-#         #      self.fit.model.predict(self.val))) for each fold
+#         #      self.predict(self.val))) for each fold
 #         binary["val_markedness"] = [
 #             markedness(pd.Series(y_val[i]), pd.Series(yhat_val[i]).ge(0.5).astype(int))
 #             for i in range(self.n_bins)
@@ -2961,29 +2961,29 @@
 #         6c. Fitted coefficient p-value (from self.fit.pvalues_) for each fold
 #         6d. Fitted intercept p-value (from self.fit.pvalues_) for each fold
 #         7a. Training Accuracy (from acc(self.fit.y, self.fit.yhat)) for each fold
-#         7b. Validation Accuracy (from acc(self.val[self.target], self.fit.model.predict(self.val))) for each fold
+#         7b. Validation Accuracy (from acc(self.val[self.target], self.predict(self.val))) for each fold
 #         8a. Training Precision (from precision_score(self.fit.y, self.fit.yhat))
-#         8b. Validation Precision (from precision_score(self.val[self.target], self.fit.model.predict(self.val)))
+#         8b. Validation Precision (from precision_score(self.val[self.target], self.predict(self.val)))
 #         9a. Training Recall (from recall_score(self.fit.y, self.fit.yhat))
-#         9b. Validation Recall (from recall_score(self.val[self.target], self.fit.model.predict(self.val)))
+#         9b. Validation Recall (from recall_score(self.val[self.target], self.predict(self.val)))
 #         10a. Training F1 Score (from f1_score(self.fit.y, self.fit.yhat))
-#         10b. Validation F1 Score (from f1_score(self.val[self.target], self.fit.model.predict(self.val)))
+#         10b. Validation F1 Score (from f1_score(self.val[self.target], self.predict(self.val)))
 #         11a. Training balanced accuracy score (from balanced_accuracy_score(self.fit.y, self.fit.yhat))
-#         11b. Validation balanced accuracy score (from balanced_accuracy_score(self.val[self.target], self.fit.model.predict(self.val)))
+#         11b. Validation balanced accuracy score (from balanced_accuracy_score(self.val[self.target], self.predict(self.val)))
 #         12a. Training negative log loss (from log_loss(self.fit.y, self.fit.yhat))
-#         12b. Validation negative log loss (from log_loss(self.val[self.target], self.fit.model.predict(self.val)))
+#         12b. Validation negative log loss (from log_loss(self.val[self.target], self.predict(self.val)))
 #         13a. Training hinge loss (from hinge_loss(self.fit.y, self.fit.yhat))
-#         13b. Validation hinge loss (from hinge_loss(self.val[self.target], self.fit.model.predict(self.val)))
+#         13b. Validation hinge loss (from hinge_loss(self.val[self.target], self.predict(self.val)))
 #         14a. Training Matthews correlation coefficient (from matthews_corrcoef(self.fit.y, self.fit.yhat))
-#         14b. Validation Matthews correlation coefficient (from matthews_corrcoef(self.val[self.target], self.fit.model.predict(self.val)))
+#         14b. Validation Matthews correlation coefficient (from matthews_corrcoef(self.val[self.target], self.predict(self.val)))
 #         15a. Training Informedness (from informedness(self.fit.y, self.fit.yhat))
-#         15b. Validation Informedness (from informedness(self.val[self.target], self.fit.model.predict(self.val)))
+#         15b. Validation Informedness (from informedness(self.val[self.target], self.predict(self.val)))
 #         """
 #         y = self.fit.y
 #         yhat = self.fit.yhat
 
 #         self.val[self.target]
-#         self.fit.model.predict(self.val[self.feature])
+#         self.predict(self.val[self.feature])
 
 #         binary = {}
 #         binary["n_obs"] = [self.train.shape[0]]
@@ -2999,7 +2999,7 @@
 #         binary["validation_matthews_corrcoef"] = [
 #             matthews_corrcoef(
 #                 self.val[self.target],
-#                 self.fit.model.predict(self.val).gt(threshold).astype(int),
+#                 self.predict(self.val).gt(threshold).astype(int),
 #             )
 #         ]
 #         binary["training_informedness"] = [
@@ -3008,7 +3008,7 @@
 #         binary["validation_informedness"] = [
 #             informedness(
 #                 self.val[self.target],
-#                 self.fit.model.predict(self.val).gt(threshold).astype(int),
+#                 self.predict(self.val).gt(threshold).astype(int),
 #             )
 #         ]
 #         binary["training_markedness"] = [
@@ -3017,7 +3017,7 @@
 #         binary["validation_markedness"] = [
 #             markedness(
 #                 self.val[self.target],
-#                 self.fit.model.predict(self.val).gt(threshold).astype(int),
+#                 self.predict(self.val).gt(threshold).astype(int),
 #             )
 #         ]
 #         binary["training_accuracy"] = [
@@ -3026,7 +3026,7 @@
 #         binary["validation_accuracy"] = [
 #             acc(
 #                 self.val[self.target],
-#                 self.fit.model.predict(self.val).gt(threshold).astype(int),
+#                 self.predict(self.val).gt(threshold).astype(int),
 #             )
 #         ]
 #         binary["training_f1_score"] = [
@@ -3035,7 +3035,7 @@
 #         binary["validation_f1_score"] = [
 #             f1_score(
 #                 self.val[self.target],
-#                 self.fit.model.predict(self.val).gt(threshold).astype(int),
+#                 self.predict(self.val).gt(threshold).astype(int),
 #             )
 #         ]
 #         binary["auc"] = [roc_auc_score(y, yhat)]
@@ -3048,7 +3048,7 @@
 #         binary["validation_precision"] = [
 #             precision_score(
 #                 self.val[self.target],
-#                 self.fit.model.predict(self.val).gt(threshold).astype(int),
+#                 self.predict(self.val).gt(threshold).astype(int),
 #             )
 #         ]
 #         binary["training_recall"] = [
@@ -3057,7 +3057,7 @@
 #         binary["validation_recall"] = [
 #             recall_score(
 #                 self.val[self.target],
-#                 self.fit.model.predict(self.val).gt(threshold).astype(int),
+#                 self.predict(self.val).gt(threshold).astype(int),
 #             )
 #         ]
 #         binary["training_balanced_accuracy"] = [
@@ -3066,7 +3066,7 @@
 #         binary["validation_balanced_accuracy"] = [
 #             balanced_accuracy_score(
 #                 self.val[self.target],
-#                 self.fit.model.predict(self.val).gt(threshold).astype(int),
+#                 self.predict(self.val).gt(threshold).astype(int),
 #             )
 #         ]
 #         binary["training_neg_log_loss"] = [
@@ -3075,7 +3075,7 @@
 #         binary["validation_neg_log_loss"] = [
 #             log_loss(
 #                 self.val[self.target],
-#                 self.fit.model.predict(self.val).gt(threshold).astype(int),
+#                 self.predict(self.val).gt(threshold).astype(int),
 #             )
 #         ]
 #         binary["training_hinge_loss"] = [
@@ -3084,7 +3084,7 @@
 #         binary["validation_hinge_loss"] = [
 #             hinge_loss(
 #                 self.val[self.target],
-#                 self.fit.model.predict(self.val).gt(threshold).astype(int),
+#                 self.predict(self.val).gt(threshold).astype(int),
 #             )
 #         ]
 

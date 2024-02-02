@@ -4,7 +4,7 @@ import pandas as pd
 import polars as pl
 
 from predictables.core.src._UnivariateAnalysis import UnivariateAnalysis
-from predictables.util import to_pd_df
+from predictables.util import to_pd_df, to_pd_s
 
 
 class PredicTables:
@@ -21,7 +21,8 @@ class PredicTables:
         has_time_series_structure: bool = False,
     ):
         self.model_name = model_name
-        self.df_train = to_pd_df(df_train).assign(cv=cv_folds)
+        self.cv_folds = to_pd_s(cv_folds)
+        self.df_train = to_pd_df(df_train).assign(cv=self.cv_folds)
         self.df_val = to_pd_df(df_val)
         self.df_test = to_pd_df(df_test)
 
@@ -29,14 +30,15 @@ class PredicTables:
         self.has_time_series_structure = has_time_series_structure
 
         self.feature_column_names = [
-            col for col in self.df_train if col not in ["cv", self.target_column_name]
+            col for col in self.df_train if col not in ["cv", self.target_column_name]  # type: ignore
         ]
 
         self.ua = UnivariateAnalysis(
             self.model_name,
             self.df_train,
+            self.df_val,
             self.target_column_name,
             self.feature_column_names,
-            cv_folds,
+            self.cv_folds,
             has_time_series_structure=self.has_time_series_structure,
         )

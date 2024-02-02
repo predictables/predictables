@@ -1,12 +1,10 @@
-from typing import Any, Callable, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import polars as pl
 from matplotlib.axes import Axes
-from sklearn.linear_model import LinearRegression, LogisticRegression
-from sklearn.model_selection import cross_val_score
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler  # type: ignore
 
 from predictables.univariate.src._get_data import _get_data
 from predictables.univariate.src.plots import (
@@ -16,16 +14,10 @@ from predictables.univariate.src.plots import (
     roc_curve_plot,
 )
 from predictables.univariate.src.plots.util import plot_label
-from predictables.util import (
-    get_column_dtype,
-    get_unique,
-    harmonic_mean,
-    to_pd_df,
-    to_pd_s,
-)
+from predictables.util import get_unique, harmonic_mean, to_pd_df, to_pd_s
 from predictables.util.report import Report
 
-from ._SingleUnivariate import SingleUnivariate
+from ._BaseModel import Model
 
 
 def get_col(self, col: str) -> List[Union[int, float, str]]:
@@ -80,7 +72,7 @@ def get_col(self, col: str) -> List[Union[int, float, str]]:
     return attributes + [getattr(self, col)] + [sd]
 
 
-class Univariate(SingleUnivariate):
+class Univariate(Model):
     results: pd.DataFrame
     target_name: str
     target: Optional[pd.Series]
@@ -99,26 +91,45 @@ class Univariate(SingleUnivariate):
 
     pareto_sort_vector: List[float]
 
+    normalization_obj: Optional[Union[MinMaxScaler, StandardScaler]]
+
     def __init__(
         self,
         df_: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
+        df_val_: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
         fold_col_: str = "cv",
         feature_col_: Optional[str] = None,
         target_col_: Optional[str] = None,
         **kwargs,
     ) -> None:
-        df = to_pd_df(df_)
+        df: pd.DataFrame = to_pd_df(df_)
+        df_val: pd.DataFrame = to_pd_df(df_val_)
         if feature_col_ is None:
             feature_col_ = df.columns[1]
         if target_col_ is None:
             target_col_ = df.columns[0]
 
-        # Normalize the column if the cross-validated fit is improved
-        df[feature_col_] = self.run_normalization(X=df[feature_col_], y=df[target_col_])
-
         super().__init__(
-            df, fold_col=fold_col_, feature_col=feature_col_, target_col=target_col_
+            df,
+            df_val,
+            fold_col=fold_col_,
+            feature_col=feature_col_,
+            target_col=target_col_,
         )
+
+        # Normalize the column if the cross-validated fit is improved
+        df[feature_col_] = self.standardize(X=df[[feature_col_]])
+        self.unique_folds = get_unique(self.df.loc[:, self.fold_col])
+
+        self.cv_dict = {}
+        for fold in self.unique_folds:
+            self.cv_dict[fold] = Model(
+                self.df,
+                fold_n=fold,
+                fold_col=self.fold_col,
+                feature_col=self.feature_col if self.feature_col is not None else None,
+                target_col=self.target_col if self.target_col is not None else None,
+            )
 
         self.results = pd.DataFrame(index=self.unique_folds + ["mean", "std"])
         self.results.index.name = "fold"
@@ -221,83 +232,19 @@ class Univariate(SingleUnivariate):
         self.pareto_sort_vector = (
             pd.DataFrame([[m, s] for m, s in zip(pareto_sort_mean, pareto_sort_sd)])
             .apply(harmonic_mean)
-            .values
+            .values.tolist()
         )
-
-    def run_normalization(
-        self,
-        X,
-        y,
-        normalization_methods: Optional[List[Callable]] = None,
-        criterion: Optional[str] = None,
-    ):
-        if normalization_methods is None:
-            normalization_methods = [MinMaxScaler, StandardScaler]
-
-        X = X.values.reshape(-1, 1)
-
-        if get_column_dtype(y) in ["categorical", "binary"]:
-            model = LogisticRegression(
-                penalty=None, max_iter=1000, n_jobs=-1, fit_intercept=False
-            )
-            criterion = "f1" if criterion is None else criterion
-        elif get_column_dtype(y) in ["continuous", "float", "int"]:
-            model = LinearRegression(n_jobs=-1, fit_intercept=False)
-            criterion = (
-                "neg_mean_absolute_percentage_error" if criterion is None else criterion
-            )
-        else:
-            raise ValueError(
-                f"Target column {y} has an unsupported dtype: {get_column_dtype(y)}."
-            )
-
-        # fit unadjusted data
-        method = ["None"]
-        method_obj: List[Optional[Callable]] = [None]
-        results = [
-            cross_val_score(
-                model,
-                X,
-                y,
-                cv=5,
-                scoring=criterion,
-            ).mean()
-        ]
-
-        # fit normalized data
-        for m in normalization_methods:
-            method.append(m.__name__)
-            method_obj.append(m)
-            results.append(
-                cross_val_score(
-                    model,
-                    m().fit_transform(X),
-                    y,
-                    cv=5,
-                    scoring=criterion,
-                ).mean()
-            )
-
-        best_df = (
-            pd.DataFrame({"method": method, "score": results})
-            .sort_values(by="score", ascending=False)
-            .iloc[0]
-        )
-
-        best_method = best_df["method"]
-
-        best_obj = method_obj[method.index(best_method)]
-
-        # return a fitted instance of the best method
-        return best_obj().fit_transform(X) if best_obj is not None else X
 
     def _get_folds(self) -> List[Union[int, float, str]]:
         """
         Helper method that returns an ordered list of the unique elements of
         self.df.cv. Used for reference only.
         """
+
         return get_unique(
-            to_pd_s(self.cv) if to_pd_s(self.cv) is not None else self.df.iloc[:, 2]
+            to_pd_s(self.cv)
+            if isinstance(self.cv, (pl.Series, pd.Series))
+            else self.df.iloc[:, 2]
         )
 
     def get_data(
@@ -314,7 +261,7 @@ class Univariate(SingleUnivariate):
             cv fold. Note that `n` must be a named cv fold in the data,
             or an error will be raised.
         data : str, optional
-            What data to use for the plot. Choices are "train", "Validate",
+            What data to use for the plot. Choices are "train", "test",
             "all".
         fold_n : int, optional
             If element is "fold", which fold to get. Must be a named
@@ -343,7 +290,7 @@ class Univariate(SingleUnivariate):
         Parameters
         ----------
         data : str, optional
-            What data to use for the plot. Choices are "train", "Validate",
+            What data to use for the plot. Choices are "train", "test",
             "all".
 
         Returns
@@ -351,26 +298,29 @@ class Univariate(SingleUnivariate):
         Tuple[pd.Series, pd.Series, pd.Series]
             The X, y, and cv data.
         """
-        if data not in ["train", "Validate", "all"]:
+        if data not in ["train", "test", "all"]:
             raise ValueError(
-                f"data must be one of 'train', 'Validate', or 'all'. Got {data}."
+                f"data must be one of 'train', 'test', or 'all'. Got {data}."
             )
 
         # Set the data
         if data == "train":
             df = to_pd_df(self.df)
-        elif data == "Validate":
+            cv = df.loc[:, self.fold_col] if df is not None else self.df.iloc[:, 2]
+        elif data == "test":
             df = to_pd_df(self.df_val) if self.df_val is not None else to_pd_df(self.df)
+            df = df.assign(cv=-42)
+            cv = df["cv"]
         else:
             df = (
                 pd.concat([to_pd_df(self.df), to_pd_df(self.df_val.assign(cv=-42))])
                 if to_pd_df(self.df_val)
                 else to_pd_df(self.df)
             )
+            cv = df["cv"]
 
         X = df.loc[:, self.feature_name] if df is not None else self.df.iloc[:, 1]
         y = df.loc[:, self.target_name] if df is not None else self.df.iloc[:, 0]
-        cv = df.loc[:, self.fold_col] if df is not None else self.df.iloc[:, 2]
 
         return X, y, cv
 
@@ -387,7 +337,7 @@ class Univariate(SingleUnivariate):
         Parameters
         ----------
         data : str, optional
-            What data to use for the plot. Choices are "train", "Validate", and "all", "fold-n".
+            What data to use for the plot. Choices are "train", "test", and "all", "fold-n".
         **kwargs
             Additional keyword arguments passed to the plot function.
 
@@ -431,10 +381,17 @@ class Univariate(SingleUnivariate):
         else:
             ax0 = ax
 
+        if cv is None:
+            cv = (
+                to_pd_s(self.cv) if self.cv is not None else to_pd_s(self.df.iloc[:, 2])
+            )
+        else:
+            cv = to_pd_s(cv)
+
         ax0 = roc_curve_plot(
-            to_pd_s(self.y) if y is None else to_pd_s(y),
-            to_pd_s(self.yhat_train) if yhat is None else to_pd_s(yhat),
-            to_pd_s(self.cv) if cv is None else to_pd_s(cv),
+            to_pd_s(self.y_test) if y is None else to_pd_s(y),
+            to_pd_s(self.yhat_test) if yhat is None else to_pd_s(yhat),
+            cv,
             self.coef if coef is None else coef,
             self.se if se is None else se,
             self.pvalues if pvalues is None else pvalues,
@@ -484,11 +441,52 @@ class Univariate(SingleUnivariate):
         **kwargs,
     ) -> Axes:
         """
-        Plots the density of the feature at each level of the larget variable, both
-        in total and for each fold.
+        Plots the quintile lift for the target variable in total and for each fold. Quintile
+        lift is a grouped bar plot with each quintile of the feature on the x-axis and the
+        mean target value for each quintile on the y-axis. There are bars for both the actual
+        target value and the predicted target value.
+
+        This plot is useful for understanding how well the model is able to segment the target
+        variable based on the feature variable, and in the specific context of a univariate
+        analysis, how well the feature variable is able to predict the target variable by itself,
+        eg with no intercept, no other features, no regularization, etc.
+
+        Parameters
+        ----------
+        data : str, optional
+            What data to use for the plot. Choices are "train", "test", and "all", "fold-n".
+        ax : Axes, optional
+            The axes to plot on, by default None. If None, a new figure and axes will be created.
+        figsize : Tuple[float, float], optional
+            The size of the figure, by default None. If None, the default figure size will be used.
+        **kwargs
+            Additional keyword arguments passed to the plot function.
+
+        Returns
+        -------
+        Axes
+            The axes object for the plot.
+
+        Examples
+        --------
+        # Plot the quintile lift for the training data in a univariate analysis `uni`
+        # with the default figure size.
+        >>> uni.plot_quintile_lift(data="train")
+
+        # Plot the quintile lift for the test data in a univariate analysis `uni`
+        # with a figure size of (10, 10).
+        >>> uni.plot_quintile_lift(data="test", figsize=(10, 10))
+
+        # Plot the quintile lift for the training data in a univariate analysis `uni`
+        # with the default figure size and a custom color for the predicted target value.
+        >>> uni.plot_quintile_lift(data="train", color="red")
+
+        # Plot the quintile lift for the training data in a univariate analysis `uni`
+        # with the default figure size and a custom title.
+        >>> uni.plot_quintile_lift(data="train", title="Quintile Lift Plot")
         """
-        X, y, cv = self._plot_data(data)
-        yhat = self.model.predict(X)
+        X, y, _ = self._plot_data(data)
+        yhat = self.predict(X)
 
         # make plot
         if ax is None:
@@ -496,15 +494,90 @@ class Univariate(SingleUnivariate):
         else:
             ax0 = ax
 
+        yhat_polars = pl.Series(yhat)  # Convert yhat to polars.series.series.Series
         ax0 = quintile_lift_plot(
             X,
             y,
-            yhat,
+            yhat_polars,
             ax=ax0,
             figsize=self.figsize if figsize is None else figsize,
             **kwargs,
         )
         return ax0
+
+    def _add_to_report(self, rpt: Optional[Report] = None, **kwargs):
+        if rpt is None:
+            rpt = Report(**kwargs)
+
+        def density():
+            return self.plot_density(
+                data="train", feature_name=self.feature_name, figsize=self.figsize
+            )
+
+        def cdf():
+            return self.plot_cdf(data="train", figsize=self.figsize)
+
+        def roc():
+            return self.plot_roc_curve(
+                y=self.y,
+                yhat=self.yhat_train,
+                cv=self.df.cv,
+                coef=self.coef,
+                se=self.se,
+                pvalues=self.pvalues,
+                figsize=self.figsize,
+            )
+
+        def quintile():
+            return self.plot_quintile_lift(data="test", figsize=self.figsize)
+
+        return (
+            rpt.h2("Univariate Report")
+            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - Results")
+            .spacer(0.5)
+            .table(self.get_results())
+            .page_break()
+            .h2("Univariate Report")
+            .h3(
+                f"{plot_label(self.feature_name, incl_bracket=False)} - Kernel Density Plot"
+            )
+            .plot(density)
+            .spacer(0.125)
+            .caption(
+                "This plot shows the Gaussian kernel density for each level of the target variable, both in total and for each fold. The x-axis represents the feature variable, and the y-axis represents the density of the target variable. The cross-validation folds are included in slightly washed-out colors to help understand the variability of the data. There are annotations with the results of a t-test for the difference in means between the feature variable at each level of the target variable. The annotations corresponding to the color of the target variable level show the mean/median ratio to help understand differences in skewness between the levels of the target variable."
+            )
+            # TODO: Add in a table for the t-test results (Issue #62 on GitHub)
+            .page_break()
+            .h2("Univariate Report")
+            .h3(
+                f"{plot_label(self.feature_name, incl_bracket=False)} - Empirical CDF Plot"
+            )
+            .plot(cdf)
+            .spacer(0.125)
+            .caption(
+                "This plot shows the empirical cumulative distribution function for each level of the target variable, both in total and for each fold. The x-axis represents the feature variable, and the y-axis represents the cumulative distribution of the target variable. The cross-validation folds are included in slightly washed-out colors to help understand the variability of the data, and whether or not it is reasonable to assume that the data is drawn from different distributions."
+            )
+            .page_break()
+            .h2("Univariate Report")
+            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - ROC Curve")
+            .plot(roc)
+            .spacer(0.125)
+            .caption(
+                "This plot shows the receiver operating characteristic (ROC) curve for the target variable in total and for each fold. The x-axis represents the false positive rate, and the y-axis represents the true positive rate. This is based on a simple Logistic Regression model with no regularization, no intercept, and no other features. Annotations are on the plot to help understand the results of the model, including the coefficient, standard error, and p-value for the feature variable. The cross-validation folds are used to create the grey region around the mean ROC curve to help understand the variability of the data."
+            )
+            .caption(
+                "Significance of the ROC curve is determined based on the method from DeLong et al. (1988). In brief, the AUC is assumed to be normally distributed, and the z-score is calculated based on the AUC and the standard error. This z-score is compared to a +/- two standard deviations from a standard normal distribution to get the p-value."
+            )
+            .page_break()
+            .h2("Univariate Report")
+            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - Quintile Lift")
+            .plot(quintile)
+            .spacer(0.125)
+            .caption(
+                "The quintile lift plot is meant to show the power of the single feature to discriminate between the highest and lowest quintiles of the target variable."
+            )
+            .page_break()
+        )
 
     def get_results(self, use_formatting: bool = True) -> pd.DataFrame:
         """
@@ -522,32 +595,6 @@ class Univariate(SingleUnivariate):
             The results dataframe.
         """
         results = self.results.copy()
-        col_multi_index = [
-            "Fitted Coef.",
-            "Fitted p-Value",
-            "Fitted Std. Err.",
-            "Conf. Int. Lower",
-            "Conf. Int. Upper",
-            "Train Accuracy",
-            "Val Accuracy",
-            "Train AUC",
-            "Val AUC",
-            "Train F1",
-            "Test F1",
-            "Train Precision",
-            "Val Precision",
-            "Train Recall",
-            "Val Recall",
-            "Train MCC",
-            "Val MCC",
-            "Train Log-Loss",
-            "Val Log-Loss",
-        ]
-
-        row_multi_index = [f"Fold-{i}" for i in self.unique_folds] + [
-            "Agg. Mean",
-            "Agg. SD",
-        ]
 
         if use_formatting:
             pct_cols = [
@@ -579,62 +626,37 @@ class Univariate(SingleUnivariate):
                 else:
                     results[col] = results[col].apply(lambda x: f"{x:.1e}")
 
-            # Apply the multi-index at the end
-            results.columns = col_multi_index
-            results.index = row_multi_index
+            # Apply an index at the end
+            results.columns = pd.Index(
+                [
+                    "Fitted Coef.",
+                    "Fitted p-Value",
+                    "Fitted Std. Err.",
+                    "Conf. Int. Lower",
+                    "Conf. Int. Upper",
+                    "Train Accuracy",
+                    "Val Accuracy",
+                    "Train AUC",
+                    "Val AUC",
+                    "Train F1",
+                    "Test F1",
+                    "Train Precision",
+                    "Val Precision",
+                    "Train Recall",
+                    "Val Recall",
+                    "Train MCC",
+                    "Val MCC",
+                    "Train Log-Loss",
+                    "Val Log-Loss",
+                ]
+            )
+
+            results.index = pd.Index(
+                [f"Fold-{i}" for i in self.unique_folds]
+                + [
+                    "Agg. Mean",
+                    "Agg. SD",
+                ]
+            )
 
         return results.T
-
-    def _add_to_report(self, rpt: Optional[Report] = None, **kwargs):
-        if rpt is None:
-            rpt = Report(**kwargs)
-
-        def density():
-            return self.plot_density(
-                data="train", feature_name=self.feature_name, figsize=self.figsize
-            )
-
-        def cdf():
-            return self.plot_cdf(data="train", figsize=self.figsize)
-
-        def roc():
-            return self.plot_roc_curve(
-                y=self.y,
-                yhat=self.yhat_train,
-                cv=self.df.cv,
-                coef=self.coef,
-                se=self.se,
-                pvalues=self.pvalues,
-                figsize=self.figsize,
-            )
-
-        def quintile():
-            return self.plot_quintile_lift(data="train", figsize=self.figsize)
-
-        return (
-            rpt.h2("Univariate Report")
-            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - Results")
-            .spacer(0.5)
-            .table(self.get_results())
-            .page_break()
-            .h2("Univariate Report")
-            .h3(
-                f"{plot_label(self.feature_name, incl_bracket=False)} - Kernel Density Plot"
-            )
-            .plot(density)
-            .page_break()
-            .h2("Univariate Report")
-            .h3(
-                f"{plot_label(self.feature_name, incl_bracket=False)} - Empirical CDF Plot"
-            )
-            .plot(cdf)
-            .page_break()
-            .h2("Univariate Report")
-            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - ROC Curve")
-            .plot(roc)
-            .page_break()
-            .h2("Univariate Report")
-            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - Quintile Lift")
-            .plot(quintile)
-            .page_break()
-        )

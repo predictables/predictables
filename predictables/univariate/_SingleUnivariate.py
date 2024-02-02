@@ -14,12 +14,17 @@ class SingleUnivariate(Model):
     def __init__(
         self,
         df: pd.DataFrame,
+        df_val: pd.DataFrame,
         fold_col: str = "cv",
         feature_col: Optional[str] = None,
         target_col: Optional[str] = None,
     ):
         super().__init__(
-            df, fold_col=fold_col, feature_col=feature_col, target_col=target_col
+            df,
+            df_val,
+            fold_col=fold_col,
+            feature_col=feature_col,
+            target_col=target_col,
         )
         self.unique_folds = get_unique(self.df.loc[:, self.fold_col])
         self.cv_dict = {}

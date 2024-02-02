@@ -280,7 +280,7 @@ def jenson_shannon_divergence(
 
 
 def create_title(feature_name: str, target_name: str):
-    return f"CDF of {plot_label(feature_name)} conditioned on {plot_label(target_name)}"
+    return f"Empirical CDF of {plot_label(feature_name)} conditioned on {plot_label(target_name)}"
 
 
 def js_divergence_annotation(jsd: float) -> str:

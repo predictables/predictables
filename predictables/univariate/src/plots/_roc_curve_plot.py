@@ -3,15 +3,15 @@ from typing import Optional, Tuple, Union
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import plotly.graph_objects as go
+import plotly.graph_objects as go  # type: ignore
 from matplotlib.axes import Axes
-from scipy.stats import norm
-from sklearn.metrics import RocCurveDisplay, roc_auc_score, roc_curve
+from scipy.stats import norm  # type: ignore
+from sklearn.metrics import RocCurveDisplay, roc_auc_score, roc_curve  # type: ignore
 
 
 def roc_curve_plot(
     y: pd.Series,
-    yhat_proba: pd.DataFrame,
+    yhat_proba: pd.Series,
     fold: pd.Series,
     coef: float,
     se: float,
@@ -29,7 +29,7 @@ def roc_curve_plot(
     ----------
     y : pd.Series
         The true labels.
-    yhat_proba : pd.DataFrame
+    yhat_proba : pd.Series
         The predicted probabilities.
     fold : pd.Series
         The fold number for each observation.
@@ -70,9 +70,32 @@ def roc_curve_plot(
     )
 
     if backend == "matplotlib":
-        return roc_curve_plot_mpl(**params)
+        return roc_curve_plot_mpl(
+            y=y,
+            yhat_proba=yhat_proba,
+            fold=fold,
+            figsize=figsize,
+            n_bins=n_bins,
+            cv_alpha=cv_alpha,
+            ax=ax,
+            coef=coef,
+            se=se,
+            pvalue=pvalue,
+        )
     elif backend == "plotly":
-        return roc_curve_plot_plotly(**params)
+        raise NotImplementedError("Plotly backend not implemented yet.")
+        # return roc_curve_plot_plotly(
+        #     y=y,
+        #     yhat_proba=yhat_proba,
+        #     fold=fold,
+        #     figsize=figsize,
+        #     n_bins=n_bins,
+        #     cv_alpha=cv_alpha,
+        #     ax=ax,
+        #     coef=coef,
+        #     se=se,
+        #     pvalue=pvalue,
+        # )
     else:
         raise ValueError(
             f"Invalid backend (expecting either 'matplotlib' or 'plotly'): {backend}"
@@ -103,11 +126,11 @@ def create_auc_data(
     tpr : pd.Series
         The true positive rate, ranging from 0 to 1, at each threshold.
     """
-    roc = roc_curve(y, yhat_proba)
+    roc: Tuple[np.ndarray, np.ndarray] = roc_curve(y, yhat_proba)
 
     # Interpolate the data to get a smoother curve
-    fpr = pd.Series(np.linspace(0, 1, n_bins))
-    tpr = pd.Series(np.interp(fpr, roc[0], roc[1]))
+    fpr: pd.Series = pd.Series(np.linspace(0, 1, n_bins))
+    tpr: pd.Series = pd.Series(np.interp(fpr, roc[0], roc[1]))
 
     return fpr, tpr
 
@@ -118,7 +141,7 @@ def roc_curve_plot_plotly():
 
 def plot_individual_roc_curves(
     y: pd.Series,
-    yhat_proba: pd.DataFrame,
+    yhat_proba: pd.Series,
     curve_name: str = "ROC Curve",
     figax: Optional[Union[go.Figure, Axes]] = None,
     n_bins: int = 200,
@@ -136,7 +159,7 @@ def plot_individual_roc_curves(
     ----------
     y : pd.Series
         The true labels.
-    yhat_proba : pd.DataFrame
+    yhat_proba : pd.Series
         The predicted probabilities.
     curve_name : str, optional
         The name of the curve to be plotted. If not provided, defaults to "ROC Curve".
@@ -225,7 +248,7 @@ def plot_individual_roc_curves(
 
 def plot_cv_roc_curves(
     y: pd.Series,
-    yhat_proba: pd.DataFrame,
+    yhat_proba: pd.Series,
     fold: pd.Series,
     figax: Optional[Union[go.Figure, Axes, None]] = None,
     n_bins: int = 200,
@@ -242,7 +265,7 @@ def plot_cv_roc_curves(
     ----------
     y : pd.Series
         The true labels.
-    yhat_proba : pd.DataFrame
+    yhat_proba : pd.Series
         The predicted probabilities.
     fold : pd.Series
         The fold number for each observation.
@@ -287,7 +310,7 @@ def plot_cv_roc_curves(
 
 
 def calc_auc_curve_data_from_folds(
-    y: pd.Series, yhat_proba: pd.DataFrame, fold: pd.Series, n_bins: int = 200
+    y: pd.Series, yhat_proba: pd.Series, fold: pd.Series, n_bins: int = 200
 ):
     """
     Calculate the standard error of the ROC curve for each fold. Filters the data for each fold label,
@@ -297,7 +320,7 @@ def calc_auc_curve_data_from_folds(
     ----------
     y : pd.Series
         The true labels.
-    yhat_proba : pd.DataFrame
+    yhat_proba : pd.Series
         The predicted probabilities.
     fold : pd.Series
         The fold number for each observation.
@@ -315,10 +338,14 @@ def calc_auc_curve_data_from_folds(
     # Data preparation
 
     # Calculate the standard error of the ROC curve for each fold
-    fprs = pd.DataFrame()
-    tprs = pd.DataFrame()
+    fprs, tprs = pd.DataFrame(), pd.DataFrame()
+
     for f in fold.drop_duplicates().sort_values().values:
-        fpr, tpr = create_auc_data(y[fold == f], yhat_proba[fold == f], n_bins)
+        fpr, tpr = create_auc_data(
+            y.reset_index(drop=True)[fold.reset_index(drop=True) == f],
+            yhat_proba.reset_index(drop=True)[fold.reset_index(drop=True) == f],
+            n_bins,
+        )
         fprs[f"fold_{f}"] = fpr
         tprs[f"fold_{f}"] = tpr
 
@@ -358,7 +385,7 @@ def calc_auc_curve_data_from_folds(
 
 def plot_roc_auc_curves_and_confidence_bands(
     y: pd.Series,
-    yhat_proba: pd.DataFrame,
+    yhat_proba: pd.Series,
     fold: pd.Series,
     figax: Optional[Union[go.Figure, Axes, None]] = None,
     n_bins: int = 200,
@@ -377,7 +404,7 @@ def plot_roc_auc_curves_and_confidence_bands(
     ----------
     y : pd.Series
         The true labels.
-    yhat_proba : pd.DataFrame
+    yhat_proba : pd.Series
         The predicted probabilities.
     fold : pd.Series
         The fold number for each observation.
@@ -452,13 +479,9 @@ def plot_roc_auc_curves_and_confidence_bands(
             label="Mean(ROC) +/- 1 SD(ROC)",
         )
 
-        loe_params = dict(
-            alpha=0.5,
-            ls="--",
-            color="grey",
-            label="Random Guess",
+        figax.plot(
+            [0, 1], [0, 1], alpha=0.5, ls="--", color="grey", label="Random Guess"
         )
-        figax.plot([0, 1], [0, 1], **loe_params)
 
     if call_legend:
         plt.legend()
@@ -503,7 +526,7 @@ def delong_statistic_annotation_mpl(y: pd.Series, yhat_proba: pd.Series, ax: Axe
     )
 
     # get the figure size from the Axes object (used to scale the annotation)
-    figsize = ax.figure.get_size_inches()
+    figsize = ax.get_figure().get_size_inches()  # type: ignore
 
     # add annotation
     ax.annotate(
@@ -703,7 +726,7 @@ def roc_curve_plot_mpl(
     ----------
     y : pd.Series
         The true labels.
-    yhat_proba : pd.DataFrame
+    yhat_proba : pd.Series
         The predicted probabilities.
     fold : pd.Series
         The fold number for each observation.
@@ -748,11 +771,11 @@ def roc_curve_plot_mpl(
     )
     ax = delong_statistic_annotation_mpl(y=y, yhat_proba=yhat_proba, ax=ax)
     ax = coefficient_annotation_mpl(
-        coef=coef, std_error=se, pvalue=pvalue, ax=ax, figsize=figsize
+        coef=coef, std_error=se, pvalue=pvalue, ax=ax, figsize=figsize  # type: ignore
     )
     a = auc(y, yhat_proba)
     _, p = _delong_test_against_chance(y, yhat_proba)
-    ax = finalize_plot(ax, figsize=figsize, auc=a, auc_p_value=p)
+    ax = finalize_plot(ax, figsize=figsize, auc=a, auc_p_value=p)  # type: ignore
 
     return ax
 
