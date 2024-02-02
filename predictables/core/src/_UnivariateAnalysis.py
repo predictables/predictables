@@ -132,6 +132,10 @@ class UnivariateAnalysis:
             segments.append(segment)
         return segments
 
+    def _add_to_report(self, rpt: Report, feature: str) -> Report:
+        ua = getattr(self, feature)
+        return ua._add_to_report(rpt)
+
     def _generate_segment_report(
         self, segment: dict, filestem_: str, margins_: List[float]
     ):
