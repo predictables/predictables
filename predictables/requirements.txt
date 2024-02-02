@@ -30,7 +30,7 @@ pandas==2.1.4
 parso==0.8.3
 patsy==0.5.5
 pexpect==4.9.0
-Pillow==10.1.0
+Pillow==10.2.0
 platformdirs==4.1.0
 plotly==5.18.0
 polars==0.20.2

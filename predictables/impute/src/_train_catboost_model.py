@@ -1,15 +1,15 @@
-from typing import Union
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
-from catboost import CatBoostClassifier, CatBoostRegressor
+from catboost import CatBoostClassifier, CatBoostRegressor  # type: ignore
 
 from predictables.impute.src._get_cv_folds import get_cv_folds
-from predictables.util import to_pd_df
+from predictables.util import get_column_dtype, to_pd_df
 
 
 def train_one_catboost_model(
-    df: pd.DataFrame, target_column: str, cv_folds: Union[int, list] = None
+    df: pd.DataFrame, target_column: str, cv_folds: Optional[Union[int, list]] = None
 ) -> Union[CatBoostRegressor, CatBoostClassifier]:
     """
     Trains a CatBoost model (regressor or classifier) based on the target column's data type.
@@ -51,9 +51,9 @@ def train_one_catboost_model(
     # Get the cross-validation folds (if cv_folds is not None)
     if cv_folds is not None:
         if isinstance(cv_folds, int):
-            cv_folds = get_cv_folds(df, cv_folds)
+            cv_folds = list(get_cv_folds(df, cv_folds))
         elif isinstance(cv_folds, list):
-            cv_folds = cv_folds
+            cv_folds = list(cv_folds)
 
     # Separating features and target
     X = df.drop(columns=[target_column])
@@ -65,6 +65,11 @@ def train_one_catboost_model(
         trained_models = []
 
         # Loop through each fold
+        if isinstance(cv_folds, int):
+            cv_folds = list(get_cv_folds(df, cv_folds))
+        elif isinstance(cv_folds, list):
+            cv_folds = cv_folds
+
         for i, (train_idx, test_idx) in enumerate(cv_folds):
             # Train a model for the fold - regressor if the target is numeric, classifier if the target is categorical
             try:
@@ -72,8 +77,7 @@ def train_one_catboost_model(
                     model = CatBoostRegressor()
                 else:
                     model = CatBoostClassifier()
-            except Exception as _:
-                # print(f"Warning: {e} - trying to convert y to string")
+            except Exception:
                 y = y.astype(str)
                 model = CatBoostClassifier()
 
@@ -103,12 +107,11 @@ def train_one_catboost_model(
     else:
         # Train a model - regressor if the target is numeric, classifier if the target is categorical
         try:
-            if np.issubdtype(y.dtype, np.number):
+            if get_column_dtype(y) == "continuous":
                 model = CatBoostRegressor()
             else:
                 model = CatBoostClassifier()
-        except Exception as _:
-            # print(f"Warning: {e} - trying to convert y to string")
+        except Exception:
             y = y.astype(str)
             model = CatBoostClassifier()
 
@@ -121,7 +124,7 @@ def train_one_catboost_model(
         return model
 
 
-def train_catboost_model(df, missing_mask, cv_folds: Union[int, list] = None):
+def train_catboost_model(df, missing_mask, cv_folds: Optional[Union[int, list]] = None):
     """
     Trains a CatBoost model (regressor or classifier) for each column in the df.
 
@@ -163,14 +166,8 @@ def train_catboost_model(df, missing_mask, cv_folds: Union[int, list] = None):
     assert (
         df.shape == missing_mask.shape
     ), f"df and missing_mask must have the same shape. df.shape: {df.shape}, missing_mask.shape: {missing_mask.shape}"
-    # Initialize an empty dictionary to store the trained models
-    trained_models = {}
-
-    # Loop through each column in the df
-    for column in df.columns:
-        # Skip the column if it has no missing values
-        if missing_mask[column].any():
-            # Train a model for the column if it has missing values
-            trained_models[column] = [train_one_catboost_model(df, column, cv_folds)]
-
-    return trained_models
+    return {
+        column: [train_one_catboost_model(df, column, cv_folds)]
+        for column in df.columns
+        if missing_mask[column].any()
+    }

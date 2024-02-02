@@ -1,7 +1,6 @@
 import pandas as pd
-from PIL import Image
-from preditables.univariate.src.plots._quintile_lift_plot import quintile_lift_plot
 
+from predictables.univariate.src.plots._quintile_lift_plot import quintile_lift_plot
 from predictables.util.report import Report
 
 

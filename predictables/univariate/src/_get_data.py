@@ -2,7 +2,7 @@ from typing import List, Optional, Union
 
 import pandas as pd
 
-from predictables.util import get_unique, to_pd_df
+from predictables.util import get_unique
 
 
 def _get_data(

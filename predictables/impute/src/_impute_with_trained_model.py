@@ -10,7 +10,6 @@ def impute_single_column(
     trained_model,
     learning_rate: float = 0.1,
     only_missing: bool = True,
-    cv_fold: int = None,
 ) -> pd.DataFrame:
     """
     Impute missing values in a single column of a dataframe using a trained CatBoost model.
@@ -29,9 +28,6 @@ def impute_single_column(
         The learning rate to use for the CatBoost model. The default is 0.1.
     only_missing : bool, optional
         Whether to only impute missing values or all values. The default is True.
-    cv_fold : int, optional
-        The cross-validation fold to use for testing (all other folds will be used for training).
-        If None, all rows will be used for training. The default is None.
 
     Returns
     -------
@@ -65,7 +61,7 @@ def impute_single_column(
     # Get the full-credibility imputed value for only the missing rows in the column
     full_cred_estimate = df.copy()
     full_cred_estimate.loc[missing_mask[column], column] = trained_model.predict(
-        df.loc[missing_mask[column], df.columns != column]
+        df.loc[missing_mask[column], ~df.columns.isin([column])]
     )
 
     # Update the imputed missing value with the full_cred_estimate if dtype is "c"
@@ -96,12 +92,21 @@ def impute_with_trained_model(
     """
     Impute missing values in a dataframe using trained CatBoost models.
 
-    :param df: The dataframe to impute.
-    :param missing_mask: The mask indicating which values are missing in the df.
-    :param trained_models: A dictionary of trained CatBoost models whose keys are the column names of the data frame.
-    :param learning_rate: The learning rate to use for the CatBoost models.
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The dataframe to impute.
+    missing_mask : pd.DataFrame
+        The mask indicating which values are missing in the df.
+    trained_models : dict
+        A dictionary of trained CatBoost models whose keys are the column names of the data frame.
+    learning_rate : float, optional
+        The learning rate to use for the CatBoost models. The default is 0.1.
 
-    :return: A dataframe with missing values imputed.
+    Returns
+    -------
+    df : pd.DataFrame
+        A dataframe with missing values imputed.
     """
     df = to_pd_df(df)
     missing_mask = to_pd_df(missing_mask)
@@ -117,7 +122,7 @@ def impute_with_trained_model(
     ), f"df and missing_mask must have the same shape. df.shape: {df.shape}, missing_mask.shape: {missing_mask.shape}"
 
     # Loop through each column name from the keys of trained_models
-    for column in trained_models.keys():
+    for column in trained_models:
         # Impute the column with the trained model
         df = impute_single_column(
             df, missing_mask, column, trained_models[column][0], learning_rate

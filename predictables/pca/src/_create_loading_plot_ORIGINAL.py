@@ -28,8 +28,7 @@ def create_loading_plot(
     drop_legend_when_n_features=15,
 ):
     # `n_components` must be less than or equal to the number of components in the PCA
-    if n_components > pca.n_components_:
-        n_components = pca.n_components_
+    n_components = min(n_components, pca.n_components_)
 
     # cumulative loading threshold is the average loading threshold times the number of components
     cumulative_loading_threshold = average_loading_threshold * n_components
@@ -39,9 +38,7 @@ def create_loading_plot(
         max_features = feature_names.shape[0]
 
     # Override the legend if there are too many features
-    if max_features < drop_legend_when_n_features:
-        pass
-    else:
+    if max_features >= drop_legend_when_n_features:
         include_legend = False
 
         # Get the loadings
@@ -77,12 +74,11 @@ def create_loading_plot(
     # Only show the top `max_features` features, or all features if there are less than `max_features`
     if max_features is None:
         max_features = total_features
-    else:
-        if df.shape[0] > max_features:
-            df = df.iloc[:max_features, :]
-            filtered_features = True
-            filter_type = "max_features"
-            hidden_features = total_features - max_features
+    elif df.shape[0] > max_features:
+        df = df.iloc[:max_features, :]
+        filtered_features = True
+        filter_type = "max_features"
+        hidden_features = total_features - max_features
 
     # Get the explained variance for the first `n_components` components (for the title)
     explained_variance = pca.explained_variance_ratio_[:n_components].sum()
@@ -107,8 +103,6 @@ def create_loading_plot(
         if filtered_features
         else ""
     )
-
-    y_label_text = "Cumulative Absolute Loading"
 
     main_title_text = "Cumulative Influence On Explained Variance"
     sub_title_text = f"The cumulative absolute value of the loadings for each feature for the first {n_components} principal components\nThis plot indicates the features' relative contributions to the {explained_variance:.1%} of variance explained by the {n_components} components"
@@ -146,8 +140,9 @@ def create_loading_plot(
             x_label_filter if filtered_features else x_label_no_filter,
             fontsize=x_label_fontsize,
         )
-        ax.set_ylabel(y_label_text, fontsize=y_label_fontsize)
 
+        y_label_text = "Cumulative Absolute Loading"
+        ax.set_ylabel(y_label_text, fontsize=y_label_fontsize)
         plt.suptitle(
             main_title_text,
             fontsize=main_title_fontsize,
@@ -161,8 +156,8 @@ def create_loading_plot(
         plt.xticks(rotation=x_ticks_rotation, ha="right")
 
         # Add a legend if needed
-        if include_legend:
-            if filtered_features:
+        if filtered_features:
+            if include_legend:
                 plt.legend(
                     fontsize=legend_fontsize,
                     bbox_to_anchor=(1.05, 1),

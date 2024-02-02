@@ -1,4 +1,4 @@
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -113,30 +113,26 @@ class PCA:
 
     >>> # Confirm that the explained variance is 95% by printing the explained variance
     >>> pca.explained_variance
-
-
-    checking the `scree` plot
-
-
-
-
-
     """
 
     def __init__(
         self,
         n_components: int = 10,
-        df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] = None,
+        df: Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]] = None,
         preprocess_data: bool = True,
         random_state: int = 42,
-        pca: sklearn_PCA = None,
-        features: list = None,
+        pca: Optional[sklearn_PCA] = None,
+        features: Optional[List[str]] = None,  # type: ignore
         plotting_backend: str = "matplotlib",  # TODO: Add plotly support
         **kwargs,
     ):
         # Set attributes
         self.n_components = n_components
-        self.df = to_pd_df(df)
+        if df is not None:
+            self.df = to_pd_df(df)
+        else:
+            self.df = pd.DataFrame()
+
         self.preprocess_data = preprocess_data
         self.random_state = random_state
         self.plotting_backend = plotting_backend
@@ -165,7 +161,9 @@ class PCA:
         return f"PCA[{self.n_components} components]"
 
     def set_n_components(
-        self, n_components: int = None, variance_threshold: float = None
+        self,
+        n_components: Optional[int] = None,
+        variance_threshold: Optional[float] = None,
     ):
         """
         Sets the number of components to retain. Can either pass `n_components` or
@@ -211,7 +209,7 @@ class PCA:
 
     def fit_pca(
         self,
-        df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] = None,
+        df: Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]] = None,
         return_pca_obj: bool = False,
     ):
         """
@@ -242,7 +240,9 @@ class PCA:
 
         return pca
 
-    def transform_pca(self, df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] = None):
+    def transform_pca(
+        self, df: Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]] = None
+    ):
         """
         Transforms the provided dataset using the fitted PCA model.
 
@@ -261,11 +261,11 @@ class PCA:
             df = self.df
 
         # Transform dataset
-        transformed_df = self.pca.transform(df)
+        return self.pca.transform(df)
 
-        return transformed_df
-
-    def get_principal_components(self, components: Union[List[int], int, None] = None):
+    def get_principal_components(
+        self, components: Optional[Union[List[int], int]] = None
+    ):
         """
         Returns the principal components.
 
@@ -296,10 +296,10 @@ class PCA:
 
     def scree(
         self,
-        df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] = None,
-        variance_levels: List[float] = None,
+        df: Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]] = None,
+        variance_levels: Optional[List[float]] = None,
         y_pos_adjustment: float = 0.1,
-        ax: matplotlib.axes.Axes = None,
+        ax: Optional[matplotlib.axes.Axes] = None,
         figsize: Tuple[int, int] = (10, 7),
     ) -> matplotlib.axes.Axes:
         """

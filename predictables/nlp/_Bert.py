@@ -1,7 +1,7 @@
 import os
-from typing import Union
+from typing import Optional, Union
 
-from transformers import BertModel, BertTokenizer, BertTokenizerFast
+from transformers import BertModel, BertTokenizer, BertTokenizerFast  # type: ignore
 
 
 class Bert:
@@ -14,7 +14,7 @@ class Bert:
         use_fast_tokenizer: bool = True,
         truncation: Union[bool, str] = True,
         padding: Union[bool, str] = True,
-        text: Union[str, list] = None,
+        text: Optional[Union[str, list]] = None,
     ):
         """
         Initializes the BERT model and tokenizer for generating embeddings.
@@ -132,9 +132,9 @@ class Bert:
                 )
         else:
             if isinstance(text, list):
-                self.text.extend(text)
+                self.text += text  # type: ignore
             elif isinstance(text, str):
-                self.text.append(text)
+                self.text += [text]  # type: ignore
             else:
                 raise ValueError(
                     "`text` must be a string or a list of strings. Please try again."
@@ -209,5 +209,5 @@ class Bert:
         outputs = self.embeddings(masked_string)
 
         # get embeddings
-        embeddings = outputs.last_hidden_state
+        embeddings = outputs["last_hidden_state"]
         return embeddings

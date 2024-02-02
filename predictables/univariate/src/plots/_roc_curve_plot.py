@@ -56,27 +56,14 @@ def roc_curve_plot(
     ax : matplotlib.Axes.Axes
         The configured Axes object.
     """
-    params = dict(
-        y=y,
-        yhat_proba=yhat_proba,
-        fold=fold,
-        figsize=figsize if (figsize is not None) & (ax is not None) else (7, 7),
-        n_bins=n_bins if n_bins is not None else 200,
-        cv_alpha=cv_alpha if cv_alpha is not None else 0.4,
-        ax=ax,
-        coef=coef,
-        se=se,
-        pvalue=pvalue,
-    )
-
     if backend == "matplotlib":
         return roc_curve_plot_mpl(
             y=y,
             yhat_proba=yhat_proba,
             fold=fold,
-            figsize=figsize,
-            n_bins=n_bins,
-            cv_alpha=cv_alpha,
+            figsize=figsize if figsize is not None else (7, 7),
+            n_bins=n_bins if n_bins is not None else 200,
+            cv_alpha=cv_alpha if cv_alpha is not None else 0.4,
             ax=ax,
             coef=coef,
             se=se,
