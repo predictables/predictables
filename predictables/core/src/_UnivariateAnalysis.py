@@ -1,4 +1,5 @@
 import datetime
+import os
 from typing import List, Optional
 
 import pandas as pd
@@ -89,7 +90,12 @@ class UnivariateAnalysis:
         >>> _get_file_stem(None, "Univariate Analysis Report")
         "Univariate Analysis Report"
         """
-        return filename.split(".")[0] if filename is not None else default
+        if filename is not None:
+            # Use os.path.splitext to split the filename and its extension
+            file_stem, _ = os.path.splitext(filename)
+            return file_stem
+        else:
+            return default
 
     def _rpt_filename(
         self,
@@ -112,6 +118,40 @@ class UnivariateAnalysis:
             f"Building {total_features} univariate analysis reports,"
             f"and packaging in increments of {max_per_file}"
         )
+
+    def _segment_features(self, features: List[str], max_per_file: int) -> List[dict]:
+        """Segments features into chunks for report generation."""
+        segments = []
+        for i in range(0, len(features), max_per_file):
+            start_index = i
+            end_index = min(i + max_per_file, len(features))
+            segment = {
+                "file_num_start": start_index + 1,
+                "file_num_end": end_index,
+                "features": features[start_index:end_index],
+            }
+            segments.append(segment)
+        return segments
+
+    def _generate_segment_report(
+        self, segment: dict, filestem_: str, margins_: List[float]
+    ):
+        """Generates a report for a specific segment of features."""
+        filename_ = self._rpt_filename(
+            filestem_, segment["file_num_start"], segment["file_num_end"]
+        )
+        rpt = self._rpt_title_page(filename_, margins_)
+        rpt = self._rpt_overview_page(
+            rpt, segment["file_num_start"], segment["file_num_end"]
+        )
+
+        for feature in tqdm(
+            segment["features"],
+            desc=f"Building report for features {segment['file_num_start']} to {segment['file_num_end']}",
+        ):
+            rpt = self._add_to_report(rpt, feature=feature)
+
+        rpt.build()
 
     def build_report(
         self,
@@ -243,8 +283,7 @@ class UnivariateAnalysis:
 
         return (
             rpt.spacer(3)
-            .h1("Univariate Analysis Report")
-            .h2(self.model_name)
+            .h2(f"{self.model_name} Univariate Analysis Report")
             .style("h3", fontName="Helvetica")
             .h3(date)
             .page_break()

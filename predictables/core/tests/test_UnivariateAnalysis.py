@@ -1,61 +1,44 @@
-# import pandas as pd
-# import pytest
-# from pandas.testing import assert_frame_equal
+import pytest
+from unittest.mock import Mock, patch
+import pandas as pd
+from predictables.core.src._UnivariateAnalysis import UnivariateAnalysis
+# from predictables.univariate import Univariate
 
-# from predictables.core.src._UnivariateAnalysis import UnivariateAnalysis
-# from predictables.util import to_pd_df
+@pytest.fixture
+def df():
+    return pd.read_parquet("cancerdf.parquet")
 
+@pytest.fixture
+def features(df):
+    return df.columns.tolist()[:-2]
 
-# # Define fixtures for the inputs
-# @pytest.fixture
-# def df_train():
-#     return pd.DataFrame(
-#         {"A": [1, 2, 3], "B": [4, 5, 6], "cv": [1, 1, 2], "target": [0, 1, 0]}
-#     )
+# Mocking the Univariate class
+@pytest.fixture
+def mock_univariate_class():
+    with patch('predictables.univariate.Univariate', autospec=True) as mock:
+        yield mock
 
+@pytest.mark.parametrize("has_time_series_structure", [True, False])
+def test_univariate_analysis_constructor(df, features, mock_univariate_class, has_time_series_structure):
+    model_name = "TestModel"
+    ua = UnivariateAnalysis(
+        model_name=model_name,
+        df_train=df,
+        df_val=df,
+        target_column_name='target',
+        feature_column_names=features,
+        cv_folds=df['cv'],
+        has_time_series_structure=has_time_series_structure
+    )
+    # Test the basic attribute assignment
+    assert ua.model_name == model_name
+    assert ua.df.equals(df)
+    assert ua.df_val.equals(df)
+    assert ua.target_column_name == 'target'
+    assert ua.feature_column_names == features
+    assert ua.has_time_series_structure == has_time_series_structure
+    assert len(ua._feature_list) == len(features)
+    
+    # Verify that Univariate instances were created for each feature
+    mock_univariate_class.assert_called()
 
-# @pytest.fixture(params=[["A", "B"], ["A"], ["B"]])
-# def feature_column_names(request):
-#     return request.param
-
-
-# @pytest.fixture
-# def ua(df_train, feature_column_names):
-#     return UnivariateAnalysis(df_train, "target", feature_column_names, "cv", False)
-
-
-# # Test the __init__ method
-# def test_UnivariateAnalysis_init(
-#     df_train,
-#     feature_column_names,
-# ):
-#     univariate_analysis = UnivariateAnalysis(
-#         df_train,
-#         "target",
-#         feature_column_names,
-#         "cv",
-#         False,
-#     )
-
-#     (
-#         assert_frame_equal(univariate_analysis.df, to_pd_df(df_train)),
-#         f"Expected: {to_pd_df(df_train)} but got: {univariate_analysis}",
-#     )
-#     assert (
-#         univariate_analysis.target_column_name == "target"
-#     ), f"Expected: 'target' but got: {univariate_analysis.target_column_name}"
-#     assert (
-#         univariate_analysis.feature_column_names == feature_column_names
-#     ), f"Expected: {feature_column_names} but got: {univariate_analysis.feature_column_names}"
-#     assert (
-#         not univariate_analysis.has_time_series_structure
-#     ), f"Expected: False but got: {univariate_analysis.has_time_series_structure}"
-#     assert univariate_analysis._feature_list == [
-#         name.lower()
-#         .replace(" ", "_")
-#         .replace("-", "_")
-#         .replace("/", "_")
-#         .replace("(", "")
-#         .replace(")", "")
-#         for name in feature_column_names
-#     ], f"Expected: {feature_column_names} but got: {univariate_analysis._feature_list}"

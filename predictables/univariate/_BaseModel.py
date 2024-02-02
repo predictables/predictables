@@ -213,7 +213,7 @@ class Model:
 
         # fit normalized data
         self.scaler = StandardScaler()
-        self.scaler.fit(X)
+        self.scaler.fit(X.values)
 
     def standardize(
         self, X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]
