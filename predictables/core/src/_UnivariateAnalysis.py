@@ -27,6 +27,7 @@ class UnivariateAnalysis:
         self.df_val = df_val
         self.target_column_name = target_column_name
         self.feature_column_names = feature_column_names
+        self.cv_folds = cv_folds
         self.has_time_series_structure = has_time_series_structure
 
         feature_list = []
