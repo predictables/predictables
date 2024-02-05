@@ -1,8 +1,8 @@
-from datetime import datetime
+from datetime import datetime # type: ignore
 
-import pandas as pd
-import polars as pl
-import pytest
+import pandas as pd # type: ignore
+import polars as pl # type: ignore
+import pytest # type: ignore
 
 from predictables.util.src._get_column_dtype import (
     get_column_dtype,
@@ -310,6 +310,35 @@ def object_polars_series():
     This is not numeric and should be treated as categorical.
     """
     return pl.Series("object", ["a", "b", "c", "d", "e"]).cast(pl.Object)
+
+@pytest.mark.parametrize(
+    "series_name, expected",
+    [
+        ("numeric_pd_series", True),
+        ("integer_pd_series", True),
+        ("non_numeric_pd_series", False),
+        ("numeric_pandas_series", True),
+        ("integer_pandas_series", True),
+        ("non_numeric_pandas_series", False),
+        ("numeric_polars_series", True),
+        ("integer_polars_series", True),
+        ("non_numeric_polars_series", False),
+        ("date_pd_series", False),
+        ("date_pandas_series", False),
+        ("date_polars_series", False),
+        ("date_numpy_array", False),
+        ("date_tuple", False),
+        ("date_as_string_pandas_series", False),
+        ("date_as_string_polars_series", False),
+        ("date_as_string_numpy_array", False),
+        ("date_as_categorical_pandas_series", False),
+        ("object_polars_series", False),
+    ]
+)
+def test_get_column_dtype(series_name, expected, object_polars_series):
+    # Use the object_polars_series fixture to perform tests on the series
+    assert get_column_dtype(object_polars_series) == expected
+
 
 
 @pytest.mark.parametrize(
@@ -629,7 +658,7 @@ def test_is_categorical(request, series_name, expected):
         # ("object_polars_series", True),
     ],
 )
-def test_get_column_dtype(request, series_name, expected):
+def test_get_column_dtype2(request, series_name, expected):
     s = request.getfixturevalue(series_name)
 
     assert (

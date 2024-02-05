@@ -21,7 +21,9 @@ lint:
     - pyright
     - pylance
   enabled:
-    - prettier@3.2.4
+    - hadolint@2.12.0
+    - terrascan@1.18.11
+    - prettier@3.2.5
     - actionlint@1.6.26
     - bandit@1.7.7
     - black@24.1.1
@@ -41,7 +43,7 @@ lint:
     - taplo@0.8.1
     - svgo@3.2.0
     - trivy@0.49.0
-    - trufflehog@3.66.3
+    - trufflehog@3.67.1
     - yamllint@1.33.0
   ignore:
     - linters: [ALL]
@@ -68,7 +70,7 @@ lint:
           "**/fred/**",
           "**/old/**",
           "**/old_src/**",
-          "**/tests/**"
+          "**/tests/**",
         ]
 actions:
   disabled:
