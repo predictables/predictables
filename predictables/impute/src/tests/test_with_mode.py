@@ -224,7 +224,7 @@ def test_impute_with_median_empty_dataframe():
 
 def test_impute_with_median_data_already_imputed(pd_df):
     result = impute_with_median(pd_df)
-    pd_df["col"].fillna(pd_df["col"].median(), inplace=True)
+    pd_df["col"] = pd_df["col"].fillna(pd_df["col"].copy().median())
     expected = pl.from_pandas(pd_df)
     pl_assert_frame_equal(result.collect(), expected)
 

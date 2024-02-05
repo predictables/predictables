@@ -2,10 +2,10 @@
 FROM python:3.11
 
 # Set the working directory in the container to /app
-WORKDIR /home/app
+WORKDIR /
 
-# Add the current directory contents into the container at /home/app
-ADD . /home/app
+# Add the current directory contents into the container at /predictables
+ADD . /predictables
 
 # Update the package list and install software
 RUN apt-get update && apt-get upgrade -y \

@@ -68,8 +68,7 @@ lint:
           "**/fred/**",
           "**/old/**",
           "**/old_src/**",
-          "**/tests/**",
-          /home/aweaver/work/predictables/predictables/univariate/src/plots/util/_get_rc_params.py,
+          "**/tests/**"
         ]
 actions:
   disabled:
