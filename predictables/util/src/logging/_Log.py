@@ -2,6 +2,7 @@ import datetime
 import json
 import os
 import sys
+import uuid
 from typing import Union
 
 from predictables.util.src.logging._LogLevel import LogLevel
@@ -10,12 +11,13 @@ from predictables.util.src.logging._LogLevel import LogLevel
 class Log:
     def __init__(self):
         self.log = {
+            "log_id": str(uuid.uuid4()),
             "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "date": datetime.datetime.now().strftime("%Y-%m-%d"),
             "time": datetime.datetime.now().strftime("%H:%M:%S"),
             "cwd": os.getcwd(),
             "source_file": sys.argv[0],
-            "line_number": 0,
+            "line_number": self._get_line_number(),
             "message": "",
             "level": LogLevel.INFO.value,
         }
@@ -23,6 +25,7 @@ class Log:
 
     def _get_line_number(self):
         """Returns the line number the logger was called from."""
+        return sys._getframe(2).f_lineno
 
     def _msg(self, message: str, level: Union[str, int, LogLevel] = LogLevel.INFO):
         if isinstance(level, str):

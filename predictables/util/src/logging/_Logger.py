@@ -1,6 +1,8 @@
-import logging
+import json
 import os
 from typing import Optional
+
+from predictables.util.src.logging._Log import Log
 
 
 class Logger:
@@ -8,65 +10,125 @@ class Logger:
         self,
         name: str,
         file_name: Optional[str] = None,
-        level: int = logging.DEBUG,
-        format_str: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        date_fmt_str: str = "%Y-%m-%d",
     ):
         """
-        Create a logger that logs to the console and to a file.
+        Create a logger that logs _Log
 
         Parameters
         ----------
         name : str
             The name of the logger. This is the only required parameter.
-        file_name : str, optional
-            The name of the file to log to. If not provided, the file will be named self.name.log.
-        level : int, optional
-            The logging level. The default is logging.DEBUG.
         format_str : str, optional
             The format of the log messages. The default is "%(asctime)s - %(name)s - %(levelname)s - %(message)s".
-        date_fmt_str : str, optional
-            The format of the date in the log messages. The default is "%Y-%m-%d".
 
         Returns
         -------
         None. Initializes the logger, but need to call `get_logger()` to actually get the logger.
 
         """
-        self.logger = logging.getLogger(name)
-        self.logger.setLevel(level)
+        self.name = name
+        self.file_name = (
+            file_name if file_name else f"{name.lower().replace(' ', '_')}.log"
+        )
 
-        # create console handler
-        ch = logging.StreamHandler()
-        ch.setLevel(level)
+        # Create the log file if it doesn't exist (will be json)
+        if not os.path.exists(self.file_name):
+            with open(self.file_name, "w") as f:
+                f.write("[]")
 
-        # create formatter
-        formatter = logging.Formatter(format_str)
-        formatter.datefmt = date_fmt_str
-        ch.setFormatter(formatter)
+    def add(self, msg, level, *args, **kwargs):
+        """
+        Add a json log message to the logger.
 
-        # add ch to logger
-        self.logger.addHandler(ch)
+        Parameters
+        ----------
+        msg : str
+            The message to log.
+        level : str
+            The level of the log message. Must be one of "INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL".
 
-        # export log to file
-        if file_name is None:
-            # get the folder of the module calling this function
-            file_name = os.path.dirname(os.path.realpath(__file__))
+        Returns
+        -------
+        None. Adds a log message to the log file.
+        """
+        log = Log().info(msg)
+        with open(self.file_name, "r") as f:
+            logs = json.load(f)
+        logs.append(log.json())
+        with open(self.file_name, "w") as f:
+            json.dump(logs, f)
 
-        # add a folder called logs if it doesn't exist
-        if not os.path.exists(f"{file_name}/logs"):
-            os.makedirs(f"{file_name}/logs")
+    def info(self, msg, *args, **kwargs):
+        """
+        Add an info log message to the logger.
 
-        # add a file called self.name.log if it doesn't exist
-        file_name = f"{file_name}/logs/{name}.log"
+        Parameters
+        ----------
+        msg : str
+            The message to log.
 
-        fh = logging.FileHandler(file_name, mode="w")
-        fh.setLevel(level)
-        fh.setFormatter(formatter)
-        self.logger.addHandler(fh)
+        Returns
+        -------
+        None. Adds a log message to the log file.
+        """
+        self.add(Log().info(msg).json(), "INFO")
 
-    def get_logger(self):
-        return self.logger
+    def debug(self, msg, *args, **kwargs):
+        """
+        Add a debug log message to the logger.
 
-    def debug(self, msg):
-        self.logger.debug(msg)
+        Parameters
+        ----------
+        msg : str
+            The message to log.
+
+        Returns
+        -------
+        None. Adds a log message to the log file.
+        """
+        self.add(Log().debug(msg).json(), "DEBUG")
+
+    def warning(self, msg, *args, **kwargs):
+        """
+        Add a warning log message to the logger.
+
+        Parameters
+        ----------
+        msg : str
+            The message to log.
+
+        Returns
+        -------
+        None. Adds a log message to the log file.
+        """
+        self.add(Log().warning(msg).json(), "WARNING")
+
+    def error(self, msg, *args, **kwargs):
+        """
+        Add an error log message to the logger.
+
+        Parameters
+        ----------
+        msg : str
+            The message to log.
+
+        Returns
+        -------
+        None. Adds a log message to the log file.
+        """
+        self.add(Log().error(msg).json(), "ERROR")
+
+    def critical(self, msg, *args, **kwargs):
+        """
+        Add a critical log message to the logger.
+
+        Parameters
+        ----------
+        msg : str
+            The message to log.
+
+        Returns
+        -------
+        None. Adds a log message to the log file.
+        """
+        self.add(Log().critical(msg).json(), "CRITICAL")
