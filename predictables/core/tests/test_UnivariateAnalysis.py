@@ -1,9 +1,8 @@
-import pandas as pd
-import pytest
-from pandas.testing import assert_frame_equal, assert_series_equal
+import pandas as pd # type: ignore
+import pytest # type: ignore
+from pandas.testing import assert_frame_equal, assert_series_equal # type: ignore
 
 from predictables.core.src._UnivariateAnalysis import UnivariateAnalysis
-from predictables.util import Logger
 
 
 @pytest.fixture
@@ -135,8 +134,8 @@ def test_univariate_analysis_constructor_cv_folds(
         f"cv_folds not equal to original df:\noriginal: {df['cv']}\nnew: {ua.cv_folds}",
     )
     assert (
-        sorted(set(ua.cv_folds["cv"])) == [1, 2, 3, 4, 5]
-    ), f"the unique values in cv_folds['cv']={ua.cv_folds['cv']}, not [1, 2, 3, 4, 5] as expected"
+        sorted(set(ua.cv_folds)) == [1, 2, 3, 4, 5]
+    ), f"the unique values in cv_folds['cv']={ua.cv_folds}, not [1, 2, 3, 4, 5] as expected"
 
 
 @pytest.mark.parametrize("has_time_series_structure", [True, False])

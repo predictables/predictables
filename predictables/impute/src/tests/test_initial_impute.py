@@ -415,7 +415,7 @@ def test_get_missing_data_mask_with_bigger_polars_lazyframe(bigger_pl_lf):
 
 
 def test_get_missing_data_mask_with_all_values_missing(pd_df):
-    pd_df_all_missing = pd_df.copy()
+    pd_df_all_missing = pd_df.copy().astype("float")
     pd_df_all_missing.loc[:, :] = np.nan
     result = get_missing_data_mask(pd_df_all_missing)
     expected = pd.DataFrame(
@@ -482,7 +482,7 @@ def pl_categorical_series(pd_categorical_series):
 
 def test_impute_col_with_mode_with_pd_series(pd_categorical_series):
     df = pd.DataFrame({"colors": pd_categorical_series.astype(str)})
-    df["colors"].replace({"nan": None}, inplace=True)
+    df["colors"] = df["colors"].replace({"nan": None})
     result = impute_with_mode(df)
     # Convert to pandas DataFrame for easier comparison and assert
     result_df = result.collect().to_pandas()
