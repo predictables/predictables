@@ -10,6 +10,12 @@
 pip install predictables
 ```
 
+Until then, can build my docker dev container:
+```Docker
+docker build -t predictables-dev
+docker run -it -p 4000:80 --name predictables-dev predictables-dev
+```
+
 ## Features
 
 - **Automated Univariate Analysis:** Quick insights into each variable.
