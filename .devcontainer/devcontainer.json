@@ -1,5 +1,5 @@
 {
-    "name": "predictables-dev",
+    "name": "pt-dev",
     "dockerFile": "../Dockerfile",
     "forwardPorts": [80],
     "postCreateCommand": "echo 'Container is ready!'"
