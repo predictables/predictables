@@ -1,5 +1,7 @@
+import datetime
 import json
 import os
+import uuid
 from typing import Optional
 
 from predictables.util.src.logging._Log import Log
@@ -8,7 +10,7 @@ from predictables.util.src.logging._Log import Log
 class Logger:
     def __init__(
         self,
-        name: str,
+        name: str = "log",
         file_name: Optional[str] = None,
     ):
         """
@@ -28,8 +30,10 @@ class Logger:
         """
         self.name = name
         self.file_name = (
-            file_name if file_name else f"{name.lower().replace(' ', '_')}.log"
+            file_name if file_name else f"{name.lower().replace(' ', '_')}.json"
         )
+        self.session_ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.session_id = str(uuid.uuid4())
 
         # Create the log file if it doesn't exist (will be json)
         if not os.path.exists(self.file_name):
@@ -52,9 +56,24 @@ class Logger:
         None. Adds a log message to the log file.
         """
         log = Log().info(msg)
-        with open(self.file_name, "r") as f:
-            logs = json.load(f)
-        logs.append(log.json())
+        log.log["session_id"] = self.session_id
+        log.log["session_ts"] = self.session_ts
+
+        # Open the log file and append the log message
+        with open(self.file_name, "rb") as f:
+            logs = json.loads(f)
+
+        # Extract the log from the string
+        log = json.loads(log)
+
+        # Make sure the log is a dict, and logs is a list
+        if not isinstance(logs, list):
+            logs = [logs]
+        if not isinstance(log, dict):
+            log = log.log
+
+        logs.append(log)
+
         with open(self.file_name, "w") as f:
             json.dump(logs, f)
 

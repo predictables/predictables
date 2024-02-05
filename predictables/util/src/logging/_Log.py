@@ -21,7 +21,6 @@ class Log:
             "message": "",
             "level": LogLevel.INFO.value,
         }
-        return self
 
     def _get_line_number(self):
         """Returns the line number the logger was called from."""
