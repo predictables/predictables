@@ -5,7 +5,7 @@ from matplotlib.transforms import Bbox
 
 from predictables.util import DebugLogger
 
-DEBUG = True
+d = DebugLogger()
 
 
 def rotate_x_labels_if_overlap(ax: plt.Axes) -> plt.Axes:
@@ -77,6 +77,8 @@ def rotate_x_labels_if_overlap_V2(ax: plt.Axes) -> plt.Axes:
     matplotlib.axes.Axes
         The same Matplotlib axis object with potentially rotated x-axis tick labels.
     """
+    d.msg("Entering rotate_x_labels_if_overlap_V2")
+
     rotation_angle = _calculate_rotation_angle(ax)
     if rotation_angle > 0:
         # Only rotate if a need was found
@@ -86,6 +88,8 @@ def rotate_x_labels_if_overlap_V2(ax: plt.Axes) -> plt.Axes:
     # Right justify the labels to prevent overlap with the tick marks
     for label in ax.xaxis.get_ticklabels():
         label.set_horizontalalignment("right")
+
+    d.msg("Exiting rotate_x_labels_if_overlap_V2")
     return ax
 
 
@@ -106,7 +110,7 @@ def _calculate_rotation_angle(ax: plt.Axes) -> int:
         is 95, it means that the labels are still overlapping after rotating by 90 degrees, and the function was unable to
         find a suitable rotation angle, so it returns 0.
     """
-    d = DebugLogger(turned_on=DEBUG)
+    d.msg("Entering _calculate_rotation_angle")
     if ax.figure is not None:
         ax.figure.canvas.draw()
         d.msg("Canvas drawn to populate tick labels")
@@ -122,19 +126,30 @@ def _calculate_rotation_angle(ax: plt.Axes) -> int:
                 d.msg(
                     f"Overlap found between {label_i.get_text()} and {label_j.get_text()} with rotation angle {rotation_angle}."
                 )
-                if DEBUG:
+                if d.turned_on:
                     (
-                        ax.get_figure().savefig(f"overlap_{d.uuid}.png")
-                        if ax.get_figure() is not None
+                        ax.get_figure().savefig(f"overlap_{d.uuid}.png")  # type: ignore
+                        if ax is not None
                         else d.msg("No figure to save...")
                     )
 
                 overlap_found = True
+                d.msg(
+                    f"Overlap found when rotation_angle={rotation_angle}, breaking..."
+                )
                 break
+            else:
+                d.msg(
+                    f"No overlap found between {label_i.get_text()} and {label_j.get_text()} with rotation angle {rotation_angle}."
+                )
         if not overlap_found:
+            d.msg(
+                f"No overlap found with rotation angle {rotation_angle} -- returning rotation angle"
+            )
             break
         rotation_angle += 5
 
+    d.msg("Exiting _calculate_rotation_angle")
     # Return the rotation angle if it's less than or equal to 90, otherwise return 0
     return rotation_angle if rotation_angle <= 90 else 0
 

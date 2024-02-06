@@ -3,12 +3,10 @@ import os
 import uuid as _uuid
 from typing import Optional
 
-import dotenv
-
 from predictables.util.src.logging._LogLevel import LogLevel
 
 
-class DebugLogger:
+class DebugLogger(_logging.Logger):
     """
     A class to log debug messages with a unique identifier to identify the debug session.
     """
@@ -16,7 +14,7 @@ class DebugLogger:
     uuid: Optional[_uuid.UUID]
     turned_on: bool
 
-    def __init__(self):
+    def __init__(self, filename: str = "debug.log"):
         """
         Initializes the DebugLogger class.
         """
@@ -24,22 +22,25 @@ class DebugLogger:
 
         # Load the .env file to get the logging level - if we are not at the debug
         # level, we don't want to log anything.
-        dotenv.load_dotenv()
         self.turned_on = (
             LogLevel.convert_str(os.getenv("LOGGING_LEVEL", "info").lower()) == "DEBUG"
         )
 
         if self.turned_on:
+            self.filename = filename
             self._init_log()
+            self.level = LogLevel.DEBUG  # type: ignore
+
+        super().__init__(str(self.uuid))
 
     def _init_log(self):
         """
         Initializes the logging module.
         """
-        _logging.basicConfig(level=_logging.DEBUG)
+        _logging.basicConfig(filename=self.filename, level=_logging.DEBUG)
         _logging.debug(f"Debugging UUID: {self.uuid}")
 
-    def debug(self, message: str):
+    def debug_(self, message: str):
         """
         Logs a debug message with the unique identifier.
 
@@ -55,7 +56,7 @@ class DebugLogger:
         """
         Alias for the debug method.
         """
-        self.debug(message)
+        self.debug_(message)
 
     def turn_on(self):
         """

@@ -3,7 +3,6 @@
 # import pytest
 # import numpy as np
 # import pandas as pd
-# from ..bootstrap_pca import bootstrap_pca
 # from PredicTables.util import to_pl_df
 
 

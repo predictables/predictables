@@ -370,7 +370,7 @@ def create_loading_plot(
     feature_names: List[str],
     n_components: int = 10,
     ax: Optional[Axes] = None,
-    fig: Optional[go.figure] = None,
+    fig: Optional[go.Figure] = None,
     average_loading_threshold: float = 0.05,
     max_features: Optional[int] = None,
     figsize: Tuple[float, float] = (10, 10),
@@ -468,9 +468,10 @@ def create_loading_plot(
             fontsize=x_label_fontsize,
         )
 
-        main_title_text = "Cumulative Influence On Explained Variance"
         y_label_text = "Cumulative Absolute Loading"
         ax.set_ylabel(y_label_text, fontsize=y_label_fontsize)
+
+        main_title_text = "Cumulative Influence On Explained Variance"
         plt.suptitle(
             main_title_text,
             fontsize=main_title_fontsize,
@@ -482,11 +483,8 @@ def create_loading_plot(
             sub_title_text,
             fontsize=sub_title_fontsize,
         )
-        plt.xticks(rotation=x_ticks_rotation, ha="right")
-
-        # Add a legend if needed
-        if filtered_features:
-            if include_legend:
+        if include_legend:
+            if filtered_features:
                 plt.legend(
                     fontsize=legend_fontsize,
                     bbox_to_anchor=(1.05, 1),
