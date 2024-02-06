@@ -3,6 +3,7 @@ import datetime
 import itertools
 import os
 import uuid
+import warnings
 from typing import List, Optional, Union
 
 import matplotlib.pyplot as plt  # type: ignore
@@ -187,8 +188,10 @@ class Report:
             if hasattr(self.doc, k):
                 setattr(self.doc, k, v)
             else:
-                SyntaxWarning(
-                    f"Attribute {k} is not a valid attribute of the document. Ignoring."
+                warnings.warn(
+                    f"Attribute {k} is not a valid attribute of the document. Ignoring.",
+                    SyntaxWarning,
+                    stacklevel=2,
                 )
 
         return self
@@ -202,8 +205,10 @@ class Report:
             if hasattr(self.styles.get(tag), k):
                 setattr(self.styles.get(tag), k, v)
             else:
-                SyntaxWarning(
-                    f"Attribute {k} is not a valid attribute of the stylesheet. Ignoring."
+                warnings.warn(
+                    f"Attribute {k} is not a valid attribute of the stylesheet. Ignoring.",
+                    SyntaxWarning,
+                    stacklevel=2,
                 )
 
         return self
