@@ -3,7 +3,7 @@ import os
 import uuid as _uuid
 from typing import Optional
 
-from dotenv import load_env
+import dotenv
 
 from predictables.util.src.logging._LogLevel import LogLevel
 
@@ -14,20 +14,23 @@ class DebugLogger:
     """
 
     uuid: Optional[_uuid.UUID]
+    turned_on: bool
 
     def __init__(self):
         """
         Initializes the DebugLogger class.
         """
         self.uuid = _uuid.uuid1()
-        log_level = LogLevel(os.getenv("LOGGING_LEVEL", False))
-        self.turned_on = log_level.
 
-        if turned_on:
-            self.turned_on = True
+        # Load the .env file to get the logging level - if we are not at the debug
+        # level, we don't want to log anything.
+        dotenv.load_dotenv()
+        self.turned_on = (
+            LogLevel.convert_str(os.getenv("LOGGING_LEVEL", "info").lower()) == "DEBUG"
+        )
+
+        if self.turned_on:
             self._init_log()
-        else:
-            self.turned_on = False
 
     def _init_log(self):
         """

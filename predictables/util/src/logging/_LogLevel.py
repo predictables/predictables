@@ -41,8 +41,6 @@ class LogLevel(Enum):
     int_(level)
         Alias for get_int. Returns the integer representation of the LogLevel enum.
 
-
-
     """
 
     INFO = "info"
@@ -101,3 +99,11 @@ class LogLevel(Enum):
 
     def int_(self, level):
         return self.get_int(level)
+
+    @staticmethod
+    def convert_str(level: str):
+        return LogLevel.from_str(level).get_str()
+
+    @staticmethod
+    def convert_int(level: int):
+        return LogLevel.from_int(level).get_str()
