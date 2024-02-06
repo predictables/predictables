@@ -51,7 +51,8 @@ class LogLevel(Enum):
     ERROR = "error"
     CRITICAL = "critical"
 
-    def from_str(self, level: str):
+    @classmethod
+    def from_str(cls, level: str):
         mapping = {
             "I": "INFO",
             "INFO": "INFO",
@@ -70,21 +71,24 @@ class LogLevel(Enum):
             "5": "CRITICAL",
         }
 
-        return LogLevel[mapping[level.upper()]]
+        return cls[mapping[level.upper()]]
 
-    def _str(self, level: str):
-        return self.from_str(level)
+    @classmethod
+    def _str(cls, level: str):
+        return cls.from_str(level)
 
-    def from_int(self, level: int):
+    @classmethod
+    def from_int(cls, level: int):
         if level > 5:
-            return LogLevel.CRITICAL
+            return cls.from_str("CRITICAL")
         elif level < 1:
-            return LogLevel.INFO
+            return cls.from_str("INFO")
         else:
-            return LogLevel(level)
+            return cls(list(cls)[level - 1])
 
-    def _int(self, level: int):
-        return self.from_int(level)
+    @classmethod
+    def _int(cls, level: int):
+        return cls.from_int(level)
 
     def get_str(self):
         return self.name

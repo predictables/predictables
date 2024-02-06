@@ -122,8 +122,12 @@ def _calculate_rotation_angle(ax: plt.Axes) -> int:
                 d.msg(
                     f"Overlap found between {label_i.get_text()} and {label_j.get_text()} with rotation angle {rotation_angle}."
                 )
-
-                ax.get_figure().savefig(f"overlap_{d.uuid}.png")
+                if DEBUG:
+                    (
+                        ax.get_figure().savefig(f"overlap_{d.uuid}.png")
+                        if ax.get_figure() is not None
+                        else d.msg("No figure to save...")
+                    )
 
                 overlap_found = True
                 break

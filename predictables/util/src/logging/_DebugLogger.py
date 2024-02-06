@@ -1,6 +1,11 @@
 import logging as _logging
+import os
 import uuid as _uuid
 from typing import Optional
+
+from dotenv import load_env
+
+from predictables.util.src.logging._LogLevel import LogLevel
 
 
 class DebugLogger:
@@ -8,32 +13,19 @@ class DebugLogger:
     A class to log debug messages with a unique identifier to identify the debug session.
     """
 
-    turned_on: bool
     uuid: Optional[_uuid.UUID]
 
-    def __init__(self, turned_on: bool = False):
+    def __init__(self):
         """
         Initializes the DebugLogger class.
-
-        Parameters
-        ----------
-        turned_on : bool, optional
-            If True, the debug logger will be turned on, by default False. You must
-            specifically set this to True to turn on the debug logger.
-
-        Raises
-        ------
-        ValueError
-            If the turned_on parameter is not a boolean.
         """
-        if not isinstance(turned_on, bool):
-            raise ValueError("The turned_on parameter must be a boolean.")
         self.uuid = _uuid.uuid1()
+        log_level = LogLevel(os.getenv("LOGGING_LEVEL", False))
+        self.turned_on = log_level.
 
         if turned_on:
             self.turned_on = True
             self._init_log()
-
         else:
             self.turned_on = False
 
