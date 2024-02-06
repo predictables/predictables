@@ -1,4 +1,7 @@
-def get_rc_params() -> dict:
+from typing import Any, Dict
+
+
+def get_rc_params() -> Dict[str, Any]:
     """
     Returns a dictionary of Matplotlib RC parameters for customizing plot styles.
 
@@ -11,20 +14,13 @@ def get_rc_params() -> dict:
     dict
         A dictionary of Matplotlib RC parameters.
     """
-    new_rc = {}
-
-    new_rc["font.size"] = 12
-    new_rc["axes.titlesize"] = 16
-    new_rc["axes.labelsize"] = 14
-    new_rc["xtick.labelsize"] = 14
-    new_rc["ytick.labelsize"] = 14
-    # new_rc['legend.fontsize'] = 14
-    new_rc["figure.titlesize"] = 16
-
-    # Set default figure size
-    new_rc["figure.figsize"] = (17, 17)
-
-    # Set default figure dpi
-    new_rc["figure.dpi"] = 150
-
-    return new_rc
+    return {
+        "font.size": 12,
+        "axes.titlesize": 16,
+        "axes.labelsize": 14,
+        "xtick.labelsize": 14,
+        "ytick.labelsize": 14,
+        "figure.titlesize": 16,
+        "figure.figsize": (7, 7),  # type: ignore
+        "figure.dpi": 150,
+    }
