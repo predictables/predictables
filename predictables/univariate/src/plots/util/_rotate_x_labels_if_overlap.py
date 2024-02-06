@@ -3,6 +3,10 @@ from itertools import combinations
 import matplotlib.pyplot as plt
 from matplotlib.transforms import Bbox
 
+from predictables.util import DebugLogger
+
+DEBUG = True
+
 
 def rotate_x_labels_if_overlap(ax: plt.Axes) -> plt.Axes:
     """
@@ -102,16 +106,25 @@ def _calculate_rotation_angle(ax: plt.Axes) -> int:
         is 95, it means that the labels are still overlapping after rotating by 90 degrees, and the function was unable to
         find a suitable rotation angle, so it returns 0.
     """
+    d = DebugLogger(turned_on=DEBUG)
     if ax.figure is not None:
         ax.figure.canvas.draw()
+        d.msg("Canvas drawn to populate tick labels")
 
     labels = ax.xaxis.get_ticklabels()
     rotation_angle = 0
     while rotation_angle <= 90:
+        d.msg(f"Checking for overlap with rotation angle {rotation_angle}")
         overlap_found = False
         for label_i, label_j in combinations(labels, 2):
             bbox_i, bbox_j = _get_bbox(label_i, ax), _get_bbox(label_j, ax)
             if bbox_i.overlaps(bbox_j):
+                d.msg(
+                    f"Overlap found between {label_i.get_text()} and {label_j.get_text()} with rotation angle {rotation_angle}."
+                )
+
+                ax.get_figure().savefig(f"overlap_{d.uuid}.png")
+
                 overlap_found = True
                 break
         if not overlap_found:
