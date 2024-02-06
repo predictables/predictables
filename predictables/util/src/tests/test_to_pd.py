@@ -1,8 +1,8 @@
 # FILEPATH: /home/aweaver/work/hit-ratio-model/PredicTables/util/tests/test_to_pd.py
 
 import numpy as np
-import pandas as pd
-import polars as pl
+import pandas as pd  # type: ignore
+import polars as pl  # type: ignore
 import pytest
 
 from predictables.util import to_pd_df, to_pd_s
@@ -18,10 +18,6 @@ def series_input(request):
         return np.array([1, 2, 3, 4, 5])
 
 
-@pytest.mark.parametrize(
-    "input_type",
-    [pd.DataFrame, pl.DataFrame, pl.LazyFrame, pd.Series, pl.Series, np.ndarray],
-)
 @pytest.fixture(
     params=[pd.DataFrame, pl.DataFrame, pl.LazyFrame, pd.Series, pl.Series, np.ndarray]
 )

@@ -5,19 +5,15 @@ import os
 import uuid
 from typing import List, Optional, Union
 
-import matplotlib.pyplot as plt
-import pandas as pd
-import polars as pl
+import matplotlib.pyplot as plt  # type: ignore
+import pandas as pd  # type: ignore
+import polars as pl  # type: ignore
 import pygments  # type: ignore
-from reportlab.lib.colors import black, lightgrey, white
-
-# type: ignore
+from reportlab.lib.colors import black, lightgrey, white  # type: ignore
 from reportlab.lib.enums import TA_CENTER  # type: ignore
 from reportlab.lib.pagesizes import inch, letter  # type: ignore
 from reportlab.lib.styles import ParagraphStyle  # type: ignore
 from reportlab.lib.styles import getSampleStyleSheet  # type: ignore
-
-# type: ignore
 from reportlab.platypus import Flowable  # type: ignore
 from reportlab.platypus import Image  # type: ignore
 from reportlab.platypus import PageBreak  # type: ignore
@@ -27,7 +23,6 @@ from reportlab.platypus import Spacer  # type: ignore
 from reportlab.platypus import Table  # type: ignore
 from reportlab.platypus import TableStyle  # type: ignore
 
-# type: ignore
 from predictables.util.src._to_pd import to_pd_df
 
 
@@ -152,10 +147,6 @@ class Report:
         self.pagesize = pagesize
         self.dpi = dpi
 
-        if margins is None:
-            margins = [0.5, 0.5, 0.5, 0.5]
-        if margins is None:
-            margins = [0.5, 0.5, 0.5, 0.5]
         if margins is None:
             margins = [0.5, 0.5, 0.5, 0.5]
         self.doc = SimpleDocTemplate(filename, pagesize=pagesize)

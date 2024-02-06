@@ -1,1 +1,1 @@
-from ._Report import Report  # noqa F401
+from ._Report import Report  # noqa: F401
