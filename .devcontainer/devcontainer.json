@@ -1,6 +1,6 @@
 {
-    "name": "pt-dev",
-    "dockerFile": "../Dockerfile",
-    "forwardPorts": [80],
-    "postCreateCommand": "echo 'Container is ready!'"
+  "name": "pt-dev",
+  "dockerFile": "../Dockerfile",
+  "forwardPorts": [80],
+  "postCreateCommand": "echo 'Container is ready!'"
 }

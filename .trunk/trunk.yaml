@@ -42,9 +42,9 @@ lint:
     - sourcery@1.15.0
     - taplo@0.8.1
     - svgo@3.2.0
-    - trivy@0.49.0
-    - trufflehog@3.67.2
-    - yamllint@1.33.0
+    - trivy@0.49.1
+    - trufflehog@3.67.4
+    - yamllint@1.34.0
   ignore:
     - linters: [ALL]
       paths: [

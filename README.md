@@ -17,7 +17,7 @@ docker build -t predictables-dev
 docker run -it -p 4000:80 --name predictables-dev predictables-dev
 ```
 
-This will build a container with Python 3.11 and install all necessary packages to run predictables (or at least enough to make all my tests run). 
+This will build a container with Python 3.11 and install all necessary packages to run predictables (or at least enough to make all my tests run).
 
 ## Features
 
