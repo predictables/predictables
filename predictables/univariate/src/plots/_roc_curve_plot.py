@@ -2,11 +2,13 @@ from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
+import pandas as pd  # type: ignore
 import plotly.graph_objects as go  # type: ignore
 from matplotlib.axes import Axes
 from scipy.stats import norm  # type: ignore
 from sklearn.metrics import RocCurveDisplay, roc_auc_score, roc_curve  # type: ignore
+
+from predictables.util import get_unique
 
 
 def roc_curve_plot(
@@ -476,7 +478,9 @@ def plot_roc_auc_curves_and_confidence_bands(
     return figax
 
 
-def delong_statistic_annotation_mpl(y: pd.Series, yhat_proba: pd.Series, ax: Axes):
+def delong_statistic_annotation_mpl(
+    y: pd.Series, yhat_proba: pd.Series, fold: pd.Series, ax: Axes
+):
     """
     Implement the DeLong test to compare the ROC AUC against the 45-degree
     line (AUC=0.5).
@@ -493,6 +497,8 @@ def delong_statistic_annotation_mpl(y: pd.Series, yhat_proba: pd.Series, ax: Axe
         The true labels.
     yhat_proba : pd.Series
         The predicted probabilities.
+    fold : pd.Series
+        The fold number for each observation.
     ax : Axes
         The Axes object to be configured.
 
@@ -501,7 +507,7 @@ def delong_statistic_annotation_mpl(y: pd.Series, yhat_proba: pd.Series, ax: Axe
     ax : matplotlib.Axes.Axes
         The Axes object annotated with the DeLong test statistic and p-value.
     """
-    z, p = _delong_test_against_chance(y, yhat_proba)
+    z, p = _delong_test_against_chance(y, yhat_proba, fold)
 
     significance_message = "DeLong Test Statistic\nAgainst the 45-degree Line:\n\n"
     significance_message += f"z = {z:.3f}\n"
@@ -756,19 +762,29 @@ def roc_curve_plot_mpl(
         figsize=figsize,
         cv_alpha=cv_alpha,
     )
-    ax = delong_statistic_annotation_mpl(y=y, yhat_proba=yhat_proba, ax=ax)
+    ax = delong_statistic_annotation_mpl(y=y, yhat_proba=yhat_proba, fold=fold, ax=ax)
     ax = coefficient_annotation_mpl(
         coef=coef, std_error=se, pvalue=pvalue, ax=ax, figsize=figsize  # type: ignore
     )
     a = auc(y, yhat_proba)
-    _, p = _delong_test_against_chance(y, yhat_proba)
+    _, p = _delong_test_against_chance(y, yhat_proba, fold)
     ax = finalize_plot(ax, figsize=figsize, auc=a, auc_p_value=p)  # type: ignore
 
     return ax
 
 
-def _compute_auc_variance(y: pd.Series, yhat: pd.Series) -> float:
+def _compute_auc_variance(
+    y: pd.Series, yhat: pd.Series, fold: Optional[pd.Series]
+) -> float:
     """
+    This function is depricated. Use _empirical_auc_variance instead for new code. I am
+    leaving it here for now to avoid breaking existing code, but will comment out the
+    implementation and just return the empirical variance so that the tests pass.
+
+
+    ----------------------------
+    ---- vvv Depricated vvv ----
+    ----------------------------
     Compute the variance of the AUC estimator. This is used in the
     computation of the DeLong test, and is based on the following paper:
 
@@ -798,29 +814,64 @@ def _compute_auc_variance(y: pd.Series, yhat: pd.Series) -> float:
         - fitted: dictionary of fitted models and metrics
         - target: name of the target variable
 
+    ----------------------------
+    ---- ^^^ Depricated ^^^ ----
+    ----------------------------
+
     Returns
     -------
     var_auc : variance of the AUC estimator
     """
-    auc = roc_auc_score(y, yhat)
-    auc2 = np.power(auc, 2)
+    # auc = roc_auc_score(y, yhat)
+    # auc2 = np.power(auc, 2)
 
-    # Count of positive and negative classes
-    n = y.shape[0]
-    n1 = y[y == 1].sum()
-    n0 = n - n1
+    # # Count of positive and negative classes
+    # n = y.shape[0]
+    # n1 = y[y == 1].sum()
+    # n0 = n - n1
 
-    # Q1 and Q2 for variance calculation
-    Q1 = auc / np.subtract(2, auc)
-    Q0 = np.divide((2 * auc2), np.add(1, auc))
+    # # Q1 and Q2 for variance calculation
+    # Q1 = auc / np.subtract(2, auc)
+    # Q0 = np.divide((2 * auc2), np.add(1, auc))
 
-    # Compute the variance
-    return (
-        auc * np.subtract(1, auc) + (n1 - 1) * (Q1 - auc2) + (n0 - 1) * (Q0 - auc2)
-    ) / (n1 * n0)
+    # # Compute the variance
+    # return (
+    #     auc * np.subtract(1, auc) + (n1 - 1) * (Q1 - auc2) + (n0 - 1) * (Q0 - auc2)
+    # ) / (n1 * n0)
+    return _empirical_auc_variance(y, yhat, fold)  # type: ignore
 
 
-def _delong_test_against_chance(y: pd.Series, yhat: pd.Series) -> Tuple[float, float]:
+def _empirical_auc_variance(
+    y: pd.Series, yhat_proba: pd.Series, fold: pd.Series
+) -> float:
+    """
+    Compute the empirical variance of the AUC estimator. This is used in the
+    computation of the DeLong test, and is calculated as the unbiased sample
+    variance of the AUC estimator across the folds.
+
+    Parameters
+    ----------
+    y : pd.Series
+        The true labels.
+    yhat_proba : pd.Series
+        The predicted probabilities.
+    fold : pd.Series
+        The fold number for each observation.
+
+    Returns
+    -------
+    var_auc : float
+        The empirical variance of the AUC estimator.
+    """
+    return np.var(
+        [roc_auc_score(y[fold == f], yhat_proba[fold == f]) for f in get_unique(fold)],
+        ddof=1,
+    )
+
+
+def _delong_test_against_chance(
+    y: pd.Series, yhat_proba: pd.Series, fold: pd.Series
+) -> Tuple[float, float]:
     """
     Implement the DeLong test to compare the ROC AUC against the 45-degree
     line (AUC = 0.5).
@@ -833,9 +884,12 @@ def _delong_test_against_chance(y: pd.Series, yhat: pd.Series) -> Tuple[float, f
 
     Parameters
     ----------
-    None. Relies on the following class attributes:
-        - fitted: dictionary of fitted models and metrics
-        - target: name of the target variable
+    y : pd.Series
+        The true labels.
+    yhat_proba : pd.Series
+        The predicted probabilities.
+    fold : pd.Series
+        The fold number for each observation.
 
     Returns
     -------
@@ -844,8 +898,8 @@ def _delong_test_against_chance(y: pd.Series, yhat: pd.Series) -> Tuple[float, f
     p_value : float
         The p-value.
     """
-    auc = roc_auc_score(y, yhat)
-    var_auc = _compute_auc_variance(y, yhat)
+    auc = roc_auc_score(y, yhat_proba)
+    var_auc = _compute_auc_variance(y, yhat_proba, fold)
     z_statistic = np.subtract(auc, 0.5) / np.sqrt(var_auc)
     p_value = 2 * (1 - norm.cdf(abs(z_statistic)))
 
