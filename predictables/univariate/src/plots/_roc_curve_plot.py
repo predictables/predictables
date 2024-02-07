@@ -1,3 +1,4 @@
+import logging
 from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
@@ -908,11 +909,18 @@ def _empirical_auc_variance(
         auc_ = np.array(
             [roc_auc_score(y_[i], yhat_proba_[i]) for i in range(n_bootstraps)]
         )
-        return np.var(auc_, ddof=1)
+        return np.var(auc_, ddof=1) * (1 - bagging_fraction) / bagging_fraction
 
-    return np.var(
-        [roc_auc_score(y[fold == f], yhat_proba[fold == f]) for f in get_unique(fold)],
-        ddof=1,
+    return (
+        np.var(
+            [
+                roc_auc_score(y[fold == f], yhat_proba[fold == f])
+                for f in get_unique(fold)
+            ],
+            ddof=1,
+        )
+        * (len(fold.unique()) - 1)
+        / len(fold.unique())
     )
 
 
@@ -946,7 +954,10 @@ def _delong_test_against_chance(
         The p-value.
     """
     auc = roc_auc_score(y, yhat_proba)
-    var_auc = _compute_auc_variance(y, yhat_proba, fold)
+    var_auc = _empirical_auc_variance(y, yhat_proba, fold)
+    if np.sqrt(var_auc) == 0:
+        logging.warning(f"Variance of AUC is {var_auc}. Returning p-value of 1.0.")
+        return 0.0, 1.0
     z_statistic = np.subtract(auc, 0.5) / np.sqrt(var_auc)
     p_value = 2 * (1 - norm.cdf(abs(z_statistic)))
 

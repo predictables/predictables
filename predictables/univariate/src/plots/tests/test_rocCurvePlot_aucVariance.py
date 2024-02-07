@@ -1,5 +1,5 @@
 import logging
-from typing import Literal, Tuple
+from typing import Tuple
 
 from predictables.univariate.src.plots._roc_curve_plot import _empirical_auc_variance
 import numpy as np
