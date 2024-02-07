@@ -8,26 +8,42 @@ def report():
     return Report(filename="test_report.pdf")
 
 
-@pytest.fixture
-def heading_tag_generator(report):
-    headings = enumerate(
-        [
-            report.h1("Heading 1"),
-            report.h2("Heading 2"),
-            report.h3("Heading 3"),
-            report.h4("Heading 4"),
-            report.h5("Heading 5"),
-            report.h6("Heading 6"),
-        ]
-    )
-    yield ((level, f"Heading {i + 1}", i + 1) for i, level in headings)
 
+@pytest.mark.parametrize(
+    "heading,style,text,level",
+    [
+        ("h1", {"fontSize": 43}, "Heading 1", 1),
+        ("h2", {"fontSize": 43}, "Heading 2", 2),
+        ("h3", {"fontSize": 43}, "Heading 3", 3),
+        ("h4", {"fontSize": 43}, "Heading 4", 4),
+        ("h5", {"fontSize": 43}, "Heading 5", 5),
+        ("h6", {"fontSize": 43}, "Heading 6", 6),
+    ],
+)
+def test_heading_valid_attributes(report, heading, style, text, level):
+    """Test setting valid heading 1 attributes on Report instance."""
+    rpt1 = report.heading(level, text).style(heading, **style)
+    rpt2 = report
+    setattr(rpt2, heading, text)
+    rpt2 = rpt2.style(heading, **style)
 
-def test_heading_valid_attributes(report, heading_tag_generator):
-    """Test setting valid attributes on Report instance."""
-    for level, text, i in heading_tag_generator:
-        assert level.text == text, f"Expected {level} to be {text}, got {level.text}"
-        assert level.level == i, f"Expected {level} to be level {i}, got {level.level}"
-        assert isinstance(
-            level, Report
-        ), f"Expected set method to return self, but got {level}"
+    assert (
+        getattr(rpt1.styles.get(heading), "fontSize") == style["fontSize"]
+    ), f"Expected {heading} to have fontSize {style['fontSize']}, got {getattr(rpt1.styles.get(heading), 'fontSize')}"
+    assert (
+        getattr(rpt2.styles.get(heading), "fontSize") == style["fontSize"]
+    ), f"Expected {heading} to have fontSize {style['fontSize']}, got {getattr(rpt2.styles.get(heading), 'fontSize')}"
+    assert isinstance(
+        rpt1, Report
+    ), f"Expected set method to return self (or at least a Report object), but got {rpt1}, a {type(rpt1)} object"
+    assert isinstance(
+        rpt2, Report
+    ), f"Expected set method to return self (or at least a Report object), but got {rpt2}, a {type(rpt2)} object"
+    assert len(rpt1.elements) == 1, f"Expected 1 element, got {len(rpt1.elements)}"
+    assert len(rpt2.elements) == 1, f"Expected 1 element, got {len(rpt2.elements)}"
+    assert (
+        rpt1.elements[0].text == text
+    ), f"Expected {text} for rpt1, got {rpt1.elements[0].text}"
+    assert (
+        rpt2.elements[0].text == text
+    ), f"Expected {text} for rpt2, got {rpt2.elements[0].text}"
