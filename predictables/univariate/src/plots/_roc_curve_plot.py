@@ -842,7 +842,12 @@ def _compute_auc_variance(
 
 
 def _empirical_auc_variance(
-    y: pd.Series, yhat_proba: pd.Series, fold: pd.Series
+    y: pd.Series,
+    yhat_proba: pd.Series,
+    fold: pd.Series,
+    use_bootstrap: bool = False,
+    n_bootstraps: int = 1000,
+    bagging_fraction: float = 0.8,
 ) -> float:
     """
     Compute the empirical variance of the AUC estimator. This is used in the
@@ -857,12 +862,54 @@ def _empirical_auc_variance(
         The predicted probabilities.
     fold : pd.Series
         The fold number for each observation.
+    use_bootstrap : bool, optional
+        Whether to use bootstrapping to compute the variance. Defaults to False.
+    n_bootstraps : int, optional
+        The number of bootstraps to use. Defaults to 1000.
+    bagging_fraction : float, optional
+        The fraction of the data to use in each bootstrap. Defaults to 0.8.
 
     Returns
     -------
     var_auc : float
         The empirical variance of the AUC estimator.
     """
+    # Raise an error if there is only one fold
+    if (len(fold.unique()) == 1) and (not use_bootstrap):
+        raise ValueError(
+            "The empirical variance of the AUC estimator cannot be computed with only one fold. Either pass a different set of fold labels or set `use_bootstrap` to True."
+        )
+
+    # Raise an error if any of the folds have only one class
+
+    elif any(len(y[fold == f].unique()) == 1 for f in fold.unique()) and (
+        not use_bootstrap
+    ):
+        raise ValueError(
+            "The empirical variance of the AUC estimator cannot be computed if any of the folds have only one class. Either pass a different set of fold labels or set `use_bootstrap` to True."
+        )
+
+    elif (len(y) == 0) | (len(yhat_proba) == 0) | (len(fold) == 0):
+        raise ValueError(
+            f"The input arrays are empty:\n y: {len(y)}\n yhat_proba: {len(yhat_proba)}\n fold: {len(fold)}"
+        )
+
+    # If bootstrapping is enabled, compute the variance using bootstrapping
+    elif use_bootstrap:
+        idx = y.reset_index(drop=True).index.to_series()
+        idx_ = np.array(
+            [
+                idx.sample(frac=bagging_fraction, replace=True)
+                for _ in range(n_bootstraps)
+            ]
+        )
+        y_ = np.array([y.iloc[i] for i in idx_])
+        yhat_proba_ = np.array([yhat_proba.iloc[i] for i in idx_])
+        auc_ = np.array(
+            [roc_auc_score(y_[i], yhat_proba_[i]) for i in range(n_bootstraps)]
+        )
+        return np.var(auc_, ddof=1)
+
     return np.var(
         [roc_auc_score(y[fold == f], yhat_proba[fold == f]) for f in get_unique(fold)],
         ddof=1,
