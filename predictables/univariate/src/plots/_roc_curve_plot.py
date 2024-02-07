@@ -756,7 +756,7 @@ def roc_curve_plot_mpl(
         y,
         yhat_proba,
         fold,
-        ax=(ax if not isinstance(ax, go.Figure) else None),
+        ax=(None if isinstance(ax, go.Figure) else ax),
         n_bins=n_bins,
         backend="matplotlib",
         figsize=figsize,
