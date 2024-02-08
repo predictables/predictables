@@ -6,8 +6,9 @@ import pandas as pd  # type: ignore
 from tqdm import tqdm  # type: ignore
 
 from predictables.univariate import Univariate
-from predictables.util import Report
+from predictables.util import DebugLogger, Report
 
+dbg = DebugLogger(working_file="_UnivariateAnalysis.py")
 current_date = datetime.datetime.now()
 
 
@@ -24,13 +25,14 @@ class UnivariateAnalysis:
         cv_column_name: str,
         has_time_series_structure: bool,
     ):
+        dbg.msg("Initializing UnivariateAnalysis class - UA0001")  # debug only
         self.model_name = model_name
         self.df = df_train
         self.df_val = df_val
         self.target_column_name = target_column_name
         self.feature_column_names = feature_column_names
         self.cv_column_name = cv_column_name
-        self.cv_folds = self.df[cv_column_name]
+        self.cv_folds = self.df.collect().to_pandas()[cv_column_name]
         self.has_time_series_structure = has_time_series_structure
 
         feature_list = []
@@ -55,6 +57,7 @@ class UnivariateAnalysis:
         self._feature_list = feature_list
 
     def get_features(self):
+        dbg.msg("Getting features - UA0002")  # debug only
         return self._feature_list
 
     def _get_file_stem(
@@ -94,8 +97,15 @@ class UnivariateAnalysis:
         >>> _get_file_stem(None, "Univariate Analysis Report")
         "Univariate Analysis Report"
         """
+        dbg.msg("Getting file stem - UA0003")
         if filename is not None:
+            dbg.msg(
+                f"Filename ({filename}) was passed to _get_file_stem - UA0004"
+            )  # debug only
             file_stem, _ = os.path.splitext(filename)
+            dbg.msg(
+                f"File stem ({file_stem}) was extracted from filename ({filename}) and should not have an extension - UA0005"
+            )  # debug only
             return file_stem
 
         return default
@@ -108,11 +118,22 @@ class UnivariateAnalysis:
         end_num: Optional[int] = None,
     ) -> str:
         """Helper function to get the file name from a filename."""
+        dbg.msg("Start of _rpt_filename - UA0006")  # debug only
+        dbg.msg(
+            f"Parameters:\n\nfile_stem: {file_stem}\n\nstart_num: {start_num}\n\nend_num: {end_num}\n\n - UA0006a"
+        )  # debug only
         if file_stem is not None and (start_num is None or end_num is None):
+            dbg.msg(
+                f"File stem ({file_stem}) is not None and either start_num ({start_num}) or end_num ({end_num}) is None, so returning '{file_stem}.pdf' - UA0006b"
+            )  # debug only
             return file_stem + ".pdf"
         if start_num is not None and end_num is not None:
+            dbg.msg(
+                f"Both start_num ({start_num}) and end_num ({end_num}) are not None, so returning '{file_stem}_{start_num}_{end_num}.pdf' - UA0006c"
+            )
             return f"{file_stem}_{start_num}_{end_num}.pdf"
         else:
+            dbg.msg(f"Returning default ({default}) - UA0006d")
             return default
 
     @staticmethod
@@ -123,7 +144,46 @@ class UnivariateAnalysis:
         )
 
     def _segment_features(self, features: List[str], max_per_file: int) -> List[dict]:
-        """Segments features into chunks for report generation."""
+        """
+        Segments features into chunks for report generation.
+
+        Parameters
+        ----------
+        features : list
+            The list of features to segment.
+        max_per_file : int
+            The maximum number of features to include in a single report.
+
+        Returns
+        -------
+        list
+            A list of dictionaries, each containing a segment of features.
+
+        Examples
+        --------
+        >>> _segment_features(["a", "b", "c", "d", "e"], 2)
+        [
+            {
+                "file_num_start": 1,
+                "file_num_end": 2,
+                "n_features": 2,
+                "features": ["a", "b"],
+            },
+            {
+                "file_num_start": 3,
+                "file_num_end": 4,
+                "n_features": 2,
+                "features": ["c", "d"],
+            },
+            {
+                "file_num_start": 5,
+                "file_num_end": 5,
+                "n_features": 1,
+                "features": ["e"],
+            },
+        ]
+
+        """
         segments = []
         for i in range(0, len(features), max_per_file):
             start_index = i

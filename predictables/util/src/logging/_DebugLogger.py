@@ -1,9 +1,14 @@
+import datetime
 import logging as _logging
 import os
 import uuid as _uuid
-from typing import Optional
+from typing import Callable, Optional
+
+from dotenv import load_dotenv
 
 from predictables.util.src.logging._LogLevel import LogLevel
+
+load_dotenv()
 
 
 class DebugLogger(_logging.Logger):
@@ -14,7 +19,12 @@ class DebugLogger(_logging.Logger):
     uuid: Optional[_uuid.UUID]
     turned_on: bool
 
-    def __init__(self, filename: str = "debug.log"):
+    def __init__(
+        self,
+        filename: str = "debug.log",
+        working_file: Optional[str] = None,
+        message_prefix: Optional[Callable] = None,
+    ):
         """
         Initializes the DebugLogger class.
         """
@@ -32,6 +42,15 @@ class DebugLogger(_logging.Logger):
             self.level = LogLevel.DEBUG  # type: ignore
 
         super().__init__(str(self.uuid))
+        self.working_file = working_file
+        self.message_prefix = (
+            message_prefix
+            if message_prefix is not None
+            else self._default_message_prefix
+        )
+
+    def _default_message_prefix(self) -> str:
+        return f"{datetime.datetime.now()} - {self.uuid} - {self.working_file} -"
 
     def _init_log(self):
         """
@@ -50,7 +69,7 @@ class DebugLogger(_logging.Logger):
             The debug message to log.
         """
         if self.turned_on:
-            _logging.debug(f"Debugging UUID: {self.uuid} - {message}")
+            _logging.debug(f"{self._default_message_prefix()} - {message}")
 
     def msg(self, message: str):
         """
