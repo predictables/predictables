@@ -7,7 +7,6 @@ import pandas as pd
 import polars as pl
 
 from predictables.util.src._get_unique import get_unique
-from predictables.util.src._to_pd import to_pd_s
 
 
 @dataclass
@@ -57,15 +56,15 @@ class Segment:
                 f"features ({self.features}) must be a list (or list-like), and cannot be {type(self.features)}."
             )
 
-        if len(self.features) != len(get_unique(self.features)):
+        if len(self.features) != len(get_unique(pd.Series(self.features))):
             raise ValueError(
-                f"features in the feature list ({self.features}) must be unique:\n{[item for item in self.features if self.features.count(item) > 1]} is/are repeated."
+                f"features in the feature list ({self.features}) must be unique:\n{[item for item in self.features if list(self.features).count(item) > 1]} is/are repeated."
             )
 
         if isinstance(self.features, list):
             self.features = pd.Series(self.features)
         else:
-            self.features = to_pd_s(self.features)
+            self.features = pd.Series(list(self.features))
 
         if self.n_features is None:
             self.n_features = len(self.features)
