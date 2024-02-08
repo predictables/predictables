@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 import polars as pl
 import pytest
-import statsmodels.api as sm
-from sklearn.datasets import load_breast_cancer
+import statsmodels.api as sm  # type: ignore
+from sklearn.datasets import load_breast_cancer  # type: ignore
 
 from predictables.univariate.src._fit_sm_logistic_regression import (
     fit_sm_logistic_regression,

@@ -50,7 +50,7 @@ class DebugLogger(_logging.Logger):
         )
 
     def _default_message_prefix(self) -> str:
-        return f"{datetime.datetime.now()} - {self.uuid} - {self.working_file} -"
+        return f"{datetime.datetime.now()} - {self.uuid} - {self.working_file}"
 
     def _init_log(self):
         """

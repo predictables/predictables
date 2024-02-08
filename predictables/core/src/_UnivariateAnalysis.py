@@ -27,9 +27,9 @@ class UnivariateAnalysis:
         df_val: pd.DataFrame,
         target_column_name: str,
         feature_column_names: List[str],
-        cv_column_name: Optional[str],
-        cv_folds: Optional[pd.Series],
         has_time_series_structure: bool,
+        cv_column_name: Optional[str] = None,
+        cv_folds: Optional[pd.Series] = None,
     ):
         dbg.msg("Initializing UnivariateAnalysis class - UA0001")  # debug only
         self.model_name = model_name
@@ -121,27 +121,27 @@ class UnivariateAnalysis:
     def _rpt_filename(
         self,
         file_stem: Optional[str] = None,
-        default: str = "Univariate Analysis Report",
         start_num: Optional[int] = None,
         end_num: Optional[int] = None,
+        default: str = "Univariate Analysis Report",
     ) -> str:
         """Helper function to get the file name from a filename."""
         dbg.msg("Start of _rpt_filename - UA0006")  # debug only
         dbg.msg(
-            f"Parameters:\n\nfile_stem: {file_stem}\n\nstart_num: {start_num}\n\nend_num: {end_num}\n\n - UA0006a"
+            f"Parameters: | file_stem: {file_stem} | start_num: {start_num} | end_num: {end_num} | UA0006a"
         )  # debug only
         if file_stem is not None and (start_num is None or end_num is None):
             dbg.msg(
-                f"File stem ({file_stem}) is not None and either start_num ({start_num}) or end_num ({end_num}) is None, so returning '{file_stem}.pdf' - UA0006b"
+                f"File stem ({file_stem}) is not None and either start_num ({start_num}) or end_num ({end_num}) is None, so returning '{file_stem}.pdf' | UA0006b"
             )  # debug only
             return file_stem + ".pdf"
         if start_num is not None and end_num is not None:
             dbg.msg(
-                f"Both start_num ({start_num}) and end_num ({end_num}) are not None, so returning '{file_stem}_{start_num}_{end_num}.pdf' - UA0006c"
+                f"Both start_num ({start_num}) and end_num ({end_num}) are not None, so returning '{file_stem}_{start_num+1}_{end_num+1}.pdf' | UA0006c"
             )
-            return f"{file_stem}_{start_num}_{end_num}.pdf"
+            return f"{file_stem}_{start_num+1}_{end_num+1}.pdf"
         else:
-            dbg.msg(f"Returning default ({default}) - UA0006d")
+            dbg.msg(f"Returning default ({default}) | UA0006d")
             return default
 
     @staticmethod
@@ -287,14 +287,15 @@ class UnivariateAnalysis:
         overview_df = overview_df.map(
             lambda x: f"{np.round(x, 3):.1%}" if x < 1 else f"{np.round(x, 3):.1f}"
         )
+        overview_df.index = overview_df.index.map(lambda x: x.replace("_", " ").title())
 
         return (
             rpt.h1("Overview")
             .h2(f"{self.model_name} Univariate Analysis Report")
-            .h3(
+            .p(
                 "These sorted results for the features in this report indicate the average cross-validated test scores for each feature, if it were used as the only predictor in a simple linear model. Keep in mind that these results are based on the average, without considering the standard deviation. This means that the results are not necessarily the best predictors, but they are the best on average, and provide a fine starting point for grouping those predictors that are on average better than others. This means that nothing was done to account for possible sampling variability in the sortied results. This is a limitation of the univariate analysis, and it is important to keep this in mind when interpreting the results. It is also important to consider further that depending on the purpose of the model, the most appropriate features may not be the ones with the highest average test scores, if a different metric is more important."
             )
-            .h3(
+            .p(
                 "In particular, this should not be taken as an opinion (actuarial or otherwise) regarding the most appropriate features to use in a model, but it rather provides a starting point for further analysis."
             )
             .spacer(0.125)
@@ -303,6 +304,15 @@ class UnivariateAnalysis:
             .caption(
                 f"This table shows an overview of the results for the variables in this file, representing those whose average test score are ranked between {first_idx+1} and {last_idx+1} of the variables passed to the {self.model_name}."
             )
+            .page_break()
+        )
+
+    def _rpt_methodology_page(self, rpt: Report) -> Report:
+        return (
+            rpt.h1("Methodology")
+            .h2(f"{self.model_name} Univariate Analysis Report")
+            .h3("Introduction")
+            .p("The univariate analysis is a simple method to evaluate")
             .page_break()
         )
 
@@ -330,10 +340,7 @@ class UnivariateAnalysis:
         cols = []
         results = []
         total_df = []
-        for col in tqdm(
-            self.feature_column_names,
-            "Sorting features by their relevance based on an univariate analysis",
-        ):
+        for col in self.feature_column_names:
             if hasattr(self, col):
                 ua = getattr(self, col)
             else:

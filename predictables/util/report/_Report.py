@@ -949,7 +949,7 @@ class Report:
         self.elements.append(PageBreak())
         return self
 
-    def caption(self, text: str, width: float = 6):
+    def caption(self, text: str, width: float = 7):
         """
         Adds a caption to the document. The caption is centered and has no top
         margin or padding.
@@ -1050,9 +1050,9 @@ class Report:
             style = create_table_style()
 
         df = to_pd_df(df)
-        data = [[""] + df.columns[:,].tolist()] + [
+        data = [[""] + df.columns.tolist()] + [
             [df.index.tolist()[i]] + df.values.tolist()[i]
-            for i, row in enumerate(df.values.tolist())
+            for i, _ in enumerate(df.values.tolist())
         ]
         t = Table(data)
         if style is not None:
