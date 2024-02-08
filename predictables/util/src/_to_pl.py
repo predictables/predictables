@@ -49,18 +49,19 @@ def to_pl_s(s: Union[pd.Series, pl.Series]) -> pl.Series:
     """
     Convert to a polars series.
     """
-    # # If the series is empty, raise a value error
-    # if s.shape[0] == 0:
-    #     return pl.Series(s)
-
-    # If the series is a pandas series, convert to a polars series
     if isinstance(s, pd.Series):
-        return pl.from_pandas(s)
+        if s.dtype.name == "category":
+            return pl.Series(
+                name=s.name if s.name else None, values=s.astype("str").values
+            ).cast(pl.Categorical)
+        return pl.Series(name=s.name if s.name else None, values=s.values)
     elif isinstance(s, pl.Series):
         return s
     elif isinstance(s, np.ndarray):
         if s.ndim > 1:
             raise ValueError(f"s must be a 1-dimensional array - s.shape = {s.shape}")
+        return pl.Series(s)
+    elif isinstance(s, list):
         return pl.Series(s)
     else:
         raise TypeError(f"s must be a pandas or polars series, not {type(s)}.")

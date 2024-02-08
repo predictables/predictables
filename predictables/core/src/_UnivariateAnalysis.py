@@ -6,7 +6,7 @@ import pandas as pd  # type: ignore
 from tqdm import tqdm  # type: ignore
 
 from predictables.univariate import Univariate
-from predictables.util import DebugLogger, Report
+from predictables.util import DebugLogger, Report, to_pd_df
 
 dbg = DebugLogger(working_file="_UnivariateAnalysis.py")
 current_date = datetime.datetime.now()
@@ -22,7 +22,8 @@ class UnivariateAnalysis:
         df_val: pd.DataFrame,
         target_column_name: str,
         feature_column_names: List[str],
-        cv_column_name: str,
+        cv_column_name: Optional[str],
+        cv_folds: Optional[pd.Series],
         has_time_series_structure: bool,
     ):
         dbg.msg("Initializing UnivariateAnalysis class - UA0001")  # debug only
@@ -31,8 +32,10 @@ class UnivariateAnalysis:
         self.df_val = df_val
         self.target_column_name = target_column_name
         self.feature_column_names = feature_column_names
-        self.cv_column_name = cv_column_name
-        self.cv_folds = self.df.collect().to_pandas()[cv_column_name]
+        self.cv_column_name = cv_column_name if cv_column_name is not None else "cv"
+        self.cv_folds = (
+            to_pd_df(self.df)[cv_column_name] if cv_folds is None else cv_folds
+        )
         self.has_time_series_structure = has_time_series_structure
 
         feature_list = []
