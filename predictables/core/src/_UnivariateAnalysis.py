@@ -2,11 +2,16 @@ import datetime
 import os
 from typing import List, Optional
 
-import pandas as pd  # type: ignore
+import numpy as np
+import pandas as pd
 from tqdm import tqdm  # type: ignore
 
 from predictables.univariate import Univariate
 from predictables.util import DebugLogger, Report, to_pd_df
+from predictables.util.report.src._segment_features_for_report import (
+    Segment,
+    segment_features_for_report,
+)
 
 dbg = DebugLogger(working_file="_UnivariateAnalysis.py")
 current_date = datetime.datetime.now()
@@ -146,7 +151,9 @@ class UnivariateAnalysis:
             f"and packaging in increments of {max_per_file}"
         )
 
-    def _segment_features(self, features: List[str], max_per_file: int) -> List[dict]:
+    def _segment_features(
+        self, features: List[str], max_per_file: int
+    ) -> List[Segment]:
         """
         Segments features into chunks for report generation.
 
@@ -160,44 +167,31 @@ class UnivariateAnalysis:
         Returns
         -------
         list
-            A list of dictionaries, each containing a segment of features.
+            The list of segments.
 
         Examples
         --------
         >>> _segment_features(["a", "b", "c", "d", "e"], 2)
         [
-            {
-                "file_num_start": 1,
-                "file_num_end": 2,
-                "n_features": 2,
-                "features": ["a", "b"],
-            },
-            {
-                "file_num_start": 3,
-                "file_num_end": 4,
-                "n_features": 2,
-                "features": ["c", "d"],
-            },
-            {
-                "file_num_start": 5,
-                "file_num_end": 5,
-                "n_features": 1,
-                "features": ["e"],
-            },
+            Segment(start=0, end=2, n_features=2),
+            Segment(start=2, end=4, n_features=2),
+            Segment(start=4, n_features=1),
+        ]
+
+        >>> _segment_features(["a", "b", "c", "d", "e"], 4)
+        [
+            Segment(start=0, end=4, n_features=4),
+            Segment(start=4, n_features=1),
+        ]
+
+        >>> _segment_features(["a", "b", "c", "d", "e"], 3)
+        [
+            Segment(start=0, end=3, n_features=3),
+            Segment(start=3, n_features=2),
         ]
 
         """
-        segments = []
-        for i in range(0, len(features), max_per_file):
-            start_index = i
-            end_index = min(i + max_per_file, len(features))
-            segment = {
-                "file_num_start": start_index + 1,
-                "file_num_end": end_index,
-                "features": features[start_index:end_index],
-            }
-            segments.append(segment)
-        return segments
+        return segment_features_for_report(features, max_per_file)
 
     def _add_to_report(self, rpt: Report, feature: str) -> Report:
         ua = getattr(self, feature)
@@ -249,43 +243,18 @@ class UnivariateAnalysis:
         # Handle the case when None is passed as the filename
         filestem_ = self._get_file_stem(filename)
         features = self._sort_features_by_ua().index.tolist()
-        if len(features) > max_per_file:
-            more_files = True
-            files = []
-            rem_features = features.copy()
-            i = 0
-        else:
-            more_files = False
-
-        while more_files:
-            files.append(
-                {
-                    "file_num_start": i * max_per_file + 1,
-                    "file_num_end": min(
-                        (i + 1) * max_per_file,
-                        (i * max_per_file) + len(rem_features) - 1,
-                    ),
-                    "features": rem_features[: min(max_per_file, len(rem_features))],
-                }
-            )
-
-            rem_features = rem_features[min(max_per_file, len(rem_features)) :]
-            i += 1
-            if len(rem_features) == 0:
-                more_files = False
-
         # Handle the case when None is passed to the margins
         margins_: List[float] = margins if margins is not None else [0.5, 0.5, 0.5, 0.5]
         filename_: str
-        i = 0
+
         if len(features) > max_per_file:
-            # Handle the case when no filename is passed
+            files = segment_features_for_report(features, max_per_file)
+
+            i = 0
             counter = 0
-            filename_ = f"{self._rpt_filename(filestem_,start_num=files[i]['file_num_start'],end_num=files[i]['file_num_end'])}"
+            filename_ = f"{self._rpt_filename(filestem_,start_num=files[i].start,end_num=files[i].end)}"
             rpt = self._rpt_title_page(filename_, margins_)
-            rpt = self._rpt_overview_page(
-                rpt, files[i]["file_num_start"], files[i]["file_num_end"]
-            )
+            rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
             for X in tqdm(features, self._build_desc(len(features), max_per_file)):
                 rpt = getattr(self, X)._add_to_report(rpt)
                 counter += 1
@@ -293,11 +262,9 @@ class UnivariateAnalysis:
                 if counter == max_per_file:
                     rpt.build()
                     i += 1
-                    filename_ = f"{self._rpt_filename(filestem_,start_num=files[i]['file_num_start'],end_num=files[i]['file_num_end'])}"
+                    filename_ = f"{self._rpt_filename(filestem_,start_num=files[i].start,end_num=files[i].end)}"
                     rpt = self._rpt_title_page(filename_, margins_)
-                    rpt = self._rpt_overview_page(
-                        rpt, files[i]["file_num_start"], files[i]["file_num_end"]
-                    )
+                    rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
                     counter = 0
 
         else:
@@ -318,7 +285,7 @@ class UnivariateAnalysis:
 
         # Reformat to be a percentage with one decimal
         overview_df = overview_df.map(
-            lambda x: f"{x:.1%}" if x > 0.0001 else f"{x:.2e}"
+            lambda x: f"{np.round(x, 3):.1%}" if x < 1 else f"{np.round(x, 3):.1f}"
         )
 
         return (
