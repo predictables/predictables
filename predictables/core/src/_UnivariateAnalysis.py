@@ -2,8 +2,8 @@ import datetime
 import os
 from typing import List, Optional
 
-import pandas as pd
-from tqdm import tqdm
+import pandas as pd  # type: ignore
+from tqdm import tqdm  # type: ignore
 
 from predictables.univariate import Univariate
 from predictables.util import Report
@@ -12,6 +12,8 @@ current_date = datetime.datetime.now()
 
 
 class UnivariateAnalysis:
+    cv_folds: pd.Series
+
     def __init__(
         self,
         model_name: str,
@@ -19,7 +21,7 @@ class UnivariateAnalysis:
         df_val: pd.DataFrame,
         target_column_name: str,
         feature_column_names: List[str],
-        cv_folds: pd.Series,
+        cv_column_name: str,
         has_time_series_structure: bool,
     ):
         self.model_name = model_name
@@ -27,7 +29,8 @@ class UnivariateAnalysis:
         self.df_val = df_val
         self.target_column_name = target_column_name
         self.feature_column_names = feature_column_names
-        self.cv_folds = cv_folds
+        self.cv_column_name = cv_column_name
+        self.cv_folds = self.df[cv_column_name]
         self.has_time_series_structure = has_time_series_structure
 
         feature_list = []
