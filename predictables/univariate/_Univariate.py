@@ -14,10 +14,12 @@ from predictables.univariate.src.plots import (
     roc_curve_plot,
 )
 from predictables.univariate.src.plots.util import plot_label
-from predictables.util import get_unique, harmonic_mean, to_pd_df, to_pd_s
+from predictables.util import DebugLogger, get_unique, to_pd_df, to_pd_s
 from predictables.util.report import Report
 
 from ._BaseModel import Model
+
+dbg = DebugLogger(working_file="_Univariate.py")
 
 
 def get_col(self, col: str) -> List[Union[int, float, str]]:
@@ -108,6 +110,8 @@ class Univariate(Model):
             feature_col_ = df.columns[1]
         if target_col_ is None:
             target_col_ = df.columns[0]
+        dbg.msg("Entering Univariate.__init__: | Ux0001a")
+        dbg.msg(f"feature_col_={feature_col_}, target_col_={target_col_} | Ux0001b")
 
         super().__init__(
             df,
@@ -117,12 +121,19 @@ class Univariate(Model):
             target_col=target_col_,
         )
 
+        dbg.msg(
+            f"[{self.feature_col}]: Before normalization, mean of feature_col_ is: {df[feature_col_].mean()} | Ux0001c"
+        )
         # Normalize the column if the cross-validated fit is improved
         df[feature_col_] = self.standardize(X=df[[feature_col_]])
+        dbg.msg(
+            f"[{self.feature_col}]: After normalization, mean of feature_col_ is: {df[feature_col_].mean()} | Ux0001d"
+        )
         self.unique_folds = get_unique(self.df.loc[:, self.fold_col])
 
         self.cv_dict = {}
         for fold in self.unique_folds:
+            dbg.msg(f"Creating cv_dict for fold {fold} | Ux0001e")
             self.cv_dict[fold] = Model(
                 self.df,
                 fold_n=fold,
@@ -131,6 +142,7 @@ class Univariate(Model):
                 target_col=self.target_col if self.target_col is not None else None,
             )
 
+        dbg.msg(f"[{self.feature_col}]: Producing results dataframe | Ux0001f")
         self.results = pd.DataFrame(index=self.unique_folds + ["mean", "std"])
         self.results.index.name = "fold"
         for attribute in [
@@ -154,10 +166,12 @@ class Univariate(Model):
             "logloss_train",
             "logloss_test",
         ]:
-            self.results[attribute] = (
-                get_col(self, attribute) if hasattr(self, attribute) else None
-            )
-
+            if hasattr(self, attribute):
+                self.results[attribute] = get_col(self, attribute)
+            else:
+                dbg.msg(
+                    f"[{self.feature_col}]: Attribute {attribute} not found in self | Ux0001g"
+                )
         # ALIASES
         # =======
         # I am going to alias some of the api syntax errors here if they are
@@ -209,31 +223,6 @@ class Univariate(Model):
         )
 
         self.figsize = (7, 7) if "figsize" not in kwargs else kwargs["figsize"]
-
-        # Pareto sort vector
-        pareto_sort_mean = [
-            self.auc_test,
-            self.acc_test,
-            self.f1_test,
-            self.precision_test,
-            self.recall_test,
-            self.mcc_test,
-        ]
-
-        pareto_sort_sd = [
-            pd.Series([v.auc_test for _, v in self.cv_dict.items()]).std(),
-            pd.Series([v.acc_test for _, v in self.cv_dict.items()]).std(),
-            pd.Series([v.f1_test for _, v in self.cv_dict.items()]).std(),
-            pd.Series([v.precision_test for _, v in self.cv_dict.items()]).std(),
-            pd.Series([v.recall_test for _, v in self.cv_dict.items()]).std(),
-            pd.Series([v.mcc_test for _, v in self.cv_dict.items()]).std(),
-        ]
-
-        self.pareto_sort_vector = (
-            pd.DataFrame([[m, s] for m, s in zip(pareto_sort_mean, pareto_sort_sd)])
-            .apply(harmonic_mean)
-            .values.tolist()
-        )
 
     def _get_folds(self) -> List[Union[int, float, str]]:
         """

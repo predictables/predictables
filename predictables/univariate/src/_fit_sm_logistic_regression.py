@@ -1,5 +1,5 @@
 import warnings
-from typing import Any, Union
+from typing import Union
 
 import pandas as pd
 import polars as pl
@@ -33,17 +33,9 @@ def fit_sm_logistic_regression(
     """
     dbg.msg("Entering fit_sm_logistic_regression function")
     X_ = to_pd_df(X)
-    y_ = to_pd_s(y)
+    y_ = to_pd_s(y).astype(float)
 
-    Y: Any = (
-        y_.astype(str)
-        .str.replace("0", "0.01")
-        .str.replace("1", "0.99")
-        .str.replace("0.00.99", "0.01")
-        .astype(float)
-    )
-
-    dbg.msg(f"X_=\n{X_},\n\nY=\n{Y}")
+    dbg.msg(f"X_=\n{X_},\n\ny_=\n{y_}")
 
     def log_warning(message, category, filename, lineno, file=None, line=None):
         detailed_msg = f"Warning: {message}, Category: {category.__name__}, File: {filename}, Line: {lineno}"
@@ -53,7 +45,7 @@ def fit_sm_logistic_regression(
     with warnings.catch_warnings(record=True) as w:
         warnings.simplefilter("always")
         warnings.showwarning = log_warning
-        sm_model = sm.GLM(Y, X_, family=sm.families.Binomial()).fit(disp=True)
+        sm_model = sm.GLM(y_, X_, family=sm.families.Binomial()).fit(disp=True)
 
         # Check if there are any warnings and log them
         if w:
@@ -61,11 +53,5 @@ def fit_sm_logistic_regression(
                 log_warning(
                     warning.message, warning.category, warning.filename, warning.lineno
                 )
-
-    # # log warnings to the debug logger
-    # with warnings.catch_warnings():
-    #     warnings.simplefilter("always")
-    #     sm_model = sm.GLM(Y, X_, family=sm.families.Binomial()).fit()
-    # return sm.GLM(Y.astype(float), X_, family=sm.families.Binomial()).fit()
 
     return sm_model

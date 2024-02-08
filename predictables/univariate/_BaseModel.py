@@ -6,7 +6,7 @@ import polars as pl
 import sklearn.metrics as metrics  # type: ignore
 from sklearn.preprocessing import StandardScaler  # type: ignore
 
-from predictables.util import get_column_dtype, to_pd_df, to_pd_s
+from predictables.util import get_column_dtype, profiler, to_pd_df, to_pd_s
 
 from .src import (
     fit_sk_linear_regression,
@@ -215,6 +215,7 @@ class Model:
         self.scaler = StandardScaler()
         self.scaler.fit(X.values)
 
+    @profiler
     def standardize(
         self, X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]
     ) -> Union[pd.Series, pd.DataFrame]:
