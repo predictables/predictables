@@ -1,3 +1,4 @@
+import warnings
 from typing import Any, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
@@ -6,6 +7,7 @@ import polars as pl
 from matplotlib.axes import Axes
 from sklearn.preprocessing import MinMaxScaler, StandardScaler  # type: ignore
 
+from predictables.univariate._BaseModel import Model
 from predictables.univariate.src._get_data import _get_data
 from predictables.univariate.src.plots import (
     cdf_plot,
@@ -16,8 +18,6 @@ from predictables.univariate.src.plots import (
 from predictables.univariate.src.plots.util import plot_label
 from predictables.util import DebugLogger, get_unique, to_pd_df, to_pd_s
 from predictables.util.report import Report
-
-from ._BaseModel import Model
 
 dbg = DebugLogger(working_file="_Univariate.py")
 
@@ -110,6 +110,32 @@ class Univariate(Model):
             feature_col_ = df.columns[1]
         if target_col_ is None:
             target_col_ = df.columns[0]
+
+        # Drop rows with missing values in the feature column
+        if df[feature_col_].isna().sum() > 0:
+            dbg.msg(
+                f"Dropping {df[feature_col_].isna().sum()} rows with missing values in the feature column {feature_col_}"
+            )
+            warnings.warn(
+                f"Dropping {df[feature_col_].isna().sum()} rows with missing values in the feature column {feature_col_}",
+                category=UserWarning,
+                stacklevel=2,
+            )
+        non_na_idx = df[feature_col_].notna().index
+        df = df.loc[non_na_idx, :]
+        if df_val is not None:
+            if df_val[feature_col_].isna().sum() > 0:
+                dbg.msg(
+                    f"Dropping {df_val[feature_col_].isna().sum()} rows with missing values in the feature column {feature_col_}"
+                )
+                warnings.warn(
+                    f"Dropping {df_val[feature_col_].isna().sum()} rows with missing values in the feature column {feature_col_}",
+                    category=UserWarning,
+                    stacklevel=2,
+                )
+            non_na_idx_val = df_val[feature_col_].notna().index
+            df_val = df_val.loc[non_na_idx_val, :]
+
         dbg.msg("Entering Univariate.__init__: | Ux0001a")
         dbg.msg(f"feature_col_={feature_col_}, target_col_={target_col_} | Ux0001b")
 
