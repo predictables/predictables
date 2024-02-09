@@ -34,11 +34,11 @@ class PredicTables:
         ]
 
         self.ua = UnivariateAnalysis(
-            self.model_name,
-            self.df_train,
-            self.df_val,
-            self.target_column_name,
-            self.feature_column_names,
-            self.cv_folds,
+            model_name=self.model_name,
+            df_train=self.df_train,
+            df_val=self.df_val,
+            target_column_name=self.target_column_name,
+            feature_column_names=self.feature_column_names,
+            cv_folds=self.cv_folds,
             has_time_series_structure=self.has_time_series_structure,
         )

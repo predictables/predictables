@@ -6,6 +6,51 @@ import polars as pl
 from predictables.util.src._to_pl import to_pl_df
 
 
+def assert_df(func, row: int = 0, col: int = 0):
+    """
+    This is a decorator that asserts that the number of rows and columns in a dataframe have changed by the expected amount. It is used to ensure that a function that is supposed to add or remove rows and columns is working as expected, and no rows or columns are 'accidentally' added or removed.
+
+    Parameters
+    ----------
+    func : function
+        The function to be tested.
+    row : int, optional
+        The expected change in rows, by default 0, indicating no intended change.
+    col : int, optional
+        The expected change in columns, by default 0, indicating no intended change.
+
+    Returns
+    -------
+    function
+        The decorated function.
+
+    Raises
+    ------
+    AssertionError
+        If the number of rows or columns have changed by an unexpected amount -- eg if the number of rows or columns have changed by a number different from the passed `row` or `col` parameters.
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> @assert_df(row=-1)
+    ... def drop_first_row(df: pd.DataFrame):
+    ...     return df.drop(index=0)
+    >>> df = pd.DataFrame({'a': [1, 2, 3], 'b': [4, 5, 6]})
+    >>> print(drop_first_row(df))
+        a  b
+    1   2  5
+    2   3  6
+    """
+
+    def wrapper(*args, **kwargs):
+        df = to_pl_df(args[0])
+        result = func(*args, **kwargs)
+        assert_df_size_change(df, to_pl_df(result), row, col)
+        return result
+
+    return wrapper
+
+
 def assert_df_size_change(
     df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
     df1: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
