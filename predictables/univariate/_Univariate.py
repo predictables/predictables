@@ -127,7 +127,7 @@ class Univariate(Model):
             f"[{self.feature_col}]: After normalization, mean of feature_col_ is: {df[feature_col_].mean()} | Ux0001d"
         )
         self.unique_folds = get_unique(
-            self.df.select(self.fold_col).to_pandas()[self.fold_col]
+            self.df.select(self.fold_col).collect().to_pandas()[self.fold_col]
         )
 
         self.cv_dict = {}
@@ -232,7 +232,7 @@ class Univariate(Model):
         return get_unique(
             to_pd_s(self.cv)
             if isinstance(self.cv, (pl.Series, pd.Series))
-            else self.df.select(self.fold_col).to_pandas()[self.fold_col]
+            else self.df.select(self.fold_col).collect().to_pandas()[self.fold_col]
         )
 
     def get_data(
@@ -294,21 +294,40 @@ class Univariate(Model):
         # Set the data
         if data == "train":
             df = to_pd_df(self.df)
-            cv = df.loc[:, self.fold_col] if df is not None else self.df.iloc[:, 2]
+            cv = (
+                df.loc[:, self.fold_col]
+                if df is not None
+                else self.df.select(pl.col(self.fold_col))
+                .collect()
+                .to_pandas()[self.fold_col]
+            )
         elif data == "test":
             df = to_pd_df(self.df_val) if self.df_val is not None else to_pd_df(self.df)
             df = df.assign(cv=-42)
             cv = df["cv"]
         else:
             df = (
-                pd.concat([to_pd_df(self.df), to_pd_df(self.df_val.assign(cv=-42))])
+                pd.concat(
+                    [
+                        to_pd_df(self.df),
+                        to_pd_df(self.df_val.with_columns(pl.lit(-42).alias("cv"))),
+                    ]
+                )
                 if to_pd_df(self.df_val)
                 else to_pd_df(self.df)
             )
             cv = df["cv"]
 
-        X = df.loc[:, self.feature_name] if df is not None else self.df.iloc[:, 1]
-        y = df.loc[:, self.target_name] if df is not None else self.df.iloc[:, 0]
+        X = (
+            df.loc[:, self.feature_name]
+            if df is not None
+            else self.df.select(self.feature_name)
+        )
+        y = (
+            df.loc[:, self.target_name]
+            if df is not None
+            else self.df.select(self.target_name)
+        )
 
         return X, y, cv
 
@@ -371,7 +390,9 @@ class Univariate(Model):
 
         if cv is None:
             cv = (
-                to_pd_s(self.cv) if self.cv is not None else to_pd_s(self.df.iloc[:, 2])
+                to_pd_s(self.cv)
+                if self.cv is not None
+                else to_pd_s(self.df.select(self.fold_col).collect()[self.fold_col])
             )
         else:
             cv = to_pd_s(cv)

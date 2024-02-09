@@ -398,9 +398,19 @@ class Model:
         # Normalize the input data
         X = self.standardize(X)
 
+        # Convert X to pandas DataFrame if necessary
+        if not isinstance(X, (pd.DataFrame, pl.DataFrame, pl.LazyFrame)):
+            if isinstance(X, pl.Series):
+                X = pd.DataFrame(to_pd_s(X))
+            elif isinstance(X, pd.Series):
+                X = pd.DataFrame(X)
+            else:
+                raise ValueError(
+                    f"X must be a pandas or polars Series or DataFrame, not {type(X)}"
+                )
+
         # Predict the target variable and return the result as a pandas Series
         return pd.Series(
             self.model.predict(X),
-            index=to_pd_df(X).index,
             name=self.target_col + "_hat" if name is None else name,
         )
