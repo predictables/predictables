@@ -4,6 +4,7 @@ from typing import List, Optional
 
 import numpy as np
 import pandas as pd
+import polars as pl
 from tqdm import tqdm  # type: ignore
 
 from predictables.univariate import Univariate
@@ -338,7 +339,6 @@ class UnivariateAnalysis:
 
     def _sort_features_by_ua(self):
         cols = []
-        results = []
         total_df = []
         for col in self.feature_column_names:
             if hasattr(self, col):
@@ -352,21 +352,38 @@ class UnivariateAnalysis:
                     time_series_validation=self.has_time_series_structure,
                 )
             cols.append(col)
-            results.append(ua.pareto_sort_vector)
             total_df.append(
-                [
-                    ua.acc_test,
-                    ua.precision_test,
-                    ua.recall_test,
-                    ua.auc_test,
-                    ua.f1_test,
-                    ua.mcc_test,
-                ]
+                ua.results.select(
+                    [
+                        pl.col("feature")
+                        .cast(pl.Utf8)
+                        .str.format(f"{col:.1%}")
+                        .alias("Feature"),
+                        pl.col("acc_test").alias("Accuracy"),
+                        pl.col("precision_test").alias("Precision"),
+                        pl.col("recall_test").alias("Recall"),
+                        pl.col("auc_test").alias("AUC"),
+                        pl.col("f1_test").alias("F1"),
+                        pl.col("mcc_test").alias("MCC"),
+                        (
+                            pl.col("acc_test")
+                            + pl.col("precision_test")
+                            + pl.col("recall_test")
+                            + pl.col("auc_test")
+                            + pl.col("f1_test")
+                            + pl.col("mcc_test")
+                        )
+                        .truediv(6)
+                        .alias("Ave."),
+                    ]
+                )
+                .sort(
+                    "Ave.",
+                    reverse=True,
+                )
+                .collect()
+                .to_pandas()
+                .set_index("Feature")
             )
-        df = pd.DataFrame(
-            total_df,
-            columns=["Accuracy", "Precision", "Recall", "AUC", "F1", "MCC"],
-            index=cols,
-        )
-        df["Ave."] = df.mean(axis=1).values
+        df = pd.concat(total_df).T
         return df.sort_values("Ave.", ascending=False)

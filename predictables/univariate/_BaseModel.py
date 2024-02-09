@@ -167,14 +167,16 @@ class Model:
             pl.lit(self.model.conf_int()[0].values[0]).alias("lower_ci")
         )
         # self.upper_ci = self.model.conf_int()[1].values[0]
-        results = results.with_columns(pl.lit(self.upper_ci).alias("upper_ci"))
+        results = results.with_columns(
+            pl.lit(self.model.conf_int()[1]).alias("upper_ci")
+        )
         # self.n = self.model.nobs
         results = results.with_columns(pl.lit(self.model.nobs).alias("n"))
         # self.k = self.model.params.shape[0]
-        results = results.with_columns(pl.lit(self.k).alias("k"))
+        results = results.with_columns(pl.lit(self.model.params.shape[0]).alias("k"))
 
         # self.sk_coef = self.sk_model.coef_
-        results = results.with_columns(pl.lit(self.sk_coef).alias("sk_coef"))
+        results = results.with_columns(pl.lit(self.sk_model.coef_).alias("sk_coef"))
 
         if self.is_binary:
             results = results.with_columns(
