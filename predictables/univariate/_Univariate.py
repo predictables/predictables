@@ -1,4 +1,3 @@
-import warnings
 from typing import Any, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
@@ -18,10 +17,6 @@ from predictables.univariate.src.plots import (
 from predictables.univariate.src.plots.util import plot_label
 from predictables.util import DebugLogger, get_unique, to_pd_df, to_pd_s
 from predictables.util.report import Report
-
-from predictables.univariate._BaseModel import Model
-
-import warnings
 
 dbg = DebugLogger(working_file="_Univariate.py")
 

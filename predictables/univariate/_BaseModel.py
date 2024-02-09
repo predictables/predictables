@@ -6,7 +6,7 @@ import polars as pl
 import sklearn.metrics as metrics  # type: ignore
 from sklearn.preprocessing import StandardScaler  # type: ignore
 
-from predictables.util import get_column_dtype, profiler, to_pd_df, to_pd_s
+from predictables.util import get_column_dtype, profiler, to_pd_df, to_pd_s, to_pl_lf
 
 from .src import (
     fit_sk_linear_regression,
@@ -85,8 +85,8 @@ class Model:
         target_col: Optional[str] = None,
         time_series_validation: bool = False,
     ) -> None:
-        self.df = to_pd_df(df)
-        self.df_val = to_pd_df(df_val) if df_val is not None else to_pd_df(df)
+        self.df = to_pl_lf(df)
+        self.df_val = to_pl_lf(df_val) if df_val is not None else to_pl_lf(df)
         self.fold_n = fold_n
         self.fold_col = fold_col
         self.feature_col = (
@@ -95,14 +95,13 @@ class Model:
         self.target_col = target_col if target_col is not None else self.df.columns[0]
         self.time_series_validation = time_series_validation
 
-        idx = self.df.loc[~self.df[self.feature_col].isna().values.ravel(), :].index
-        idx_val = self.df_val.loc[~self.df_val[self.feature_col].isna().values.ravel(), :].index
-       
+        # Remove rows with missing values
+        self.df = self.df.filter(~pl.col(self.feature_col).is_null()).filter(
+            ~pl.col(self.target_col).is_null()
+        )
 
-        self.df = self.df.loc[idx]
         self.df_val = self.df_val.loc[idx_val]
 
-        
         # Split into train and test sets
         (self.X_train, self.y_train, self.X_test, self.y_test) = (
             time_series_validation_filter(
@@ -298,6 +297,6 @@ class Model:
         # Predict the target variable and return the result as a pandas Series
         return pd.Series(
             self.model.predict(X),
-            index=X.index,
+            index=to_pd_df(X).index,
             name=self.target_col + "_hat" if name is None else name,
         )
