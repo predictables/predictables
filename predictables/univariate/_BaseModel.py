@@ -95,6 +95,14 @@ class Model:
         self.target_col = target_col if target_col is not None else self.df.columns[0]
         self.time_series_validation = time_series_validation
 
+        idx = self.df.loc[~self.df[self.feature_col].isna().values.ravel(), :].index
+        idx_val = self.df_val.loc[~self.df_val[self.feature_col].isna().values.ravel(), :].index
+       
+
+        self.df = self.df.loc[idx]
+        self.df_val = self.df_val.loc[idx_val]
+
+        
         # Split into train and test sets
         (self.X_train, self.y_train, self.X_test, self.y_test) = (
             time_series_validation_filter(

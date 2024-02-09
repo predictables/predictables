@@ -9,7 +9,9 @@ from matplotlib.axes import Axes
 from scipy.stats import norm  # type: ignore
 from sklearn.metrics import RocCurveDisplay, roc_auc_score, roc_curve  # type: ignore
 
-from predictables.util import get_unique
+from predictables.util import get_unique, DebugLogger
+
+dbg = DebugLogger(working_file="_roc_curve_plot.py")
 
 
 def roc_curve_plot(
@@ -331,8 +333,9 @@ def calc_auc_curve_data_from_folds(
     fprs, tprs = pd.DataFrame(), pd.DataFrame()
 
     for f in fold.drop_duplicates().sort_values().values:
+        dbg.msg(f"fold: {fold} | y.name: {y.name} | ROC000Fa ")
         fpr, tpr = create_auc_data(
-            y.reset_index(drop=True)[fold.reset_index(drop=True) == f],
+            pd.Series(y.values[fold.values == f]),
             yhat_proba.reset_index(drop=True)[fold.reset_index(drop=True) == f],
             n_bins,
         )

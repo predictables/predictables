@@ -17,7 +17,9 @@ from predictables.univariate.src.plots.util import plot_label
 from predictables.util import DebugLogger, get_unique, to_pd_df, to_pd_s
 from predictables.util.report import Report
 
-from ._BaseModel import Model
+from predictables.univariate._BaseModel import Model
+
+import warnings
 
 dbg = DebugLogger(working_file="_Univariate.py")
 
@@ -110,6 +112,30 @@ class Univariate(Model):
             feature_col_ = df.columns[1]
         if target_col_ is None:
             target_col_ = df.columns[0]
+
+        # Drop rows with missing values in the feature col:
+        dbg.msg(
+            f"Dropping {df[feature_col_].isna().sum()} rows with missing values in the feature column {feature_col_}"
+        )
+        warnings.warn(
+            f"Dropping {df[feature_col_].isna().sum()} rows with missing values in the feature column {feature_col_}",
+            category=UserWarning,
+            stacklevel=2
+        )
+        nonna_idx = df[feature_col_].notna().index
+        df = df.loc[nonna_idx, :]
+        if df_val is not None:
+            dbg.msg(
+                f"Dropping {df[feature_col_].isna().sum()} rows with missing values in the feature column {feature_col_}"
+            )
+            warnings.warn(
+                f"Dropping {df[feature_col_].isna().sum()} rows with missing values in the feature column {feature_col_}",
+                category=UserWarning,
+                stacklevel=2
+            )
+            nonna_idx = df_val[feature_col_].notna().index
+            df_val = df_val.loc[nonna_idx, :]
+            
         dbg.msg("Entering Univariate.__init__: | Ux0001a")
         dbg.msg(f"feature_col_={feature_col_}, target_col_={target_col_} | Ux0001b")
 
