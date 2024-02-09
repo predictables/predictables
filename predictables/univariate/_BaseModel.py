@@ -6,15 +6,15 @@ import polars as pl
 import sklearn.metrics as metrics  # type: ignore
 from sklearn.preprocessing import StandardScaler  # type: ignore
 
-from predictables.util import get_column_dtype, profiler, to_pd_df, to_pd_s, to_pl_lf
-
-from .src import (
+from predictables.univariate.src import (
     fit_sk_linear_regression,
     fit_sk_logistic_regression,
     fit_sm_linear_regression,
     fit_sm_logistic_regression,
+    remove_missing_rows,
     time_series_validation_filter,
 )
+from predictables.util import get_column_dtype, to_pd_df, to_pd_s, to_pl_lf
 
 
 class Model:
@@ -24,17 +24,17 @@ class Model:
     """
 
     # Instance/type class attributes
-    df: pd.DataFrame
-    df_val: pd.DataFrame
+    df: pl.LazyFrame
+    df_val: pl.LazyFrame
     fold_n: Optional[int]
     fold_col: str
     feature_col: str
     target_col: str
     time_series_validation: bool
 
-    X_train: pd.DataFrame
+    X_train: pl.LazyFrame
     y_train: pd.Series
-    X_test: pd.DataFrame
+    X_test: pl.LazyFrame
     y_test: pd.Series
 
     is_binary: bool
@@ -96,11 +96,31 @@ class Model:
         self.time_series_validation = time_series_validation
 
         # Remove rows with missing values
-        self.df = self.df.filter(~pl.col(self.feature_col).is_null()).filter(
-            ~pl.col(self.target_col).is_null()
+        self.df = remove_missing_rows(self.df, self.feature_col, self.target_col)
+        self.df_val = remove_missing_rows(
+            self.df_val, self.feature_col, self.target_col
         )
 
-        self.df_val = self.df_val.loc[idx_val]
+        # Initialize results lazyframe
+        results = pl.DataFrame(
+            {
+                "model": [self.__str__()],
+                "model_name": [self.__repr__()],
+                "fold": [f"fold-{self.fold_n}" if self.fold_n is not None else "none"],
+                "feature": [self.feature_col],
+                "feature_dtype": [
+                    get_column_dtype(
+                        self.df.select(self.feature_col).collect()[self.feature_col]
+                    )
+                ],
+                "target": [self.target_col],
+                "target_dtype": [
+                    get_column_dtype(
+                        self.df.select(self.target_col).collect()[self.target_col]
+                    )
+                ],
+            }
+        ).lazy()
 
         # Split into train and test sets
         (self.X_train, self.y_train, self.X_test, self.y_test) = (
@@ -132,65 +152,150 @@ class Model:
         self.yhat_test: Union[pd.Series[Any], pd.DataFrame[Any]] = self.predict(self.X_test)  # type: ignore
 
         # Pull stats from the fitted model object
-        self.coef = self.model.params.iloc[0]
-        self.pvalues = self.model.pvalues.iloc[0]
-        self.aic = self.model.aic
-        self.se = self.model.bse.iloc[0]
-        self.lower_ci = self.model.conf_int()[0].values[0]
-        self.upper_ci = self.model.conf_int()[1].values[0]
-        self.n = self.model.nobs
-        self.k = self.model.params.shape[0]
+        # self.coef = self.model.params.iloc[0]
+        results = results.with_columns(pl.lit(self.model.params.iloc[0]).alias("coef"))
+        # self.pvalues = self.model.pvalues.iloc[0]
+        results = results.with_columns(
+            pl.lit(self.model.pvalues.iloc[0]).alias("pvalues")
+        )
+        # self.aic = self.model.aic
+        results = results.with_columns(pl.lit(self.model.aic).alias("aic"))
+        # self.se = self.model.bse.iloc[0]
+        results = results.with_columns(pl.lit(self.model.bse.iloc[0]).alias("se"))
+        # self.lower_ci = self.model.conf_int()[0].values[0]
+        results = results.with_columns(
+            pl.lit(self.model.conf_int()[0].values[0]).alias("lower_ci")
+        )
+        # self.upper_ci = self.model.conf_int()[1].values[0]
+        results = results.with_columns(pl.lit(self.upper_ci).alias("upper_ci"))
+        # self.n = self.model.nobs
+        results = results.with_columns(pl.lit(self.model.nobs).alias("n"))
+        # self.k = self.model.params.shape[0]
+        results = results.with_columns(pl.lit(self.k).alias("k"))
 
-        self.sk_coef = self.sk_model.coef_
+        # self.sk_coef = self.sk_model.coef_
+        results = results.with_columns(pl.lit(self.sk_coef).alias("sk_coef"))
 
         if self.is_binary:
-            self.acc_train = metrics.accuracy_score(
-                self.y_train, self.yhat_train.round(0)
+            results = results.with_columns(
+                [
+                    pl.lit(
+                        metrics.accuracy_score(self.y_train, self.yhat_train.round(0))
+                    ).alias("acc_train"),
+                    pl.lit(
+                        metrics.accuracy_score(self.y_test, self.yhat_test.round(0))
+                    ).alias("acc_test"),
+                    pl.lit(
+                        metrics.f1_score(self.y_train, self.yhat_train.round(0))
+                    ).alias("f1_train"),
+                    pl.lit(
+                        metrics.f1_score(self.y_test, self.yhat_test.round(0))
+                    ).alias("f1_test"),
+                    pl.lit(
+                        metrics.recall_score(self.y_train, self.yhat_train.round(0))
+                    ).alias("recall_train"),
+                    pl.lit(
+                        metrics.recall_score(self.y_test, self.yhat_test.round(0))
+                    ).alias("recall_test"),
+                    pl.lit(
+                        metrics.log_loss(self.y_train, self.yhat_train.round(0))
+                    ).alias("logloss_train"),
+                    pl.lit(
+                        metrics.log_loss(self.y_test, self.yhat_test.round(0))
+                    ).alias("logloss_test"),
+                    pl.lit(
+                        metrics.roc_auc_score(self.y_train, self.yhat_train.round(0))
+                    ).alias("auc_train"),
+                    pl.lit(
+                        metrics.roc_auc_score(self.y_test, self.yhat_test.round(0))
+                    ).alias("auc_test"),
+                    pl.lit(
+                        metrics.precision_score(
+                            self.y_train, self.yhat_train.round(0), zero_division=0
+                        )
+                    ).alias("precision_train"),
+                    pl.lit(
+                        metrics.precision_score(
+                            self.y_test, self.yhat_test.round(0), zero_division=0
+                        )
+                    ).alias("precision_test"),
+                    pl.lit(
+                        metrics.matthews_corrcoef(
+                            self.y_train.replace(0, -1),
+                            self.yhat_train.round(0).replace(0, -1),
+                        )
+                    ).alias("mcc_train"),
+                    pl.lit(
+                        metrics.matthews_corrcoef(
+                            self.y_test.replace(0, -1),
+                            self.yhat_test.round(0).replace(0, -1),
+                        )
+                    ).alias("mcc_test"),
+                    pl.lit(
+                        metrics.roc_curve(self.y_train, self.yhat_train.round(0))
+                    ).alias("roc_curve_train"),
+                    pl.lit(
+                        metrics.roc_curve(self.y_test, self.yhat_test.round(0))
+                    ).alias("roc_curve_test"),
+                    pl.lit(
+                        metrics.precision_recall_curve(
+                            self.y_train, self.yhat_train.round(0)
+                        )
+                    ).alias("pr_curve_train"),
+                    pl.lit(
+                        metrics.precision_recall_curve(
+                            self.y_test, self.yhat_test.round(0)
+                        )
+                    ).alias("pr_curve_test"),
+                ]
             )
-            self.acc_test = metrics.accuracy_score(self.y_test, self.yhat_test.round(0))
-            self.f1_train = metrics.f1_score(self.y_train, self.yhat_train.round(0))
-            self.f1_test = metrics.f1_score(self.y_test, self.yhat_test.round(0))
-            self.recall_train = metrics.recall_score(
-                self.y_train, self.yhat_train.round(0)
-            )
-            self.recall_test = metrics.recall_score(
-                self.y_test, self.yhat_test.round(0)
-            )
+            # self.acc_train = metrics.accuracy_score(
+            #     self.y_train, self.yhat_train.round(0)
+            # )
+            # self.acc_test = metrics.accuracy_score(self.y_test, self.yhat_test.round(0))
+            # self.f1_train = metrics.f1_score(self.y_train, self.yhat_train.round(0))
+            # self.f1_test = metrics.f1_score(self.y_test, self.yhat_test.round(0))
+            # self.recall_train = metrics.recall_score(
+            #     self.y_train, self.yhat_train.round(0)
+            # )
+            # self.recall_test = metrics.recall_score(
+            #     self.y_test, self.yhat_test.round(0)
+            # )
 
-            self.logloss_train = metrics.log_loss(
-                self.y_train, self.yhat_train.round(0)
-            )
-            self.logloss_test = metrics.log_loss(self.y_test, self.yhat_test.round(0))
-            self.auc_train = metrics.roc_auc_score(
-                self.y_train, self.yhat_train.round(0)
-            )
-            self.auc_test = metrics.roc_auc_score(self.y_test, self.yhat_test.round(0))
+            # self.logloss_train = metrics.log_loss(
+            #     self.y_train, self.yhat_train.round(0)
+            # )
+            # self.logloss_test = metrics.log_loss(self.y_test, self.yhat_test.round(0))
+            # self.auc_train = metrics.roc_auc_score(
+            #     self.y_train, self.yhat_train.round(0)
+            # )
+            # self.auc_test = metrics.roc_auc_score(self.y_test, self.yhat_test.round(0))
 
-            self.precision_train = metrics.precision_score(
-                self.y_train, self.yhat_train.round(0), zero_division=0
-            )
-            self.precision_test = metrics.precision_score(
-                self.y_test, self.yhat_test.round(0), zero_division=0
-            )
-            self.mcc_train = metrics.matthews_corrcoef(
-                self.y_train.replace(0, -1), self.yhat_train.round(0).replace(0, -1)
-            )
-            self.mcc_test = metrics.matthews_corrcoef(
-                self.y_test.replace(0, -1), self.yhat_test.round(0).replace(0, -1)
-            )
+            # self.precision_train = metrics.precision_score(
+            #     self.y_train, self.yhat_train.round(0), zero_division=0
+            # )
+            # self.precision_test = metrics.precision_score(
+            #     self.y_test, self.yhat_test.round(0), zero_division=0
+            # )
+            # self.mcc_train = metrics.matthews_corrcoef(
+            #     self.y_train.replace(0, -1), self.yhat_train.round(0).replace(0, -1)
+            # )
+            # self.mcc_test = metrics.matthews_corrcoef(
+            #     self.y_test.replace(0, -1), self.yhat_test.round(0).replace(0, -1)
+            # )
 
-            self.roc_curve_train = metrics.roc_curve(
-                self.y_train, self.yhat_train.round(0)
-            )
-            self.roc_curve_test = metrics.roc_curve(
-                self.y_test, self.yhat_test.round(0)
-            )
-            self.pr_curve_train = metrics.precision_recall_curve(
-                self.y_train, self.yhat_train.round(0)
-            )
-            self.pr_curve_test = metrics.precision_recall_curve(
-                self.y_test, self.yhat_test.round(0)
-            )
+            # self.roc_curve_train = metrics.roc_curve(
+            #     self.y_train, self.yhat_train.round(0)
+            # )
+            # self.roc_curve_test = metrics.roc_curve(
+            #     self.y_test, self.yhat_test.round(0)
+            # )
+            # self.pr_curve_train = metrics.precision_recall_curve(
+            #     self.y_train, self.yhat_train.round(0)
+            # )
+            # self.pr_curve_test = metrics.precision_recall_curve(
+            #     self.y_test, self.yhat_test.round(0)
+            # )
 
     def __repr__(self) -> str:
         return f"<Model{'_[CV-' if self.fold_n is not None else ''}{f'{self.fold_n}]' if self.fold_n is not None else ''}({'df' if self.df is not None else ''}{', df-val' if self.df_val is not None else ''})>"
@@ -222,7 +327,6 @@ class Model:
         self.scaler = StandardScaler()
         self.scaler.fit(X.values)
 
-    @profiler
     def standardize(
         self, X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]
     ) -> Union[pd.Series, pd.DataFrame]:
