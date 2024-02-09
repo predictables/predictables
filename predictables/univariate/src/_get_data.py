@@ -1,13 +1,14 @@
 from typing import List, Optional, Union
 
 import pandas as pd
+import polars as pl
 
-from predictables.util import get_unique
+from predictables.util import get_unique, to_pd_df
 
 
 def _get_data(
-    df: pd.DataFrame,
-    df_val: Optional[pd.DataFrame],
+    df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+    df_val: Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]],
     element: str = "x",
     data: str = "train",
     fold_n: Optional[int] = None,
@@ -20,9 +21,9 @@ def _get_data(
 
     Parameters
     ----------
-    df : pd.DataFrame
+    df : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]
         The dataframe to get the data from.
-    df_val : pd.DataFrame | None
+    df_val : Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]]
         The validation dataframe.
     element : str, optional
         What data element to get. Choices are "x", "y", or "fold"
@@ -47,13 +48,14 @@ def _get_data(
     List[Union[int, float, str]]
         The values for the requested column.
     """
+    df_: pd.DataFrame = to_pd_df(df)
     df_validation: pd.DataFrame = (
-        df_val if df_val is not None else pd.DataFrame(columns=df.columns)
+        to_pd_df(df_val) if df_val is not None else pd.DataFrame(columns=df.columns)
     )
 
     element_ = element.lower()
     data_ = data.lower()
-    unique_folds = get_unique(df.loc[:, fold_col_name])
+    unique_folds = get_unique(df_.loc[:, fold_col_name])
 
     if data_ not in ["train", "test", "all"]:
         raise ValueError(f"data must be one of 'train', 'test', or 'all'. Got {data}.")
@@ -69,11 +71,11 @@ def _get_data(
     # Use the cv function if we're getting a fold
     if element_ == "fold":
         return _filter_df_for_cv(
-            df, fold_n if fold_n is not None else -42, fold_col_name, data
+            df_, fold_n if fold_n is not None else -42, fold_col_name, data
         )[feature_col_name].tolist()
 
     # Otherwise, get the data for the requested fold
-    split: pd.DataFrame = _filter_df_for_train_test(df, df_validation, data)
+    split: pd.DataFrame = _filter_df_for_train_test(df_, df_validation, data)
 
     return split[feature_col_name if element_ == "x" else target_col_name].tolist()
 

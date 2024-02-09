@@ -90,8 +90,6 @@ class Univariate(Model):
 
     df_all: pd.DataFrame
 
-    pareto_sort_vector: List[float]
-
     normalization_obj: Optional[Union[MinMaxScaler, StandardScaler]]
 
     def __init__(
@@ -128,7 +126,9 @@ class Univariate(Model):
         dbg.msg(
             f"[{self.feature_col}]: After normalization, mean of feature_col_ is: {df[feature_col_].mean()} | Ux0001d"
         )
-        self.unique_folds = get_unique(self.df.loc[:, self.fold_col])
+        self.unique_folds = get_unique(
+            self.df.select(self.fold_col).to_pandas()[self.fold_col]
+        )
 
         self.cv_dict = {}
         for fold in self.unique_folds:
@@ -232,7 +232,7 @@ class Univariate(Model):
         return get_unique(
             to_pd_s(self.cv)
             if isinstance(self.cv, (pl.Series, pd.Series))
-            else self.df.iloc[:, 2]
+            else self.df.select(self.fold_col).to_pandas()[self.fold_col]
         )
 
     def get_data(
