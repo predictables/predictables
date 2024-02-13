@@ -9,7 +9,7 @@ from matplotlib.axes import Axes
 from scipy.stats import norm  # type: ignore
 from sklearn.metrics import RocCurveDisplay, roc_auc_score, roc_curve  # type: ignore
 
-from predictables.util import get_unique, DebugLogger
+from predictables.util import DebugLogger, get_unique
 
 dbg = DebugLogger(working_file="_roc_curve_plot.py")
 
