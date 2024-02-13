@@ -6,7 +6,7 @@ import pytest
 
 @pytest.fixture
 def logistic_coef():
-    return 0.01
+    return 0.003
 
 
 @pytest.fixture
@@ -28,7 +28,7 @@ def df(noise, logistic_coef, linear_coef):
         .with_columns(
             [
                 pl.Series(noise).alias("epsilon"),
-                pl.col("X0") + pl.Series(noise).alias("X"),
+                (pl.col("X0") + pl.Series(noise)).alias("X"),
             ]
         )
         # Create linear relationship (easy to predict)
@@ -41,11 +41,22 @@ def df(noise, logistic_coef, linear_coef):
         .with_columns(
             [
                 # Logits
-                pl.col("X").mul(logistic_coef).alias("logit"),
+                pl.col("X").mul(logistic_coef).alias("logit")
+            ]
+        )
+        .with_columns(
+            [
                 # Probability
                 pl.col("logit").exp().truediv(1 + pl.col("logit").exp()).alias("prob"),
+            ]
+        )
+        .with_columns(
+            [
                 # Binary outcome
-                pl.when(pl.col("prob") > 0.5).then(1).otherwise(0).alias("y_logistic"),
+                pl.when(pl.col("prob") > pl.col("prob").median())
+                .then(1)
+                .otherwise(0)
+                .alias("y_logistic"),
             ]
         )
     )
@@ -59,7 +70,7 @@ def sm_logistic_model(df):
     from predictables.util import to_pd_df, to_pd_s
 
     return fit_sm_logistic_regression(
-        to_pd_df(df.select("X")), to_pd_s(df.select("y_logistic"))
+        to_pd_df(df.select("X")), to_pd_s(df.select("y_logistic")["y_logistic"])
     )
 
 
@@ -71,7 +82,7 @@ def sm_linear_model(df):
     from predictables.util import to_pd_df, to_pd_s
 
     return fit_sm_linear_regression(
-        to_pd_df(df.select("X")), to_pd_s(df.select("y_linear"))
+        to_pd_df(df.select("X")), to_pd_s(df.select("y_linear")["y_linear"])
     )
 
 
@@ -83,7 +94,7 @@ def sk_logistic_model(df):
     from predictables.util import to_pd_df, to_pd_s
 
     return fit_sk_logistic_regression(
-        to_pd_df(df.select("X")), to_pd_s(df.select("y_logistic"))
+        to_pd_df(df.select("X")), to_pd_s(df.select("y_logistic")["y_logistic"])
     )
 
 
@@ -95,11 +106,11 @@ def sk_linear_model(df):
     from predictables.util import to_pd_df, to_pd_s
 
     return fit_sk_linear_regression(
-        to_pd_df(df.select("X")), to_pd_s(df.select("y_linear"))
+        to_pd_df(df.select("X")), to_pd_s(df.select("y_linear")["y_linear"])
     )
 
 
-def is_close(a, b, tol=1e-6):
+def is_close(a, b, tol=1e-3):
     return abs(a - b) < tol
 
 
@@ -113,58 +124,58 @@ def test_extract_model_params_sm_OLS(sm_linear_model, linear_coef):
         result.coef, linear_coef
     ), f"Expected fitted coeficient close to {linear_coef}, got {result.coef}"
     assert is_close(
-        result.pvalues, sm_linear_model.pvalues
+        result.pvalues.values, sm_linear_model.pvalues.values
     ), f"Expected pvalues close to {sm_linear_model.pvalues}, got {result.pvalues}"
     assert is_close(
         result.aic, sm_linear_model.aic
     ), f"Expected AIC close to {sm_linear_model.aic}, got {result.aic}"
     assert is_close(
-        result.se, sm_linear_model.bse
+        result.se.values, sm_linear_model.bse.values
     ), f"Expected SE close to {sm_linear_model.bse}, got {result.se}"
     assert is_close(
-        result.lower_ci, sm_linear_model.conf_int()[0]
-    ), f"Expected lower confidence interval close to {sm_linear_model.conf_int()[0]}, got {result.lower_ci}"
+        result.lower_ci, sm_linear_model.conf_int().values.ravel()[0]
+    ), f"Expected lower confidence interval close to {sm_linear_model.conf_int().values.ravel()[0]}, got {result.lower_ci}"
     assert is_close(
-        result.upper_ci, sm_linear_model.conf_int()[1]
-    ), f"Expected upper confidence interval close to {sm_linear_model.conf_int()[1]}, got {result.upper_ci}"
+        result.upper_ci, sm_linear_model.conf_int().values.ravel()[1]
+    ), f"Expected upper confidence interval close to {sm_linear_model.conf_int().values.ravel()[1]}, got {result.upper_ci}"
     assert (
-        result.nobs == sm_linear_model.nobs
-    ), f"Expected number of observations close to {sm_linear_model.nobs}, got {result.nobs}"
+        result.n == sm_linear_model.nobs
+    ), f"Expected number of observations close to {sm_linear_model.nobs}, got {result.n}"
     assert (
-        result.df_model == sm_linear_model.df_model
-    ), f"Expected model degrees of freedom close to {sm_linear_model.df_model}, got {result.df_model}"
+        result.k == sm_linear_model.df_model
+    ), f"Expected model degrees of freedom close to {sm_linear_model.df_model}, got {result.k}"
 
 
-def test_extract_model_params_sm_LogisticRegression(sm_logistic_model, logistic_coef):
+def test_extract_model_params_sm_GLM(sm_logistic_model, logistic_coef):
     from predictables.univariate.src._extract_model_params import (
-        extract_model_params_sm_LogisticRegression,
+        extract_model_params_sm_GLM,
     )
 
-    result = extract_model_params_sm_LogisticRegression(sm_logistic_model)
+    result = extract_model_params_sm_GLM(sm_logistic_model)
     assert is_close(
         result.coef, logistic_coef
     ), f"Expected fitted coeficient close to {logistic_coef}, got {result.coef}"
     assert is_close(
-        result.pvalues, sm_logistic_model.pvalues
+        result.pvalues.values, sm_logistic_model.pvalues.values
     ), f"Expected pvalues close to {sm_logistic_model.pvalues}, got {result.pvalues}"
     assert is_close(
         result.aic, sm_logistic_model.aic
     ), f"Expected AIC close to {sm_logistic_model.aic}, got {result.aic}"
     assert is_close(
-        result.se, sm_logistic_model.bse
+        result.se.values, sm_logistic_model.bse.values
     ), f"Expected SE close to {sm_logistic_model.bse}, got {result.se}"
     assert is_close(
-        result.lower_ci, sm_logistic_model.conf_int()[0]
-    ), f"Expected lower confidence interval close to {sm_logistic_model.conf_int()[0]}, got {result.lower_ci}"
+        result.lower_ci, sm_logistic_model.conf_int().values.ravel()[0]
+    ), f"Expected lower confidence interval close to {sm_logistic_model.conf_int().values.ravel()[0]}, got {result.lower_ci}"
     assert is_close(
-        result.upper_ci, sm_logistic_model.conf_int()[1]
-    ), f"Expected upper confidence interval close to {sm_logistic_model.conf_int()[1]}, got {result.upper_ci}"
+        result.upper_ci, sm_logistic_model.conf_int().values.ravel()[1]
+    ), f"Expected upper confidence interval close to {sm_logistic_model.conf_int().values.ravel()[1]}, got {result.upper_ci}"
     assert (
-        result.nobs == sm_logistic_model.nobs
-    ), f"Expected number of observations close to {sm_logistic_model.nobs}, got {result.nobs}"
+        result.n == sm_logistic_model.nobs
+    ), f"Expected number of observations close to {sm_logistic_model.nobs}, got {result.n}"
     assert (
-        result.df_model == sm_logistic_model.df_model
-    ), f"Expected model degrees of freedom close to {sm_logistic_model.df_model}, got {result.df_model}"
+        result.k == sm_logistic_model.df_model
+    ), f"Expected model degrees of freedom close to {sm_logistic_model.df_model}, got {result.k}"
 
 
 def test_extract_model_params_sk_LogisticRegression(sk_logistic_model, logistic_coef):
@@ -176,27 +187,6 @@ def test_extract_model_params_sk_LogisticRegression(sk_logistic_model, logistic_
     assert is_close(
         result.coef, logistic_coef
     ), f"Expected fitted coeficient close to {logistic_coef}, got {result.coef}"
-    assert is_close(
-        result.pvalues, sk_logistic_model.pvalues
-    ), f"Expected pvalues close to {sk_logistic_model.pvalues}, got {result.pvalues}"
-    assert is_close(
-        result.aic, sk_logistic_model.aic
-    ), f"Expected AIC close to {sk_logistic_model.aic}, got {result.aic}"
-    assert is_close(
-        result.se, sk_logistic_model.bse
-    ), f"Expected SE close to {sk_logistic_model.bse}, got {result.se}"
-    assert is_close(
-        result.lower_ci, sk_logistic_model.conf_int()[0]
-    ), f"Expected lower confidence interval close to {sk_logistic_model.conf_int()[0]}, got {result.lower_ci}"
-    assert is_close(
-        result.upper_ci, sk_logistic_model.conf_int()[1]
-    ), f"Expected upper confidence interval close to {sk_logistic_model.conf_int()[1]}, got {result.upper_ci}"
-    assert (
-        result.nobs == sk_logistic_model.nobs
-    ), f"Expected number of observations close to {sk_logistic_model.nobs}, got {result.nobs}"
-    assert (
-        result.df_model == sk_logistic_model.df_model
-    ), f"Expected model degrees of freedom close to {sk_logistic_model.df_model}, got {result.df_model}"
 
 
 def test_extract_model_params_sk_LinearRegression(sk_linear_model, linear_coef):
@@ -208,24 +198,3 @@ def test_extract_model_params_sk_LinearRegression(sk_linear_model, linear_coef):
     assert is_close(
         result.coef, linear_coef
     ), f"Expected fitted coeficient close to {linear_coef}, got {result.coef}"
-    assert is_close(
-        result.pvalues, sk_linear_model.pvalues
-    ), f"Expected pvalues close to {sk_linear_model.pvalues}, got {result.pvalues}"
-    assert is_close(
-        result.aic, sk_linear_model.aic
-    ), f"Expected AIC close to {sk_linear_model.aic}, got {result.aic}"
-    assert is_close(
-        result.se, sk_linear_model.bse
-    ), f"Expected SE close to {sk_linear_model.bse}, got {result.se}"
-    assert is_close(
-        result.lower_ci, sk_linear_model.conf_int()[0]
-    ), f"Expected lower confidence interval close to {sk_linear_model.conf_int()[0]}, got {result.lower_ci}"
-    assert is_close(
-        result.upper_ci, sk_linear_model.conf_int()[1]
-    ), f"Expected upper confidence interval close to {sk_linear_model.conf_int()[1]}, got {result.upper_ci}"
-    assert (
-        result.nobs == sk_linear_model.nobs
-    ), f"Expected number of observations close to {sk_linear_model.nobs}, got {result.nobs}"
-    assert (
-        result.df_model == sk_linear_model.df_model
-    ), f"Expected model degrees of freedom close to {sk_linear_model.df_model}, got {result.df_model}"

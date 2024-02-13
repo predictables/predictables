@@ -44,6 +44,3 @@ def to_pd_s(s: Union[pd.Series, pl.Series]) -> pd.Series:
         return pd.Series(s)
     else:
         raise TypeError(f"s must be a pandas or polars series. Got {type(s)}.")
-
-
-# git commit -m "added list to to_pd_s and to_pl_s acceptable types, and tests pass"

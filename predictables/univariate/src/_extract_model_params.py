@@ -1,6 +1,7 @@
 from collections import namedtuple
 from typing import Tuple
 
+import pandas as pd
 import statsmodels.api as sm  # type: ignore
 from sklearn.linear_model import LinearRegression, LogisticRegression  # type: ignore
 
@@ -15,7 +16,7 @@ StatsmodelsModelParams = namedtuple(
 
 SKLearnModelParams = namedtuple(
     "SKLearnModelParams",
-    ["coef", "n", "k"],
+    ["coef", "k"],
 )
 
 
@@ -70,25 +71,25 @@ def extract_model_params_sm_GLM(model: sm.GLM) -> StatsmodelsModelParams:
     dbg.msg("Entering extract_model_params_sm_GLM function")
     return (
         StatsmodelsModelParams(
-            model.params[1:],
-            model.params[0],
+            model.params.values[1:],
+            model.params.values[0],
             model.pvalues,
             model.aic,
             model.bse,
-            model.conf_int()[0],
-            model.conf_int()[1],
+            model.conf_int().values.ravel()[0],
+            model.conf_int().values.ravel()[1],
             model.nobs,
             model.df_model,
         )
         if len(model.params) > 1
         else StatsmodelsModelParams(
-            model.params[0],
+            model.params.values[0],
             None,
             model.pvalues,
             model.aic,
             model.bse,
-            model.conf_int()[0],
-            model.conf_int()[1],
+            model.conf_int().values.ravel()[0],
+            model.conf_int().values.ravel()[1],
             model.nobs,
             model.df_model,
         )
@@ -118,20 +119,20 @@ def extract_model_params_sm_OLS(model: sm.OLS) -> StatsmodelsModelParams:
             model.pvalues,
             model.aic,
             model.bse,
-            model.conf_int()[0],
-            model.conf_int()[1],
+            model.conf_int().values.ravel()[0],
+            model.conf_int().values.ravel()[1],
             model.nobs,
             model.df_model,
         )
         if len(model.params) > 1
         else StatsmodelsModelParams(
-            model.params[0],
+            model.params.values[0],
             None,
             model.pvalues,
             model.aic,
             model.bse,
-            model.conf_int()[0],
-            model.conf_int()[1],
+            model.conf_int().values.ravel()[0],
+            model.conf_int().values.ravel()[1],
             model.nobs,
             model.df_model,
         )
@@ -158,7 +159,6 @@ def extract_model_params_sk_LogisticRegression(
     dbg.msg("Entering extract_model_params_sk function")
     return SKLearnModelParams(
         model.coef_,
-        model.n_samples_,
         model.coef_.shape[0],
     )
 
@@ -183,6 +183,5 @@ def extract_model_params_sk_LinearRegression(
     dbg.msg("Entering extract_model_params_sk function")
     return SKLearnModelParams(
         model.coef_,
-        model.n_samples_,
         model.coef_.shape[0],
     )
