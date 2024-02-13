@@ -1,7 +1,6 @@
 from collections import namedtuple
 from typing import Tuple
 
-import pandas as pd
 import statsmodels.api as sm  # type: ignore
 from sklearn.linear_model import LinearRegression, LogisticRegression  # type: ignore
 
