@@ -56,7 +56,7 @@ platformdirs==3.11.0
 plotly==5.18.0
 pluggy==1.4.0
 polars==0.20.7
-predictables==0.0.1
+# predictables==0.0.1
 prompt-toolkit==3.0.39
 psutil==5.9.6
 ptyprocess==0.7.0
