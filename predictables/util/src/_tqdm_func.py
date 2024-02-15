@@ -1,5 +1,5 @@
 import os
-from typing import Any, Callable
+from typing import Any, Iterable, Optional
 
 from dotenv import load_dotenv
 from tqdm import tqdm as _tqdm  # type: ignore
@@ -10,13 +10,22 @@ def identidy_function(x: Any) -> Any:
     return x
 
 
-def tqdm(**kwargs: Any) -> Callable:
+def tqdm(
+    x: Iterable,
+    desc: Optional[str] = None,
+    enable: Optional[bool] = None,
+    disable: Optional[bool] = None,
+    notebook: Optional[bool] = None,
+    nb: Optional[bool] = None,
+) -> Iterable:
     """
     Wrapper for tqdm that can be enabled or disabled by setting the TQDM_ENABLE environment variable to "true" or "false".
     If the environment variable is not set, the default is to enable tqdm.
 
     Parameters
     ----------
+    x : Any
+        Any iterable to be wrapped by tqdm.
     desc : str, optional
         Description to be displayed by tqdm.
     enable : bool, optional
@@ -36,28 +45,39 @@ def tqdm(**kwargs: Any) -> Callable:
     load_dotenv()
 
     # Handle description (if provided)
-    desc_dict = {"desc": kwargs["desc"]} if "desc" in kwargs else {}
+    desc_dict = {"desc": desc} if desc is not None else {}
 
     # Handle enable, disable, notebook, and nb (if any)
-    if "enable" in kwargs:
-        tqdm_enable = kwargs["enable"] if isinstance(kwargs["enable"], bool) else True
-    elif "disable" in kwargs:
+    if enable is not None:
         tqdm_enable = (
-            not kwargs["disable"] if isinstance(kwargs["disable"], bool) else True
+            enable
+            if isinstance(enable, bool)
+            else os.environ.get("TQDM_ENABLE") == "true"
+        )
+    elif disable is not None:
+        tqdm_enable = (
+            not disable
+            if isinstance(disable, bool)
+            else os.environ.get("TQDM_ENABLE") == "true"
         )
     else:
         tqdm_enable = os.environ.get("TQDM_ENABLE") == "true"
 
-    if "notebook" in kwargs:
-        tqdm_nb = kwargs["notebook"] if isinstance(kwargs["notebook"], bool) else True
-    elif "nb" in kwargs:
-        tqdm_nb = kwargs["nb"] if isinstance(kwargs["nb"], bool) else True
+    if notebook is not None:
+        tqdm_nb = (
+            notebook
+            if isinstance(notebook, bool)
+            else os.environ.get("TQDM_NOTEBOOK") == "true"
+        )
+    elif nb is not None:
+        tqdm_nb = (
+            nb if isinstance(nb, bool) else os.environ.get("TQDM_NOTEBOOK") == "true"
+        )
     else:
         tqdm_nb = os.environ.get("TQDM_NOTEBOOK") == "true"
 
     # Return the appropriate function
-    return (
-        (lambda x: _tqdm_notebook(x, **desc_dict) if tqdm_nb else _tqdm(x, **desc_dict))
-        if tqdm_enable
-        else identidy_function
-    )
+    if tqdm_nb:
+        return _tqdm_notebook(x, **desc_dict) if tqdm_enable else identidy_function(x)
+    else:
+        return _tqdm(x, **desc_dict) if tqdm_enable else identidy_function(x)
