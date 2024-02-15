@@ -314,7 +314,8 @@ def _make_quintiles(modeled_target: Union[pd.Series, pl.Series]) -> pd.Series:
         modeled_target, pl.Series
     ):
         raise TypeError(
-            f"Expected modeled_target to be a Pandas or Polars Series, got {type(modeled_target)}"
+            "Expected modeled_target to be a Pandas or Polars Series, "
+            f"got {type(modeled_target)}"
         )
 
     modeled_target = to_pd_s(modeled_target)

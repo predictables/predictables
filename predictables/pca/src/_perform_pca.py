@@ -28,14 +28,15 @@ def perform_pca(
 
     Parameters
     ----------
-    X_train : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] of shape (n_samples, n_features)
-        Training dataset.
-    X_val : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] of shape (n_samples_val, n_features), optional
-        Validation dataset. If not provided, the function will not transform the
-        validation dataset, by default None.
-    X_test : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] of shape (n_samples_test, n_features), optional
-        Test dataset. If not provided, the function will not transform the test
-        dataset, by default None.
+    X_train : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+        Training dataset of shape (n_samples, n_features).
+    X_val : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], optional
+        Validation dataset of shape (n_samples_val, n_features). If not
+        provided, the function will not transform the validation dataset,
+        by default None.
+    X_test : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], optional
+        Test dataset of shape (n_samples_test, n_features). If not provided, the
+        function will not transform the test dataset, by default None.
     n_components : int, optional
         Number of principal components to keep. Defaults to 10.
     return_pca_obj : bool, optional
@@ -52,11 +53,14 @@ def perform_pca(
     X_train_pca : pl.LazyFrame, optional
         Transformed training dataset. Only returned if `return_pca_obj` is False.
     X_val_pca : pl.LazyFrame, optional
-        Transformed validation dataset. Only returned if `return_pca_obj` is False, and `X_val` is not None.
+        Transformed validation dataset. Only returned if `return_pca_obj` is False,
+        and `X_val` is not None.
     X_test_pca : pl.LazyFrame, optional
-        Transformed test dataset. Only returned if `return_pca_obj` is False, and `X_test` is not None.
+        Transformed test dataset. Only returned if `return_pca_obj` is False, and
+        `X_test` is not None.
     pca : PCA object, optional
-        The fitted PCA object from scikit-learn. Only returned if `return_pca_obj` is True.
+        The fitted PCA object from scikit-learn. Only returned if `return_pca_obj`
+        is True.
 
     Notes
     -----
@@ -78,7 +82,9 @@ def perform_pca(
     >>> from sklearn.datasets import load_iris
     >>> X, _ = load_iris(return_X_y=True)
     >>> X_train, X_test = X[:100], X[100:]
-    >>> X_train_pca, _, X_test_pca = perform_pca(X_train, X_test, X_test, n_components=2)
+    >>> X_train_pca, _, X_test_pca = perform_pca(
+            X_train, X_test, X_test, n_components=2
+        )
 
     Raises
     ------
@@ -111,23 +117,22 @@ def perform_pca(
 
     if return_pca_obj:
         return pca.fit(to_pd_df(X_train))
+
+    # Fit and transform X_train
+    X_train_pca = pca.fit_transform(to_pd_df(X_train))
+
+    if X_val is None:
+        # If X_val was not provided, return only X_train_pca
+        out = X_train_pca
     else:
-        # Fit and transform X_train
-        X_train_pca = pca.fit_transform(to_pd_df(X_train))
+        # If X_val was provided, transform it and add it to the output
+        X_val_pca = pca.transform(to_pd_df(X_val))
+        out = (X_train_pca, X_val_pca)
 
-        # Transform X_val and X_test if they were provided
-        if X_val is not None:
-            X_val_pca = pca.transform(to_pd_df(X_val))
-            out = (X_train_pca, X_val_pca)
+    # If X_test was provided, transform it and add it to the output,
+    # regardless of whether X_val was provided
+    if X_test is not None:
+        X_test_pca = pca.transform(to_pd_df(X_test))
+        out = (*out, X_test_pca) if isinstance(out, tuple) else (out, X_test_pca)
 
-        # If X_val was not provided, return only X_train_pca and maybe X_test_pca
-        else:
-            out = X_train_pca
-
-        # If X_test was provided, transform it and add it to the output,
-        # regardless of whether X_val was provided
-        if X_test is not None:
-            X_test_pca = pca.transform(to_pd_df(X_test))
-            out = (*out, X_test_pca)
-
-        return out
+    return out

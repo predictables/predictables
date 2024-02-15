@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import polars as pl
 from matplotlib.axes import Axes
-from scipy.spatial.distance import jensenshannon as js_divergence
+from scipy.spatial.distance import jensenshannon as js_divergence  # type: ignore
 
 from predictables.univariate.src.plots.util import binary_color, plot_label
 from predictables.util import get_column_dtype, to_pd_s
@@ -15,9 +15,9 @@ def cdf_plot(
     x: Union[pl.Series, pd.Series, np.ndarray],
     plot_by: Union[pl.Series, pd.Series, np.ndarray],
     cv_folds: Union[pl.Series, pd.Series, np.ndarray],
-    x_label: Union[str, None] = None,
+    x_label: Optional[str] = None,
     y_label: str = "Empirical Cumulative Distribution Function",
-    ax: Union[Axes, None] = None,
+    ax: Optional[Axes] = None,
     figsize: Tuple[int, int] = (7, 7),
     backend: str = "matplotlib",
     **kwargs,
@@ -51,23 +51,23 @@ def cdf_plot(
     Axes
         The axes on which the CDF was plotted.
     """
-    x = to_pd_s(x)
-    plot_by = to_pd_s(plot_by)
-
     if backend == "matplotlib":
         if ax is None:
-            _, ax = plt.subplots(figsize=figsize)
+            _, ax_ = plt.subplots(figsize=figsize)
+        else:
+            ax_ = ax
 
-        ax = cdf_plot_matplotlib(
-            x=x,
-            plot_by=plot_by,
+        return cdf_plot_matplotlib(
+            x=to_pd_s(x),
+            plot_by=to_pd_s(plot_by),
             cv_folds=cv_folds,
             x_label=x_label,
             y_label=y_label,
-            ax=ax,
+            ax=ax_,
             **kwargs,
         )
-    return ax
+    else:
+        raise ValueError(f"Backend {backend} is not supported.")
 
 
 def cdf_plot_matplotlib(
@@ -80,7 +80,10 @@ def cdf_plot_matplotlib(
     **kwargs,
 ) -> Axes:
     """
-    Plots the empirical CDF of the given data for each level in `plot_by` and each fold in `cv_folds`. This plot is meant to show a "distribution" of possible CDF plots that could have been pulled from the real distribution. This plot is rendered using matplotlib.
+    Plots the empirical CDF of the given data for each level in `plot_by` and each
+    fold in `cv_folds`. This plot is meant to show a "distribution" of possible CDF
+    plots that could have been pulled from the real distribution. This plot is
+    rendered using matplotlib.
     """
     x = to_pd_s(x)
     plot_by = to_pd_s(plot_by)
@@ -185,21 +188,23 @@ def cdf_plot_matplotlib_levels(
     plot_by = to_pd_s(plot_by)
 
     if ax is None:
-        _, ax = plt.subplots(figsize=figsize)
+        _, ax_ = plt.subplots(figsize=figsize)
+    else:
+        ax_ = ax
 
     # For each level of plot_by, plot the cdf of x, conditional on plot_by
     for level in plot_by.drop_duplicates().sort_values().values:
         label = plot_label(plot_by.name)
         label += f" = {level}"
         x_cdf = calculate_cdf(x[plot_by == level])
-        ax = x_cdf.plot.line(ax=ax, label=label, color=binary_color(level), **kwargs)
+        ax_ = x_cdf.plot.line(ax=ax_, label=label, color=binary_color(level), **kwargs)
 
     if x_label is not None:
-        ax.set_xlabel(x_label)
+        ax_.set_xlabel(x_label)
     if y_label is not None:
-        ax.set_ylabel(y_label)
+        ax_.set_ylabel(y_label)
 
-    return ax
+    return ax_
 
 
 def cdf_plot_matplotlib_levels_cv(
@@ -212,9 +217,10 @@ def cdf_plot_matplotlib_levels_cv(
     **kwargs,
 ) -> Axes:
     """
-    Plots the empirical CDF of the given data for each level in `plot_by` and each fold in
-    `cv_folds`. This plot is meant to show a "distribution" of possible CDF plots that could
-    have been pulled from the real distribution.
+    Plots the empirical CDF of the given data for each level in `plot_by`
+    and each fold in `cv_folds`. This plot is meant to show a "distribution"
+    of possible CDF plots that could have been pulled from the real
+    distribution.
 
     Parameters
     ----------
@@ -240,21 +246,23 @@ def cdf_plot_matplotlib_levels_cv(
     plot_by = to_pd_s(plot_by)
 
     if ax is None:
-        _, ax = plt.subplots()
+        _, ax_ = plt.subplots()
+    else:
+        ax_ = ax
 
     # For each level of plot_by, plot the cdf of x, conditional on plot_by
     for level in plot_by.drop_duplicates().sort_values().values:
         for fold in cv_folds.drop_duplicates().sort_values().values:
             x_cdf = calculate_cdf(x[(plot_by == level) & (cv_folds == fold)])
-            ax = x_cdf.plot.line(ax=ax, color=binary_color(level), **kwargs)
+            ax_ = x_cdf.plot.line(ax=ax_, color=binary_color(level), **kwargs)
 
-    ax.set_xlabel(x_label) if x_label is not None else ax.set_xlabel(x.name)
+    ax_.set_xlabel(x_label) if x_label is not None else ax_.set_xlabel(x.name)
     (
-        ax.set_ylabel(y_label)
+        ax_.set_ylabel(y_label)
         if y_label is not None
-        else ax.set_ylabel("Empirical Cumulative Distribution Function")
+        else ax_.set_ylabel("Empirical Cumulative Distribution Function")
     )
-    return ax
+    return ax_
 
 
 def jenson_shannon_divergence(
@@ -262,19 +270,22 @@ def jenson_shannon_divergence(
     plot_by: Union[pl.Series, pd.Series, np.ndarray],
 ) -> float:
     """
-    Calculates the Jenson-Shannon divergence between `x` conditional on each level of `plot_by`.
+    Calculates the Jenson-Shannon divergence between `x` conditional on each
+    level of `plot_by`.
 
     Parameters
     ----------
     x : Union[pl.Series, pd.Series, np.ndarray]
         The data to calculate the Jenson-Shannon divergence from.
     plot_by : Union[pl.Series, pd.Series, np.ndarray]
-        The levels used to split the `x` data, and which form the different compared distributions.
+        The levels used to split the `x` data, and which form the different
+        compared distributions.
 
     Returns
     -------
     float
-        The Jenson-Shannon divergence between `x` conditioned on each level of `plot_by`.
+        The Jenson-Shannon divergence between `x` conditioned on each level
+        of `plot_by`.
     """
     x0 = x[plot_by == plot_by.drop_duplicates().sort_values()[0]]
     x1 = x[plot_by == plot_by.drop_duplicates().sort_values()[1]]
@@ -282,7 +293,10 @@ def jenson_shannon_divergence(
 
 
 def create_title(feature_name: str, target_name: str):
-    return f"Empirical CDF of {plot_label(feature_name)} conditioned on {plot_label(target_name)}"
+    return (
+        f"Empirical CDF of {plot_label(feature_name)} conditioned on "
+        f"{plot_label(target_name)}"
+    )
 
 
 def js_divergence_annotation(jsd: float) -> str:

@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import GradientBoostingRegressor  # type: ignore
+from sklearn.model_selection import cross_val_score  # type: ignore
 
 # Mock data for demonstration
 X_train, y_train = np.random.rand(100, 10), np.random.rand(100)
@@ -106,7 +106,9 @@ def plot_acquisition_function():
 if __name__ == "__main__":
     model = GradientBoostingRegressor()
     criterion = "neg_mean_squared_error"
-    # Uncomment and use the following lines when setup and optimization functions are implemented
+    # TODO Uncomment and use the following lines when setup and optimization
+    # TODO functions are implemented:
+
     # best_params = optimize_hyperparameters(model, criterion)
     # model.set_params(**best_params)
     # model.fit(X_train, y_train)

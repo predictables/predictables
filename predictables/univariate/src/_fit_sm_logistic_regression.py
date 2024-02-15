@@ -15,8 +15,8 @@ def fit_sm_logistic_regression(
     y: Union[pd.Series, pl.Series],
 ) -> sm.GLM:
     """
-    Fit a logistic regression model using the statsmodels library. Used in the univariate
-    analysis to fit a simple model to each variable.
+    Fit a logistic regression model using the statsmodels library. Used in the
+    univariate analysis to fit a simple model to each variable.
 
     Parameters
     ----------
@@ -38,7 +38,10 @@ def fit_sm_logistic_regression(
     dbg.msg(f"X_=\n{X_},\n\ny_=\n{y_}")
 
     def log_warning(message, category, filename, lineno, file=None, line=None):
-        detailed_msg = f"Warning: {message}, Category: {category.__name__}, File: {filename}, Line: {lineno}"
+        detailed_msg = (
+            f"Warning: {message}, Category: {category.__name__}, "
+            f"File: {filename}, Line: {lineno}"
+        )
         dbg.msg(detailed_msg)
 
     # Log warnings to the debug logger

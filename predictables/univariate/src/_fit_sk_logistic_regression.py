@@ -3,7 +3,7 @@ from typing import Union
 import numpy as np
 import pandas as pd
 import polars as pl
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression  # type: ignore
 
 from predictables.util import to_pd_df, to_pd_s
 
@@ -14,8 +14,8 @@ def fit_sk_logistic_regression(
     fit_intercept: bool = False,
 ) -> LogisticRegression:
     """
-    Fit a logistic regression model using the scikit-learn library. Used in the univariate
-    analysis to fit a simple model to each variable.
+    Fit a logistic regression model using the scikit-learn library. Used in the
+    univariate analysis to fit a simple model to each variable.
 
     Parameters
     ----------
@@ -32,7 +32,7 @@ def fit_sk_logistic_regression(
     sklearn.linear_model.LogisticRegression
         The fitted model
     """
-    X = to_pd_df(X)
-    y = to_pd_s(y).values.ravel()
+    X_ = to_pd_df(X) if isinstance(X, (pd.DataFrame, pl.DataFrame, pl.LazyFrame)) else X
+    y_ = to_pd_s(y).values.ravel() if isinstance(y, (pd.Series, pl.Series)) else y
 
-    return LogisticRegression(fit_intercept=fit_intercept).fit(X, y)
+    return LogisticRegression(fit_intercept=fit_intercept).fit(X_, y_)

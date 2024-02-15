@@ -21,10 +21,8 @@ def harmonic_mean(*args) -> float:
     float
         The harmonic mean of the given numbers or numpy array.
     """
-    if len(args) > 1:
-        return _harmonic_mean_args(*args)
-    elif isinstance(args[0], int) or isinstance(args[0], float):
-        return args[0]
+    if isinstance(args[0], (int, float)):
+        return _harmonic_mean_args(*args) if len(args) > 1 else args[0]
     elif isinstance(args[0], list):
         return _harmonic_from_list(args[0])
     elif isinstance(args[0], np.ndarray):
@@ -35,7 +33,8 @@ def harmonic_mean(*args) -> float:
         return _harmonic_from_series(args[0])
     else:
         raise TypeError(
-            f"Input must be a number, list, numpy array, pandas series, or polars series. Got {type(args[0])} instead."
+            "Input must be a number, list, numpy array, pandas series, or polars "
+            f"series. Got {type(args[0])} instead."
         )
 
 
@@ -54,27 +53,20 @@ def _harmonic_mean_args(*args) -> float:
         The harmonic mean of the given numbers or numpy array.
     """
     # If this is a single integer or float value, return that value (as a float)
-    if len(args) == 1 and (isinstance(args, int) or isinstance(args, float)):
-        return float(args)
+    if len(args) == 1 and isinstance(args[0], (int, float)):
+        return float(args[0])
 
     # Convert input to numpy array if it's not already
-    if not isinstance(args[0], np.ndarray):
-        args = np.array(args)
+    args_ = np.array(*args)
 
     # if all elements are zero, return zero
-    if np.all(args == 0):
+    if np.all(args_ == 0):
         return 0
 
-    if len(args) == 1:
-        denom = 1 / args[0]
-    else:
-        denom = np.sum(1 / args[args != 0])
+    denom = 1 / args_[0] if len(args_) == 1 else np.sum(1 / args_[args_ != 0])
 
     # Return the harmonic mean
-    if denom != 0:
-        return len(args) / denom
-    else:
-        return 0
+    return len(args_) / denom if denom != 0 else 0
 
 
 def _harmonic_from_list(input_list):
@@ -102,10 +94,7 @@ def _harmonic_from_list(input_list):
     denom = np.sum(1 / input_list[input_list != 0])
 
     # Return the harmonic mean
-    if denom != 0:
-        return len(input_list) / denom
-    else:
-        return 0
+    return len(input_list) / denom if denom != 0 else 0
 
 
 def _harmonic_from_series(s: Union[pd.Series, pl.Series, np.ndarray]):
@@ -122,9 +111,7 @@ def _harmonic_from_series(s: Union[pd.Series, pl.Series, np.ndarray]):
     float
         The harmonic mean of the given series of inputs.
     """
-    if isinstance(s, pd.Series):
-        s = s.values
-    elif isinstance(s, pl.Series):
+    if isinstance(s, (pd.Series, pl.Series)):
         s = s.to_numpy()
     elif not isinstance(s, np.ndarray):
         raise TypeError("Input must be a pandas, polars, or numpy series of numbers.")
@@ -136,7 +123,4 @@ def _harmonic_from_series(s: Union[pd.Series, pl.Series, np.ndarray]):
     denom = np.sum(1 / s[s != 0])
 
     # Return the harmonic mean
-    if denom != 0:
-        return len(s) / denom
-    else:
-        return 0
+    return len(s) / denom if denom != 0 else 0

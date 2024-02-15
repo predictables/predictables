@@ -65,7 +65,8 @@ def _get_data(
         (fold_n if fold_n is not None else -42) not in unique_folds
     ):
         raise ValueError(
-            f"fold_n must be one of {unique_folds}. Got {fold_n if fold_n is not None else -42}."
+            f"fold_n must be one of {unique_folds}. "
+            f"Got {fold_n if fold_n is not None else -42}."
         )
 
     # Use the cv function if we're getting a fold

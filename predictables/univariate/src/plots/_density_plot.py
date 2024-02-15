@@ -27,37 +27,45 @@ def density_plot(
     backend: str = "matplotlib",
 ) -> Axes:
     """
-    Plot density function as well as cross-validation densities using the specified backend.
+    Plot density function as well as cross-validation densities using the
+    specified backend.
 
     Parameters
     ----------
     x : Union[pd.Series, pl.Series]
         The variable to plot the density of.
     plot_by : Union[pd.Series, pl.Series]
-        The variable to group by. For a binary target, this is the target. The plot will
-        generate a density for each level of the target.
+        The variable to group by. For a binary target, this is the target.
+        The plot will generate a density for each level of the target.
     cv_label : Union[pd.Series, pl.Series]
-        The cross-validation fold to group by. If None, no grouping is done. Defaults to None.
+        The cross-validation fold to group by. If None, no grouping is done.
+        Defaults to None.
     x_min : float, optional
-        The minimum value to plot. If None, defaults to the minimum of x before grouping by
-        any variables. Used to extend the curve to the edges of the plot.
+        The minimum value to plot. If None, defaults to the minimum of x
+        before grouping by any variables. Used to extend the curve to the
+        edges of the plot.
     x_max : float, optional
-        The maximum value to plot. If None, defaults to the maximum of x before grouping by
-        any variables. Used to extend the curve to the edges of the plot.
+        The maximum value to plot. If None, defaults to the maximum of x
+        before grouping by any variables. Used to extend the curve to the
+        edges of the plot.
     ax : matplotlib.axes.Axes, optional
         The axes to plot on. If None, a new figure and axes is created.
     grid_bins : int, optional
         The number of bins to use for the density. Defaults to 200.
     cv_alpha : float, optional
-        The alpha value to use for the cross-validation folds. Defaults to 0.5.
+        The alpha value to use for the cross-validation folds. Defaults to
+        0.5.
     cv_line_width : float, optional
-        The width of the line to use for the cross-validation folds. Defaults to 0.5.
+        The width of the line to use for the cross-validation folds.
+        Defaults to 0.5.
     t_test_alpha : float, optional
         The alpha value to use for the t-test. Defaults to 0.05.
     figsize : tuple, optional
-        The size of the figure to create. Defaults to (7, 7). Only used if ax is None.
+        The size of the figure to create. Defaults to (7, 7). Only used
+        if ax is None.
     call_legend : bool, optional
-        Whether to call plt.legend() at the end of the function. Defaults to True.
+        Whether to call plt.legend() at the end of the function.
+        Defaults to True.
     backend : str, optional
         The backend to use for plotting. Defaults to "matplotlib".
 
@@ -199,11 +207,12 @@ def density_plot_mpl(
     x = to_pd_s(x)
     plot_by = to_pd_s(plot_by)
 
+    cv_label_ = to_pd_s(cv_label)  # Convert cv_label to a pandas Series
     ax0 = density_by_mpl(x, plot_by, fill_under=False, ax=ax0)
     ax0 = density_by_mpl(
         x,
         plot_by,
-        cv_fold=cv_label,
+        cv_fold=cv_label_,
         ax=ax0,
         use_labels=False,
         alpha=cv_alpha,
@@ -236,14 +245,20 @@ def density_plot_mpl(
     )
 
     # Add a title reflecting the t-test results
-    title = f"Kernel Density Plot of {plot_label(x.name)} by {plot_label(plot_by.name)}\nDistributions by level are"
+    title = (
+        "Kernel Density Plot of "
+        f"{plot_label(x.name if x.name is not None else 'Var')}"
+        " by "
+        f"{plot_label(plot_by.name if plot_by.name is not None else 'Groupby Var')}."
+    )
+    title += "Distributions by level are"
     title += " not " if p >= t_test_alpha else " "
     title += f"significantly different at the {1 - t_test_alpha:.0%} level."
 
     ax0.set_title(title)
 
     # Set the x-axis label
-    ax0.set_xlabel(plot_label(x.name, False))
+    ax0.set_xlabel(plot_label(x.name if x.name is not None else "Var"), False)
 
     if call_legend:
         plt.legend(fontsize=24 * (figsize[0] / 16))
@@ -257,14 +272,16 @@ def _density_t_test_binary_target(
     alpha: float = 0.05,
 ):
     """
-    Perform a t-test on the density of x by the levels of plot_by. This function will be used only when the target variable is binary.
+    Perform a t-test on the density of x by the levels of plot_by. This function
+    will be used only when the target variable is binary.
 
     Parameters
     ----------
     x : Union[pd.Series, pl.Series]
         The variable to plot the density of.
     plot_by : Union[pd.Series, pl.Series]
-        The variable to group by. For a binary target, this is the target. The plot will generate a density for each level of the target.
+        The variable to group by. For a binary target, this is the target.
+        The plot will generate a density for each level of the target.
     alpha : float, optional
         The alpha value to use for the t-test. Defaults to 0.05.
 
@@ -275,7 +292,8 @@ def _density_t_test_binary_target(
     p : float
         The p-value of the t-test.
     significance_statement : str
-        A statement indicating whether or not the t-test indicates that the distributions are different.
+        A statement indicating whether or not the t-test indicates that the
+        distributions are different.
     """
     # Validate inputs
     if not isinstance(x, pd.Series) and not isinstance(x, pl.Series):
@@ -301,12 +319,17 @@ def _density_t_test_binary_target(
     # Determine if the distributions are different
     significance_statement = "Results of a Student's t-test:\n=================\n\n"
     if p < alpha:
-        if p < 1e-3:
-            significance_statement += f"The test indicates that the\ndistributions are significantly\ndifferent (p={p:.1e})."
-        else:
-            significance_statement += f"The test indicates that the\ndistributions are significantly\ndifferent (p={p:.3f})."
+        significance_statement += "The test indicates that the\ndistributions "
+        significance_statement += (
+            f"are significantly\ndifferent (p={p:.1e})."
+            if p < 1e-3
+            else f"are significantly\ndifferent (p={p:.3f})."
+        )
     else:
-        significance_statement += f"The test indicates no significant\ndifference between the distributions\n(p={p:.3f}) at the {1-alpha:.0%} level."
+        significance_statement += "The test indicates no significant\ndifference"
+        significance_statement += (
+            f"between the distributions\n(p={p:.3f}) at the {1-alpha:.0%} level."
+        )
 
     return t, p, significance_statement
 
@@ -378,7 +401,7 @@ def _plot_density_mpl(
     x_grid = np.linspace(x_min, x_max, grid_bins)
 
     if label is None:
-        label = x.name
+        label = x.name if x.name is not None else "Var"
 
     if fill_under:
         ax.plot(
@@ -435,7 +458,8 @@ def density_by_mpl(
     by : pd.Series
         The variable to group by.
     cv_fold : pd.Series, optional
-        The cross-validation fold to group by. If None, no grouping is done. Defaults to None.
+        The cross-validation fold to group by. If None, no grouping is done.
+        Defaults to None.
     x_min : float, optional
         The minimum value to plot. If None, defaults to the minimum of x. Used
         to extend the curve to the edges of the plot.
@@ -447,7 +471,8 @@ def density_by_mpl(
     use_labels : bool, optional
         Whether to use the labels of by. Defaults to True.
     grid_bins : int, optional
-        The number of bins to use for the density. Defaults to 200. Controls how smooth the density plot is.
+        The number of bins to use for the density. Defaults to 200. Controls
+        how smooth the density plot is.
     line_width : float, optional
         The width of the line to use for the density. Defaults to 1.
     line_color : str, optional
@@ -469,8 +494,8 @@ def density_by_mpl(
 
     Not Yet Implemented
     -------------------
-    1. I want to have the CV curves calculate a standard deviation, and provide a +/- 1 SD
-       band.
+    1. I want to have the CV curves calculate a standard deviation, and provide a
+       +/- 1 SD band.
     """
     # If no axis passed, create one
     if ax is None:
@@ -494,25 +519,28 @@ def density_by_mpl(
     # If not grouping by CV fold, just plot the density
     if cv_fold is None:
         for level, group in x.groupby(by):
-            color = binary_color(level) if get_column_dtype(by) == "binary" else None
-            label = f"{plot_label(by.name)} = {level}"
+            byname = by.name if by.name is not None else "Groupby Var"
+            color_ = binary_color(level) if get_column_dtype(by) == "binary" else None
+            color__ = color_ if color_ is not None else None
+            label = f"{plot_label(byname)} = {level}"
             _plot_density_mpl(
                 group,
                 label=label,
-                line_color=color,
+                line_color=color__,
                 **params,
             )
     # Otherwise, plot the density by CV fold
     else:
         for f in cv_fold.drop_duplicates().sort_values():  # loop over CV fold
             for level, group in x[cv_fold == f].groupby(by[cv_fold == f]):
-                color = (
+                color_ = (
                     binary_color(level) if get_column_dtype(by) == "binary" else None
                 )
+                color__ = color_ if color_ is not None else None
                 _plot_density_mpl(
                     group,
                     label="_nolegend_",  # don't label the plot if we're filling under
-                    line_color=color,
+                    line_color=color__,
                     **params,
                 )
 
@@ -541,7 +569,7 @@ def calculate_density_sd(
             sd[f"{f}_{level}"] = density(sd["x"])
 
     sd = sd.drop(columns=["x"])
-    sd = sd.std(axis=1)
+    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)
 
     # smooth the standard deviation (should not deviate much from one
     # x value to the next)
@@ -572,7 +600,7 @@ def _calculate_single_density_sd(
         sd[f"{f}"] = density(sd["x"])
 
     sd = sd.drop(columns=["x"])
-    sd = sd.std(axis=1)
+    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)
 
     # smooth the standard deviation (should not deviate much from one
     # x value to the next)

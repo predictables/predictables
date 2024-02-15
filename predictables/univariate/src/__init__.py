@@ -1,10 +1,14 @@
 from ._fit_sk_linear_regression import fit_sk_linear_regression  # noqa F401
+
+# trunk-ignore(flake8/F401)
 from ._fit_sk_logistic_regression import (
-    fit_sk_logistic_regression,
+    fit_sk_logistic_regression,  # noqa F401
 )  # noqa F401
 from ._fit_sm_linear_regression import fit_sm_linear_regression  # noqa F401
+
+# trunk-ignore(flake8/F401)
 from ._fit_sm_logistic_regression import (
-    fit_sm_logistic_regression,
+    fit_sm_logistic_regression,  # noqa F401
 )  # noqa F401
 from ._get_data import (  # noqa F401
     _filter_df_for_cv,
@@ -12,8 +16,10 @@ from ._get_data import (  # noqa F401
     _get_data,
 )
 from ._remove_missing_rows import remove_missing_rows  # noqa F401
+
+# trunk-ignore(flake8/F401)
 from ._time_series_validation_filter import (
-    time_series_validation_filter,
+    time_series_validation_filter,  # noqa F401
 )  # noqa F401
 
 # import the main plots themselves

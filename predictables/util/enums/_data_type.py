@@ -103,7 +103,7 @@ class DataType(Enum):
         return self == DataType.CONTINUOUS
 
     def is_categorical(self):
-        return (self == DataType.CATEGORICAL) or (self == DataType.BINARY)
+        return self in [DataType.CATEGORICAL, DataType.BINARY]
 
     def is_binary(self):
         return self == DataType.BINARY
@@ -192,8 +192,8 @@ class DataType(Enum):
         ]
 
         max_diff_eq_1 = False
-        if dtype in numeric_dtypes:
-            if n_unique > 1:
+        if n_unique > 1:
+            if dtype in numeric_dtypes:
                 max_diff = unique.diff().dropna().max()
                 max_diff_eq_1 = max_diff == 1
 
@@ -205,10 +205,7 @@ class DataType(Enum):
             else:
                 return DataType.CONTINUOUS
         elif dtype in categorical_dtypes:
-            if n_unique <= 2:
-                return DataType.BINARY
-            else:
-                return DataType.CATEGORICAL
+            return DataType.BINARY if n_unique <= 2 else DataType.CATEGORICAL
         elif dtype in date_dtypes:
             return DataType.DATE
         else:
@@ -252,8 +249,8 @@ class DataType(Enum):
         ]
 
         max_diff_eq_1 = False
-        if dtype in numeric_dtypes:
-            if n_unique > 1:
+        if n_unique > 1:
+            if dtype in numeric_dtypes:
                 max_diff = unique.diff().drop_nans().max()
                 max_diff_eq_1 = max_diff == 1
 
@@ -265,10 +262,7 @@ class DataType(Enum):
             else:
                 return DataType.CONTINUOUS
         elif dtype in categorical_dtypes:
-            if n_unique <= 2:
-                return DataType.BINARY
-            else:
-                return DataType.CATEGORICAL
+            return DataType.BINARY if n_unique <= 2 else DataType.CATEGORICAL
         elif dtype in date_dtypes:
             return DataType.DATE
         else:

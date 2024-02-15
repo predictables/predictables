@@ -33,8 +33,9 @@ def extract_model_params(
     sm_model, sk_model
 ) -> Tuple[StatsmodelsModelParams, SKLearnModelParams]:
     """
-    Extract the parameters from a model and return them as a named tuple. Both the statsmodels and
-    sklearn model must be passed, and the function will return the parameters for both models.
+    Extract the parameters from a model and return them as a named tuple. Both the
+    statsmodels and sklearn model must be passed, and the function will return the
+    parameters for both models.
 
     Parameters
     ----------
@@ -64,7 +65,8 @@ def extract_model_params(
 
 def extract_model_params_sm_GLM(model: sm.GLM) -> StatsmodelsModelParams:
     """
-    Extract the parameters from a statsmodels GLM model and return them as a named tuple.
+    Extract the parameters from a statsmodels GLM model and return them as
+    a named tuple.
 
     Parameters
     ----------
@@ -107,7 +109,8 @@ def extract_model_params_sm_GLM(model: sm.GLM) -> StatsmodelsModelParams:
 
 def extract_model_params_sm_OLS(model: sm.OLS) -> StatsmodelsModelParams:
     """
-    Extract the parameters from a statsmodels OLS model and return them as a named tuple.
+    Extract the parameters from a statsmodels OLS model and return them
+    as a named tuple.
 
     Parameters
     ----------

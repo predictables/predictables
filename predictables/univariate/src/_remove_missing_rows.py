@@ -3,7 +3,8 @@ import polars as pl
 
 def remove_missing_rows(df, *columns):
     """
-    Remove rows from a Polars DataFrame where any of the specified columns contain missing values.
+    Remove rows from a Polars DataFrame where any of the specified columns contain
+    missing values.
 
     Parameters
     ----------
@@ -15,7 +16,8 @@ def remove_missing_rows(df, *columns):
     Returns
     -------
     pl.LazyFrame
-        A lazy Polars DataFrame with rows removed where specified columns contain missing values.
+        A lazy Polars DataFrame with rows removed where specified columns contain
+        missing values.
     """
     for col in columns:
         df = df.filter(pl.col(col).is_not_null())

@@ -20,8 +20,9 @@ def time_series_validation_filter(
     """
     df = to_pl_lf(df)
 
-    # allowed to pass in a separate validation set, but if none passed (or if doing cross
-    # validation (and so validation set is part of the training set)), use the training set
+    # allowed to pass in a separate validation set, but if none passed (or if
+    # doing cross validation (and so validation set is part of the training
+    # set)), use the training set
     df_val_start = (
         df if df_val is None else (to_pl_lf(df_val) if fold is None else None)
     )
