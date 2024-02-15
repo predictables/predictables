@@ -142,35 +142,40 @@ class Univariate(Model):
             )
 
         dbg.msg(f"[{self.feature_col}]: Producing results dataframe | Ux0001f")
-        # self.results = pd.DataFrame(index=self.unique_folds + ["mean", "std"])
-        # self.results.index.name = "fold"
-        # for attribute in [
-        #     "coef",
-        #     "pvalues",
-        #     "se",
-        #     "lower_ci",
-        #     "upper_ci",
-        #     "acc_train",
-        #     "acc_test",
-        #     "auc_train",
-        #     "auc_test",
-        #     "f1_train",
-        #     "f1_test",
-        #     "precision_train",
-        #     "precision_test",
-        #     "recall_train",
-        #     "recall_test",
-        #     "mcc_train",
-        #     "mcc_test",
-        #     "logloss_train",
-        #     "logloss_test",
-        # ]:
-        #     if hasattr(self, attribute):
-        #         self.results[attribute] = get_col(self, attribute)
-        #     else:
-        #         dbg.msg(
-        #             f"[{self.feature_col}]: Attribute {attribute} not found in self | Ux0001g"
-        #         )
+        self.results = pl.DataFrame(
+            {"fold": self.unique_folds + ["mean", "std"]}
+        ).lazy()
+        for attribute in [
+            "coef",
+            "pvalues",
+            "se",
+            "lower_ci",
+            "upper_ci",
+            "acc_train",
+            "acc_test",
+            "auc_train",
+            "auc_test",
+            "f1_train",
+            "f1_test",
+            "precision_train",
+            "precision_test",
+            "recall_train",
+            "recall_test",
+            "mcc_train",
+            "mcc_test",
+            "logloss_train",
+            "logloss_test",
+        ]:
+            if hasattr(self, attribute):
+                self.results = self.results.with_column(
+                    attribute, get_col(self, attribute)
+                )
+
+            else:
+                dbg.msg(
+                    f"[{self.feature_col}]: Attribute {attribute} not found in self | Ux0001g"
+                )
+
         # ALIASES
         # =======
         # I am going to alias some of the api syntax errors here if they are

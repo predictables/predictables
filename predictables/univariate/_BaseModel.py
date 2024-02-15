@@ -123,16 +123,19 @@ class Model:
         ).lazy()
 
         # Split into train and test sets
-        (self.X_train, self.y_train, self.X_test, self.y_test) = (
-            time_series_validation_filter(
-                df=self.df,
-                df_val=self.df_val,
-                fold=self.fold_n,
-                fold_col=self.fold_col,
-                feature_col=self.feature_col,
-                target_col=self.target_col,
-                time_series_validation=self.time_series_validation,
-            )
+        (
+            self.X_train,
+            self.y_train,
+            self.X_test,
+            self.y_test,
+        ) = time_series_validation_filter(
+            df=self.df,
+            df_val=self.df_val,
+            fold=self.fold_n,
+            fold_col=self.fold_col,
+            feature_col=self.feature_col,
+            target_col=self.target_col,
+            time_series_validation=self.time_series_validation,
         )
 
         self.scaler: Optional[StandardScaler] = None
@@ -148,34 +151,28 @@ class Model:
             self.model = fit_sm_linear_regression(self.X_train, self.y_train)
             self.sk_model = fit_sk_linear_regression(self.X_train, self.y_train)
 
-        self.yhat_train: Union[pd.Series[Any], pd.DataFrame[Any]] = self.predict(self.X_train)  # type: ignore
-        self.yhat_test: Union[pd.Series[Any], pd.DataFrame[Any]] = self.predict(self.X_test)  # type: ignore
+        self.yhat_train: Union[pd.Series[Any], pd.DataFrame[Any]] = self.predict(
+            self.X_train
+        )  # type: ignore
+        self.yhat_test: Union[pd.Series[Any], pd.DataFrame[Any]] = self.predict(
+            self.X_test
+        )  # type: ignore
 
         # Pull stats from the fitted model object
-        # self.coef = self.model.params.iloc[0]
         results = results.with_columns(pl.lit(self.model.params.iloc[0]).alias("coef"))
-        # self.pvalues = self.model.pvalues.iloc[0]
         results = results.with_columns(
             pl.lit(self.model.pvalues.iloc[0]).alias("pvalues")
         )
-        # self.aic = self.model.aic
         results = results.with_columns(pl.lit(self.model.aic).alias("aic"))
-        # self.se = self.model.bse.iloc[0]
         results = results.with_columns(pl.lit(self.model.bse.iloc[0]).alias("se"))
-        # self.lower_ci = self.model.conf_int()[0].values[0]
         results = results.with_columns(
             pl.lit(self.model.conf_int()[0].values[0]).alias("lower_ci")
         )
-        # self.upper_ci = self.model.conf_int()[1].values[0]
         results = results.with_columns(
             pl.lit(self.model.conf_int()[1]).alias("upper_ci")
         )
-        # self.n = self.model.nobs
         results = results.with_columns(pl.lit(self.model.nobs).alias("n"))
-        # self.k = self.model.params.shape[0]
         results = results.with_columns(pl.lit(self.model.params.shape[0]).alias("k"))
-
-        # self.sk_coef = self.sk_model.coef_
         results = results.with_columns(pl.lit(self.sk_model.coef_).alias("sk_coef"))
 
         if self.is_binary:
@@ -251,53 +248,8 @@ class Model:
                     ).alias("pr_curve_test"),
                 ]
             )
-            # self.acc_train = metrics.accuracy_score(
-            #     self.y_train, self.yhat_train.round(0)
-            # )
-            # self.acc_test = metrics.accuracy_score(self.y_test, self.yhat_test.round(0))
-            # self.f1_train = metrics.f1_score(self.y_train, self.yhat_train.round(0))
-            # self.f1_test = metrics.f1_score(self.y_test, self.yhat_test.round(0))
-            # self.recall_train = metrics.recall_score(
-            #     self.y_train, self.yhat_train.round(0)
-            # )
-            # self.recall_test = metrics.recall_score(
-            #     self.y_test, self.yhat_test.round(0)
-            # )
 
-            # self.logloss_train = metrics.log_loss(
-            #     self.y_train, self.yhat_train.round(0)
-            # )
-            # self.logloss_test = metrics.log_loss(self.y_test, self.yhat_test.round(0))
-            # self.auc_train = metrics.roc_auc_score(
-            #     self.y_train, self.yhat_train.round(0)
-            # )
-            # self.auc_test = metrics.roc_auc_score(self.y_test, self.yhat_test.round(0))
-
-            # self.precision_train = metrics.precision_score(
-            #     self.y_train, self.yhat_train.round(0), zero_division=0
-            # )
-            # self.precision_test = metrics.precision_score(
-            #     self.y_test, self.yhat_test.round(0), zero_division=0
-            # )
-            # self.mcc_train = metrics.matthews_corrcoef(
-            #     self.y_train.replace(0, -1), self.yhat_train.round(0).replace(0, -1)
-            # )
-            # self.mcc_test = metrics.matthews_corrcoef(
-            #     self.y_test.replace(0, -1), self.yhat_test.round(0).replace(0, -1)
-            # )
-
-            # self.roc_curve_train = metrics.roc_curve(
-            #     self.y_train, self.yhat_train.round(0)
-            # )
-            # self.roc_curve_test = metrics.roc_curve(
-            #     self.y_test, self.yhat_test.round(0)
-            # )
-            # self.pr_curve_train = metrics.precision_recall_curve(
-            #     self.y_train, self.yhat_train.round(0)
-            # )
-            # self.pr_curve_test = metrics.precision_recall_curve(
-            #     self.y_test, self.yhat_test.round(0)
-            # )
+        self.results = results
 
     def __repr__(self) -> str:
         return f"<Model{'_[CV-' if self.fold_n is not None else ''}{f'{self.fold_n}]' if self.fold_n is not None else ''}({'df' if self.df is not None else ''}{', df-val' if self.df_val is not None else ''})>"
@@ -368,7 +320,9 @@ class Model:
 
         # Standardize and return the input data
         return pd.DataFrame(
-            self.scaler.transform(np.array(X.values).reshape(-1, 1) if X.shape[1] == 1 else X),  # type: ignore
+            self.scaler.transform(
+                np.array(X.values).reshape(-1, 1) if X.shape[1] == 1 else X
+            ),  # type: ignore
             index=X.index,
             columns=X.columns,
         )
