@@ -383,6 +383,7 @@ def _plotly_plot(*args, **kwargs):
     raise NotImplementedError("Plotly support is not yet implemented")
 
 
+# trunk-ignore(sourcery/low-code-quality)
 def create_loading_plot(
     pca: PCA,
     feature_names: List[str],
@@ -473,6 +474,7 @@ def create_loading_plot(
     backend_options.get(backend, lambda: None)()
 
     # If the backend is plotly, raise a not implemented error
+    # trunk-ignore(sourcery/switch)
     if backend == "plotly":
         raise NotImplementedError("Plotly support is not yet implemented")
     elif backend != "matplotlib":

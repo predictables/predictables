@@ -1,6 +1,6 @@
 # PredicTables
 
-## A brazenly-opinionated library for standardizing machine learning workflows in Python.
+## A brazenly-opinionated library for standardizing machine learning workflows in Python
 
 ### Installation
 
@@ -27,17 +27,11 @@ This will build a container with Python 3.11 and install all necessary packages 
 - **SHAP Analysis:** Interpret the impact of your features.
 - **Bayesian Model Optimization:** Fine-tune models for peak performance.
 
-## Installation
-
-```bash
-pip install predictables
-```
-
 ## Quick Start
 
 Get started with PredicTables in just a few lines:
 
-```
+```python
 import predictables as pt
 pt.eda('path/to/your/data.csv')
 ```

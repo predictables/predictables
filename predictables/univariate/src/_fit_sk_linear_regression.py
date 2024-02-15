@@ -3,7 +3,7 @@ from typing import Union
 import numpy as np
 import pandas as pd
 import polars as pl
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression  # type: ignore
 
 from predictables.util import to_pd_df, to_pd_s
 
@@ -40,7 +40,8 @@ def fit_sk_linear_regression(
         | isinstance(X, pl.LazyFrame)
     ):
         raise TypeError(
-            f"X must be one of np.ndarray, pd.DataFrame, pl.DataFrame, pl.LazyFrame. Got {type(X)}"
+            "X must be one of np.ndarray, pd.DataFrame, pl.DataFrame, pl.LazyFrame. "
+            f"Got {type(X)}"
         )
 
     # Validate y input
@@ -55,7 +56,7 @@ def fit_sk_linear_regression(
     if not isinstance(fit_intercept, bool):
         raise TypeError(f"fit_intercept must be a bool. Got {type(fit_intercept)}")
 
-    X = to_pd_df(X)
-    y = to_pd_s(y).values.ravel()
+    X_ = to_pd_df(X) if isinstance(X, (pl.DataFrame, pl.LazyFrame, pd.DataFrame)) else X
+    y_ = to_pd_s(y).values.ravel() if isinstance(y, (pl.Series, pd.Series)) else y
 
-    return LinearRegression(fit_intercept=fit_intercept).fit(X, y)
+    return LinearRegression(fit_intercept=fit_intercept).fit(X_, y_)

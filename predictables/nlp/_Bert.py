@@ -3,11 +3,14 @@ from typing import Optional, Union
 
 from transformers import BertModel, BertTokenizer, BertTokenizerFast  # type: ignore
 
+default_folder = "/sas/data/project/EG/ActShared/SmallBusiness/aw/bert/bert-cased"
+
 
 class Bert:
+
     def __init__(
         self,
-        bert_folder: str = "/sas/data/project/EG/ActShared/SmallBusiness/aw/bert/bert-cased",
+        bert_folder: str = default_folder,
         bert_model_name: str = "pytorch_model.bin",
         null_symbol: str = "[MASK]",
         padding_symbol: str = "[PAD]",
@@ -22,7 +25,8 @@ class Bert:
         Parameters
         ----------
         bert_folder : str
-            The folder containing the BERT model and tokenizer files. The default is "/sas/data/project/EG/ActShared/SmallBusiness/aw/bert/bert-cased".
+            The folder containing the BERT model and tokenizer files. The default
+            is "/sas/data/project/EG/ActShared/SmallBusiness/aw/bert/bert-cased".
         bert_model_name : str
             The name of the BERT model file. The default is "pytorch_model.bin".
         null_symbol : str
@@ -30,7 +34,9 @@ class Bert:
         padding_symbol : str
             The padding symbol to use for padding. The default is "[PAD]".
         use_fast_tokenizer : bool
-            Whether to use the fast tokenizer or not. The default is True. Use the slow tokenizer if you need to tokenize text longer than 512 tokens. The fast tokenizer is limited to 512 tokens.
+            Whether to use the fast tokenizer or not. The default is True. Use the
+            slow tokenizer if you need to tokenize text longer than 512 tokens. The
+            fast tokenizer is limited to 512 tokens.
         truncation : Union[bool, str]
             Whether to truncate text to 512 tokens. The default is True.
         padding : Union[bool, str]
@@ -57,11 +63,13 @@ class Bert:
         tokenizer : BertTokenizerFast or BertTokenizer
             The BERT tokenizer, either the fast tokenizer or the slow tokenizer.
         model_path : str
-            The path to the BERT model specifically. This is a concatenation of the folder and model name.
+            The path to the BERT model specifically. This is a concatenation of the
+            folder and model name.
         model : BertModel
             The BERT model object.
         text : list
-            A list of text strings, each of which is individually tokenized and embedded.
+            A list of text strings, each of which is individually tokenized and
+            embedded.
 
 
         """
@@ -106,10 +114,7 @@ class Bert:
             string = string[:512]
         elif len(string) < 512:
             # pad string if shorter than 512 tokens
-            string = string + " " + self.padding_symbol * (512 - len(string) + 1)
-        else:
-            # do nothing if string is 512 tokens
-            pass
+            string = f"{string} {self.padding_symbol * (512 - len(string) + 1)}"
         return string
 
     def add(self, text: Union[list, str]) -> None:
@@ -121,24 +126,14 @@ class Bert:
         text : Union[list, str]
             A string or list of strings to add to the BERT model.
         """
-        if self.text is None:
-            if isinstance(text, list):
-                self.text = text
-            elif isinstance(text, str):
-                self.text = [text]
-            else:
-                raise ValueError(
-                    "`text` must be a string or a list of strings. Please try again."
-                )
+        if isinstance(text, list):
+            self.text = text if self.text is None else self.text
+        elif isinstance(text, str):
+            self.text = [text] if self.text is None else [self.text] + [text]
         else:
-            if isinstance(text, list):
-                self.text += text  # type: ignore
-            elif isinstance(text, str):
-                self.text += [text]  # type: ignore
-            else:
-                raise ValueError(
-                    "`text` must be a string or a list of strings. Please try again."
-                )
+            raise ValueError(
+                "`text` must be a string or a list of strings. Please try again."
+            )
 
     def tokens(self, text: str) -> dict:
         """
@@ -155,8 +150,7 @@ class Bert:
             The tokenized string, along with the token type ids and attention mask.
         """
         # tokenize
-        inputs = self.tokenizer(text, return_tensors="pt")
-        return inputs
+        return self.tokenizer(text, return_tensors="pt")
 
     def embeddings(self, masked_string: str, pad: bool = True) -> dict:
         """
@@ -167,7 +161,8 @@ class Bert:
         masked_string : str
             The string to generate embeddings for.
         pad : bool
-            Whether to pad the string to the maximum length of 512 tokens. The default is True.
+            Whether to pad the string to the maximum length of 512 tokens. The
+            default is True.
 
         Returns
         -------
@@ -178,12 +173,8 @@ class Bert:
         if pad:
             masked_string = self._pad(masked_string)
 
-        # tokenize
-        inputs = self.tokens(masked_string)
-
         # generate embeddings
-        outputs = self.model(**inputs)
-        return outputs
+        return self.model(**self.tokens(masked_string))
 
     def get_embeddings(self, masked_string: str, pad: bool = True) -> list:
         """
@@ -194,7 +185,8 @@ class Bert:
         masked_string : str
             The string to generate embeddings for.
         pad : bool
-            Whether to pad the string to the maximum length of 512 tokens. The default is True.
+            Whether to pad the string to the maximum length of 512 tokens. The
+            default is True.
 
         Returns
         -------

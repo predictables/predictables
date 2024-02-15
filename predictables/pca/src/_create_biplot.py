@@ -2,10 +2,11 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import warnings
-from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA  # type: ignore
 from typing import List, Optional, Tuple
 
 
+# trunk-ignore(sourcery/low-code-quality)
 def create_biplot(
     pca: PCA,
     feature_names: List[str],
@@ -69,6 +70,7 @@ def create_biplot(
     ax : matplotlib.axes.Axes
         The Axes object with the biplot.
     """
+    # trunk-ignore(sourcery/switch)
     if backend == "plotly":
         raise NotImplementedError("Plotly support is not yet implemented")
     elif backend != "matplotlib":
@@ -155,8 +157,8 @@ def create_biplot(
 
         # Set limits
         if use_limits:
-            ax.set_xlim([-1, 1])
-            ax.set_ylim([-1, 1])
+            ax.set_xlim(-1, 1)
+            ax.set_ylim(-1, 1)
 
         # Add labels and title
         ax.set_xlabel(

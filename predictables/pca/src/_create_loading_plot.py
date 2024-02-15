@@ -82,10 +82,12 @@
 
 #     Examples
 #     --------
-#     >>> from predictables.pca.src._create_loading_plot import calculate_cumulative_loading_threshold
+#     >>> from predictables.pca.src._create_loading_plot import
+# calculate_cumulative_loading_threshold
 #     >>> n_components = 2
 #     >>> average_loading_threshold = 0.05
-#     >>> calculate_cumulative_loading_threshold(n_components, average_loading_threshold)
+#     >>> calculate_cumulative_loading_threshold(n_components,
+# average_loading_threshold)
 #     0.1
 #     """
 #     return average_loading_threshold * n_components
@@ -189,7 +191,8 @@
 #     if ax is None:
 #         fig, ax0 = plt.subplots(figsize=figsize)
 #     else:
-#         fig = ax.get_figure()  # type: ignore # This cannot be None because of the conditional
+#         fig = ax.get_figure()  # type: ignore # This cannot be None because of the
+# conditional
 #         ax0 = ax
 #     return fig, ax0
 
@@ -202,7 +205,8 @@
 #         width=bar_width,
 #         alpha=bar_alpha,
 #         color=[f"C{i}" for i in range(n_components)],
-#         label=[f"{'' if include_legend else '_'}PC-{i+1}" for i in range(n_components)],
+#         label=[f"{'' if include_legend else '_'}PC-{i+1}" for i in
+# range(n_components)],
 #     )
 #     return df.iloc[:, :n_components].plot.bar(**params)
 

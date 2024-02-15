@@ -432,6 +432,7 @@ def _plot_density_mpl(
     return ax
 
 
+# trunk-ignore(sourcery/low-code-quality)
 def density_by_mpl(
     x: pd.Series,
     by: pd.Series,

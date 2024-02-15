@@ -1,8 +1,8 @@
-from typing import Union
+from typing import Union, Dict
 
 import pandas as pd
 import polars as pl
-from sklearn.utils import resample
+from sklearn.utils import resample  # type: ignore
 
 from predictables.util import to_pl_df
 
@@ -32,12 +32,15 @@ def bootstrap_pca(
     Returns
     -------
     bootstrapped_results : dict
-        Dictionary containing loadings and explained variance for each bootstrapped sample.
+        Dictionary containing loadings and explained variance for each bootstrapped
+        sample.
 
     Notes
     -----
-    1. The function uses scikit-learn's `resample` function to generate bootstrapped samples.
-    2. The function uses `PredicTable.PCA.src.perform_pca` to perform PCA on each bootstrapped sample.
+    1. The function uses scikit-learn's `resample` function to generate bootstrapped
+       samples.
+    2. The function uses `PredicTable.PCA.src.perform_pca` to perform PCA on each
+       bootstrapped sample.
 
     Examples
     --------
@@ -60,7 +63,8 @@ def bootstrap_pca(
     See Also
     --------
     sklearn.utils.resample : Function used to generate bootstrapped samples.
-    PredicTable.PCA.src.perform_pca : Function used to perform PCA on each bootstrapped sample.
+    PredicTable.PCA.src.perform_pca : Function used to perform PCA on each bootstrapped
+    sample.
     """
     # Convert `data` to polars DataFrame if it isn't already:
     data = to_pl_df(data)
@@ -73,7 +77,7 @@ def bootstrap_pca(
         raise ValueError("n_components cannot be greater than the number of features.")
 
     # Initialize dictionary to store results
-    bootstrapped_results = {"loadings": [], "explained_variance": []}
+    bootstrapped_results: Dict[str, list] = {"loadings": [], "explained_variance": []}
 
     # Generate bootstrapped samples
     for _ in range(n_bootstraps):
@@ -82,9 +86,12 @@ def bootstrap_pca(
         # `perform_pca` on each bootstrapped sample
         pca_obj = perform_pca(sample, n_components=n_components, return_pca_obj=True)
 
-        bootstrapped_results["loadings"].append(pca_obj.components_)
+        if isinstance(pca_obj, tuple):
+            pca_obj = pca_obj[0]
+
+        bootstrapped_results["loadings"].append(pca_obj.components_)  # type: ignore
         bootstrapped_results["explained_variance"].append(
-            pca_obj.explained_variance_ratio_
+            pca_obj.explained_variance_ratio_  # type: ignore
         )
 
     return bootstrapped_results

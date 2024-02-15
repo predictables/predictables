@@ -23,9 +23,9 @@ def cdf_plot(
     **kwargs,
 ) -> Axes:
     """
-    Plots the empirical CDF of the given data for each level in `plot_by` and each fold in
-    `cv_folds`. This plot is meant to show a "distribution" of possible CDF plots that
-    could have been pulled from the real distribution.
+    Plots the empirical CDF of the given data for each level in `plot_by` and each fold
+    in `cv_folds`. This plot is meant to show a "distribution" of possible CDF plots
+    that could have been pulled from the real distribution.
 
     Parameters
     ----------
@@ -93,11 +93,13 @@ def cdf_plot_matplotlib(
     else:
         ax0 = ax
 
+    _name = x.name if x.name is not None else "x"
+
     # Plot the total CDFs
     ax0 = cdf_plot_matplotlib_levels(
         x=x,
         plot_by=plot_by,
-        x_label=(plot_label(x_label) if x_label is not None else plot_label(x.name)),
+        x_label=(plot_label(x_label) if x_label is not None else plot_label(_name)),
         y_label=(
             y_label
             if y_label is not None
@@ -112,7 +114,7 @@ def cdf_plot_matplotlib(
         x=x,
         plot_by=plot_by,
         cv_folds=cv_folds,
-        x_label=(plot_label(x_label) if x_label is not None else plot_label(x.name)),
+        x_label=(plot_label(x_label) if x_label is not None else plot_label(_name)),
         y_label=(
             y_label
             if y_label is not None
@@ -126,7 +128,7 @@ def cdf_plot_matplotlib(
     if x_label is not None:
         ax0.set_xlabel(plot_label(x_label))
     else:
-        ax0.set_xlabel(plot_label(x.name))
+        ax0.set_xlabel(plot_label(_name))
     if y_label is not None:
         ax0.set_ylabel(y_label)
     else:
@@ -140,7 +142,7 @@ def cdf_plot_matplotlib(
     ax0.axhline(0, color="black", linestyle="--", linewidth=1, label="_nolegend_")
     ax0.axhline(1, color="black", linestyle="--", linewidth=1, label="_nolegend_")
 
-    title = create_title(x.name, plot_by.name)
+    title = create_title(_name, plot_by.name if plot_by.name is not None else "plot_by")
     ax0.set_title(title)
 
     plt.legend(
@@ -192,9 +194,11 @@ def cdf_plot_matplotlib_levels(
     else:
         ax_ = ax
 
+    _plotby_name = plot_by.name if plot_by.name is not None else "plot_by"
+
     # For each level of plot_by, plot the cdf of x, conditional on plot_by
     for level in plot_by.drop_duplicates().sort_values().values:
-        label = plot_label(plot_by.name)
+        label = plot_label(_plotby_name)
         label += f" = {level}"
         x_cdf = calculate_cdf(x[plot_by == level])
         ax_ = x_cdf.plot.line(ax=ax_, label=label, color=binary_color(level), **kwargs)
@@ -252,7 +256,7 @@ def cdf_plot_matplotlib_levels_cv(
 
     # For each level of plot_by, plot the cdf of x, conditional on plot_by
     for level in plot_by.drop_duplicates().sort_values().values:
-        for fold in cv_folds.drop_duplicates().sort_values().values:
+        for fold in cv_folds.unique().sort():
             x_cdf = calculate_cdf(x[(plot_by == level) & (cv_folds == fold)])
             ax_ = x_cdf.plot.line(ax=ax_, color=binary_color(level), **kwargs)
 

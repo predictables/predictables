@@ -103,7 +103,8 @@
 #         y : Union[pd.Series, pl.Series, np.ndarray, None], optional
 #             Optionally sets the y attribute, by default None, indicating no change.
 #         **kwargs
-#             Optional keyword arguments to be passed to the correlation calculation method.
+#             Optional keyword arguments to be passed to the correlation calculation
+# method.
 
 #         Returns
 #         -------
@@ -174,7 +175,8 @@
 #         Parameters
 #         ----------
 #         X : pandas.DataFrame
-#             The feature matrix. Must contain both continuous, categorical, and binary features.
+#             The feature matrix. Must contain both continuous, categorical, and binary
+# features.
 #         y : pandas.Series
 #             The target vector. Must be binary.
 #         """
