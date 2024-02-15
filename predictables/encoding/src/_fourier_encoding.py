@@ -47,9 +47,7 @@ def _days_in_quarter_already(x: pd.Series) -> pd.Series:
         12: 30 + 31,
     }
 
-    days = x.dt.month.map(qtr).mask(
-        x.dt.is_leap_year & (x.dt.month.eq(3)), 31 + 29
-    )
+    days = x.dt.month.map(qtr).mask(x.dt.is_leap_year & (x.dt.month.eq(3)), 31 + 29)
     return days
 
 

@@ -69,9 +69,7 @@ def test_get_bbox_with_non_displayed_label():
 def test_get_bbox_with_various_text_and_styles(rotation, alignment, text):
     """Test bounding box with various text sizes, rotations, and alignments."""
     fig, ax = plt.subplots()
-    label = ax.text(
-        0.5, 0.5, text, rotation=rotation, ha=alignment, visible=True
-    )
+    label = ax.text(0.5, 0.5, text, rotation=rotation, ha=alignment, visible=True)
     fig.canvas.draw()
 
     bbox = _get_bbox(label, ax)

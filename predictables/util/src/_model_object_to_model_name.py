@@ -13,9 +13,7 @@ def model_object_to_model_name(model):
     Takes a model object. Returns the name of the model as a string.
     """
 
-    if isinstance(model, CatBoostClassifier) or isinstance(
-        model, CatBoostRegressor
-    ):
+    if isinstance(model, CatBoostClassifier) or isinstance(model, CatBoostRegressor):
         out = "catboost"
     elif isinstance(model, RandomForestClassifier) or isinstance(
         model, RandomForestRegressor

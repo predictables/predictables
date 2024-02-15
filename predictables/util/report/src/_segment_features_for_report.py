@@ -51,9 +51,7 @@ class Segment:
                 f"max_features ({self.max_features}) must be an integer, and cannot be {type(self.max_features)}."
             )
 
-        if not isinstance(
-            self.features, (list, pd.Series, pl.Series, np.ndarray)
-        ):
+        if not isinstance(self.features, (list, pd.Series, pl.Series, np.ndarray)):
             raise TypeError(
                 f"features ({self.features}) must be a list (or list-like), and cannot be {type(self.features)}."
             )
@@ -74,10 +72,7 @@ class Segment:
             self.idx_start = self.file_num_start - 1
         if self.idx_end is None:
             self.idx_end = self.file_num_end - 1
-        if (
-            self.max_features is not None
-            and self.n_features > self.max_features
-        ):
+        if self.max_features is not None and self.n_features > self.max_features:
             raise ValueError(
                 f"Number of features in segment ({self.n_features}) is greater than the maximum allowed ({self.max_features})."
             )

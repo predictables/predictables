@@ -53,9 +53,7 @@ def test_mean_encoding_hit_ratio1(sample_data):
         drop_mean_ratio=False,
     )
     result_df = (
-        result_df.collect()
-        if isinstance(result_df, pl.LazyFrame)
-        else result_df
+        result_df.collect() if isinstance(result_df, pl.LazyFrame) else result_df
     )
 
     # Check if mean_ratio is calculated correctly for category 'A'
@@ -83,9 +81,7 @@ def test_mean_encoding_hit_ratio2(sample_data):
         drop_mean_ratio=False,
     )
     result_df = (
-        result_df.collect()
-        if isinstance(result_df, pl.LazyFrame)
-        else result_df
+        result_df.collect() if isinstance(result_df, pl.LazyFrame) else result_df
     )
 
     # Check if mean_ratio is calculated correctly for category 'B'
@@ -114,9 +110,7 @@ def test_mean_encoding_hit_ratio3(sample_data):
         drop_mean_ratio=False,
     )
     result_df = (
-        result_df.collect()
-        if isinstance(result_df, pl.LazyFrame)
-        else result_df
+        result_df.collect() if isinstance(result_df, pl.LazyFrame) else result_df
     )
 
     # Check if row order is preserved after operations

@@ -15,9 +15,7 @@ from predictables.impute import (
 @pytest.fixture
 def data_setup():
     # Original DataFrame
-    original_df = pd.DataFrame(
-        {"A": [1, 2, np.nan, 4, 5], "B": [5, np.nan, 7, 8, 9]}
-    )
+    original_df = pd.DataFrame({"A": [1, 2, np.nan, 4, 5], "B": [5, np.nan, 7, 8, 9]})
 
     # Imputed DataFrame
     imputed_df = pd.DataFrame({"A": [1, 2, 3, 4, 5], "B": [5, 6, 7, 8, 9]})
@@ -52,9 +50,7 @@ def test_evaluate_imputation_normal_case(data_setup):
 def test_evaluate_imputation_column_not_found(data_setup):
     imputed_df, original_df, missing_mask = data_setup
     with pytest.raises(ValueError):
-        evaluate_imputation_one_column(
-            imputed_df, original_df, missing_mask, "C"
-        )
+        evaluate_imputation_one_column(imputed_df, original_df, missing_mask, "C")
 
 
 # No missing values
@@ -66,12 +62,8 @@ def test_evaluate_imputation_no_missing_values(data_setup):
     mae, mape = evaluate_imputation_one_column(
         imputed_df, original_df, missing_mask, "B"
     )
-    assert (
-        mae == 0
-    ), f"MAE should be 0 when there are no missing values, not {mae}"
-    assert (
-        mape == 0
-    ), f"MAPE should be 0 when there are no missing values, not {mape}"
+    assert mae == 0, f"MAE should be 0 when there are no missing values, not {mae}"
+    assert mape == 0, f"MAPE should be 0 when there are no missing values, not {mape}"
 
 
 # Incorrect data types
@@ -140,9 +132,7 @@ def test_calculate_fold_error_normal_case():
     predictions = np.array([1, 2, 3])
 
     error = calculate_fold_error(y_val, predictions)
-    assert (
-        error == 0
-    ), f"Error should be 0 for perfect predictions, not {error}"
+    assert error == 0, f"Error should be 0 for perfect predictions, not {error}"
 
 
 # Mismatched sizes
@@ -162,9 +152,7 @@ def test_calculate_fold_error_custom_metric():
     y_val = np.array([1, 2, 3])
     predictions = np.array([2, 3, 4])  # Error of 1 for each prediction
 
-    error = calculate_fold_error(
-        y_val, predictions, error_metric=absolute_error
-    )
+    error = calculate_fold_error(y_val, predictions, error_metric=absolute_error)
     assert (
         error == 1
     ), f"Error should be 1 for these predictions with absolute error metric, not {error}"
@@ -242,9 +230,7 @@ def test_cross_validate_model_custom_error_metric(mock_model):
         mock_model, X, y, n_folds, n_epochs, error_metric=absolute_error
     )
 
-    assert isinstance(
-        errors, list
-    ), f"Should return a list, not {type(errors)}"
+    assert isinstance(errors, list), f"Should return a list, not {type(errors)}"
     assert (
         len(errors) == n_folds
     ), f"List should contain an error for each fold, but only contains {len(errors)} errors, with {n_folds} folds"

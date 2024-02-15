@@ -97,9 +97,7 @@ def perform_pca(
         X_test = to_pd_df(X_test)
 
     if n_components > X_train.shape[1]:
-        raise ValueError(
-            "n_components cannot be greater than the number of features"
-        )
+        raise ValueError("n_components cannot be greater than the number of features")
 
     pca = PCA(n_components=n_components, random_state=random_state, **kwargs)
 

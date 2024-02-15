@@ -31,19 +31,13 @@ def _tukeys_fences(df: pl.LazyFrame, col: str, k: float = 1.5) -> tuple:
     iqr = _iqr(df, col)
 
     # Calculate Tukey's fences
-    lower_fence = (
-        df.select(pl.col(col).quantile(0.25) - k * iqr).collect().item()
-    )
-    upper_fence = (
-        df.select(pl.col(col).quantile(0.75) + k * iqr).collect().item()
-    )
+    lower_fence = df.select(pl.col(col).quantile(0.25) - k * iqr).collect().item()
+    upper_fence = df.select(pl.col(col).quantile(0.75) + k * iqr).collect().item()
 
     return lower_fence, upper_fence
 
 
-def tukeys_outliers(
-    df: pl.LazyFrame, col: str, k: float = 1.5
-) -> pl.LazyFrame:
+def tukeys_outliers(df: pl.LazyFrame, col: str, k: float = 1.5) -> pl.LazyFrame:
     """
     Function to calculate Tukey's fences a column in a LazyFrame.
 
@@ -69,9 +63,7 @@ def tukeys_outliers(
     lower_fence, upper_fence = _tukeys_fences(df, col, k)
 
     # Filter to only include outliers
-    df = df.filter(
-        (pl.col(col) < lower_fence).or_((pl.col(col) > upper_fence))
-    )
+    df = df.filter((pl.col(col) < lower_fence).or_((pl.col(col) > upper_fence)))
 
     # Return filtered LazyFrame
     return df

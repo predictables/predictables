@@ -120,20 +120,12 @@ def calc_binary_categorical_corr_df(
 
     # Separate binary and categorical variables
     binary_cols = df[
-        [
-            df.columns.tolist()[i]
-            for i, x in enumerate(col_dtypes)
-            if x == "binary"
-        ]
+        [df.columns.tolist()[i] for i, x in enumerate(col_dtypes) if x == "binary"]
     ].columns.tolist()
     binary_vars = df[binary_cols]
 
     categorical_cols = df[
-        [
-            df.columns.tolist()[i]
-            for i, x in enumerate(col_dtypes)
-            if x == "categorical"
-        ]
+        [df.columns.tolist()[i] for i, x in enumerate(col_dtypes) if x == "categorical"]
     ].columns.tolist()
     categorical_vars = df[categorical_cols]
 
@@ -151,9 +143,7 @@ def calc_binary_categorical_corr_df(
                 )
                 chi2, p, dof, _ = stats.chi2_contingency(contingency_table)
                 n = np.sum(contingency_table.values)
-                cramers_v = np.sqrt(
-                    chi2 / (n * (min(contingency_table.shape) - 1))
-                )
+                cramers_v = np.sqrt(chi2 / (n * (min(contingency_table.shape) - 1)))
                 corr_matrix.loc[bin_col, cat_col] = cramers_v
 
     return corr_matrix
@@ -216,20 +206,12 @@ def calc_binary_categorical_corr_series(
 
     # Separate binary and categorical variables
     binary_cols = df[
-        [
-            df.columns.tolist()[i]
-            for i, x in enumerate(col_dtypes)
-            if x == "binary"
-        ]
+        [df.columns.tolist()[i] for i, x in enumerate(col_dtypes) if x == "binary"]
     ].columns.tolist()
     binary_vars = df[binary_cols]
 
     categorical_cols = df[
-        [
-            df.columns.tolist()[i]
-            for i, x in enumerate(col_dtypes)
-            if x == "categorical"
-        ]
+        [df.columns.tolist()[i] for i, x in enumerate(col_dtypes) if x == "categorical"]
     ].columns.tolist()
     categorical_vars = df[categorical_cols]
 

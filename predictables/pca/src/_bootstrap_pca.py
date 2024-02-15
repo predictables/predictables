@@ -70,9 +70,7 @@ def bootstrap_pca(
         raise ValueError("Data must be a 2-dimensional array.")
 
     if n_components > data.shape[1]:
-        raise ValueError(
-            "n_components cannot be greater than the number of features."
-        )
+        raise ValueError("n_components cannot be greater than the number of features.")
 
     # Initialize dictionary to store results
     bootstrapped_results = {"loadings": [], "explained_variance": []}
@@ -82,9 +80,7 @@ def bootstrap_pca(
         sample = resample(data, replace=True, random_state=random_state)
 
         # `perform_pca` on each bootstrapped sample
-        pca_obj = perform_pca(
-            sample, n_components=n_components, return_pca_obj=True
-        )
+        pca_obj = perform_pca(sample, n_components=n_components, return_pca_obj=True)
 
         bootstrapped_results["loadings"].append(pca_obj.components_)
         bootstrapped_results["explained_variance"].append(

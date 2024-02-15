@@ -51,9 +51,7 @@ def plot_density_with_histograms(
     num_plots = grid_size[0] * grid_size[1]
     selected_columns = original_df.columns[:num_plots]
 
-    _, axes = plt.subplots(
-        nrows=grid_size[0], ncols=grid_size[1], figsize=(20, 20)
-    )
+    _, axes = plt.subplots(nrows=grid_size[0], ncols=grid_size[1], figsize=(20, 20))
     axes = axes.flatten()
 
     for idx, col in enumerate(selected_columns):
@@ -182,12 +180,10 @@ def plot_scatter_matrix(
 
                 missing_mask = original_df.isnull().iloc[:, [i, j]]
                 init_impute = init_impute_df.iloc[:, [i, j]].loc[
-                    missing_mask.iloc[:, 0].values
-                    | missing_mask.iloc[:, 1].values
+                    missing_mask.iloc[:, 0].values | missing_mask.iloc[:, 1].values
                 ]
                 imputed = imputed_df.iloc[:, [i, j]].loc[
-                    missing_mask.iloc[:, 0].values
-                    | missing_mask.iloc[:, 1].values
+                    missing_mask.iloc[:, 0].values | missing_mask.iloc[:, 1].values
                 ]
                 if i < j:
                     ax[i, j].scatter(

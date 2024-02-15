@@ -76,9 +76,7 @@ def create_scree_plot(
     # Create scree plot
     if ax is None:
         _, ax = plt.subplots(figsize=figsize)
-    ax.plot(
-        range(1, len(cumulative_variance) + 1), cumulative_variance, marker="o"
-    )
+    ax.plot(range(1, len(cumulative_variance) + 1), cumulative_variance, marker="o")
 
     # Get features
     n_features = X.shape[1]
@@ -92,9 +90,7 @@ def create_scree_plot(
         n_components = (
             np.sum(np.less_equal(np.round(cumulative_variance, 4), level)) + 1
         )
-        y_pos = level - (y_pos_adjustment) * (
-            2 - cumulative_variance[n_components - 1]
-        )
+        y_pos = level - (y_pos_adjustment) * (2 - cumulative_variance[n_components - 1])
         components.append(n_components)
 
         # Linearly interpolate between points (n_components, level) and
@@ -174,9 +170,7 @@ def create_scree_plot(
         )
 
     # One more annotation for the first component, and the first component that explains 100% of the variance
-    n_components_for_100 = (
-        np.sum(np.less_equal(cumulative_variance, 0.9999)) + 1
-    )
+    n_components_for_100 = np.sum(np.less_equal(cumulative_variance, 0.9999)) + 1
     ax.annotate(
         f"100%\n{n_components_for_100} component{'s' if n_components_for_100 > 1 else ''}",
         xy=(n_components_for_100, 1),

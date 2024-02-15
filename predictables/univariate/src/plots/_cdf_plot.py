@@ -94,9 +94,7 @@ def cdf_plot_matplotlib(
     ax0 = cdf_plot_matplotlib_levels(
         x=x,
         plot_by=plot_by,
-        x_label=(
-            plot_label(x_label) if x_label is not None else plot_label(x.name)
-        ),
+        x_label=(plot_label(x_label) if x_label is not None else plot_label(x.name)),
         y_label=(
             y_label
             if y_label is not None
@@ -111,9 +109,7 @@ def cdf_plot_matplotlib(
         x=x,
         plot_by=plot_by,
         cv_folds=cv_folds,
-        x_label=(
-            plot_label(x_label) if x_label is not None else plot_label(x.name)
-        ),
+        x_label=(plot_label(x_label) if x_label is not None else plot_label(x.name)),
         y_label=(
             y_label
             if y_label is not None
@@ -138,12 +134,8 @@ def cdf_plot_matplotlib(
     # js_divergence_annotation = js_divergence_annotation()
 
     # Add horizontal line at 0 and 1
-    ax0.axhline(
-        0, color="black", linestyle="--", linewidth=1, label="_nolegend_"
-    )
-    ax0.axhline(
-        1, color="black", linestyle="--", linewidth=1, label="_nolegend_"
-    )
+    ax0.axhline(0, color="black", linestyle="--", linewidth=1, label="_nolegend_")
+    ax0.axhline(1, color="black", linestyle="--", linewidth=1, label="_nolegend_")
 
     title = create_title(x.name, plot_by.name)
     ax0.set_title(title)
@@ -200,9 +192,7 @@ def cdf_plot_matplotlib_levels(
         label = plot_label(plot_by.name)
         label += f" = {level}"
         x_cdf = calculate_cdf(x[plot_by == level])
-        ax = x_cdf.plot.line(
-            ax=ax, label=label, color=binary_color(level), **kwargs
-        )
+        ax = x_cdf.plot.line(ax=ax, label=label, color=binary_color(level), **kwargs)
 
     if x_label is not None:
         ax.set_xlabel(x_label)
@@ -297,7 +287,9 @@ def create_title(feature_name: str, target_name: str):
 
 def js_divergence_annotation(jsd: float) -> str:
     if jsd < 0.1:
-        return f"JS divergence of {jsd} indicates that the distributions are very similar"
+        return (
+            f"JS divergence of {jsd} indicates that the distributions are very similar"
+        )
     elif jsd < 0.3:
         return "The distributions are somewhat similar"
     elif jsd < 0.5:

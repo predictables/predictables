@@ -66,17 +66,15 @@ def _eigenvalues(
     )
 
     # Calculate a condition number
-    df["log[condition_number]"] = np.log(
-        df["eigenvalue"].max() / df["eigenvalue"]
-    )
+    df["log[condition_number]"] = np.log(df["eigenvalue"].max() / df["eigenvalue"])
 
     # Round the eigenvalues
     df["eigenvalue"] = df["eigenvalue"].round(round_to)
     df["log[condition_number]"] = df["log[condition_number]"].round(round_to)
 
     # Sort the DataFrame by the condition number
-    df = df.sort_values(
-        by="log[condition_number]", ascending=False
-    ).reset_index(drop=True)
+    df = df.sort_values(by="log[condition_number]", ascending=False).reset_index(
+        drop=True
+    )
 
     return df

@@ -127,9 +127,7 @@ def _harmonic_from_series(s: Union[pd.Series, pl.Series, np.ndarray]):
     elif isinstance(s, pl.Series):
         s = s.to_numpy()
     elif not isinstance(s, np.ndarray):
-        raise TypeError(
-            "Input must be a pandas, polars, or numpy series of numbers."
-        )
+        raise TypeError("Input must be a pandas, polars, or numpy series of numbers.")
 
     # if all elements in the series are zero, return zero
     if np.all(s == 0):

@@ -167,11 +167,8 @@ def plotly_stacked_bar_chart(
             go.Bar(
                 x=ct.index,
                 y=ct[col],
-                name=str(
-                    col
-                ),  # Convert column name to string in case it's not
-                width=[bar_width]
-                * len(ct.index),  # Specify the width for each bar
+                name=str(col),  # Convert column name to string in case it's not
+                width=[bar_width] * len(ct.index),  # Specify the width for each bar
             )
         )
 

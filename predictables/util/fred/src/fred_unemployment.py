@@ -156,9 +156,7 @@ def fred_unemployment_data():
         )
         .assign(msa=lambda x: x.msa.str.replace(" MSA", ""))
     )
-    msa_unemployment["state"] = msa_unemployment["state"].str.replace(
-        " (msa)", ""
-    )
+    msa_unemployment["state"] = msa_unemployment["state"].str.replace(" (msa)", "")
     msa_unemployment.to_parquet("./fred_msa_unemployment.parquet")
 
     state_unemployment = (

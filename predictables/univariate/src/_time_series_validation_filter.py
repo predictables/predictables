@@ -47,9 +47,7 @@ def time_series_validation_filter(
 
     # Split into X, y and train, test
     X_test = (
-        df_test.collect().to_pandas()[[feature_col]]
-        if df_test is not None
-        else None
+        df_test.collect().to_pandas()[[feature_col]] if df_test is not None else None
     )
     y_test = (
         df_test.select([target_col]).collect().to_pandas()[target_col]

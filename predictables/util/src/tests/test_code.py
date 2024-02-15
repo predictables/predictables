@@ -97,9 +97,7 @@ def test_read_file_code_invalid(file_name):
     ],
 )
 def test_get_functions_from_file(file_name, expected_output):
-    with patch(
-        "builtins.open", mock_open(read_data=mock_file_contents[file_name])
-    ):
+    with patch("builtins.open", mock_open(read_data=mock_file_contents[file_name])):
         assert (
             get_functions_from_file(file_name) == expected_output
         ), f"Expected output: {expected_output}, Actual output: {get_functions_from_file(file_name)}"
@@ -211,8 +209,6 @@ def test_get_functions_from_file(file_name, expected_output):
 )
 def test_get_files_from_folder(folder_contents, file_type, expected_output):
     with patch("os.listdir", return_value=folder_contents):
-        assert sorted(
-            get_files_from_folder("some_folder", file_type)
-        ) == sorted(
+        assert sorted(get_files_from_folder("some_folder", file_type)) == sorted(
             expected_output
         ), f"Expected output: {expected_output}, Actual output: {get_files_from_folder('some_folder', file_type)}"

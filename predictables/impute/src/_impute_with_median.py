@@ -54,9 +54,7 @@ def _impute_col_with_median(
     # median = df.select(pl.col(col).median().alias("median")).collect()["median"][0]
     return df.with_columns(
         pl.col(col).fill_null(
-            df.select(pl.col(col).median().alias("median")).collect()[
-                "median"
-            ][0]
+            df.select(pl.col(col).median().alias("median")).collect()["median"][0]
         )
     )
     # else:

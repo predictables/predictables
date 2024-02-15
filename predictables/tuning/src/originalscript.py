@@ -11,11 +11,7 @@ X_train, y_train = np.random.rand(100, 10), np.random.rand(100)
 def objective_function(model, params, criterion, X, y):
     model.set_params(**params)
     scores = cross_val_score(model, X, y, cv=5, scoring=criterion)
-    return (
-        -scores.mean()
-        if criterion == "neg_mean_squared_error"
-        else scores.mean()
-    )
+    return -scores.mean() if criterion == "neg_mean_squared_error" else scores.mean()
 
 
 # Placeholder for Bayesian Optimization Setup

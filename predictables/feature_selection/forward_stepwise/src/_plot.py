@@ -38,17 +38,13 @@ def plot(
     predictions = model.predict(data[features])
     residuals = data[target] - predictions
     fig.add_trace(
-        go.Scatter(
-            x=predictions, y=residuals, mode="markers", name="Residuals"
-        ),
+        go.Scatter(x=predictions, y=residuals, mode="markers", name="Residuals"),
         row=1,
         col=2,
     )
 
     fig.add_trace(
-        go.Scatter(
-            x=data[target], y=predictions, mode="markers", name="Model Fit"
-        ),
+        go.Scatter(x=data[target], y=predictions, mode="markers", name="Model Fit"),
         row=2,
         col=1,
     )

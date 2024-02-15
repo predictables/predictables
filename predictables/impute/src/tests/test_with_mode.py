@@ -189,9 +189,7 @@ def test_impute_with_median_with_string_pl_df(pl_string_df):
 def test_impute_with_median_with_empty_df():
     s = pd.DataFrame({"col": pd.Series([])})
     result = impute_with_median(s)
-    assert isinstance(
-        result, pl.LazyFrame
-    ), f"to_pl_s({type(s)}) is not a pl.LazyFrame"
+    assert isinstance(result, pl.LazyFrame), f"to_pl_s({type(s)}) is not a pl.LazyFrame"
     assert (
         result.collect().shape[0] == 0
     ), f"Length of result ({result.collect().shape[0]}) does not match length of input ({s.collect().shape[0]})."

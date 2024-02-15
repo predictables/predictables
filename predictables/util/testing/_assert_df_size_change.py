@@ -108,9 +108,7 @@ def assert_df_size_change(
             if col > 10:
                 print(f"Added {col} columns.")
             else:
-                print(
-                    f"Added columns:\n\n{set(df1.columns) - set(df.columns)}"
-                )
+                print(f"Added columns:\n\n{set(df1.columns) - set(df.columns)}")
 
         return True
     except AssertionError as e:

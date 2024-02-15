@@ -55,11 +55,7 @@ def select_cols_by_dtype(
 
     # Get the names of the columns of the specified dtype
     cols = df[
-        [
-            df.columns.tolist()[i]
-            for i, x in enumerate(col_dtypes)
-            if x == dtype
-        ]
+        [df.columns.tolist()[i] for i, x in enumerate(col_dtypes) if x == dtype]
     ].columns.tolist()
 
     # Return a df with only the columns of the specified dtype

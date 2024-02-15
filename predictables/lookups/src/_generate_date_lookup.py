@@ -58,9 +58,7 @@ def generate_date_lookup(
     """
     # Start with a dataframe of dates
     dates = (
-        pd.DataFrame(
-            pd.date_range(start=start_date, end=end_date), columns=["date"]
-        )
+        pd.DataFrame(pd.date_range(start=start_date, end=end_date), columns=["date"])
         .reset_index()
         .rename(columns=dict(index="date_id"))
         .set_index("date_id")
@@ -81,9 +79,7 @@ def generate_date_lookup(
     # Create complex numbers for the month -- this is the same as the projection
     # above, but in complex number form. This is useful for doing things like
     # calculating the distance between two months.
-    dates["cos[month]"] = dates["month_cpx"].apply(
-        lambda x: np.cos(x)
-    )  # real part
+    dates["cos[month]"] = dates["month_cpx"].apply(lambda x: np.cos(x))  # real part
     dates["sin[month]"] = dates["month_cpx"].apply(
         lambda x: np.sin(x)
     )  # imaginary part
@@ -100,9 +96,7 @@ def generate_date_lookup(
     dates["quarter_cpx"] = dates["date"].dt.quarter.apply(
         lambda x: (2 * np.pi) * ((x - 1) / 4)  # these range from 0 to 2pi
     )
-    dates["cos[quarter]"] = dates["quarter_cpx"].apply(
-        lambda x: np.cos(x)
-    )  # real part
+    dates["cos[quarter]"] = dates["quarter_cpx"].apply(lambda x: np.cos(x))  # real part
     dates["sin[quarter]"] = dates["quarter_cpx"].apply(
         lambda x: np.sin(x)
     )  # imaginary part
@@ -123,12 +117,8 @@ def generate_date_lookup(
     dates["day_of_week_cpx"] = dates["date"].dt.day_of_week.apply(
         lambda x: (2 * np.pi) * ((x - 1) / 7)
     )
-    dates["cos[day_of_week]"] = dates["day_of_week_cpx"].apply(
-        lambda x: np.cos(x)
-    )
-    dates["sin[day_of_week]"] = dates["day_of_week_cpx"].apply(
-        lambda x: np.sin(x)
-    )
+    dates["cos[day_of_week]"] = dates["day_of_week_cpx"].apply(lambda x: np.cos(x))
+    dates["sin[day_of_week]"] = dates["day_of_week_cpx"].apply(lambda x: np.sin(x))
 
     # Project day onto a circle for the day of YEAR
     dates["day_of_year"] = dates["date"].dt.day_of_year
@@ -138,12 +128,8 @@ def generate_date_lookup(
     dates["day_of_year_cpx"] = dates["day_of_year days_in_year".split()].apply(
         lambda x: (2 * np.pi) * ((x[0] - 1) / x[1]), axis=1
     )
-    dates["cos[day_of_year]"] = dates["day_of_year_cpx"].apply(
-        lambda x: np.cos(x)
-    )
-    dates["sin[day_of_year]"] = dates["day_of_year_cpx"].apply(
-        lambda x: np.sin(x)
-    )
+    dates["cos[day_of_year]"] = dates["day_of_year_cpx"].apply(lambda x: np.cos(x))
+    dates["sin[day_of_year]"] = dates["day_of_year_cpx"].apply(lambda x: np.sin(x))
 
     dates.drop(
         columns=[

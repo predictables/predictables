@@ -16,9 +16,7 @@ def model_class():
 
 
 # Create a fixture for the evaluation metric
-@pytest.fixture(
-    params=[accuracy_score, roc_auc_score, [accuracy_score, roc_auc_score]]
-)
+@pytest.fixture(params=[accuracy_score, roc_auc_score, [accuracy_score, roc_auc_score]])
 def evaluation_metric(request):
     return request.param
 
@@ -71,9 +69,7 @@ def test_single_callable(model_class, data, params):
 
 def test_list_of_strings(model_class, data, params):
     X, y = data
-    score = objective_function(
-        params, model_class, ["accuracy", "roc_auc"], X, y
-    )
+    score = objective_function(params, model_class, ["accuracy", "roc_auc"], X, y)
     assert isinstance(score, float) or isinstance(
         score, int
     ), f"The objective function should return a float or an integer:\nexpected: float or int\nactual: {type(score)}"
@@ -92,9 +88,7 @@ def test_list_of_callables(model_class, data, params):
 def test_single_string_metric(data):
     X, y = data
     params = {"n_estimators": 10}
-    score = objective_function(
-        params, RandomForestClassifier, "accuracy", X, y
-    )
+    score = objective_function(params, RandomForestClassifier, "accuracy", X, y)
     assert isinstance(score, float) or isinstance(
         score, int
     ), f"The objective function should return a float or an integer:\nexpected: float or int\nactual: {type(score)}"
@@ -103,9 +97,7 @@ def test_single_string_metric(data):
 def test_single_callable_metric(data):
     X, y = data
     params = {"n_estimators": 10}
-    score = objective_function(
-        params, RandomForestClassifier, accuracy_score, X, y
-    )
+    score = objective_function(params, RandomForestClassifier, accuracy_score, X, y)
     assert isinstance(score, float) or isinstance(
         score, int
     ), f"The objective function should return a float or an integer:\nexpected: float or int\nactual: {type(score)}"
@@ -126,8 +118,6 @@ def test_invalid_metric(data):
     params = {"n_estimators": 10}
     with pytest.raises(ValueError):
         (
-            objective_function(
-                params, RandomForestClassifier, "invalid_metric", X, y
-            ),
+            objective_function(params, RandomForestClassifier, "invalid_metric", X, y),
             "No value error was raised...",
         )

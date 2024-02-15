@@ -98,9 +98,7 @@ def test_variance_explained(mock_data):
     X_train, _, _, _ = mock_data
 
     # Select number of components for 90% variance (to ensure we are > 80%)
-    n_components = select_n_components_for_variance(
-        X_train, variance_threshold=0.9
-    )
+    n_components = select_n_components_for_variance(X_train, variance_threshold=0.9)
 
     # Perform PCA
     X_train = to_pl_df(pd.DataFrame(X_train))
@@ -111,9 +109,7 @@ def test_variance_explained(mock_data):
         n_components,
         return_pca_obj=True,
     )
-    pca_sklearn = PCA(n_components=n_components).fit(
-        to_pl_df(X_train).to_numpy()
-    )
+    pca_sklearn = PCA(n_components=n_components).fit(to_pl_df(X_train).to_numpy())
 
     # Assert variance explained
     explained_variance_func = sum(pca_func.explained_variance_ratio_)
@@ -286,9 +282,7 @@ def test_pca_with_preprocessing(mock_data):
     )
 
     # Perform PCA on raw data
-    pca_raw = perform_pca(
-        X_train, n_components=n_components, return_pca_obj=True
-    )
+    pca_raw = perform_pca(X_train, n_components=n_components, return_pca_obj=True)
 
     # Compare explained variance
     assert not np.array_equal(
@@ -303,9 +297,7 @@ def test_pca_high_dimensional_data():
     n_components = 10
 
     # Perform PCA
-    pca_result = perform_pca(
-        X_train, n_components=n_components, return_pca_obj=True
-    )
+    pca_result = perform_pca(X_train, n_components=n_components, return_pca_obj=True)
 
     # Validate the result
     assert pca_result.components_.shape == (

@@ -19,10 +19,7 @@ except Exception:
 from docutils.core import default_description, publish_cmdline
 
 description = (
-    "Generates (X)HTML from reStructuredText-format PEP files.  "
-    + default_description
+    "Generates (X)HTML from reStructuredText-format PEP files.  " + default_description
 )
 
-publish_cmdline(
-    reader_name="pep", writer_name="pep_html", description=description
-)
+publish_cmdline(reader_name="pep", writer_name="pep_html", description=description)

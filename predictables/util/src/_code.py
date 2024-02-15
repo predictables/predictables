@@ -155,9 +155,7 @@ def get_function_docstring(function_name: str, filepath: str) -> str:
         return ""
 
 
-def get_files_from_folder(
-    folder_path: str, file_type: Optional[str] = None
-) -> list:
+def get_files_from_folder(folder_path: str, file_type: Optional[str] = None) -> list:
     """
     Takes a folder path and returns a list of files in that folder. If a file type is specified, only files of that type will be returned, otherwise all files will be returned.
 

@@ -30,17 +30,13 @@ def unambiguous_str():
 
 def ambiguous_cat():
     return (
-        pd.Series(["a", "b", "b", "c", "c"])
-        .astype("category")
-        .reset_index(drop=True)
+        pd.Series(["a", "b", "b", "c", "c"]).astype("category").reset_index(drop=True)
     )
 
 
 def unambiguous_cat():
     return (
-        pd.Series(["a", "b", "b", "b", "c"])
-        .astype("category")
-        .reset_index(drop=True)
+        pd.Series(["a", "b", "b", "b", "c"]).astype("category").reset_index(drop=True)
     )  # mode of 'b'
 
 

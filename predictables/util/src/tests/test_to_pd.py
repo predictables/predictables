@@ -57,9 +57,7 @@ def test_to_pd_df_unsupported_type():
 
 def test_to_pd_s(series_input):
     result = to_pd_s(series_input)
-    assert isinstance(
-        result, pd.Series
-    ), f"Expected pd.Series, got {type(result)}"
+    assert isinstance(result, pd.Series), f"Expected pd.Series, got {type(result)}"
 
 
 def test_to_pd_s_unsupported_type():

@@ -50,20 +50,14 @@ def test_date_column_dropping_v2():
 
 
 def test_standardizing_numeric_columns():
-    df = pl.DataFrame(
-        {"numeric_1": [1, 2, 3, 4, 5], "numeric_2": [10, 20, 30, 40, 50]}
-    )
+    df = pl.DataFrame({"numeric_1": [1, 2, 3, 4, 5], "numeric_2": [10, 20, 30, 40, 50]})
 
     processed_df = preprocess_data_for_pca(df)
     for col in ["numeric_1", "numeric_2"]:
         assert processed_df.select(
             pl.col(col).mean()
-        ).collect().item() == pytest.approx(
-            0
-        ), f"{col} should have mean close to 0"
-        assert processed_df.select(
-            pl.col(col).std()
-        ).collect().item() == pytest.approx(
+        ).collect().item() == pytest.approx(0), f"{col} should have mean close to 0"
+        assert processed_df.select(pl.col(col).std()).collect().item() == pytest.approx(
             1
         ), f"{col} should have standard deviation close to 1"
 
@@ -143,9 +137,7 @@ def test_coding_binary_categorical_columns():
 def test_one_hot_encoding_non_binary_categorical_columns():
     df = pl.DataFrame({"cat_col": ["A", "B", "C", "A", "B"]})
 
-    processed_df = preprocess_data_for_pca(
-        df, high_cardinality_threshold=10
-    ).collect()
+    processed_df = preprocess_data_for_pca(df, high_cardinality_threshold=10).collect()
 
     for value in ["A", "B", "C"]:
         assert (

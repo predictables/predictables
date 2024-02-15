@@ -271,9 +271,7 @@ def binary_pd_series_not_0_or_1():
     This is a pd_series of floats, whose maximum difference between unique values is 1, but
     there are only two unique values. This means that it is binary.
     """
-    return pd.Series(
-        [2, 3, 2, 3, 2]
-    )  # only two unique values, so should be binary
+    return pd.Series([2, 3, 2, 3, 2])  # only two unique values, so should be binary
 
 
 @pytest.fixture
@@ -289,9 +287,7 @@ def categorical_polars_series():
     """
     This is not numeric and should be treated as categorical.
     """
-    return pl.Series("categorical", ["a", "b", "c", "d", "e"]).cast(
-        pl.Categorical
-    )
+    return pl.Series("categorical", ["a", "b", "c", "d", "e"]).cast(pl.Categorical)
 
 
 @pytest.fixture
@@ -507,9 +503,7 @@ def test_is_binary(request, series_name, expected):
     s = request.getfixturevalue(series_name)
 
     if expected:
-        assert is_binary(
-            s
-        ), f"Expected is_binary([{series_name}]) to return {expected}"
+        assert is_binary(s), f"Expected is_binary([{series_name}]) to return {expected}"
     else:
         assert not is_binary(
             s

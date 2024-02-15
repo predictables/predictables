@@ -45,9 +45,7 @@ def fit_sk_linear_regression(
 
     # Validate y input
     if not (
-        isinstance(y, np.ndarray)
-        | isinstance(y, pd.Series)
-        | isinstance(y, pl.Series)
+        isinstance(y, np.ndarray) | isinstance(y, pd.Series) | isinstance(y, pl.Series)
     ):
         raise TypeError(
             f"y must be one of np.ndarray, pd.Series, pl.Series. Got {type(y)}"
@@ -55,9 +53,7 @@ def fit_sk_linear_regression(
 
     # Validate fit_intercept input
     if not isinstance(fit_intercept, bool):
-        raise TypeError(
-            f"fit_intercept must be a bool. Got {type(fit_intercept)}"
-        )
+        raise TypeError(f"fit_intercept must be a bool. Got {type(fit_intercept)}")
 
     X = to_pd_df(X)
     y = to_pd_s(y).values.ravel()

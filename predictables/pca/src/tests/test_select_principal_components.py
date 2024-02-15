@@ -9,15 +9,11 @@ from predictables.pca.src._select_principal_components import (
 def test_select_n_components_for_variance():
     # Generate a synthetic dataset
     n_features = 20
-    X, _ = make_classification(
-        n_samples=100, n_features=n_features, random_state=42
-    )
+    X, _ = make_classification(n_samples=100, n_features=n_features, random_state=42)
 
     # Test for 95% variance threshold
     var_threshold = 0.95
-    n_components = select_n_components_for_variance(
-        X, variance_threshold=var_threshold
-    )
+    n_components = select_n_components_for_variance(X, variance_threshold=var_threshold)
 
     # Assert conditions
     assert isinstance(

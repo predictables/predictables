@@ -32,29 +32,19 @@ def _vif_i(
     # Convert to numpy array
     if isinstance(data, pd.DataFrame):
         col_idx = (
-            data.columns.tolist().index(col_i)
-            if isinstance(col_i, str)
-            else col_i
+            data.columns.tolist().index(col_i) if isinstance(col_i, str) else col_i
         )
         exog = to_pd_df(data).values
     elif isinstance(data, pl.DataFrame):
-        col_idx = (
-            data.columns.index(col_i) if isinstance(col_i, str) else col_i
-        )
+        col_idx = data.columns.index(col_i) if isinstance(col_i, str) else col_i
         exog = to_pd_df(data).values
     elif isinstance(data, pl.LazyFrame):
         col_idx = (
-            data.collect().columns.index(col_i)
-            if isinstance(col_i, str)
-            else col_i
+            data.collect().columns.index(col_i) if isinstance(col_i, str) else col_i
         )
         exog = to_pd_df(data).values
     elif isinstance(data, np.ndarray):
-        col_idx = (
-            col_i
-            if isinstance(col_i, int)
-            else np.where(data[0] == col_i)[0][0]
-        )
+        col_idx = col_i if isinstance(col_i, int) else np.where(data[0] == col_i)[0][0]
         exog = data
     else:
         raise TypeError(

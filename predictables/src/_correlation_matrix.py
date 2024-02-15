@@ -51,9 +51,7 @@ Please use one of the following types: \n\
     # Check that if either a numpy array or list, that it is 2D
     elif isinstance(data, np.ndarray):
         if len(data.shape) != 2:
-            raise ValueError(
-                f"Input data must be 2D, but is {len(data.shape)}D."
-            )
+            raise ValueError(f"Input data must be 2D, but is {len(data.shape)}D.")
     elif isinstance(data, list):
         if len(data) != 2:
             raise ValueError(f"Input data must be 2D, but is {len(data)}D.")
@@ -493,9 +491,7 @@ def _highly_correlated_variables(
     corr = corr.reset_index()
 
     # 7. Rename columns
-    corr = corr.rename(
-        {"level_0": "var1", "level_1": "var2", 0: "corr"}, axis=1
-    )
+    corr = corr.rename({"level_0": "var1", "level_1": "var2", 0: "corr"}, axis=1)
 
     # 8. Sort by correlation
     corr = corr.sort_values(by="corr", ascending=False)

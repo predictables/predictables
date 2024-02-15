@@ -27,9 +27,7 @@ def sample_data() -> Tuple[pd.Series, pd.Series, pd.Series]:
     """Generate sample data for testing."""
     np.random.seed(42)  # Ensure reproducibility
     yhat_proba_logits = pd.Series(np.random.rand(100))
-    yhat_proba = 1 / (
-        1 + np.exp(-yhat_proba_logits)
-    )  # Convert to probabilities
+    yhat_proba = 1 / (1 + np.exp(-yhat_proba_logits))  # Convert to probabilities
     y = pd.Series(
         np.random.binomial(1, yhat_proba, size=100)
     )  # Simulate binary outcomes
@@ -38,14 +36,11 @@ def sample_data() -> Tuple[pd.Series, pd.Series, pd.Series]:
 
 
 @pytest.fixture
-def sample_variance(
-    sample_data: Tuple[pd.Series, pd.Series, pd.Series]
-) -> float:
+def sample_variance(sample_data: Tuple[pd.Series, pd.Series, pd.Series]) -> float:
     """Calculate the variance of the AUC for the sample data."""
     y, yhat_proba, fold = sample_data
     aucs = [
-        roc_auc_score(y[fold == f], yhat_proba[fold == f])
-        for f in get_unique(fold)
+        roc_auc_score(y[fold == f], yhat_proba[fold == f]) for f in get_unique(fold)
     ]
     return float(np.var(aucs))
 
@@ -120,9 +115,7 @@ def test_delong_test_against_chance_known_values(cancer):
         idx_val = folds == fold
         clf = LogisticRegression()
         clf.fit(X[idx_train].values.reshape(-1, 1), y[idx_train])
-        yhat_proba_val = clf.predict_proba(X[idx_val].values.reshape(-1, 1))[
-            :, 1
-        ]
+        yhat_proba_val = clf.predict_proba(X[idx_val].values.reshape(-1, 1))[:, 1]
         auc_val = roc_auc_score(y[idx_val], yhat_proba_val)
         aucs.append(auc_val)
 
@@ -217,9 +210,7 @@ def test_delong_test_cross_validation_consistency(n_folds, p):
         y_test = y.iloc[test_index].reset_index(drop=True)
         yhat_proba_test = yhat_proba.iloc[test_index].reset_index(drop=True)
         fold = pd.Series(test_index % n_folds[0]).reset_index(drop=True)
-        z_stat, p_value = _delong_test_against_chance(
-            y_test, yhat_proba_test, fold
-        )
+        z_stat, p_value = _delong_test_against_chance(y_test, yhat_proba_test, fold)
         z_stats.append(z_stat)
         p_values.append(p_value)
 

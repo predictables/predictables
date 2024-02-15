@@ -25,9 +25,7 @@ def test_remove_missing_rows():
 
 def test_remove_missing_rows_no_missing_values():
     # Create a test dataframe
-    df = pl.DataFrame(
-        {"feature": [1, 2, 3, 4, 5], "target": [6, 7, 8, 9, 10]}
-    ).lazy()
+    df = pl.DataFrame({"feature": [1, 2, 3, 4, 5], "target": [6, 7, 8, 9, 10]}).lazy()
 
     # Call the function
     result = remove_missing_rows(df, "feature", "target")

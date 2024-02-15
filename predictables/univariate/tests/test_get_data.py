@@ -49,9 +49,9 @@ def test_filter_df_for_cv_train_valid_input(sample_dataframe):
         {"fold_col": [1, 2, 4, 5], "data": ["A", "B", "D", "E"]}
     )
 
-    output = _filter_df_for_cv_train(
-        sample_dataframe, fold, fold_col
-    ).reset_index(drop=True)
+    output = _filter_df_for_cv_train(sample_dataframe, fold, fold_col).reset_index(
+        drop=True
+    )
     (
         assert_frame_equal(output, expected_output),
         f"Expected {expected_output}, got {output}",
@@ -64,9 +64,9 @@ def test_filter_df_for_cv_test_valid_input(sample_dataframe):
     fold_col = "fold_col"
     expected_output = pd.DataFrame({"fold_col": [3, 3], "data": ["C", "c1"]})
 
-    output = _filter_df_for_cv_test(
-        sample_dataframe, fold, fold_col
-    ).reset_index(drop=True)
+    output = _filter_df_for_cv_test(sample_dataframe, fold, fold_col).reset_index(
+        drop=True
+    )
     (
         assert_frame_equal(output, expected_output),
         f"Expected {expected_output}, got {output}",
@@ -81,9 +81,7 @@ def test_filter_df_for_cv_test_valid_input(sample_dataframe):
         ("all", "1 2 3 3 4 5", "A B C c1 D E"),
     ],
 )
-def test_filter_df_for_cv_valid_input(
-    sample_dataframe, data, fold_col, values
-):
+def test_filter_df_for_cv_valid_input(sample_dataframe, data, fold_col, values):
     # Test with valid input
     fold = 3
     # fold_col = "fold_col"
@@ -94,9 +92,9 @@ def test_filter_df_for_cv_valid_input(
         }
     )
 
-    output = _filter_df_for_cv(
-        sample_dataframe, fold, "fold_col", data
-    ).reset_index(drop=True)
+    output = _filter_df_for_cv(sample_dataframe, fold, "fold_col", data).reset_index(
+        drop=True
+    )
     (
         assert_frame_equal(output, expected_output),
         f"Expected {expected_output}, got {output}",
@@ -123,9 +121,7 @@ def test_filter_df_for_cv_valid_input(
         ),  # Invalid fold number and column name
     ],
 )
-def test_filter_df_for_cv_train_invalid_input(
-    sample_dataframe, fold, fold_col, msg
-):
+def test_filter_df_for_cv_train_invalid_input(sample_dataframe, fold, fold_col, msg):
     # Test with invalid input
     with pytest.raises(KeyError) as err:
         _filter_df_for_cv_train(sample_dataframe, fold, fold_col)
@@ -156,9 +152,7 @@ def test_filter_df_for_cv_train_invalid_input(
         ),  # Invalid fold number and column name
     ],
 )
-def test_filter_df_for_cv_test_invalid_input(
-    sample_dataframe, fold, fold_col, msg
-):
+def test_filter_df_for_cv_test_invalid_input(sample_dataframe, fold, fold_col, msg):
     # Test with invalid input
     with pytest.raises(KeyError) as err:
         _filter_df_for_cv_test(sample_dataframe, fold, fold_col)
@@ -228,9 +222,7 @@ def test_filter_df_for_cv_test_invalid_input(
         ),  # Invalid fold number and column name
     ],
 )
-def test_filter_df_for_cv_invalid_input(
-    sample_dataframe, fold, fold_col, data, msg
-):
+def test_filter_df_for_cv_invalid_input(sample_dataframe, fold, fold_col, data, msg):
     # Test with invalid input
     with pytest.raises(KeyError) as err:
         _filter_df_for_cv(sample_dataframe, fold, fold_col, data)
@@ -245,8 +237,7 @@ def test_filter_df_for_train_test_all(sample_dataframe, sample_val_dataframe):
     # Test with data='all'
     expected_output = pd.DataFrame(
         {
-            "fold_col": [1, 2, 3, 3, 4, 5]
-            + ([-42] * sample_val_dataframe.shape[0]),
+            "fold_col": [1, 2, 3, 3, 4, 5] + ([-42] * sample_val_dataframe.shape[0]),
             "data": ["A", "B", "C", "c1", "D", "E", "F", "G", "H", "I", "J"],
         }
     )
@@ -259,9 +250,7 @@ def test_filter_df_for_train_test_all(sample_dataframe, sample_val_dataframe):
     )
 
 
-def test_filter_df_for_train_test_train(
-    sample_dataframe, sample_val_dataframe
-):
+def test_filter_df_for_train_test_train(sample_dataframe, sample_val_dataframe):
     # Test with data='train'
     expected_output = pd.DataFrame(
         {
@@ -290,9 +279,7 @@ def test_filter_df_for_train_test_test(sample_dataframe, sample_val_dataframe):
     )
 
 
-def test_filter_df_for_train_test_invalid_data(
-    sample_dataframe, sample_val_dataframe
-):
+def test_filter_df_for_train_test_invalid_data(sample_dataframe, sample_val_dataframe):
     # Test with invalid data value
     with pytest.raises(ValueError) as err:
         _filter_df_for_train_test(

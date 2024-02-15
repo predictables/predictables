@@ -9,9 +9,7 @@ from predictables.util import get_column_dtype, to_pd_df, to_pd_s
 
 
 def calc_binary_binary_corr(
-    *args: Union[
-        pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame
-    ],
+    *args: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame],
 ) -> Union[float, pd.DataFrame]:
     r"""
     Calculates the correlation either between two binary variables or between
@@ -99,26 +97,18 @@ def calc_binary_binary_corr_df(
 
     # Selecting binary variables
     binary_cols = df[
-        [
-            df.columns.tolist()[i]
-            for i, x in enumerate(col_dtypes)
-            if x == "binary"
-        ]
+        [df.columns.tolist()[i] for i, x in enumerate(col_dtypes) if x == "binary"]
     ].columns.tolist()
     binary_vars = df[binary_cols]
 
     # Initialize an empty DataFrame to store correlation values
-    corr_matrix = pd.DataFrame(
-        index=binary_vars.columns, columns=binary_vars.columns
-    )
+    corr_matrix = pd.DataFrame(index=binary_vars.columns, columns=binary_vars.columns)
 
     # Calculate phi coefficient for each pair of binary variables
     for col1 in binary_vars.columns:
         for col2 in binary_vars.columns:
             if col1 != col2:
-                contingency_table = pd.crosstab(
-                    binary_vars[col1], binary_vars[col2]
-                )
+                contingency_table = pd.crosstab(binary_vars[col1], binary_vars[col2])
                 chi2, _, _, _ = stats.chi2_contingency(contingency_table)
                 n = np.sum(contingency_table.values)
                 phi_coeff = np.sqrt(chi2 / (n + (chi2 == 0)))

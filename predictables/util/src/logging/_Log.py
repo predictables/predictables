@@ -26,9 +26,7 @@ class Log:
         """Returns the line number the logger was called from."""
         return sys._getframe(2).f_lineno
 
-    def _msg(
-        self, message: str, level: Union[str, int, LogLevel] = LogLevel.INFO
-    ):
+    def _msg(self, message: str, level: Union[str, int, LogLevel] = LogLevel.INFO):
         if isinstance(level, str):
             level = LogLevel.from_str(level)
         elif isinstance(level, int):

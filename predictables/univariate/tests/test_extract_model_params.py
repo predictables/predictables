@@ -185,9 +185,7 @@ def test_extract_model_params_sm_GLM(sm_logistic_model, logistic_coef):
     ), f"Expected model degrees of freedom close to {sm_logistic_model.df_model}, got {result.k}"
 
 
-def test_extract_model_params_sk_LogisticRegression(
-    sk_logistic_model, logistic_coef
-):
+def test_extract_model_params_sk_LogisticRegression(sk_logistic_model, logistic_coef):
     from predictables.univariate.src._extract_model_params import (
         extract_model_params_sk_LogisticRegression,
     )
@@ -198,9 +196,7 @@ def test_extract_model_params_sk_LogisticRegression(
     ), f"Expected fitted coeficient close to {logistic_coef}, got {result.coef}"
 
 
-def test_extract_model_params_sk_LinearRegression(
-    sk_linear_model, linear_coef
-):
+def test_extract_model_params_sk_LinearRegression(sk_linear_model, linear_coef):
     from predictables.univariate.src._extract_model_params import (
         extract_model_params_sk_LinearRegression,
     )

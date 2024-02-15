@@ -37,9 +37,7 @@ class UnivariateAnalysis:
         self.df_val = df_val
         self.target_column_name = target_column_name
         self.feature_column_names = feature_column_names
-        self.cv_column_name = (
-            cv_column_name if cv_column_name is not None else "cv"
-        )
+        self.cv_column_name = cv_column_name if cv_column_name is not None else "cv"
         self.cv_folds = (
             to_pd_df(self.df)[cv_column_name] if cv_folds is None else cv_folds
         )
@@ -61,9 +59,7 @@ class UnivariateAnalysis:
             setattr(
                 self,
                 obj_name,
-                Univariate(
-                    self.df, self.df_val, "cv", col, self.target_column_name
-                ),
+                Univariate(self.df, self.df_val, "cv", col, self.target_column_name),
             )
             feature_list.append(obj_name)
             try:
@@ -256,9 +252,7 @@ class UnivariateAnalysis:
         filestem_ = self._get_file_stem(filename)
         features = self._sort_features_by_ua().index.tolist()
         # Handle the case when None is passed to the margins
-        margins_: List[float] = (
-            margins if margins is not None else [0.5, 0.5, 0.5, 0.5]
-        )
+        margins_: List[float] = margins if margins is not None else [0.5, 0.5, 0.5, 0.5]
         filename_: str
 
         if len(features) > max_per_file:
@@ -272,9 +266,7 @@ class UnivariateAnalysis:
             filename_ = f"{fn}"
             rpt = self._rpt_title_page(filename_, margins_)
             rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
-            for X in tqdm(
-                features, self._build_desc(len(features), max_per_file)
-            ):
+            for X in tqdm(features, self._build_desc(len(features), max_per_file)):
                 rpt = getattr(self, X)._add_to_report(rpt)
                 counter += 1
 
@@ -286,9 +278,7 @@ class UnivariateAnalysis:
                     fn = self._rpt_filename(filestem_, start, end)
                     filename_ = f"{fn}"
                     rpt = self._rpt_title_page(filename_, margins_)
-                    rpt = self._rpt_overview_page(
-                        rpt, files[i].start, files[i].end
-                    )
+                    rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
                     counter = 0
 
         else:
@@ -304,22 +294,14 @@ class UnivariateAnalysis:
 
         rpt.build()
 
-    def _rpt_overview_page(
-        self, rpt: Report, first_idx: int, last_idx: int
-    ) -> Report:
-        overview_df = self._sort_features_by_ua().iloc[
-            first_idx : last_idx + 1
-        ]
+    def _rpt_overview_page(self, rpt: Report, first_idx: int, last_idx: int) -> Report:
+        overview_df = self._sort_features_by_ua().iloc[first_idx : last_idx + 1]
 
         # Reformat to be a percentage with one decimal
         overview_df = overview_df.map(
-            lambda x: (
-                f"{np.round(x, 3):.1%}" if x < 1 else f"{np.round(x, 3):.1f}"
-            )
+            lambda x: (f"{np.round(x, 3):.1%}" if x < 1 else f"{np.round(x, 3):.1f}")
         )
-        overview_df.index = overview_df.index.map(
-            lambda x: x.replace("_", " ").title()
-        )
+        overview_df.index = overview_df.index.map(lambda x: x.replace("_", " ").title())
 
         return (
             rpt.h1("Overview")
