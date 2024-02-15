@@ -2,6 +2,7 @@ from typing import List, Optional, Tuple, Union
 
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
 import pandas as pd
 import polars as pl
 from sklearn.decomposition import PCA as sklearn_PCA  # type: ignore
@@ -65,25 +66,33 @@ class PCA:
 
     Methods
     -------
-    set_n_components(n_components: int = None, variance_threshold: float = None) -> None
+    set_n_components
         Sets the number of components to retain. Can either pass `n_components` or
         `variance_threshold`.
-    _refitPCA() -> None
+    _refitPCA
         Refits the PCA model. Private method.
-    fit_pca(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] = None, return_pca_obj: bool = False) -> sklearn.decomposition.PCA
+    fit_pca
         Fits a PCA model to the provided dataset.
-    transform_pca(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] = None) -> pd.DataFrame
+    transform_pca
         Transforms the provided dataset using the fitted PCA model.
-    get_principal_components(components: Union[List[int], int, None] = None) -> pd.DataFrame
+    get_principal_components
         Returns the principal components.
-    scree(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] = None, variance_levels: List[float] = None, y_pos_adjustment: float = 0.1, ax: matplotlib.axes.Axes = None, figsize: Tuple[int, int] = (10, 7)) -> matplotlib.axes.Axes
-        Creates a scree plot to help determine the number of principal components to retain.
-    biplot(loading_threshold: float = 0.2, ax: matplotlib.axes.Axes = None, figsize: Tuple[int, int] = (10, 10), use_limits: bool = True) -> matplotlib.axes.Axes
-        Creates a biplot to visualize the features in the first two principal components.
-    loading_plot(n_components=10, max_features=50, average_loading_threshold=0.01, ax=None, fig=None, figsize=(10, 7), bar_alpha=0.8, bar_width=0.9, main_title_fontsize=13, main_title_fontweight='bold', sub_title_fontsize=10, legend_fontsize=9, x_ticks_rotation=45, x_label_fontsize=10, y_label_fontsize=10, include_legend=True, drop_legend_when_n_features=15, return_ax=False) -> matplotlib.axes.Axes
-        Original plot from Andy's noggin. Stacks the absolute value loadings for each feature across the first `n_components` principal components. The features are sorted by the magnitude of their average loading across the first `n_components` principal components. The size of the bars in total is a measure of the feature importance (for explaining the variance in the dataset).
-    feature_importance() -> pd.DataFrame
-        Returns a sorted table of features sorted by the magnitude of their loading vectors with `self.n_components` components after being scaled by the explained variance of each component.
+    scree
+        Creates a scree plot to help determine the number of principal components to
+        retain.
+    biplot
+        Creates a biplot to visualize the features in the first two principal
+        components.
+    loading_plot
+        Original plot from Andy's noggin. Stacks the absolute value loadings for each
+        feature across the first `n_components` principal components. The features are
+        sorted by the magnitude of their average loading across the first `n_components`
+        principal components. The size of the bars in total is a measure of the feature
+        importance (for explaining the variance in the dataset).
+    feature_importance
+        Returns a sorted table of features sorted by the magnitude of their loading
+        vectors with `self.n_components` components after being scaled by the explained
+        variance of each component.
 
     Examples
     --------
@@ -106,7 +115,8 @@ class PCA:
     >>> pca
     PCA[3 components]
 
-    >>> # Change your mind, decide to reset the number of components to retain 95% of the variance in the data
+    >>> # Change your mind, decide to reset the number of components to retain 95% of
+    >>> # the variance in the data
     >>> pca.set_n_components(variance_threshold=0.95)
     >>> pca
     PCA[10 components]
@@ -128,10 +138,7 @@ class PCA:
     ):
         # Set attributes
         self.n_components = n_components
-        if df is not None:
-            self.df = to_pd_df(df)
-        else:
-            self.df = pd.DataFrame()
+        self.df = to_pd_df(df) if df is not None else pd.DataFrame()
 
         self.preprocess_data = preprocess_data
         self.random_state = random_state
@@ -200,9 +207,7 @@ class PCA:
             )
 
     def _refitPCA(self):
-        if self.pca is None:
-            pass
-        else:
+        if self.pca is not None:
             self.pca = self.fit_pca(df=self.df, return_pca_obj=True)
             self.explained_variance = self.pca.explained_variance_ratio_.tolist()
             self.features = self.df.columns.tolist()
@@ -217,8 +222,8 @@ class PCA:
 
         Parameters
         ----------
-        df : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] of shape (n_samples, n_features)
-            Dataset to fit PCA to.
+        df : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+            Dataset of shape (n_samples, n_features) to fit PCA to.
 
         Returns
         -------
@@ -230,15 +235,13 @@ class PCA:
             df = self.df
 
         # Fit PCA
-        pca = perform_pca(
+        return perform_pca(
             X_train=df,
             n_components=self.n_components,
             return_pca_obj=return_pca_obj,
             preprocess_data=self.preprocess_data,
             random_state=self.random_state,
         )
-
-        return pca
 
     def transform_pca(
         self,
@@ -249,8 +252,8 @@ class PCA:
 
         Parameters
         ----------
-        df : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] of shape (n_samples, n_features)
-            Dataset to transform.
+        df : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+            Dataset of shape (n_samples, n_features) to transform.
 
         Returns
         -------
@@ -278,7 +281,8 @@ class PCA:
         Returns
         -------
         pd.DataFrame
-            The principal components. The index is the component number, and the columns are the features.
+            The principal components. The index is the component number, and the
+            columns are the features.
         """
         # Fit PCA if not already fitted
         if self.pca is None:
@@ -308,16 +312,19 @@ class PCA:
 
         Parameters
         ----------
-        df : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] of shape (n_samples, n_features), optional
-            Dataset to create the scree plot for, by default None. If None, uses the
-            dataset provided when instantiating the PCA object.
+        df : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], optional
+            Dataset of shape (n_samples, n_features) to create the scree plot for, by
+            default None. If None, uses the dataset provided when instantiating the
+            PCA object.
         variance_levels : list of float, optional
             A list of levels at which to annotate the cumulative variance.
-            For example, [0.75, 0.90, 0.95, 0.99]. By default, it's set to [0.75, 0.90, 0.95, 0.99].
+            For example, [0.75, 0.90, 0.95, 0.99]. By default, it's set to
+            [0.75, 0.90, 0.95, 0.99].
         y_pos_adjustment : float, optional
             Adjustment for the y position of the annotations, by default 0.05.
         ax : matplotlib.axes.Axes, optional
-            The Axes object to plot on. If None, a new figure and Axes object is created.
+            The Axes object to plot on. If None, a new figure and Axes object is
+            created.
         figsize : tuple of int, optional
             The figure size, by default (10, 7).
 
@@ -341,20 +348,22 @@ class PCA:
             _, ax = plt.subplots(figsize=figsize)
 
         # Create scree plot
-        ax = create_scree_plot(
-            X=df,
+        return create_scree_plot(
+            X=(
+                df.collect().to_numpy()
+                if isinstance(df, pl.LazyFrame)
+                else df.to_numpy()
+            ),
             variance_levels=variance_levels,
             y_pos_adjustment=y_pos_adjustment,
             ax=ax,
             figsize=figsize,
         )
 
-        return ax
-
     def biplot(
         self,
         loading_threshold: float = 0.2,
-        ax: matplotlib.axes.Axes = None,
+        ax: Optional[Axes] = None,
         figsize: Tuple[int, int] = (10, 10),
         use_limits: bool = True,
     ):

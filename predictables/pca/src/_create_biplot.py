@@ -1,26 +1,28 @@
-import warnings
-
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import warnings
+from sklearn.decomposition import PCA
+from typing import List, Optional, Tuple
 
 
 def create_biplot(
-    pca,
-    feature_names,
-    ax=None,
-    loading_threshold=0.2,
-    figsize=(10, 10),
-    backend="matplotlib",
-    use_limits=True,
-    scatter_alpha=0.5,
-    axes_color="k",
-    axes_lw=2,
-    axes_alpha=0.5,
-    axes_ls="--",
-    arrow_lw=0.5,
-    arrow_alpha=0.5,
-    arrow_color="r",
-):
+    pca: PCA,
+    feature_names: List[str],
+    ax: Optional[matplotlib.axes.Axes] = None,
+    loading_threshold: float = 0.2,
+    figsize: Tuple[float, float] = (10, 10),
+    backend: str = "matplotlib",
+    use_limits: bool = True,
+    scatter_alpha: float = 0.5,
+    axes_color: str = "k",
+    axes_lw: float = 2,
+    axes_alpha: float = 0.5,
+    axes_ls: str = "--",
+    arrow_lw: float = 0.5,
+    arrow_alpha: float = 0.5,
+    arrow_color: str = "r",
+) -> matplotlib.axes.Axes:
     """
     Creates a biplot for the given fitted PCA object.
 
@@ -45,6 +47,22 @@ def create_biplot(
         Currently, only "matplotlib" is supported, but "plotly" support is planned.
     use_limits : bool, optional
         Whether to set the limits of the axes to [-1, 1], by default True.
+    scatter_alpha : float, optional
+        The alpha value for the scatter plot, by default 0.5.
+    axes_color : str, optional
+        The color of the axes lines, by default "k".
+    axes_lw : float, optional
+        The line width of the axes lines, by default 2.
+    axes_alpha : float, optional
+        The alpha value for the axes lines, by default 0.5.
+    axes_ls : str, optional
+        The line style of the axes lines, by default "--".
+    arrow_lw : float, optional
+        The line width of the arrow lines, by default 0.5.
+    arrow_alpha : float, optional
+        The alpha value for the arrow lines, by default 0.5.
+    arrow_color : str, optional
+        The color of the arrow lines, by default "r".
 
     Returns
     -------
@@ -101,7 +119,8 @@ def create_biplot(
                     lw=arrow_lw,
                     # arrowprops=dict(arrowstyle="->"),
                 )
-                # shift the text a bit away from the arrow, but in the direction of the arrow
+                # shift the text a bit away from the arrow, but in the direction of
+                # the arrow
                 magnitude = np.sqrt(np.sum(loading_vector**2))
                 text_shift = (
                     (magnitude / 10) * loading_vector / np.linalg.norm(loading_vector)
@@ -141,13 +160,18 @@ def create_biplot(
 
         # Add labels and title
         ax.set_xlabel(
-            f"First Principal Component - {100*pca.explained_variance_ratio_[0]:.1f}% Of the Total Variance Explained"
+            f"First Principal Component - {100*pca.explained_variance_ratio_[0]:.1f}"
+            "% Of the Total Variance Explained"
         )
         ax.set_ylabel(
-            f"Second Principal Component - {100*pca.explained_variance_ratio_[1]:.1f}% Of the Total Variance Explained"
+            f"Second Principal Component - {100*pca.explained_variance_ratio_[1]:.1f}"
+            "% Of the Total Variance Explained"
         )
+        pct = pca.explained_variance_ratio_[0] + pca.explained_variance_ratio_[1]
         ax.set_title(
-            f"PCA Biplot - {100*(pca.explained_variance_ratio_[0] + pca.explained_variance_ratio_[1]):.1f}% Variance Explained by First Two Principal Components"
+            "PCA Biplot - "
+            f"{100*pct:.1f}"
+            "% Variance Explained by First Two Principal Components"
         )
         ax.grid(True)
 

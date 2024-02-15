@@ -8,7 +8,10 @@ from predictables.util.src._to_pl import to_pl_df
 
 def assert_df(func, row: int = 0, col: int = 0):
     """
-    This is a decorator that asserts that the number of rows and columns in a dataframe have changed by the expected amount. It is used to ensure that a function that is supposed to add or remove rows and columns is working as expected, and no rows or columns are 'accidentally' added or removed.
+    This is a decorator that asserts that the number of rows and columns in a
+    dataframe have changed by the expected amount. It is used to ensure that
+    a function that is supposed to add or remove rows and columns is working
+    as expected, and no rows or columns are 'accidentally' added or removed.
 
     Parameters
     ----------
@@ -27,7 +30,9 @@ def assert_df(func, row: int = 0, col: int = 0):
     Raises
     ------
     AssertionError
-        If the number of rows or columns have changed by an unexpected amount -- eg if the number of rows or columns have changed by a number different from the passed `row` or `col` parameters.
+        If the number of rows or columns have changed by an unexpected amount -- eg if
+        the number of rows or columns have changed by a number different from the
+        passed `row` or `col` parameters.
 
     Examples
     --------
@@ -58,7 +63,10 @@ def assert_df_size_change(
     col: int = 0,
 ):
     """
-    This is a testing function that asserts that the number of rows and columns in a dataframe have changed by the expected amount. It is used to ensure that a function that is supposed to add or remove rows and columns is working as expected, and no rows or columns are 'accidentally' added or removed.
+    This is a testing function that asserts that the number of rows and columns in
+    a dataframe have changed by the expected amount. It is used to ensure that a
+    unction that is supposed to add or remove rows and columns is working as expected,
+    and no rows or columns are 'accidentally' added or removed.
 
     Parameters
     ----------
@@ -74,7 +82,8 @@ def assert_df_size_change(
     Returns
     -------
     bool
-        True if the number of rows and columns have changed by the expected amount, False otherwise.
+        True if the number of rows and columns have changed by the expected amount,
+        False otherwise.
 
     Raises
     ------
@@ -97,12 +106,18 @@ def assert_df_size_change(
     df1 = to_pl_df(df1)
 
     try:
-        assert (
-            df.shape[0] + row == df1.shape[0]
-        ), f"rows before: {df.shape[0]}\nrows after: {df1.shape[0]}\nexpected row change: {row}\nactual row change: {df1.shape[0] - df.shape[0]}"
-        assert (
-            df.shape[1] + col == df1.shape[1]
-        ), f"columns before: {df.shape[1]}\ncolumns after: {df1.shape[1]}\nexpected column change: {col}\nactual column change: {df1.shape[1] - df.shape[1]}"
+        assert df.shape[0] + row == df1.shape[0], (
+            f"rows before: {df.shape[0]}\n"
+            f"rows after: {df1.shape[0]}\n"
+            f"expected row change: {row}\n"
+            f"actual row change: {df1.shape[0] - df.shape[0]}"
+        )
+        assert df.shape[1] + col == df1.shape[1], (
+            f"columns before: {df.shape[1]}\n"
+            f"columns after: {df1.shape[1]}\n"
+            f"expected column change: {col}\n"
+            f"actual column change: {df1.shape[1] - df.shape[1]}"
+        )
 
         if col > 0:
             if col > 10:
@@ -112,10 +127,23 @@ def assert_df_size_change(
 
         return True
     except AssertionError as e:
-        assert (
-            df.shape[0] + row == df1.shape[0]
-        ), f"rows before: {df.shape[0]}\nrows after: {df1.shape[0]}\nexpected row change: {row}\nactual row change: {df1.shape[0] - df.shape[0]}\n\n{e}"
+        assert df.shape[0] + row == df1.shape[0], (
+            f"rows before: {df.shape[0]}\n"
+            f"rows after: {df1.shape[0]}\n"
+            f"expected row change: {row}\n"
+            f"actual row change: {df1.shape[0] - df.shape[0]}\n\n{e}"
+        )
 
-        assert (
-            df.shape[1] + col == df1.shape[1]
-        ), f"columns before: {df.shape[1]}\ncolumns after: {df1.shape[1]}\nexpected column change: {col}\nactual column change: {df1.shape[1] - df.shape[1]}\n\nLikely due to: {set(df1.columns) - set(df.columns) if df1.shape[1] > df.shape[1] else set(df.columns) - set(df1.columns)}\n\n{e}"
+        due_to = (
+            set(df1.columns) - set(df.columns)
+            if df1.shape[1] > df.shape[1]
+            else set(df.columns) - set(df1.columns)
+        )
+
+        assert df.shape[1] + col == df1.shape[1], (
+            f"columns before: {df.shape[1]}\n"
+            f"columns after: {df1.shape[1]}\n"
+            f"expected column change: {col}\n"
+            f"actual column change: {df1.shape[1] - df.shape[1]}\n\n"
+            f"Likely due to: {due_to}\n\n{e}"
+        )

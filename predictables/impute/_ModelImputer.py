@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Union
+from typing import Union, Optional
 
 import pandas as pd
 from joblib import Parallel, delayed
@@ -15,12 +15,12 @@ from predictables.impute.src._train_catboost_model import (
 
 @dataclass
 class ModelImputer:
-    df: pd.DataFrame = None
-    missing_mask: Union[pd.DataFrame, str] = None
+    df: Optional[pd.DataFrame] = None
+    missing_mask: Optional[Union[pd.DataFrame, str]] = None
     n_models: int = 0
     initial_impute: bool = True
 
-    def _initial_impute(self) -> None:
+    def _initial_impute(self):
         if self.initial_impute:
             self.imputed_df = initial_impute(self.df).collect().to_pandas()
             # Update the dtype to equal that of the original df
@@ -104,17 +104,25 @@ class ModelImputer:
 
             elif isinstance(self.df[col].dtype, pd.DatetimeTZDtype):
                 raise ValueError(
-                    f"Column {col} is a datetime column, and should have been removed by this point."
+                    f"Column {col} is a datetime column, and should have been removed "
+                    "by this point."
                 )
 
             elif isinstance(self.df[col].dtype, pd.BooleanDtype):
                 raise ValueError(
-                    f"""Column {col} is a boolean column, and should have been removed or converted by this point. It is worth considering convreting to a categorical column, coded as '1' and '0' for True and False, respectively. Most binary columns are coded this way, and it is simpler than using a boolean column, because there are fewer cases to keep track of."""
+                    f"Column {col} is a boolean column, and should have been removed "
+                    "or converted by this point. It is worth considering convreting to "
+                    "a categorical column, coded as '1' and '0' for True and False, "
+                    "respectively. Most binary columns are coded this way, and it is "
+                    "simpler than using a boolean column, because there are fewer cases"
+                    " to keep track of."
                 )
 
             else:
                 raise ValueError(
-                    f"""Column {col} has an unrecognized dtype: {self.df[col].dtype}. Please convert to a recognized dtype (categorical or numeric) before imputing."""
+                    f"Column {col} has an unrecognized dtype: {self.df[col].dtype}. "
+                    "Please convert to a recognized dtype (categorical or numeric) "
+                    "before imputing."
                 )
 
         # Update the imputed_df columns (if initial_impute is True)
@@ -143,8 +151,8 @@ class ModelImputer:
         -------
         None, but sets the class attribute to the fitted model.
         """
-        # Fit a model to the column if it is initialized - eg if there is a class attribute
-        # with the same name as the column
+        # Fit a model to the column if it is initialized - eg if there is a
+        # class attribute with the same name as the column
 
         # Check that there is a class attribute with the same name as the column
         if hasattr(self, col):
@@ -234,7 +242,6 @@ class ModelImputer:
                 ),  # Get the model from the class attribute if it exists
                 learning_rate=learning_rate,
                 only_missing=True,  # Only impute missing values
-                cv_fold=None,  # Don't use a cross-validation fold
             )
         else:
             # If there is no class attribute with the same name as the column,

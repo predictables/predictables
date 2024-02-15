@@ -45,7 +45,10 @@ def train_one_catboost_model(
     ), f"cv_folds must be an integer or list, not {type(cv_folds)}"
     assert (cv_folds is None) or (
         isinstance(cv_folds, int) or len(cv_folds) == len(df)
-    ), f"cv_folds must be an integer or a list of the same length as df. len(cv_folds): {len(cv_folds)}, len(df): {len(df)}"
+    ), (
+        f"cv_folds must be an integer or a list of the same length as df. "
+        f"len(cv_folds): {len(cv_folds)}, len(df): {len(df)}"
+    )
     assert (cv_folds is None) or (
         isinstance(cv_folds, int) or all(isinstance(i, int) for i in cv_folds)
     ), f"cv_folds must be an integer or a list of integers. cv_folds: {cv_folds}"
@@ -107,7 +110,8 @@ def train_one_catboost_model(
         return trained_models
 
     else:
-        # Train a model - regressor if the target is numeric, classifier if the target is categorical
+        # Train a model - regressor if the target is numeric, classifier if the
+        # target is categorical
         try:
             if get_column_dtype(y) == "continuous":
                 model = CatBoostRegressor()
@@ -137,12 +141,17 @@ def train_catboost_model(df, missing_mask, cv_folds: Optional[Union[int, list]] 
     missing_mask : pd.DataFrame
         A boolean mask with the same shape as df, where True indicates a missing value.
     cv_folds : Union[int, list], optional
-        The number of cross-validation folds to use. If None, will not do cross validation. If an integer is provided, will create that many folds. If a list is provided and is the same length as the df, will use those indices to create the folds. If the size if not the same as the df, will raise an error. The default is None.
+        The number of cross-validation folds to use. If None, will not do cross
+        validation. If an integer is provided, will create that many folds. If a list
+        is provided and is the same length as the df, will use those indices to create
+        the folds. If the size if not the same as the df, will raise an error. The
+        default is None.
 
     Returns
     -------
     dict
-        A dictionary where the keys are the column names and the values are the trained models.
+        A dictionary where the keys are the column names and the values are the
+        trained models.
 
     Raises
     ------
@@ -165,9 +174,10 @@ def train_catboost_model(df, missing_mask, cv_folds: Optional[Union[int, list]] 
     assert isinstance(
         missing_mask, pd.DataFrame
     ), f"missing_mask must be a pandas DataFrame, not {type(missing_mask)}"
-    assert (
-        df.shape == missing_mask.shape
-    ), f"df and missing_mask must have the same shape. df.shape: {df.shape}, missing_mask.shape: {missing_mask.shape}"
+    assert df.shape == missing_mask.shape, (
+        f"df and missing_mask must have the same shape. df.shape: {df.shape}, "
+        f"missing_mask.shape: {missing_mask.shape}"
+    )
     return {
         column: [train_one_catboost_model(df, column, cv_folds)]
         for column in df.columns

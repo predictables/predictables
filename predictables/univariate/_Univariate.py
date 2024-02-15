@@ -118,12 +118,14 @@ class Univariate(Model):
         )
 
         dbg.msg(
-            f"[{self.feature_col}]: Before normalization, mean of feature_col_ is: {df[feature_col_].mean()} | Ux0001c"
+            f"[{self.feature_col}]: Before normalization, mean of feature_col_ is: "
+            f"{df[feature_col_].mean()} | Ux0001c"
         )
         # Normalize the column if the cross-validated fit is improved
         df[feature_col_] = self.standardize(X=df[[feature_col_]])
         dbg.msg(
-            f"[{self.feature_col}]: After normalization, mean of feature_col_ is: {df[feature_col_].mean()} | Ux0001d"
+            f"[{self.feature_col}]: After normalization, mean of feature_col_ is: "
+            f"{df[feature_col_].mean()} | Ux0001d"
         )
         self.unique_folds = get_unique(
             self.df.select(self.fold_col).collect().to_pandas()[self.fold_col]
@@ -174,7 +176,8 @@ class Univariate(Model):
 
             else:
                 dbg.msg(
-                    f"[{self.feature_col}]: Attribute {attribute} not found in self | Ux0001g"
+                    f"[{self.feature_col}]: Attribute {attribute} not found in "
+                    "self | Ux0001g"
                 )
 
         # ALIASES
@@ -348,12 +351,14 @@ class Univariate(Model):
         **kwargs,
     ):
         """
-        Plots the empirical cumulative distribution function for the target variable in total and for each fold.
+        Plots the empirical cumulative distribution function for the target variable
+        in total and for each fold.
 
         Parameters
         ----------
         data : str, optional
-            What data to use for the plot. Choices are "train", "test", and "all", "fold-n".
+            What data to use for the plot. Choices are "train", "test", and
+            "all", "fold-n".
         **kwargs
             Additional keyword arguments passed to the plot function.
 
@@ -467,24 +472,28 @@ class Univariate(Model):
         **kwargs,
     ) -> Axes:
         """
-        Plots the quintile lift for the target variable in total and for each fold. Quintile
-        lift is a grouped bar plot with each quintile of the feature on the x-axis and the
-        mean target value for each quintile on the y-axis. There are bars for both the actual
-        target value and the predicted target value.
+        Plots the quintile lift for the target variable in total and for each fold.
+        Quintile lift is a grouped bar plot with each quintile of the feature on the
+        x-axis and the mean target value for each quintile on the y-axis. There are
+        bars for both the actual target value and the predicted target value.
 
-        This plot is useful for understanding how well the model is able to segment the target
-        variable based on the feature variable, and in the specific context of a univariate
-        analysis, how well the feature variable is able to predict the target variable by itself,
-        eg with no intercept, no other features, no regularization, etc.
+        This plot is useful for understanding how well the model is able to segment
+        the target variable based on the feature variable, and in the specific context
+        of a univariate analysis, how well the feature variable is able to predict the
+        target variable by itself, eg with no intercept, no other features, no
+        regularization, etc.
 
         Parameters
         ----------
         data : str, optional
-            What data to use for the plot. Choices are "train", "test", and "all", "fold-n".
+            What data to use for the plot. Choices are "train", "test", and
+            "all", "fold-n".
         ax : Axes, optional
-            The axes to plot on, by default None. If None, a new figure and axes will be created.
+            The axes to plot on, by default None. If None, a new figure and axes
+            will be created.
         figsize : Tuple[float, float], optional
-            The size of the figure, by default None. If None, the default figure size will be used.
+            The size of the figure, by default None. If None, the default figure
+            size will be used.
         **kwargs
             Additional keyword arguments passed to the plot function.
 
@@ -504,7 +513,8 @@ class Univariate(Model):
         >>> uni.plot_quintile_lift(data="test", figsize=(10, 10))
 
         # Plot the quintile lift for the training data in a univariate analysis `uni`
-        # with the default figure size and a custom color for the predicted target value.
+        # with the default figure size and a custom color for the predicted target
+        # value.
         >>> uni.plot_quintile_lift(data="train", color="red")
 
         # Plot the quintile lift for the training data in a univariate analysis `uni`
@@ -567,23 +577,43 @@ class Univariate(Model):
             .page_break()
             .h2("Univariate Report")
             .h3(
-                f"{plot_label(self.feature_name, incl_bracket=False)} - Kernel Density Plot"
+                f"{plot_label(self.feature_name, incl_bracket=False)} - "
+                "Kernel Density Plot"
             )
             .plot(density)
             .spacer(0.125)
             .caption(
-                "This plot shows the Gaussian kernel density for each level of the target variable, both in total and for each fold. The x-axis represents the feature variable, and the y-axis represents the density of the target variable. The cross-validation folds are included in slightly washed-out colors to help understand the variability of the data. There are annotations with the results of a t-test for the difference in means between the feature variable at each level of the target variable. The annotations corresponding to the color of the target variable level show the mean/median ratio to help understand differences in skewness between the levels of the target variable."
+                "This plot shows the Gaussian kernel density for each level of the "
+                "target variable, both in total and for each fold. "
+                "The x-axis represents the feature variable, and the y-axis represents "
+                "the density of the target variable. "
+                "The cross-validation folds are included in slightly washed-out colors "
+                "to help understand the variability of the data. "
+                "There are annotations with the results of a t-test for the difference "
+                "in means between the feature variable at each level of the target "
+                "variable. "
+                "The annotations corresponding to the color of the target variable "
+                "level show the mean/median ratio to help understand differences in "
+                "skewness between the levels of the target variable."
             )
             # TODO: Add in a table for the t-test results (Issue #62 on GitHub)
             .page_break()
             .h2("Univariate Report")
             .h3(
-                f"{plot_label(self.feature_name, incl_bracket=False)} - Empirical CDF Plot"
+                f"{plot_label(self.feature_name, incl_bracket=False)} "
+                "- Empirical CDF Plot"
             )
             .plot(cdf)
             .spacer(0.125)
             .caption(
-                "This plot shows the empirical cumulative distribution function for each level of the target variable, both in total and for each fold. The x-axis represents the feature variable, and the y-axis represents the cumulative distribution of the target variable. The cross-validation folds are included in slightly washed-out colors to help understand the variability of the data, and whether or not it is reasonable to assume that the data is drawn from different distributions."
+                "This plot shows the empirical cumulative distribution function for "
+                "each level of the target variable, both in total and for each fold. "
+                "The x-axis represents the feature variable, and the y-axis represents "
+                "the cumulative distribution of the target variable. "
+                "The cross-validation folds are included in slightly washed-out colors "
+                "to help understand the variability of the data, and whether or not it "
+                "is reasonable to assume that the data is drawn from different "
+                "distributions."
             )
             .page_break()
             .h2("Univariate Report")
@@ -591,10 +621,27 @@ class Univariate(Model):
             .plot(roc)
             .spacer(0.125)
             .caption(
-                "This plot shows the receiver operating characteristic (ROC) curve for the target variable in total and for each fold. The x-axis represents the false positive rate, and the y-axis represents the true positive rate. This is based on a simple Logistic Regression model with no regularization, no intercept, and no other features. Annotations are on the plot to help understand the results of the model, including the coefficient, standard error, and p-value for the feature variable. The cross-validation folds are used to create the grey region around the mean ROC curve to help understand the variability of the data."
+                "This plot shows the receiver operating characteristic (ROC) curve "
+                "for the target variable in total and for each fold. "
+                "The x-axis represents the false positive rate, and the y-axis "
+                "represents the true positive rate. This is based on a simple "
+                "Logistic Regression model with no regularization, no intercept, "
+                "and no other features. "
+                "Annotations are on the plot to help understand the results of the "
+                "model, including the coefficient, standard error, and p-value for "
+                "the feature variable. "
+                "The cross-validation folds are used to create the grey region around "
+                "the mean ROC curve to help understand the variability of the data."
             )
             .caption(
-                "Significance of the ROC curve is determined based on a modified version the method from DeLong et al. (1988). In brief, the AUC is assumed to be normally distributed, and I calculate the empirical standard error from the cross-validated AUC values. I then calculate a z-score for the AUC, and use the z-score to calculate a p-value. The p-value is then used to determine the significance of the AUC. This is a simple test, and should be used with caution."
+                "Significance of the ROC curve is determined based on a modified "
+                "version the method from DeLong et al. (1988). In brief, the AUC "
+                "is assumed to be normally distributed, and I calculate the empirical "
+                "standard error from the cross-validated AUC values. "
+                "I then calculate a z-score for the AUC, and use the z-score to "
+                "calculate a p-value. "
+                "The p-value is then used to determine the significance of the AUC. "
+                "This is a simple test, and should be used with caution."
             )
             .page_break()
             .h2("Univariate Report")
@@ -602,7 +649,9 @@ class Univariate(Model):
             .plot(quintile)
             .spacer(0.125)
             .caption(
-                "The quintile lift plot is meant to show the power of the single feature to discriminate between the highest and lowest quintiles of the target variable."
+                "The quintile lift plot is meant to show the power of the single "
+                "feature to discriminate between the highest and lowest quintiles "
+                "of the target variable."
             )
             .page_break()
         )

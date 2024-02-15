@@ -7,6 +7,8 @@ from ._feature_importance import (  # noqa F401
 )
 from ._perform_pca import perform_pca  # noqa F401
 from ._preprocessing import preprocess_data_for_pca  # noqa F401
+
+# trunk-ignore(flake8/F401)
 from ._select_principal_components import (
-    select_n_components_for_variance,
+    select_n_components_for_variance,  # noqa F401
 )  # noqa F401

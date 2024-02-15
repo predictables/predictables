@@ -2,60 +2,69 @@ from typing import Union
 
 import pandas as pd
 import polars as pl
-import polars.selectors as cs
 
-from predictables.util import to_pl_lf
+from predictables.util import to_pl_lf, get_column_dtype
 
 
 def _check_if_numeric(
     df: Union[pl.DataFrame, pd.DataFrame, pl.LazyFrame, pd.Series, pl.Series],
     col: str,
 ) -> bool:
-    """Check if a column is numeric.
-
-    :param[Union[pl.DataFrame, pd.DataFrame, pl.LazyFrame, pd.Series, pl.Series]] df: A dataframe. Will be coerced to a polars lazy frame.
-    :param[str] col: A column name.
-
-    :return[bool]: True if the column is numeric, False otherwise.
-
-    :example:
-    >>> df = pl.DataFrame({'A': [1, 2, None, 4]})
-    >>> _check_if_numeric(df, 'A')
-    True
     """
-    # Convert to a polars lazy frame
-    df = to_pl_lf(df)
-
-    # Check if the column is numeric
-    return col in df.select(cs.numeric()).columns
+    Check if a column is numeric. This has been refactored to simply use
+    the predictables.util.get_column_dtype function.
+    """
+    if isinstance(df, pd.DataFrame):
+        c = df[col]
+    elif isinstance(df, pl.DataFrame):
+        c = df[col]
+    elif isinstance(df, pl.LazyFrame):
+        c = df.collect()[col]
+    elif isinstance(df, pd.Series):
+        c = df
+    elif isinstance(df, pl.Series):
+        c = df
+    else:
+        raise ValueError("The dataframe type is not supported")
+    return get_column_dtype(c) in ["continuous", "integer", "float"]
 
 
 def _impute_col_with_median(
     df: Union[pl.DataFrame, pd.DataFrame, pl.LazyFrame, pd.Series, pl.Series],
     col: str,
 ) -> pl.Series:
-    """Impute missing values with the median of the column.
+    """
+    Impute missing values with the median of the column.
 
-    :param[Union[pl.DataFrame, pd.DataFrame, pl.LazyFrame, pd.Series, pl.Series]] df: A dataframe. Will be coerced to a polars lazy frame.
-    :param[str] col: A column name.
+    Parameters
+    ----------
+    df : Union[pl.DataFrame, pd.DataFrame, pl.LazyFrame, pd.Series, pl.Series]
+        A dataframe. Will be coerced to a polars lazy frame.
+    col : str
+        A column name.
 
-    :return[pl.Series]: A column of a dataframe with missing values imputed with the median.
+    Returns
+    -------
+    pl.Series
+        A column of a dataframe with missing values imputed with the median.
 
-    :example:
+    Examples
+    --------
     >>> df = pl.DataFrame({'A': [1, 2, None, 4]})
     >>> df.select(pl.col('A').median().alias('median')).collect()['median'][0]
     2
     """
     # Convert to a polars lazy frame
-    df = to_pl_lf(df)
+    if isinstance(df, (pd.DataFrame, pl.DataFrame, pl.LazyFrame)):
+        df = to_pl_lf(df)
+    elif isinstance(df, (pd.Series, pl.Series)):
+        df = df.to_frame()
+    else:
+        raise ValueError("The dataframe type is not supported")
 
     # If the column is numeric, impute with the median
-    # if _check_if_numeric(df, col):
-    # median = df.select(pl.col(col).median().alias("median")).collect()["median"][0]
-    return df.with_columns(
-        pl.col(col).fill_null(
-            df.select(pl.col(col).median().alias("median")).collect()["median"][0]
-        )
+    return df[str(pl.col(col))].fill_null(
+        df.select(pl.col(col).median().alias("median")).collect()["median"][0]
     )
     # else:
     #     return df
@@ -64,11 +73,42 @@ def _impute_col_with_median(
 def impute_with_median(
     df: Union[pl.DataFrame, pd.DataFrame, pl.LazyFrame, pd.Series, pl.Series],
 ) -> pl.LazyFrame:
-    """Loop through all the columns in a dataframe and impute missing values with the median.
+    """
+    Loop through all the columns in a dataframe and impute missing values with the
+    median.
 
-    :param[Union[pl.DataFrame, pd.DataFrame, pl.LazyFrame, pd.Series, pl.Series]] df: A dataframe. Will be coerced to a polars lazy frame.
+    Parameters
+    ----------
+    df : Union[pl.DataFrame, pd.DataFrame, pl.LazyFrame, pd.Series, pl.Series]
+        A dataframe. Will be coerced to a polars lazy frame.
 
-    :return[pl.LazyFrame]: A dataframe with missing values imputed with the median from each column.
+    Returns
+    -------
+    pl.LazyFrame
+        A dataframe with missing values imputed with the median from each column.
+
+    Examples
+    --------
+    >>> df = pl.DataFrame({'A': [1, 2, None, 4]})
+
+    >>> df.select(pl.col('A').median().alias('median')).collect()['median'][0]
+    2
+
+    >>> impute_with_median(df).collect()
+    shape: (4, 1)
+    ╭─────╮
+    │ A   │
+    │ --- │
+    │ i64 │
+    ╞═════╡
+    │ 1   │
+    ├─────┤
+    │ 2   │
+    ├─────┤
+    │ 2   │
+    ├─────┤
+    │ 4   │
+    ╰─────╯
     """
     # Convert to a polars lazy frame
     df = to_pl_lf(df)

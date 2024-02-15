@@ -32,7 +32,8 @@ from sklearn.decomposition import PCA  # type: ignore
 #     # `n_components` must be less than or equal to the number of components in the PCA
 #     n_components = min(n_components, pca.n_components_)
 
-#     # cumulative loading threshold is the average loading threshold times the number of components
+#     # cumulative loading threshold is the average loading threshold times the number
+# of components
 #     cumulative_loading_threshold = average_loading_threshold * n_components
 
 #     # Decide if there will be a legend
@@ -73,7 +74,8 @@ from sklearn.decomposition import PCA  # type: ignore
 #         filtered_features = True
 #         filter_type = "loading_threshold"
 
-#     # Only show the top `max_features` features, or all features if there are less than `max_features`
+#     # Only show the top `max_features` features, or all features if there are less
+# than `max_features`
 #     if max_features is None:
 #         max_features = total_features
 #     elif df.shape[0] > max_features:
@@ -82,7 +84,8 @@ from sklearn.decomposition import PCA  # type: ignore
 #         filter_type = "max_features"
 #         hidden_features = total_features - max_features
 
-#     # Get the explained variance for the first `n_components` components (for the title)
+#     # Get the explained variance for the first `n_components` components (for
+# the title)
 #     explained_variance = pca.explained_variance_ratio_[:n_components].sum()
 
 #     # Test to show if any features were hidden
@@ -92,7 +95,8 @@ from sklearn.decomposition import PCA  # type: ignore
 
 #     # Labels and other text elements will be the same regardless of backend
 #     x_label_no_filter = "Features" + (
-#         f" (Showing all with an ave loading for each of the {n_components} components > {average_loading_threshold:.2f}{hidden_features_text})"
+#         f" (Showing all with an ave loading for each of the {n_components}
+# components > {average_loading_threshold:.2f}{hidden_features_text})"
 #         if filtered_features
 #         else ""
 #     )
@@ -100,7 +104,8 @@ from sklearn.decomposition import PCA  # type: ignore
 #         (
 #             f" (Only showing the top {max_features} features{hidden_features_text})"
 #             if filter_type == "max_features"
-#             else f" (Showing all with an ave loading for each of the {n_components} components > {average_loading_threshold:.2f}{hidden_features_text})"
+#             else f" (Showing all with an ave loading for each of the {n_components}
+# components > {average_loading_threshold:.2f}{hidden_features_text})"
 #         )
 #         if filtered_features
 #         else ""
@@ -116,7 +121,8 @@ from sklearn.decomposition import PCA  # type: ignore
 #         if ax is None:
 #             _, ax = plt.subplots(figsize=figsize)
 
-#         # Plot the loadings for the first `n_components` components as a stacked bar plot
+#         # Plot the loadings for the first `n_components` components as a stacked
+# bar plot
 #         if include_legend:
 #             df.iloc[:, :n_components].plot.bar(
 #                 stacked=True,
@@ -149,7 +155,10 @@ from sklearn.decomposition import PCA  # type: ignore
 #             fontweight=main_title_fontweight,
 #         )
 
-#         sub_title_text = f"The cumulative absolute value of the loadings for each feature for the first {n_components} principal components\nThis plot indicates the features' relative contributions to the {explained_variance:.1%} of variance explained by the {n_components} components"
+#         sub_title_text = f"The cumulative absolute value of the loadings for each
+# feature for the first {n_components} principal components\nThis plot indicates the
+# features' relative contributions to the {explained_variance:.1%} of variance explained
+# by the {n_components} components"
 #         ax.set_title(
 #             sub_title_text,
 #             fontsize=sub_title_fontsize,
@@ -206,7 +215,8 @@ def filter_loadings(
     max_features: Optional[int],
 ) -> Tuple[pd.DataFrame, bool, str, int]:
     """
-    Filter the loadings based on the average loading threshold and the maximum number of features
+    Filter the loadings based on the average loading threshold and the maximum number
+    of features
 
     Parameters
     ----------
@@ -222,7 +232,8 @@ def filter_loadings(
     Returns
     -------
     Tuple[pd.DataFrame, bool, str, int]
-        The filtered loadings, a boolean indicating if features were filtered, the filter type, and the number of hidden features
+        The filtered loadings, a boolean indicating if features were filtered, the
+        filter type, and the number of hidden features
     """
     # Step 1: Sort the loadings by the sum of the first `n_components` columns
     total_features = df.shape[0]
@@ -353,7 +364,12 @@ def _matplotlib_plot(
         fontweight=main_title_fontweight,
     )
 
-    sub_title_text = f"The cumulative absolute value of the loadings for each feature for the first {n_components} principal components\nThis plot indicates the features' relative contributions to the {explained_variance:.1%} of variance explained by the {n_components} components"
+    sub_title_text = (
+        "The cumulative absolute value of the loadings for each feature "
+        f"for the first {n_components} principal components\nThis plot indicates the "
+        f"features' relative contributions to the {explained_variance:.1%} of variance "
+        f"explained by the {n_components} components"
+    )
     ax.set_title(
         sub_title_text,
         fontsize=sub_title_fontsize,
@@ -407,7 +423,8 @@ def create_loading_plot(
 
     # Labels and other text elements will be the same regardless of backend
     x_label_no_filter = "Features" + (
-        f" (Showing all with an ave loading for each of the {n_components} components > {average_loading_threshold:.2f}{hidden_features_text})"
+        f" (Showing all with an ave loading for each of the {n_components} components "
+        f"> {average_loading_threshold:.2f}{hidden_features_text})"
         if filtered_features
         else ""
     )
@@ -415,7 +432,10 @@ def create_loading_plot(
         (
             f" (Only showing the top {max_features} features{hidden_features_text})"
             if filter_type == "max_features"
-            else f" (Showing all with an ave loading for each of the {n_components} components > {average_loading_threshold:.2f}{hidden_features_text})"
+            else (
+                f" (Showing all with an ave loading for each of the {n_components} "
+                f"components > {average_loading_threshold:.2f}{hidden_features_text})"
+            )
         )
         if filtered_features
         else ""
@@ -462,7 +482,8 @@ def create_loading_plot(
         if ax is None:
             _, ax = plt.subplots(figsize=figsize)
 
-        # Plot the loadings for the first `n_components` components as a stacked bar plot
+        # Plot the loadings for the first `n_components` components as a stacked
+        # bar plot
         plot_loadings(df, n_components, ax, bar_width, bar_alpha, include_legend)
 
         ax.set_xlabel(
@@ -470,8 +491,7 @@ def create_loading_plot(
             fontsize=x_label_fontsize,
         )
 
-        y_label_text = "Cumulative Absolute Loading"
-        ax.set_ylabel(y_label_text, fontsize=y_label_fontsize)
+        ax.set_ylabel("Cumulative Absolute Loading", fontsize=y_label_fontsize)
 
         main_title_text = "Cumulative Influence On Explained Variance"
         plt.suptitle(
@@ -480,7 +500,13 @@ def create_loading_plot(
             fontweight=main_title_fontweight,
         )
 
-        sub_title_text = f"The cumulative absolute value of the loadings for each feature for the first {n_components} principal components\nThis plot indicates the features' relative contributions to the {explained_variance:.1%} of variance explained by the {n_components} components"
+        sub_title_text = (
+            "The cumulative absolute value of the loadings for each "
+            f"feature for the first {n_components} principal components\n"
+            "This plot indicates the features' relative contributions to the "
+            f"{explained_variance:.1%} of variance explained by the "
+            f"{n_components} components"
+        )
         ax.set_title(
             sub_title_text,
             fontsize=sub_title_fontsize,

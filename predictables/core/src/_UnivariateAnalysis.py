@@ -46,7 +46,8 @@ class UnivariateAnalysis:
         feature_list = []
         for col in tqdm(
             self.feature_column_names,
-            f"Performing univariate analysis on {len(self.feature_column_names)} features",
+            f"Performing univariate analysis on {len(self.feature_column_names)} "
+            "features",
         ):
             obj_name = (
                 col.lower()
@@ -64,7 +65,8 @@ class UnivariateAnalysis:
             feature_list.append(obj_name)
             try:
                 dbg.msg(
-                    f"results for feature {col}: {getattr(self, obj_name).results.head()} | UA0001a"
+                    f"results for feature {col}: "
+                    "{getattr(self, obj_name).results.head()} | UA0001a"
                 )  # debug only
             except AttributeError:
                 dbg.msg(
@@ -104,11 +106,11 @@ class UnivariateAnalysis:
         >>> _get_file_stem("Univariate Analysis Report")
         "Univariate Analysis Report"
 
-        >>> _get_file_stem("Different Analysis Report.pdf", "Univariate Analysis Report")
-        "Different Analysis Report"
+        >>> _get_file_stem("Different Report.pdf", "Univariate Analysis Report")
+        "Different Report"
 
-        >>> _get_file_stem("Univariate Analysis Report.pdf", "Different Analysis Report")
-        "Univariate Analysis Report"
+        >>> _get_file_stem("Univariate Analysis Report.pdf", "Different Report")
+        "Univariate Report"
 
         >>> _get_file_stem(None, "Univariate Analysis Report")
         "Univariate Analysis Report"
@@ -120,7 +122,8 @@ class UnivariateAnalysis:
             )  # debug only
             file_stem, _ = os.path.splitext(filename)
             dbg.msg(
-                f"File stem ({file_stem}) was extracted from filename ({filename}) and should not have an extension - UA0005"
+                f"File stem ({file_stem}) was extracted from filename ({filename}) "
+                "and should not have an extension - UA0005"
             )  # debug only
             return file_stem
 
@@ -136,16 +139,20 @@ class UnivariateAnalysis:
         """Helper function to get the file name from a filename."""
         dbg.msg("Start of _rpt_filename - UA0006")  # debug only
         dbg.msg(
-            f"Parameters: | file_stem: {file_stem} | start_num: {start_num} | end_num: {end_num} | UA0006a"
+            f"Parameters: | file_stem: {file_stem} | start_num: {start_num} "
+            f"| end_num: {end_num} | UA0006a"
         )  # debug only
         if file_stem is not None and (start_num is None or end_num is None):
             dbg.msg(
-                f"File stem ({file_stem}) is not None and either start_num ({start_num}) or end_num ({end_num}) is None, so returning '{file_stem}.pdf' | UA0006b"
+                f"File stem ({file_stem}) is not None and either start_num "
+                f"({start_num}) or end_num ({end_num}) is None, so returning "
+                f"'{file_stem}.pdf' | UA0006b"
             )  # debug only
             return file_stem + ".pdf"
         if start_num is not None and end_num is not None:
             dbg.msg(
-                f"Both start_num ({start_num}) and end_num ({end_num}) are not None, so returning '{file_stem}_{start_num+1}_{end_num+1}.pdf' | UA0006c"
+                f"Both start_num ({start_num}) and end_num ({end_num}) are not None, "
+                f"so returning '{file_stem}_{start_num+1}_{end_num+1}.pdf' | UA0006c"
             )
             return f"{file_stem}_{start_num+1}_{end_num+1}.pdf"
         else:
@@ -219,7 +226,10 @@ class UnivariateAnalysis:
 
         for feature in tqdm(
             segment["features"],
-            desc=f"Building report for features {segment['file_num_start']} to {segment['file_num_end']}",
+            desc=(
+                f"Building report for features {segment['file_num_start']}"
+                f" to {segment['file_num_end']}"
+            ),
         ):
             rpt = self._add_to_report(rpt, feature=feature)
 
@@ -241,7 +251,8 @@ class UnivariateAnalysis:
         margins : list, optional
             The margins of the report. The default is None.
         max_per_file : int, optional
-            The maximum number of features to include in a single report. The default is 25.
+            The maximum number of features to include in a single report. The default
+            is 25.
 
         Returns
         -------

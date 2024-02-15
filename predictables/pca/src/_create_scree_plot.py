@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 import matplotlib.axes as Axes
 import matplotlib.pyplot as plt
@@ -12,9 +12,9 @@ from ._preprocessing import preprocess_data_for_pca
 
 def create_scree_plot(
     X: np.ndarray,
-    variance_levels: List[float] = None,
+    variance_levels: Optional[List[float]] = None,
     y_pos_adjustment: float = 0.1,
-    ax: Axes = None,
+    ax: Optional[Axes] = None,
     figsize: Tuple[int, int] = (10, 10),
 ):
     """
@@ -22,8 +22,9 @@ def create_scree_plot(
 
     This function performs Principal Component Analysis (PCA) on the provided dataset
     and creates a scree plot that shows the cumulative variance explained by each
-    component. The plot is annotated with lines indicating specified levels of cumulative
-    variance explained, aiding in the decision of how many components to retain.
+    component. The plot is annotated with lines indicating specified levels of
+    cumulative variance explained, aiding in the decision of how many components to
+    retain.
 
     Parameters
     ----------
@@ -31,7 +32,8 @@ def create_scree_plot(
         The input dataset for PCA.
     variance_levels : list of float, optional
         A list of levels at which to annotate the cumulative variance.
-        For example, [0.75, 0.90, 0.95, 0.99]. By default, it's set to [0.75, 0.90, 0.95, 0.99].
+        For example, [0.75, 0.90, 0.95, 0.99]. By default, it's set to
+        [0.75, 0.90, 0.95, 0.99].
     y_pos_adjustment : float, optional
         Adjustment for the y position of the annotations, by default 0.05.
     ax : matplotlib.axes.Axes, optional
@@ -44,10 +46,11 @@ def create_scree_plot(
 
     Notes
     -----
-    The scree plot is a graphical representation of the amount of variance each principal
-    component retains. It is useful for determining the number of components to include in
-    further analyses or models. The plot includes horizontal lines indicating predefined
-    levels of cumulative variance, which are useful for selecting a suitable number of components.
+    The scree plot is a graphical representation of the amount of variance each
+    principal component retains. It is useful for determining the number of components
+    to include in further analyses or models. The plot includes horizontal lines
+    indicating predefined levels of cumulative variance, which are useful for
+    selecting a suitable number of components.
 
     Examples
     --------
@@ -185,39 +188,40 @@ def create_scree_plot(
 
     # Put annotation box in bottom right that explains the scree plot and how to
     # interpret it
-    scree_interpretation = f"""The scree plot shows the cumulative variance
-explained by each principal component. I have
-added annotations to show the number of components
-required to explain at least 75%, 90%, 95%, and 99%
-of the variance. The first component that explains
-100% of the variance is also annotated. The scree
-plot is used to help select the number of components
-to retain. In this case, I would likely retain {components[variance_levels.index(0.9)]:d}
-components to retain at least 90% of the variance."""
-    ax.text(
-        0.975,
-        0.025,
-        scree_interpretation,
-        transform=ax.transAxes,
-        ha="right",
-        va="bottom",
-        bbox=dict(
-            facecolor="w",
-            edgecolor="k",
-            lw=0.5,
-            alpha=0.6,
-            boxstyle="round,pad=0.2",
-        ),
+    scree_interpretation = (
+        "The scree plot shows the cumulative variance "
+        "explained by each principal component. I have "
+        "added annotations to show the number of components "
+        "required to explain at least 75%, 90%, 95%, and 99% "
+        "of the variance. The first component that explains"
+        "100% of the variance is also annotated. The scree "
+        "plot is used to help select the number of components "
+        "to retain. In this case, I would likely retain "
+        f"{components[variance_levels.index(0.9)]:d}"
+        "components to retain at least 90% of the variance."
     )
+    if ax is not None:
+        ax.text(
+            0.975,
+            0.025,
+            scree_interpretation,
+            transform=ax.transAxes,
+            ha="right",
+            va="bottom",
+            bbox=dict(
+                facecolor="w",
+                edgecolor="k",
+                lw=0.5,
+                alpha=0.6,
+                boxstyle="round,pad=0.2",
+            ),
+        )
 
     # Set limits
-    ax.set_xlim([1, n_features])
-    ax.set_ylim([cumulative_variance[0] - (cumulative_variance[0] / 4), 1])
-
-    # Add labels and title
-    ax.set_xlabel("Number of Components")
-    ax.set_ylabel("Cumulative Explained Variance")
-    plt.suptitle("Scree Plot", fontsize=16, fontweight="bold")
-    ax.set_title("Cumulative Variance Explained by N Principal Components")
+    if ax is not None:
+        ax.set_xlabel("Number of Components")
+        ax.set_ylabel("Cumulative Explained Variance")
+        plt.suptitle("Scree Plot", fontsize=16, fontweight="bold")
+        ax.set_title("Cumulative Variance Explained by N Principal Components")
 
     return ax

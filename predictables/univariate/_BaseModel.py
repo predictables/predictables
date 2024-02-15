@@ -231,10 +231,18 @@ class Model:
         self.results = results
 
     def __repr__(self) -> str:
-        return f"<Model{'_[CV-' if self.fold_n is not None else ''}{f'{self.fold_n}]' if self.fold_n is not None else ''}({'df' if self.df is not None else ''}{', df-val' if self.df_val is not None else ''})>"
+        return (
+            f"<Model{'_[CV-' if self.fold_n is not None else ''}"
+            f"{f'{self.fold_n}]' if self.fold_n is not None else ''}"
+            f"({'df' if self.df is not None else ''}"
+            f"{', df-val' if self.df_val is not None else ''})>"
+        )
 
     def __str__(self) -> str:
-        return f"Model(df-val={'loaded' if self.df_val is not None else 'none'}, cv={f'fold-{self.fold_n}' if self.fold_n is not None else 'none'})"
+        return (
+            f"Model(df-val={'loaded' if self.df_val is not None else 'none'}, "
+            f"cv={f'fold-{self.fold_n}' if self.fold_n is not None else 'none'})"
+        )
 
     def _fit_standardization(
         self,
