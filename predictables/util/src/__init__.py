@@ -11,6 +11,7 @@ from ._profiler import profiler  # noqa F401
 from ._select_cols_by_dtype import select_cols_by_dtype  # noqa F401
 from ._to_pd import to_pd_df, to_pd_s  # noqa F401
 from ._to_pl import to_pl_df, to_pl_lf, to_pl_s  # noqa F401
+from ._tqdm_func import tqdm  # noqa F401
 from .logging._DebugLogger import DebugLogger  # noqa F401
 from .logging._Logger import Logger  # noqa F401
 from .logging._LogLevel import LogLevel  # noqa F401

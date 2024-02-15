@@ -1,7 +1,8 @@
 from typing import List
 
 import polars as pl
-from tqdm import tqdm
+
+from predictables.util import tqdm
 
 
 def mean_encode_df(
@@ -180,4 +181,4 @@ def mean_encoding_with_ratio_lazy(
     if drop_mean_ratio:
         lazy_df = lazy_df.drop("mean_ratio")
 
-    return lazy_df
+    return lazy_df.collect()

@@ -5,10 +5,9 @@ from typing import List, Optional
 import numpy as np
 import pandas as pd
 import polars as pl
-from tqdm import tqdm  # type: ignore
 
 from predictables.univariate import Univariate
-from predictables.util import DebugLogger, Report, to_pd_df
+from predictables.util import DebugLogger, Report, to_pd_df, tqdm
 from predictables.util.report.src._segment_features_for_report import (
     Segment,
     segment_features_for_report,
@@ -63,6 +62,14 @@ class UnivariateAnalysis:
                 Univariate(self.df, self.df_val, "cv", col, self.target_column_name),
             )
             feature_list.append(obj_name)
+            try:
+                dbg.msg(
+                    f"results for feature {col}: {getattr(self, obj_name).results.head()} | UA0001a"
+                )  # debug only
+            except AttributeError:
+                dbg.msg(
+                    f"No results attribute found for feature {col} | UA0001b"
+                )  # debug only
         self._feature_list = feature_list
 
     def get_features(self):
@@ -355,10 +362,7 @@ class UnivariateAnalysis:
             total_df.append(
                 ua.results.select(
                     [
-                        pl.col("feature")
-                        .cast(pl.Utf8)
-                        .str.format(f"{col:.1%}")
-                        .alias("Feature"),
+                        pl.col("feature").alias("Feature"),
                         pl.col("acc_test").alias("Accuracy"),
                         pl.col("precision_test").alias("Precision"),
                         pl.col("recall_test").alias("Recall"),
@@ -373,13 +377,13 @@ class UnivariateAnalysis:
                             + pl.col("f1_test")
                             + pl.col("mcc_test")
                         )
-                        .truediv(6)
+                        .truediv(6.0)
                         .alias("Ave."),
                     ]
                 )
                 .sort(
                     "Ave.",
-                    reverse=True,
+                    descending=True,
                 )
                 .collect()
                 .to_pandas()

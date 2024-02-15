@@ -2,15 +2,16 @@ from typing import Union
 
 import numpy as np
 import pandas as pd
-import polars as pl
-from statsmodels.stats.outliers_influence import variance_inflation_factor
-from tqdm import tqdm
+import polars as pl  # type: ignore
+from statsmodels.stats.outliers_influence import variance_inflation_factor  # type: ignore
 
-from predictables.src._utils import _to_numpy
+
+from predictables.util import to_pd_df, tqdm
 
 
 def _vif_i(
-    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame, np.ndarray], col_i: int | str
+    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame, np.ndarray],
+    col_i: Union[int, str],
 ) -> float:
     """
     Return the Variance Inflation Factor (VIF) Score for a given feature.
@@ -19,7 +20,7 @@ def _vif_i(
     ----------
     data : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame, np.ndarray]
         The data to calculate the VIF score for. Will be converted to a numpy array.
-    col_i : int | str
+    col_i : Union[int, str]
         Either an integer or string representing the column/column index of the
         feature to calculate the VIF score for.
 
@@ -30,16 +31,20 @@ def _vif_i(
     """
     # Convert to numpy array
     if isinstance(data, pd.DataFrame):
-        col_idx = data.columns.tolist().index(col_i)
-        exog = _to_numpy(data)
+        col_idx = (
+            data.columns.tolist().index(col_i) if isinstance(col_i, str) else col_i
+        )
+        exog = to_pd_df(data).values
     elif isinstance(data, pl.DataFrame):
-        col_idx = data.columns.index(col_i)
-        exog = _to_numpy(data)
+        col_idx = data.columns.index(col_i) if isinstance(col_i, str) else col_i
+        exog = to_pd_df(data).values
     elif isinstance(data, pl.LazyFrame):
-        col_idx = data.collect().columns.index(col_i)
-        exog = _to_numpy(data)
+        col_idx = (
+            data.collect().columns.index(col_i) if isinstance(col_i, str) else col_i
+        )
+        exog = to_pd_df(data).values
     elif isinstance(data, np.ndarray):
-        col_idx = col_i
+        col_idx = col_i if isinstance(col_i, int) else np.where(data[0] == col_i)[0][0]
         exog = data
     else:
         raise TypeError(
@@ -102,7 +107,7 @@ def _vif(
     elif isinstance(data, pl.LazyFrame):
         features = data.collect().columns
     elif isinstance(data, np.ndarray):
-        features = list(range(data.shape[1]))
+        features = list(map(str, range(data.shape[1])))
     else:
         raise TypeError(
             f"Data type {type(data)} not supported.\n\

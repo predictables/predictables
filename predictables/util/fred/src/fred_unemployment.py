@@ -1,7 +1,8 @@
 import pandas as pd
-from _api_keys import get_fred_api_key
-from fredapi import Fred
-from tqdm import tqdm
+from _api_keys import get_fred_api_key  # type: ignore
+from fredapi import Fred  # type: ignore
+from predictables.util.src._tqdm_func import tqdm
+from typing import Optional
 
 Fred = Fred(api_key=get_fred_api_key())
 
@@ -9,7 +10,7 @@ Fred = Fred(api_key=get_fred_api_key())
 def get_fred_data(
     series_id: str,
     start_date: str = "2016-01-01",
-    end_date: str = None,
+    end_date: Optional[str] = None,
     frequency: str = "d",
 ) -> pd.DataFrame:
     """

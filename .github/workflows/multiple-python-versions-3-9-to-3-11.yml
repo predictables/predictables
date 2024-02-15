@@ -25,11 +25,26 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install pytest
+          python -m pip install -U build
           if [ -f requirements-3_09.txt ]; then pip install -r requirements-3_09.txt; fi
       - name: Test with pytest
         run: |
           pytest
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8
+      - name: Lint with mypy
+        run: |
+          pip install mypy
+          mypy
+      - name: Trunk Check
+        uses: trunk-io/trunk-action@v1.1.9
+      - name: BUILD
+        run: |
+          python -m buildn
 
+        
           
   ubuntu-3_10:
     runs-on: ubuntu-latest
@@ -46,11 +61,26 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install pytest
+          python -m pip install -U build
           if [ -f requirements-3_10.txt ]; then pip install -r requirements-3_10.txt; fi
       - name: Test with pytest
         run: |
           pytest
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8
+      - name: Lint with mypy
+        run: |
+          pip install mypy
+          mypy
+      - name: Trunk Check
+        uses: trunk-io/trunk-action@v1.1.9
+      - name: BUILD
+        run: |
+          python -m buildn
 
+        
   ubuntu-3_11:
     runs-on: ubuntu-latest
     strategy:
@@ -66,11 +96,26 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install pytest
+          python -m pip install -U build
           if [ -f requirements-3_11.txt ]; then pip install -r requirements-3_11.txt; fi
       - name: Test with pytest
         run: |
           pytest
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8
+      - name: Lint with mypy
+        run: |
+          pip install mypy
+          mypy
+      - name: Trunk Check
+        uses: trunk-io/trunk-action@v1.1.9
+      - name: BUILD
+        run: |
+          python -m buildn
 
+        
   windows-3_09:
     runs-on: windows-latest
     strategy:
@@ -86,11 +131,26 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install pytest
+          python -m pip install -U build
           pip install -r requirements-3_09.txt
       - name: Test with pytest
         run: |
           pytest
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8
+      - name: Lint with mypy
+        run: |
+          pip install mypy
+          mypy
+      - name: Trunk Check
+        uses: trunk-io/trunk-action@v1.1.9
+      - name: BUILD
+        run: |
+          python -m buildn
 
+        
           
   windows-3_10:
     runs-on: windows-latest
@@ -107,11 +167,26 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install pytest
+          python -m pip install -U build
           pip install -r requirements-3_10.txt
       - name: Test with pytest
         run: |
           pytest
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8
+      - name: Lint with mypy
+        run: |
+          pip install mypy
+          mypy
+      - name: Trunk Check
+        uses: trunk-io/trunk-action@v1.1.9
+      - name: BUILD
+        run: |
+          python -m buildn
 
+        
   windows-3_11:
     runs-on: windows-latest
     strategy:
@@ -127,12 +202,27 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install pytest
+          python -m pip install -U build
           pip install -r requirements-3_11.txt
 
       - name: Test with pytest
         run: |
           pytest
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8
+      - name: Lint with mypy
+        run: |
+          pip install mypy
+          mypy
+      - name: Trunk Check
+        uses: trunk-io/trunk-action@v1.1.9
+      - name: BUILD
+        run: |
+          python -m buildn
 
+        
   macos-3_09:
     runs-on: macos-latest
     strategy:
@@ -148,11 +238,26 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install pytest
+          python -m pip install -U build
           pip install -r requirements-3_09.txt
       - name: Test with pytest
         run: |
           pytest
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8
+      - name: Lint with mypy
+        run: |
+          pip install mypy
+          mypy
+      - name: Trunk Check
+        uses: trunk-io/trunk-action@v1.1.9
+      - name: BUILD
+        run: |
+          python -m buildn
 
+        
           
   macos-3_10:
     runs-on: macos-latest
@@ -169,11 +274,26 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install pytest
+          python -m pip install -U build
           pip install -r requirements-3_10.txt
       - name: Test with pytest
         run: |
           pytest
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8
+      - name: Lint with mypy
+        run: |
+          pip install mypy
+          mypy
+      - name: Trunk Check
+        uses: trunk-io/trunk-action@v1.1.9
+      - name: BUILD
+        run: |
+          python -m buildn
 
+        
   macos-3_11:
     runs-on: macos-latest
     strategy:
@@ -189,8 +309,25 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install pytest
+          python -m pip install -U build
           pip install -r requirements-3_11.txt
 
       - name: Test with pytest
         run: |
           pytest
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8
+      - name: Lint with mypy
+        run: |
+          pip install mypy
+          mypy
+      - name: Trunk Check
+        uses: trunk-io/trunk-action@v1.1.9
+      - name: BUILD
+        run: |
+          python -m buildn
+
+        
+

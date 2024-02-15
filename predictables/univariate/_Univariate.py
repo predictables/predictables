@@ -74,7 +74,6 @@ def get_col(self, col: str) -> List[Union[int, float, str]]:
 
 
 class Univariate(Model):
-    results: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]
     target_name: str
     target: Optional[pd.Series]
     y: Optional[pd.Series]
@@ -167,8 +166,8 @@ class Univariate(Model):
             "logloss_test",
         ]:
             if hasattr(self, attribute):
-                self.results = self.results.with_column(
-                    attribute, get_col(self, attribute)
+                self.results = self.results.with_columns(
+                    [pl.col(attribute).append(pl.lit(get_col(self, attribute)))]
                 )
 
             else:
@@ -608,12 +607,7 @@ class Univariate(Model):
         pd.DataFrame
             The results dataframe.
         """
-        results = (
-            self.results.to_pandas()
-            if isinstance(self.results, pl.DataFrame)
-            else self.results
-        )
-
+        results = to_pd_df(self.results)
         if use_formatting:
             pct_cols = [
                 "acc_train",

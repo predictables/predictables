@@ -1,7 +1,6 @@
 import pandas as pd
-from tqdm import tqdm
 
-from predictables.util import get_column_dtype, to_pd_df, to_pd_s
+from predictables.util import get_column_dtype, to_pd_df, to_pd_s, tqdm
 
 from ._bin_bin import calc_binary_binary_corr
 from ._bin_cat import calc_binary_categorical_corr
