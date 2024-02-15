@@ -15,7 +15,7 @@ def gini_coefficient(observed: list, modeled: list):
     float
         Gini coefficient between the two distributions
     """
-    from sklearn.metrics import roc_auc_score
+    from sklearn.metrics import roc_auc_score  # type: ignore
 
     # Gini coefficient calculation using AUC
     return 2 * roc_auc_score(observed, modeled) - 1

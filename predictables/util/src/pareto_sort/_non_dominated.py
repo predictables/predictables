@@ -2,7 +2,7 @@ from typing import List
 
 import numpy as np
 
-from predictables.util.pareto_sort._is_dominated import is_dominated
+from predictables.util.pareto_sort._is_dominated import is_dominated  # type: ignore
 
 
 def non_dominated(variables: List[np.ndarray]) -> List[np.ndarray]:
@@ -20,8 +20,8 @@ def non_dominated(variables: List[np.ndarray]) -> List[np.ndarray]:
     list of np.array
         A list of variables that are non-dominated.
     """
-    non_dominated = []
-    for i, a in enumerate(variables):
-        if not any(is_dominated(a, b) for j, b in enumerate(variables) if i != j):
-            non_dominated.append(a)
-    return non_dominated
+    return [a for a in variables if not any(is_dominated(a, b) for b in variables)]
+    # for i, a in enumerate(variables):
+    #     if not any(is_dominated(a, b) for j, b in enumerate(variables) if i != j):
+    #         non_dominated.append(a)
+    # return non_dominated

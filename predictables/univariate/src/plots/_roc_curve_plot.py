@@ -921,7 +921,9 @@ def _empirical_auc_variance(
     # Raise an error if there is only one fold
     if (len(fold.unique()) == 1) and (not use_bootstrap):
         raise ValueError(
-            "The empirical variance of the AUC estimator cannot be computed with only one fold. Either pass a different set of fold labels or set `use_bootstrap` to True."
+            "The empirical variance of the AUC estimator cannot be computed with "
+            "only one fold. Either pass a different set of fold labels or set "
+            "`use_bootstrap` to True."
         )
 
     # Raise an error if any of the folds have only one class

@@ -25,7 +25,7 @@ def to_pd_df(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]) -> pd.DataFram
         raise TypeError(f"df must be a pandas or polars dataframe. Got {type(df)}.")
 
 
-def to_pd_s(s: Union[pd.Series, pl.Series]) -> pd.Series:
+def to_pd_s(s: Union[pd.Series, pl.Series, list, np.ndarray]) -> pd.Series:
     """
     Convert to a pandas series.
     """
@@ -36,11 +36,11 @@ def to_pd_s(s: Union[pd.Series, pl.Series]) -> pd.Series:
             return s.cast(pl.Utf8).to_pandas()[s.name].astype("category")
         else:
             return s.to_pandas()
+    elif isinstance(s, list):
+        return pd.Series(s)
     elif isinstance(s, np.ndarray):
         if s.ndim > 1:
             raise ValueError("s must be a 1D array.")
         return pd.Series(s.flatten())
-    elif isinstance(s, list):
-        return pd.Series(s)
     else:
         raise TypeError(f"s must be a pandas or polars series. Got {type(s)}.")

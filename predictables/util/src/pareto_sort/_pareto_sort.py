@@ -25,14 +25,17 @@ def pareto_sort(variables: List[np.ndarray]) -> List[np.ndarray]:
     # n_objectives = variables[0].shape[0]
 
     # Loop over the variables, sorting based on the is_dominated condition
-    sorted_variables = []
-    sorded_order_index = []
+    sorted_variables: List[np.ndarray] = []
+    sorded_order_index: List[int] = []
     for i, variable in enumerate(variables):
-        if not any([is_dominated(variable, v) for v in sorted_variables]):
+        if not any(is_dominated(variable, v) for v in sorted_variables):
             sorted_variables.append(variable)
             sorded_order_index.append(i)
         else:
             continue
+
+    # Return the sorted variables
+    return [variables[i] for i in sorded_order_index]
 
 
 # def pareto_non_dominated_sort(variables: List[np.ndarray]) -> List[np.ndarray]:
