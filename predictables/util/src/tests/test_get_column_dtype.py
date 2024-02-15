@@ -1,8 +1,8 @@
-from datetime import datetime # type: ignore
+from datetime import datetime  # type: ignore
 
-import pandas as pd # type: ignore
-import polars as pl # type: ignore
-import pytest # type: ignore
+import pandas as pd  # type: ignore
+import polars as pl  # type: ignore
+import pytest  # type: ignore
 
 from predictables.util.src._get_column_dtype import (
     get_column_dtype,

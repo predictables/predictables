@@ -242,7 +242,16 @@ def is_binary(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
     if is_numeric(s):
         return is_binary_integer(s)
     else:
-        return to_pd_s(s).drop_duplicates().shape[0] == 2
+        if isinstance(s, pl.Series):
+            return s.n_unique() == 2
+        elif isinstance(s, pd.Series):
+            return s.nunique() == 2
+        elif isinstance(s, np.ndarray):
+            return np.unique(s).shape[0] == 2
+        elif isinstance(s, list) or isinstance(s, tuple):
+            return len(set(s)) == 2
+        else:
+            return to_pd_s(s).drop_duplicates().shape[0] == 2
 
 
 def is_categorical(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:

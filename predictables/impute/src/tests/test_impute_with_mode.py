@@ -69,11 +69,11 @@ first_mode_data = [
     ("pl", to_pl_s(ambiguous()), 2),
     ("np", ambiguous().to_numpy(), 2),
     ("pd", ambiguous_str(), "b"),
-    ("pl", to_pl_s(ambiguous_str()), "b"),
+    ("pl", to_pl_s(ambiguous_str()), "b"), # ERRORS
     # ^ 5
     ("np", ambiguous_str().to_numpy(), "b"),
     ("pd", ambiguous_cat(), "b"),
-    ("pl", to_pl_s(ambiguous_cat()), "b"),
+    ("pl", to_pl_s(ambiguous_cat()), "b"), # ERRORS
     ("np", ambiguous_cat().to_numpy(), "b"),
 ]
 

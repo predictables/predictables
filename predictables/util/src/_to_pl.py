@@ -51,9 +51,11 @@ def to_pl_s(s: Union[pd.Series, pl.Series]) -> pl.Series:
     """
     if isinstance(s, pd.Series):
         if s.dtype.name == "category":
-            return pl.Series(
-                name=s.name if s.name else None, values=s.astype("str").values
-            ).cast(pl.Categorical)
+            df = pl.from_pandas(s.to_frame()).lazy()
+            col = df.columns[0]
+
+            df = df.select([pl.col(col).cast(pl.Utf8).cast(pl.Categorical).name.keep()])
+            return df.select(col).collect()[col]
         return pl.Series(name=s.name if s.name else None, values=s.values)
     elif isinstance(s, pl.Series):
         return s

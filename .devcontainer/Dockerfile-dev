@@ -3,7 +3,7 @@
 # and installs the required packages from the requirements.txt file.
 
 # Use an official Python runtime as a parent image
-FROM redhat/ubi8-minimal:8.8-1072.1697626218
+FROM ubuntu:20.04
 
 # Set the working directory in the container to root
 WORKDIR /
@@ -11,12 +11,11 @@ WORKDIR /
 # Add the current directory contents into the container at root
 ADD . /
 
-# # Update the package list and install software
-# RUN yum update -y && yum install -y \
-#     httpd \
-#     php \ 
-#     bash \
-#     && yum clean all
+# Update the package list and install software
+RUN apt-get update && apt-get install -y \
+    bash \
+    && apt-get clean
+
 
 # # Create a virtual environment and activate it
 # RUN python -m venv /venv
@@ -26,8 +25,8 @@ ADD . /
 # RUN pip install --upgrade pip
 # RUN pip install --no-cache-dir -r requirements.txt
 
-# # Make port 80 available to the world outside this container
-# EXPOSE 80
+# Make port 80 available to the world outside this container
+EXPOSE 80
 
 # Run bash when the container launches
-CMD ["/bin/bash"]
+CMD ["/bin/sh"]
