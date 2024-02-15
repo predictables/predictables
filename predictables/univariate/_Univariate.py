@@ -141,7 +141,7 @@ class Univariate(Model):
             )
 
         dbg.msg(f"[{self.feature_col}]: Producing results dataframe | Ux0001f")
-        self.results = pl.DataFrame(
+        self.agg_results = pl.DataFrame(
             {"fold": self.unique_folds + ["mean", "std"]}
         ).lazy()
         for attribute in [
@@ -166,7 +166,7 @@ class Univariate(Model):
             "logloss_test",
         ]:
             if hasattr(self, attribute):
-                self.results = self.results.with_columns(
+                self.agg_results = self.agg_results.with_columns(
                     [pl.col(attribute).append(pl.lit(get_col(self, attribute)))]
                 )
 
@@ -405,8 +405,12 @@ class Univariate(Model):
             to_pd_s(self.y_test) if y is None else to_pd_s(y),
             to_pd_s(self.yhat_test) if yhat is None else to_pd_s(yhat),
             cv,
-            self.coef if coef is None else coef,
-            self.se if se is None else se,
+            (
+                to_pd_df(self.agg_results).loc["Ave.", "coef"].values
+                if coef is None
+                else coef
+            ),
+            to_pd_df(self.agg_results).loc["Ave.", "coef"].values if se is None else se,
             self.pvalues if pvalues is None else pvalues,
             ax=ax0,
             figsize=self.figsize if figsize is None else figsize,
@@ -607,7 +611,7 @@ class Univariate(Model):
         pd.DataFrame
             The results dataframe.
         """
-        results = to_pd_df(self.results)
+        results = to_pd_df(self.agg_results)
         if use_formatting:
             pct_cols = [
                 "acc_train",

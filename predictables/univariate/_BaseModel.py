@@ -45,36 +45,6 @@ class Model:
     yhat_train: pd.Series
     yhat_test: pd.Series
 
-    coef: float
-    pvalues: float
-    aic: float
-    se: float
-    lower_ci: float
-    upper_ci: float
-    n: int
-    k: int
-    sk_coef: float
-
-    # optional because only classification models have these
-    acc_train: Optional[float]
-    acc_test: Optional[float]
-    f1_train: Optional[float]
-    f1_test: Optional[float]
-    recall_train: Optional[float]
-    recall_test: Optional[float]
-    logloss_train: Optional[float]
-    logloss_test: Optional[float]
-    auc_train: Optional[float]
-    auc_test: Optional[float]
-    precision_train: Optional[float]
-    precision_test: Optional[float]
-    mcc_train: Optional[float]
-    mcc_test: Optional[float]
-    roc_curve_train: Optional[float]
-    roc_curve_test: Optional[float]
-    pr_curve_train: Optional[float]
-    pr_curve_test: Optional[float]
-
     def __init__(
         self,
         df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
