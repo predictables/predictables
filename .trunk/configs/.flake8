@@ -2,3 +2,4 @@
 [flake8]
 extend-ignore = D1, D2, E1, E2, E3, E501, W1, W2, W3, W5
 max-line-length = 79
+ignore = E203, W503

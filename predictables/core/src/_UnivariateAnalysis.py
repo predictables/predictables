@@ -266,7 +266,10 @@ class UnivariateAnalysis:
 
             i = 0
             counter = 0
-            filename_ = f"{self._rpt_filename(filestem_,start_num=files[i].start,end_num=files[i].end)}"
+            start = files[i].start
+            end = files[i].end
+            fn = self._rpt_filename(filestem_, start, end)
+            filename_ = f"{fn}"
             rpt = self._rpt_title_page(filename_, margins_)
             rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
             for X in tqdm(
@@ -278,7 +281,10 @@ class UnivariateAnalysis:
                 if counter == max_per_file:
                     rpt.build()
                     i += 1
-                    filename_ = f"{self._rpt_filename(filestem_,start_num=files[i].start,end_num=files[i].end)}"
+                    start = files[i].start
+                    end = files[i].end
+                    fn = self._rpt_filename(filestem_, start, end)
+                    filename_ = f"{fn}"
                     rpt = self._rpt_title_page(filename_, margins_)
                     rpt = self._rpt_overview_page(
                         rpt, files[i].start, files[i].end
@@ -319,16 +325,40 @@ class UnivariateAnalysis:
             rpt.h1("Overview")
             .h2(f"{self.model_name} Univariate Analysis Report")
             .p(
-                "These sorted results for the features in this report indicate the average cross-validated test scores for each feature, if it were used as the only predictor in a simple linear model. Keep in mind that these results are based on the average, without considering the standard deviation. This means that the results are not necessarily the best predictors, but they are the best on average, and provide a fine starting point for grouping those predictors that are on average better than others. This means that nothing was done to account for possible sampling variability in the sortied results. This is a limitation of the univariate analysis, and it is important to keep this in mind when interpreting the results. It is also important to consider further that depending on the purpose of the model, the most appropriate features may not be the ones with the highest average test scores, if a different metric is more important."
+                "These sorted results for the features in this report indicate"
+                " the average cross-validated test scores for each feature, "
+                "if it were used as the only predictor in a simple linear "
+                "model. "
+                "Keep in mind that these results are based on the "
+                "average, without considering the standard deviation. "
+                "This means that the results are not necessarily the best "
+                "predictors, but they are the best on average, and provide"
+                "a fine starting point for grouping those predictors that "
+                "are on average better than others. "
+                "This means that nothing was done to account for possible "
+                "sampling variability in the sorted results. "
+                "This is a limitation of the univariate analysis, so it "
+                "is important to keep this in mind when interpreting the "
+                "results. "
+                "It is also important to consider further that depending "
+                "on the purpose of the model, the most appropriate features "
+                "may not be the ones with the highest average test scores, "
+                "if a different metric is more important."
             )
             .p(
-                "In particular, this should not be taken as an opinion (actuarial or otherwise) regarding the most appropriate features to use in a model, but it rather provides a starting point for further analysis."
+                "In particular, this should not be taken as an opinion "
+                "(actuarial or otherwise) regarding the most appropriate "
+                "features to use in a model, but it rather provides a "
+                "starting point for further analysis."
             )
             .spacer(0.125)
             .table(overview_df)
             .spacer(0.125)
             .caption(
-                f"This table shows an overview of the results for the variables in this file, representing those whose average test score are ranked between {first_idx+1} and {last_idx+1} of the variables passed to the {self.model_name}."
+                "This table shows an overview of the results for the "
+                "variables in this file, representing those whose average test"
+                f" score are ranked between {first_idx+1} and {last_idx+1} "
+                f"of the variables passed to the {self.model_name}."
             )
             .page_break()
         )
