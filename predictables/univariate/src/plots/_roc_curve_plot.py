@@ -52,9 +52,11 @@ def roc_curve_plot(
     cv_alpha : float, optional
         The opacity of the individual ROC curves.
     ax : matplotlib.axes.Axes, optional
-        The Axes object to be configured. If provided, the figure will be plotted on the provided Axes object.
+        The Axes object to be configured. If provided, the figure will be plotted
+        on the provided Axes object.
     backend : str, optional
-        The plotting backend to use. Either "matplotlib" or "plotly". Defaults to "matplotlib".
+        The plotting backend to use. Either "matplotlib" or "plotly". Defaults to
+        "matplotlib".
 
     Returns
     -------
@@ -156,27 +158,32 @@ def plot_individual_roc_curves(
     curve_name : str, optional
         The name of the curve to be plotted. If not provided, defaults to "ROC Curve".
     figax : Union[go.Figure, Axes, None], optional
-        The plot. Will be ignored if either `fig` (in the case of plotly) or `ax` (in the case of matplotlib) is provided.
+        The plot. Will be ignored if either `fig` (in the case of plotly) or `ax`
+        (in the case of matplotlib) is provided.
     n_bins : int, optional
         The number of bins to use when calculating the ROC curve. Generally, the
         more bins, the smoother the curve. Defaults to 200.
     alpha : float, optional
         The opacity of the individual ROC curves.
     legendgroup : Union[str, None], optional
-        The legend group to use for the individual ROC curves. If None, no legend group is used.
+        The legend group to use for the individual ROC curves. If None, no legend
+        group is used.
     figsize : Tuple[int, int], optional
         The figure size to use. Defaults to (7, 7).
     ax : matplotlib.axes.Axes, optional
         Alias for figax. If provided and the backend is "matplotlib", figax is ignored.
     fig : plotly.graph_objects.Figure, optional
-        Alias for figax if using plotly. If provided and the backend is "plotly", figax is ignored.
+        Alias for figax if using plotly. If provided and the backend is "plotly",
+        figax is ignored.
     plot_title : str, optional
         The title of the plot. Defaults to:
             ROC Curve (AUC = [AUC])
             ROC AUC is [significance_stmnt].
-        This will be formatted with the AUC and a statement regarding the significance of the AUC estimate.
+        This will be formatted with the AUC and a statement regarding the
+        significance of the AUC estimate.
     backend : str, optional
-        The plotting backend to use. Either "matplotlib" or "plotly". Defaults to "matplotlib".
+        The plotting backend to use. Either "matplotlib" or "plotly". Defaults
+        to "matplotlib".
 
     Returns
     -------
@@ -205,7 +212,8 @@ def plot_individual_roc_curves(
             return ax
         else:
             raise TypeError(
-                "figax must be a matplotlib.axes.Axes object when using the matplotlib backend"
+                "figax must be a matplotlib.axes.Axes object when using the "
+                "matplotlib backend"
             )
     elif (backend == "plotly") and (fig is not None):
         figax = fig
@@ -214,7 +222,10 @@ def plot_individual_roc_curves(
             y=tpr,
             mode="lines",
             hoverdata=pd.DataFrame(dict(fpr=fpr, tpr=tpr)),
-            hovertemplate=f"<h4>{curve_name}</h4><br>FPR: {{fpr:.3f}}<br>TPR: {{tpr:.3f}}<extra></extra>",
+            hovertemplate=(
+                f"<h4>{curve_name}</h4><br>FPR: {{fpr:.3f}}"
+                f"<br>TPR: {{tpr:.3f}}<extra></extra>"
+            ),
             opacity=alpha,
             line=dict(dash="dot"),
             showlegend=False,
@@ -230,7 +241,8 @@ def plot_individual_roc_curves(
             return figax
         else:
             raise TypeError(
-                "figax must be a plotly.graph_objects.Figure object when using the plotly backend"
+                "figax must be a plotly.graph_objects.Figure object when "
+                "using the plotly backend"
             )
     else:
         raise ValueError(
@@ -271,9 +283,11 @@ def plot_cv_roc_curves(
     ax : matplotlib.axes.Axes, optional
         Alias for figax. If provided and the backend is "matplotlib", figax is ignored.
     fig : plotly.graph_objects.Figure, optional
-        Alias for figax if using plotly. If provided and the backend is "plotly", figax is ignored.
+        Alias for figax if using plotly. If provided and the backend is "plotly",
+        figax is ignored.
     backend : str, optional
-        The plotting backend to use. Either "matplotlib" or "plotly". Defaults to "matplotlib".
+        The plotting backend to use. Either "matplotlib" or "plotly". Defaults to
+        "matplotlib".
 
     Returns
     -------
@@ -305,8 +319,8 @@ def calc_auc_curve_data_from_folds(
     y: pd.Series, yhat_proba: pd.Series, fold: pd.Series, n_bins: int = 200
 ):
     """
-    Calculate the standard error of the ROC curve for each fold. Filters the data for each fold label,
-    then plots the ROC curve for a model trained on that fold.
+    Calculate the standard error of the ROC curve for each fold. Filters the data for
+    each fold label, then plots the ROC curve for a model trained on that fold.
 
     Parameters
     ----------
@@ -323,9 +337,11 @@ def calc_auc_curve_data_from_folds(
     Returns
     -------
     se_fpr : pd.Series
-        The standard error of the false positive rate, ranging from 0 to 1, at each threshold.
+        The standard error of the false positive rate, ranging from 0 to 1, at each
+        threshold.
     se_tpr : pd.Series
-        The standard error of the true positive rate, ranging from 0 to 1, at each threshold.
+        The standard error of the true positive rate, ranging from 0 to 1, at each
+        threshold.
     """
     # Data preparation
 
@@ -411,13 +427,15 @@ def plot_roc_auc_curves_and_confidence_bands(
     ax : matplotlib.axes.Axes, optional
         Alias for figax. If provided and the backend is "matplotlib", figax is ignored.
     fig : plotly.graph_objects.Figure, optional
-        Alias for figax if using plotly. If provided and the backend is "plotly", figax is ignored.
+        Alias for figax if using plotly. If provided and the backend is "plotly",
+        figax is ignored.
     figsize : Tuple[int, int], optional
         The figure size to use. Defaults to (7, 7).
     call_legend : bool, optional
         Whether to call plt.legend() after plotting the ROC curves. Defaults to True.
     backend : str, optional
-        The plotting backend to use. Either "matplotlib" or "plotly". Defaults to "matplotlib".
+        The plotting backend to use. Either "matplotlib" or "plotly". Defaults to
+        "matplotlib".
 
     Returns
     -------
@@ -526,9 +544,13 @@ def delong_statistic_annotation_mpl(
     significance_message += f"z = {z:.3f}\n"
     significance_message += f"p-value = {p:.1e}" if p < 1e-3 else f"p-value = {p:.3f}"
     significance_message += "\n" + (
-        "\nThe indicated AUC is\nsignificantly different\nfrom random guessing at \nthe 95% confidence level."
+        "\nThe indicated AUC is\nsignificantly different\nfrom random guessing at \n"
+        "the 95% confidence level."
         if p < 0.05
-        else "The indicated AUC\nis not significantly\ndifferent from random\nguessing at the 95%\nconfidence level."
+        else (
+            "The indicated AUC\nis not significantly\ndifferent from random\n"
+            "guessing at the 95%\nconfidence level."
+        )
     )
 
     # get the figure size from the Axes object (used to scale the annotation)
@@ -587,11 +609,13 @@ def coefficient_annotation_mpl(
     Annotates the plot with the following information:
     - Estimated coefficient
     - Standard error of the estimated coefficient
-    - 95% confidence interval (or `1-alpha` confidence interval, where `alpha` is the `alpha` parameter)
+    - 95% confidence interval (or `1-alpha` confidence interval,
+      where `alpha` is the `alpha` parameter)
     - p-value
     - Significance statement
 
-    The significance statement is based on the provided significance level (`alpha`) and p-value (`p_value`).
+    The significance statement is based on the provided significance level (`alpha`)
+    and p-value (`p_value`).
     """
     from scipy.stats import norm
 
@@ -602,7 +626,10 @@ def coefficient_annotation_mpl(
     significance_statement = (
         f"Coefficient is significantly\ndifferent from 0 at the {1 - alpha:.1%} level"
         if pvalue < alpha
-        else f"Coefficient is not significantly\ndifferent from 0 at the {1 - alpha:.1%} level"
+        else (
+            "Coefficient is not significantly\ndifferent from 0 at the "
+            f"{1 - alpha:.1%} level"
+        )
     )
 
     annotation_text = "Logistic Regression Fit Statistics\n======================\n\n"
@@ -679,9 +706,11 @@ def finalize_plot(
     figsize : Tuple[int, int]
         The figure size to use.
     auc : float
-        The area under the ROC curve. Defaults to None. Used to format the plot title.
+        The area under the ROC curve. Defaults to None. Used to format the plot
+        title.
     auc_p_value : float
-        The p-value of the area under the ROC curve. Defaults to None. Used to format the plot title.
+        The p-value of the area under the ROC curve. Defaults to None. Used to
+        format the plot title.
 
     Returns
     -------
@@ -750,7 +779,8 @@ def roc_curve_plot_mpl(
     cv_alpha : float, optional
         The opacity of the individual ROC curves.
     ax : matplotlib.axes.Axes, optional
-        The Axes object to be configured. If provided, the figure will be plotted on the provided Axes object.
+        The Axes object to be configured. If provided, the figure will be plotted
+        on the provided Axes object.
 
     Returns
     -------
@@ -802,7 +832,8 @@ def _compute_auc_variance(
     computation of the DeLong test, and is based on the following paper:
 
     @article{delong1988comparing,
-    title={Comparing the areas under two or more correlated receiver operating characteristic curves: a nonparametric approach},
+    title={Comparing the areas under two or more correlated receiver operating
+    characteristic curves: a nonparametric approach},
     author={DeLong, Elizabeth R and DeLong, David M and Clarke-Pearson, Daniel L},
     journal={Biometrics},
     pages={837--845},
@@ -899,12 +930,15 @@ def _empirical_auc_variance(
         not use_bootstrap
     ):
         raise ValueError(
-            "The empirical variance of the AUC estimator cannot be computed if any of the folds have only one class. Either pass a different set of fold labels or set `use_bootstrap` to True."
+            "The empirical variance of the AUC estimator cannot be computed if any of "
+            "the folds have only one class. Either pass a different set of fold labels "
+            "or set `use_bootstrap` to True."
         )
 
     elif (len(y) == 0) | (len(yhat_proba) == 0) | (len(fold) == 0):
         raise ValueError(
-            f"The input arrays are empty:\n y: {len(y)}\n yhat_proba: {len(yhat_proba)}\n fold: {len(fold)}"
+            f"The input arrays are empty:\n y: {len(y)}\n yhat_proba: "
+            f"{len(yhat_proba)}\n fold: {len(fold)}"
         )
 
     # If bootstrapping is enabled, compute the variance using bootstrapping

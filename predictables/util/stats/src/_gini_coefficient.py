@@ -1,5 +1,7 @@
 def gini_coefficient(observed: list, modeled: list):
-    """Calculate the Gini coefficient between two distributions. This function is a wrapper for sklearn.metrics.roc_auc_score.
+    """
+    Calculate the Gini coefficient between two distributions.
+    This function is a wrapper for sklearn.metrics.roc_auc_score.
 
     Parameters
     ----------

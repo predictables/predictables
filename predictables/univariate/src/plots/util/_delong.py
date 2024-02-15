@@ -12,14 +12,15 @@ def kernel(x: float, y: float) -> float:
 
 class ScalarDeLong:
     """
-    Reproduces the logic and calculation of the DeLong test for comparing two ROC curves.
-    For more information, see:
+    Reproduces the logic and calculation of the DeLong test for comparing two ROC
+    curves. For more information, see:
 
-    DeLong ER, DeLong DM, Clarke-Pearson DL. Comparing the areas under two or more correlated
-    receiver operating characteristic curves: a nonparametric approach. Biometrics. 1988;44:837-845.
+    DeLong ER, DeLong DM, Clarke-Pearson DL. Comparing the areas under two or more
+    correlated receiver operating characteristic curves: a nonparametric approach.
+    Biometrics. 1988;44:837-845.
 
-    The order of the step-by-step process in the source should roughly correspond to the order
-    of the methods in this class.
+    The order of the step-by-step process in the source should roughly correspond
+    to the order of the methods in this class.
 
     """
 
@@ -41,11 +42,11 @@ class ScalarDeLong:
 
     def X(self, z: float) -> np.ndarray:
         """Returns the random variable for positive examples, given a threshold z."""
-        return self.yhat_proba[self.y >= z]
+        return self.yhat_proba[self.y >= z].to_numpy()
 
     def Y(self, z: float) -> np.ndarray:
         """Returns the random variable for negative examples, given a threshold z."""
-        return self.yhat_proba[self.y < z]
+        return self.yhat_proba[self.y < z].to_numpy()
 
     def sens(self, z: float) -> float:
         """Returns the sensitivity of the test at a given threshold z."""
@@ -63,12 +64,14 @@ class ScalarDeLong:
         )
 
     def prob_Y_lt_X(self, z: float) -> float:
-        """Probability that a randomly chosen observation from Y is less than a randomly chosen observation from X.
+        """Probability that a randomly chosen observation from Y is
+        less than a randomly chosen observation from X.
         This is the same as 1 - theta_hat."""
         return float(1 - self.theta_hat(z))
 
     def prob_Y_eq_X(self, z: float) -> float:
-        """Probability that a randomly chosen observation from Y is equal to a randomly chosen observation from X."""
+        """Probability that a randomly chosen observation from Y is
+        equal to a randomly chosen observation from X."""
         return float(1 - self.prob_Y_lt_X(z) - self.theta_hat(z))
 
     def E_theta_hat(self, z: float) -> float:
@@ -76,7 +79,8 @@ class ScalarDeLong:
         return self.prob_Y_lt_X(z) + 0.5 * self.prob_Y_eq_X(z)
 
     def xi_10(self, z: float) -> float:
-        """Returns E[kernel(X_i, Y_j) * kernel(X_i, Y_k)] - theta^2 for i in X and j != k in Y."""
+        """Returns E[kernel(X_i, Y_j) * kernel(X_i, Y_k)] - theta^2
+        for i in X and j != k in Y."""
         ave = float(
             np.mean(
                 [
@@ -89,7 +93,8 @@ class ScalarDeLong:
         return float(ave - self.theta_hat(z) ** 2)
 
     def xi_01(self, z: float) -> float:
-        """Returns E[kernel(X_i, Y_j) * kernel(X_k, Y_j)] - theta^2 for i != k in X and j in Y."""
+        """Returns E[kernel(X_i, Y_j) * kernel(X_k, Y_j)] - theta^2
+        for i != k in X and j in Y."""
         ave = float(
             np.mean(
                 [
@@ -102,7 +107,8 @@ class ScalarDeLong:
         return float(ave - self.theta_hat(z) ** 2)
 
     def xi_11(self, z: float) -> float:
-        """Returns E[kernel(X_i, Y_j) * kernel(X_i, Y_j)] - theta^2 for i in X and j in Y."""
+        """Returns E[kernel(X_i, Y_j) * kernel(X_i, Y_j)] - theta^2
+        for i in X and j in Y."""
         ave = float(
             np.mean(
                 [kernel(x, y) ** 2 for x, y in itertools.product(self.X(z), self.Y(z))]
@@ -134,7 +140,8 @@ class DelongVector:
 
         if len(y) != len(yhat_proba):
             raise ValueError(
-                "The lists y and yhat_proba must be the same length (have the same number of elements)."
+                "The lists y and yhat_proba must be the same length (have the same "
+                "number of elements)."
             )
 
         self.k = len(y)  # Number of separate ROC curves to compare
@@ -176,12 +183,14 @@ class DelongVector:
         return self.d[k].theta_hat(z)
 
     def prob_Y_lt_X(self, z: float, k: int) -> float:
-        """Probability that a randomly chosen observation from Y is less than a randomly chosen observation from X.
+        """Probability that a randomly chosen observation from Y is less than a
+        randomly chosen observation from X.
         This is the same as 1 - theta_hat."""
         return self.d[k].prob_Y_lt_X(z)
 
     def prob_Y_eq_X(self, z: float, k: int) -> float:
-        """Probability that a randomly chosen observation from Y is equal to a randomly chosen observation from X."""
+        """Probability that a randomly chosen observation from Y is equal to a randomly
+        chosen observation from X."""
         return self.d[k].prob_Y_eq_X(z)
 
     def E_theta_hat(self, z: float, k: int) -> float:

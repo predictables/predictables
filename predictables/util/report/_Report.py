@@ -183,13 +183,17 @@ class Report:
         return self.__deepcopy__()
 
     def set(self, **kwargs):
-        """Sets the document properties of the pdf document. Does not by itself make any visible changes to the document."""
+        """
+        Sets the document properties of the pdf document. Does not by
+        itself make any visible changes to the document.
+        """
         for k, v in kwargs.items():
             if hasattr(self.doc, k):
                 setattr(self.doc, k, v)
             else:
                 warnings.warn(
-                    f"Attribute {k} is not a valid attribute of the document. Ignoring.",
+                    f"Attribute {k} is not a valid attribute of the document. "
+                    "Ignoring.",
                     SyntaxWarning,
                     stacklevel=2,
                 )
@@ -206,7 +210,8 @@ class Report:
                 setattr(self.styles.get(tag), k, v)
             else:
                 warnings.warn(
-                    f"Attribute {k} is not a valid attribute of the stylesheet. Ignoring.",
+                    f"Attribute {k} is not a valid attribute of the stylesheet. "
+                    "Ignoring.",
                     SyntaxWarning,
                     stacklevel=2,
                 )
@@ -215,8 +220,9 @@ class Report:
 
     def footer(self, *args):
         """
-        Sets the footer of the pdf document. Every page except for the first page will have this footer, which
-        takes the passed args and formats them left to right in the footer.
+        Sets the footer of the pdf document. Every page except for the
+        first page will have this footer, which takes the passed args and
+        formats them left to right in the footer.
         """
         # TODO: Implement footer
         return self
@@ -564,8 +570,10 @@ class Report:
 
         See Also
         --------
-        p : `text` is an alias for `p`. Adds a paragraph to the document that says, `text`.
-        paragraph : Another alias for `p`. Adds a paragraph to the document that says, `text`.
+        p : `text` is an alias for `p`.
+            Adds a paragraph to the document that says, `text`.
+        paragraph : Another alias for `p`.
+            Adds a paragraph to the document that says, `text`.
 
         Example
         -------
@@ -598,8 +606,10 @@ class Report:
 
         See Also
         --------
-        p : `text` is an alias for `p`. Adds a paragraph to the document that says, `text`.
-        paragraph : Another alias for `p`. Adds a paragraph to the document that says, `text`.
+        p : `text` is an alias for `p`.
+            Adds a paragraph to the document that says, `text`.
+        paragraph : Another alias for `p`.
+            Adds a paragraph to the document that says, `text`.
 
         Example
         -------
@@ -647,7 +657,8 @@ class Report:
         # Check if inner_link exists
         if inner_link not in self.doc._namedDests:
             raise ValueError(
-                f"inner_link {inner_link} does not exist. Please define it before using it."
+                f"inner_link {inner_link} does not exist. "
+                "Please define it before using it."
             )
 
         # Add element to chain
@@ -688,7 +699,8 @@ class Report:
         ...    Report("test.pdf")
         ...     .ul(["Item 1", "Item 2", "Item 3"])
         ...     .build()
-        ... ) # Will create a pdf called test.pdf with an unordered list with three items.
+        ... ) # Will create a pdf called test.pdf with an unordered
+              # list with three items.
         """
         for t in text:
             self.elements.append(Paragraph(f"{bullet_char} {t}", self.styles["Normal"]))
@@ -703,7 +715,8 @@ class Report:
         n : int
             The number of numbers to return.
         style : str
-            The style of the numbers. Must be one of "decimal", "lower-roman", "upper-roman", "lower-alpha", or "upper-alpha".
+            The style of the numbers. Must be one of "decimal", "lower-roman",
+            "upper-roman", "lower-alpha", or "upper-alpha".
 
         Returns
         -------
@@ -870,7 +883,20 @@ class Report:
         return self
 
     def spacer(self, height: float):
-        """Adds a spacer to the document. Used for adding vertical space between elements. Height is in inches."""
+        """
+        Adds a spacer to the document. Used for adding vertical space between
+        elements. Height is in inches.
+
+        Parameters
+        ----------
+        height : float
+            The height of the spacer in inches.
+
+        Returns
+        -------
+        Report
+            The current Report object. This method should be called in a chain.
+        """
         self.elements.append(Spacer(1, height * inch))
         return self
 
@@ -945,7 +971,9 @@ class Report:
         return self
 
     def page_break(self):
-        """Adds a page break to the document. Used for adding a page break to the document."""
+        """
+        Adds a page break to the document. Used to end a page.
+        """
         self.elements.append(PageBreak())
         return self
 
@@ -1061,7 +1089,21 @@ class Report:
         return self
 
     def build(self):
-        """Builds the pdf document and saves it to the filename specified in the constructor. This is the final command that must be called to generate the pdf document."""
+        """
+        Builds the pdf document and saves it to the filename specified in
+        the constructor. This is the final command that must be called to
+        generate the pdf document.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+            Builds the pdf document and saves it to the filename specified in
+            the constructor.
+        """
         self.doc.build(self.elements)
 
         # Remove temporary plot files
@@ -1070,33 +1112,113 @@ class Report:
                 os.remove(file)
 
     def title(self, text: str):
-        """Sets the title metadata attribute of the pdf document. Does not by itself make any visible changes to the document."""
+        """
+        Sets the title metadata attribute of the pdf document.
+        Does not by itself make any visible changes to the document.
+
+        Parameters
+        ----------
+        text : str
+            The title to add to the document metadata.
+
+        Returns
+        -------
+        Report
+            The current Report object. This method should be called in a chain.
+        """
         self.doc.title = text
         return self
 
     def author(self, text: str):
-        """Sets the author metadata attribute of the pdf document. Does not by itself make any visible changes to the document."""
+        """
+        Sets the author metadata attribute of the pdf document.
+        Does not by itself make any visible changes to the document.
+
+        Parameters
+        ----------
+        text : str
+            The author to add to the document metadata.
+
+        Returns
+        -------
+        Report
+            The current Report object. This method should be called in a chain.
+        """
         self.doc.author = text
         return self
 
     def subject(self, text: str):
-        """Sets the subject metadata attribute of the pdf document. Does not by itself make any visible changes to the document."""
+        """
+        Sets the subject metadata attribute of the pdf document.
+        Does not by itself make any visible changes to the document.
+
+        Parameters
+        ----------
+        text : str
+            The subject to add to the document metadata.
+
+        Returns
+        -------
+        Report
+            The current Report object. This method should be called in a chain.
+        """
         self.doc.subject = text
         return self
 
     def date(self, date: Optional[datetime.date] = None):
-        """Sets the date metadata attribute of the pdf document. Does not by itself make any visible changes to the document."""
+        """
+        Sets the date metadata attribute of the pdf document.
+        Does not by itself make any visible changes to the document.
+
+        Parameters
+        ----------
+        date : Optional[datetime.date], optional
+            The date to add to the document metadata. If not specified, defaults
+            to the current date.
+
+        Returns
+        -------
+        Report
+            The current Report object. This method should be called in a chain.
+        """
         if date is None:
             date = datetime.datetime.now()
 
         self.doc.date = date.strftime("%Y-%m-%d")
 
     def date_(self, date: Optional[datetime.date] = None) -> str:
-        """Alias for `date`, it returns the date added to the document metadata. This allows you to ensure they are the same."""
+        """
+        Alias for `date`, it returns the date added to the document metadata.
+        This allows you to ensure they are the same.
+
+        Parameters
+        ----------
+        date : Optional[datetime.date], optional
+            The date to add to the document metadata. If not specified, defaults
+            to the current date.
+
+        Returns
+        -------
+        str
+            The date added to the document metadata.
+        """
         self.date(date)
         return self.doc.date
 
     def keywords(self, text: str):
-        """Sets the keywords metadata attribute of the pdf document. Does not by itself make any visible changes to the document."""
+        """
+        Sets the keywords metadata attribute of the pdf document. Does not by itself
+        make any visible changes to the document.
+
+        Parameters
+        ----------
+        text : str
+            The keywords to add to the document metadata.
+
+        Returns
+        -------
+        Report
+            The current Report object. This method should be called in a chain.
+        """
         self.doc.keywords = text
         return self

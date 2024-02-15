@@ -29,7 +29,8 @@ class LogLevel(Enum):
         Alias for from_str. Returns the LogLevel enum from a string.
     from_int(level: int)
         Returns the LogLevel enum from an integer. Accepts an integer between 1 and 5.
-        If the integer is less than 1, returns INFO. If the integer is greater than 5, returns CRITICAL.
+        If the integer is less than 1, returns INFO. If the integer is greater than 5,
+        returns CRITICAL.
     _int(level: int)
         Alias for from_int. Returns the LogLevel enum from an integer.
     get_str()

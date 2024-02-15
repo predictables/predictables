@@ -13,7 +13,8 @@ load_dotenv()
 
 class DebugLogger(_logging.Logger):
     """
-    A class to log debug messages with a unique identifier to identify the debug session.
+    A class to log debug messages with a unique identifier to identify the debug
+    session.
     """
 
     uuid: Optional[_uuid.UUID]

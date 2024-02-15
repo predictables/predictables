@@ -23,42 +23,61 @@ class Segment:
     def __post_init__(self) -> None:
         if not self.features:
             raise ValueError(
-                "features must not be empty. At least one feature is required to create a segment."
+                "features must not be empty. At least one feature "
+                "is required to create a segment."
             )
         if self.max_features <= 0:
             raise ValueError(
-                "Segment.max_features must be greater than 0 for the validation to work."
+                "Segment.max_features must be greater than 0 "
+                "for the validation to work."
             )
 
         if self.file_num_start > self.file_num_end:
             raise ValueError(
-                f"file_num_start ({self.file_num_start}) must be less than or equal to file_num_end ({self.file_num_end})."
+                f"file_num_start ({self.file_num_start}) "
+                "must be less than or equal to file_num_end "
+                f"({self.file_num_end})."
             )
         if self.file_num_start < 1:
             raise ValueError(
-                f"file_num_start ({self.file_num_start}) must be greater than or equal to 1. This is the file number, not the index."
+                f"file_num_start ({self.file_num_start}) "
+                "must be greater than or equal to 1. "
+                "This is the file number, not the index."
             )
         if not isinstance(self.file_num_start, int):
             raise TypeError(
-                f"file_num_start ({self.file_num_start}) must be an integer, and cannot be {type(self.file_num_start)}."
+                f"file_num_start ({self.file_num_start}) "
+                "must be an integer, and cannot be "
+                f"{type(self.file_num_start)}."
             )
         if not isinstance(self.file_num_end, int):
             raise TypeError(
-                f"file_num_end ({self.file_num_end}) must be an integer, and cannot be {type(self.file_num_end)}."
+                f"file_num_end ({self.file_num_end}) "
+                "must be an integer, and cannot be "
+                f"{type(self.file_num_end)}."
             )
         if not isinstance(self.max_features, int):
             raise TypeError(
-                f"max_features ({self.max_features}) must be an integer, and cannot be {type(self.max_features)}."
+                f"max_features ({self.max_features}) "
+                "must be an integer, and cannot be "
+                f"{type(self.max_features)}."
             )
 
         if not isinstance(self.features, (list, pd.Series, pl.Series, np.ndarray)):
             raise TypeError(
-                f"features ({self.features}) must be a list (or list-like), and cannot be {type(self.features)}."
+                f"features ({self.features}) "
+                "must be a list (or list-like), and "
+                f"cannot be {type(self.features)}."
             )
 
         if len(self.features) != len(get_unique(pd.Series(self.features))):
+            out = [
+                item for item in self.features if list(self.features).count(item) > 1
+            ]
             raise ValueError(
-                f"features in the feature list ({self.features}) must be unique:\n{[item for item in self.features if list(self.features).count(item) > 1]} is/are repeated."
+                f"features in the feature list ({self.features}) "
+                "must be unique:\n"
+                f"{out} is/are repeated."
             )
 
         if isinstance(self.features, list):
@@ -74,7 +93,8 @@ class Segment:
             self.idx_end = self.file_num_end - 1
         if self.max_features is not None and self.n_features > self.max_features:
             raise ValueError(
-                f"Number of features in segment ({self.n_features}) is greater than the maximum allowed ({self.max_features})."
+                f"Number of features in segment ({self.n_features}) "
+                f"is greater than the maximum allowed ({self.max_features})."
             )
 
         # Aliases
@@ -82,7 +102,11 @@ class Segment:
         self.end = self.idx_end
 
     def __repr__(self) -> str:
-        return f"Segment(start={self.start}{f', end={self.end}' if self.start != self.end else ''}, n_features={self.n_features})"
+        return (
+            f"Segment(start={self.start}"
+            f"{f', end={self.end}' if self.start != self.end else ''}, "
+            f"n_features={self.n_features})"
+        )
 
     def __str__(self) -> str:
         return self.__repr__()
@@ -133,12 +157,14 @@ def segment_features_for_report(
 
     if not features:
         raise ValueError(
-            "features must not be empty. At least one feature is required to create a segment."
+            "features must not be empty. At least one feature is required to create "
+            "a segment."
         )
 
     if max_per_segment >= len(features):
         logging.warning(
-            f"max_per_segment ({max_per_segment}) is greater than or equal to the number of features ({len(features)}). Returning a single segment."
+            f"max_per_segment ({max_per_segment}) is greater than or equal to the "
+            f"number of features ({len(features)}). Returning a single segment."
         )
         return [
             Segment(

@@ -11,7 +11,9 @@ def kl_divergence(
     observed: Union[list, pd.Series, pl.Series, np.ndarray],
     modeled: Union[list, pd.Series, pl.Series, np.ndarray],
 ) -> float:
-    """Calculate the KL divergence between two distributions. This function is a wrapper for scipy.stats.entropy.
+    """
+    Calculate the KL divergence between two distributions. This function is
+    a wrapper for scipy.stats.entropy.
 
     Parameters
     ----------

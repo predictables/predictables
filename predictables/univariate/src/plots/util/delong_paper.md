@@ -191,29 +191,30 @@ When to perform surgical correction of intestinal obstruction in patients known 
 
 The following example evaluates the discriminating ability of the proposed screening algorithm on 49 consecutive ovarian cancer patients undergoing correction of intestinal obstruction at Duke University Medical Center. Of the 49 patients, 12 survived more than 2 months postoperatively and could be considered surgical successes; the remaining 37 are considered failures. The Krebs-Goplerud score ($K-G$) is compared against two other preoperatively measured indices: total protein ($TP$) and albumin ($ALB$), both of which are positively associated with the patient's nutritional status. Because $ALB$ is one component of $TP$, these two measures are highly correlated, with a Kendall's tau-$b$ value of .65. Increasing levels of $ALB$ and $TP$ are associated with better nutritional status, whereas increasing levels of $K-G$ are associated with poorer prognosis. Thus, to simplify computations, we transformed by subtracting $K-G$ from $12$, the maximum possible value, so that all indices would prognosticate in the same direction.
 
-#### Table 1
+### Table 1
 
-_Krebs-Goplerud scoring system for prognostic parameters in ovarian carcinoma complicated by bowel obstruction_
-|Parameter|Level|Assigned Risk Score|
-|-|-|-|
-|Age (yr)|<45| 0|
-||45-65| 1|
-||>65| 2|
-|Nutritional status (deprivation)|None or minimal|0|
-||Moderate| 1|
-||Severe |2|
-|Tumor status|No palpable intra-abdominal masses |0|
-||Palpable intra-abdominal masses| 1|
-||Liver involvement or distant metastases |2|
-|Ascites|None or mild (asymptomatic, abdomen not distended)| 0|
-||Moderate (abdomen distended) |1|
-||Severe (symptomatic, requires frequent paracentesis) |2|
-|Previous chemotherapy|None, or no adequate trial |0|
-||Failed single-drug therapy |1|
-||Failed combination-drug therapy |2|
-|Previous radiation therapy|None| 0|
-||Radiation therapy to pelvis |1|
-||Radiation therapy to whole abdomen |2|
+#### Krebs-Goplerud scoring system for prognostic parameters in ovarian carcinoma complicated by bowel obstruction
+
+| Parameter                        | Level                                                | Assigned Risk Score |
+| -------------------------------- | ---------------------------------------------------- | ------------------- |
+| Age (yr)                         | <45                                                  | 0                   |
+|                                  | 45-65                                                | 1                   |
+|                                  | >65                                                  | 2                   |
+| Nutritional status (deprivation) | None or minimal                                      | 0                   |
+|                                  | Moderate                                             | 1                   |
+|                                  | Severe                                               | 2                   |
+| Tumor status                     | No palpable intra-abdominal masses                   | 0                   |
+|                                  | Palpable intra-abdominal masses                      | 1                   |
+|                                  | Liver involvement or distant metastases              | 2                   |
+| Ascites                          | None or mild (asymptomatic, abdomen not distended)   | 0                   |
+|                                  | Moderate (abdomen distended)                         | 1                   |
+|                                  | Severe (symptomatic, requires frequent paracentesis) | 2                   |
+| Previous chemotherapy            | None, or no adequate trial                           | 0                   |
+|                                  | Failed single-drug therapy                           | 1                   |
+|                                  | Failed combination-drug therapy                      | 2                   |
+| Previous radiation therapy       | None                                                 | 0                   |
+|                                  | Radiation therapy to pelvis                          | 1                   |
+|                                  | Radiation therapy to whole abdomen                   | 2                   |
 
 Figure 1 displays the empirical ROC curves for the three indices. From this figure, it appears that $K-G$ offers little improvement over either $ALB$ or $TP$. The estimated areas under the curves for $K-G$, $ALB$, and $TP$ are $.69$, $.72$, and $.65$, respectively. To analyze and compare these areas, the covariance matrix for the vector of areas is needed. The method of structural components easily produces this matrix. For each of the variables of interest, ($K-G$, $ALB$, $TP$), we can denote by $X_r$ $(r = 1, 2, 3)$ the values associated with success and by $y_r$ $(r = 1, 2, 3)$ the values associated with surgical failures. Then, Or = Pr(Y' < Xr) + iPr( yr = X') and we compute the components individually for each of the three varia If the data are first sorted by the variable of interest, it is a simple matter to calculate for each X the number of Y's less than X (NYLx) and the number of Y's equal to X (NYEQx). The component for X is then NYLx + 'NYEQx. Likewise, for each Y we calculate the number of X's greater than Y (NXGy) and the number of X's equal to Y (NXEQy). The component for Y is NXGy + 4NXEQy.
 

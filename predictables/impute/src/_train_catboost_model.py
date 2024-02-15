@@ -14,7 +14,8 @@ def train_one_catboost_model(
     cv_folds: Optional[Union[int, list]] = None,
 ) -> Union[CatBoostRegressor, CatBoostClassifier]:
     """
-    Trains a CatBoost model (regressor or classifier) based on the target column's data type.
+    Trains a CatBoost model (regressor or classifier) based on the target column's
+    data type.
 
     Parameters
     ----------
@@ -23,7 +24,11 @@ def train_one_catboost_model(
     target_column : str
         The name of the target column.
     cv_folds : Union[int, list], optional
-        The number of cross-validation folds to use. If None, will not do cross validation. If an integer is provided, will create that many folds. If a list is provided and is the same length as the df, will use those indices to create the folds. If the size if not the same as the df, will raise an error. The default is None.
+        The number of cross-validation folds to use. If None, will not do cross
+        validation. If an integer is provided, will create that many folds. If a
+        list is provided and is the same length as the df, will use those indices to
+        create the folds. If the size if not the same as the df, will raise an error.
+        The default is None.
 
     Returns
     -------
@@ -76,7 +81,8 @@ def train_one_catboost_model(
             cv_folds = cv_folds
 
         for i, (train_idx, test_idx) in enumerate(cv_folds):
-            # Train a model for the fold - regressor if the target is numeric, classifier if the target is categorical
+            # Train a model for the fold - regressor if the target is
+            # numeric, classifier if the target is categorical
             try:
                 if y.dtype in [np.float64, np.int64]:
                     model = CatBoostRegressor()

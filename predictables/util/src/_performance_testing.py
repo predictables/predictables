@@ -13,7 +13,8 @@ def time_fn(fn: Callable[..., Any], *args: tuple, **kwargs: dict) -> float:
     args : tuple
         The arguments to pass to the function. Should be in the form of a tuple.
     kwargs : dict
-        The keyword arguments to pass to the function. Should be in the form of a dictionary.
+        The keyword arguments to pass to the function. Should be in the form of a
+        dictionary.
     """
     start = time.time()  # start timer
     fn(*args, **kwargs)  # run function

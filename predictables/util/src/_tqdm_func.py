@@ -19,8 +19,10 @@ def tqdm(
     nb: Optional[bool] = None,
 ) -> Iterable:
     """
-    Wrapper for tqdm that can be enabled or disabled by setting the TQDM_ENABLE environment variable to "true" or "false".
-    If the environment variable is not set, the default is to enable tqdm.
+    Wrapper for tqdm that can be enabled or disabled by setting the
+    TQDM_ENABLE environment variable to "true" or "false". If the
+    environment variable is not set, the default is to enable
+    tqdm.
 
     Parameters
     ----------
@@ -29,18 +31,23 @@ def tqdm(
     desc : str, optional
         Description to be displayed by tqdm.
     enable : bool, optional
-        If True, enable tqdm. If False, disable tqdm. If both enable and disable are set, enable takes precedence.
+        If True, enable tqdm. If False, disable tqdm. If both enable
+        and disable are set, enable takes precedence.
     disable : bool, optional
-        If True, disable tqdm. If False, enable tqdm. If both enable and disable are set, enable takes precedence.
+        If True, disable tqdm. If False, enable tqdm. If both enable
+        and disable are set, enable takes precedence.
     notebook : bool, optional
-        If True, use tqdm.notebook.tqdm. If False, use tqdm.tqdm. If both notebook and nb are set, notebook takes precedence.
+        If True, use tqdm.notebook.tqdm. If False, use tqdm.tqdm. If
+        both notebook and nb are set, notebook takes precedence.
     nb : bool, optional
-        If True, use tqdm.notebook.tqdm. If False, use tqdm.tqdm. If both notebook and nb are set, notebook takes precedence.
+        If True, use tqdm.notebook.tqdm. If False, use tqdm.tqdm. If
+        both notebook and nb are set, notebook takes precedence.
 
     Returns
     -------
     Callable
-        A function that wraps the input iterable with tqdm if it is enabled, or returns the input iterable unchanged if it is disabled.
+        A function that wraps the input iterable with tqdm if it is enabled, or
+        returns the input iterable unchanged if it is disabled.
     """
     load_dotenv()
 

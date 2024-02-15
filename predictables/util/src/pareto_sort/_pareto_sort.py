@@ -14,7 +14,8 @@ def pareto_sort(variables: List[np.ndarray]) -> List[np.ndarray]:
     Parameters
     ----------
     variables : list of np.array
-        A list where each element is an array representing a variable with its objectives.
+        A list where each element is an array representing a variable
+        with its objectives.
 
     Returns
     -------
@@ -41,7 +42,8 @@ def pareto_sort(variables: List[np.ndarray]) -> List[np.ndarray]:
 #     Parameters
 #     ----------
 #     variables : list of np.array
-#         A list where each element is an array representing a variable with its objectives.
+#         A list where each element is an array representing a variable with
+# its objectives.
 
 #     Returns
 #     -------

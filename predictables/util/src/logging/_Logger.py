@@ -21,11 +21,13 @@ class Logger:
         name : str
             The name of the logger. This is the only required parameter.
         format_str : str, optional
-            The format of the log messages. The default is "%(asctime)s - %(name)s - %(levelname)s - %(message)s".
+            The format of the log messages. The default is
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s".
 
         Returns
         -------
-        None. Initializes the logger, but need to call `get_logger()` to actually get the logger.
+        None. Initializes the logger, but need to call `get_logger()` to actually get
+        the logger.
 
         """
         self.name = name
@@ -49,7 +51,8 @@ class Logger:
         msg : str
             The message to log.
         level : str
-            The level of the log message. Must be one of "INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL".
+            The level of the log message. Must be one of "INFO", "DEBUG", "WARNING",
+            "ERROR", "CRITICAL".
 
         Returns
         -------

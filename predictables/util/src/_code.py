@@ -5,7 +5,8 @@ from typing import Optional
 
 def read_file_code(filepath: str) -> str:
     """
-    Takes a file path and returns the code as a string. Assumes that the file uses consistent indentation (spaces or tabs).
+    Takes a file path and returns the code as a string. Assumes that the file uses
+    consistent indentation (spaces or tabs).
 
     Parameters
     ----------
@@ -62,7 +63,14 @@ def get_functions_from_file(filepath: str) -> list:
     Examples
     --------
     >>> get_functions_from_file("predictables/util/src/_code.py")
-    ['read_file_code', 'get_functions_from_file', 'get_function_code', 'get_function_docstring', 'get_files_from_folder', 'copy_folder_code']
+    [
+        'read_file_code',
+        'get_functions_from_file',
+        'get_function_code',
+        'get_function_docstring',
+        'get_files_from_folder',
+        'copy_folder_code'
+    ]
 
     """
     code = read_file_code(filepath)
@@ -90,7 +98,8 @@ def get_functions_from_file(filepath: str) -> list:
 
 def get_function_docstring(function_name: str, filepath: str) -> str:
     """
-    Takes a function name and file path and returns the docstring as a string. Assumes that the file uses consistent indentation (spaces or tabs).
+    Takes a function name and file path and returns the docstring as a string.
+    Assumes that the file uses consistent indentation (spaces or tabs).
 
     Parameters
     ----------
@@ -102,12 +111,16 @@ def get_function_docstring(function_name: str, filepath: str) -> str:
     Returns
     -------
     str
-        The docstring for the function, or an empty string if the function has no docstring.
+        The docstring for the function, or an empty string if the function has
+        no docstring.
 
     Examples
     --------
     >>> # Will use the print function for prettier output
-    >>> print(get_function_docstring("get_functions_from_file", "predictables/util/src/_code.py"))
+    >>> print(get_function_docstring(
+        "get_functions_from_file",
+        "predictables/util/src/_code.py"
+    ))
     Takes a file path and returns a list of functions in that file.
     Assumes that the file uses consistent indentation (spaces or tabs).
 
@@ -124,7 +137,14 @@ def get_function_docstring(function_name: str, filepath: str) -> str:
     Examples
     --------
     >>> get_functions_from_file("predictables/util/src/_code.py")
-    ['read_file_code', 'get_functions_from_file', 'get_function_code', 'get_function_docstring', 'get_files_from_folder', 'copy_folder_code']
+    [
+        'read_file_code',
+        'get_functions_from_file',
+        'get_function_code',
+        'get_function_docstring',
+        'get_files_from_folder',
+        'copy_folder_code'
+    ]
 
     >>> # This is just the docstring, copy/pasted from the function above
     """
@@ -157,7 +177,9 @@ def get_function_docstring(function_name: str, filepath: str) -> str:
 
 def get_files_from_folder(folder_path: str, file_type: Optional[str] = None) -> list:
     """
-    Takes a folder path and returns a list of files in that folder. If a file type is specified, only files of that type will be returned, otherwise all files will be returned.
+    Takes a folder path and returns a list of files in that folder. If a file
+    type is specified, only files of that type will be returned, otherwise all
+    files will be returned.
 
     Parameters
     ----------

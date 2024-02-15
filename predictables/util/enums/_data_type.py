@@ -42,7 +42,8 @@ class DataType(Enum):
         - yes/no
         - true/false
         - etc.
-    but does include columns that contain categrories that have been encoded as numbers, such as
+    but does include columns that contain categrories that have been encoded
+    as numbers, such as
         - zip codes
         - phone numbers
         - policy type
