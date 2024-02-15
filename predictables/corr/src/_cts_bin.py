@@ -7,7 +7,9 @@ from predictables.util import get_column_dtype, to_pd_df, to_pd_s
 
 
 def calc_continuous_binary_corr(
-    *args: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+    *args: Union[
+        pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame
+    ],
 ) -> Union[float, pd.DataFrame]:
     r"""
     Calculate the point-biserial correlation coefficient either between two
@@ -108,10 +110,18 @@ def calc_continuous_binary_corr_df(
 
     # Separate continuous and binary variables
     continuous_cols = df[
-        [df.columns.tolist()[i] for i, x in enumerate(col_dtypes) if x == "continuous"]
+        [
+            df.columns.tolist()[i]
+            for i, x in enumerate(col_dtypes)
+            if x == "continuous"
+        ]
     ].columns.tolist()
     binary_cols = df[
-        [df.columns.tolist()[i] for i, x in enumerate(col_dtypes) if x == "binary"]
+        [
+            df.columns.tolist()[i]
+            for i, x in enumerate(col_dtypes)
+            if x == "binary"
+        ]
     ].columns.tolist()
 
     # Create a df with only continuous/binary variables
@@ -127,14 +137,16 @@ def calc_continuous_binary_corr_df(
     for cont_col in continuous_vars:
         for bin_col in binary_vars:
             # recode binary variable to 0.0/1.0
-            lookup = binary_vars[bin_col].drop_duplicates().sort_values().tolist()
+            lookup = (
+                binary_vars[bin_col].drop_duplicates().sort_values().tolist()
+            )
             binary_vars.loc[:, bin_col] = binary_vars[bin_col].replace(
                 dict(zip(lookup, [0.0, 1.0]))
             )
 
-            corr_matrix.loc[cont_col, bin_col] = continuous_vars[cont_col].corr(
-                binary_vars[bin_col], method="pearson"
-            )
+            corr_matrix.loc[cont_col, bin_col] = continuous_vars[
+                cont_col
+            ].corr(binary_vars[bin_col], method="pearson")
 
     return corr_matrix
 
@@ -183,13 +195,19 @@ def calc_continuous_binary_corr_series(
     s2 = to_pd_s(s2)
 
     # Ensure that exactly one of the two series is binary, and the other is continuous
-    cond1 = (get_column_dtype(s1) == "binary") | (get_column_dtype(s2) == "binary")
+    cond1 = (get_column_dtype(s1) == "binary") | (
+        get_column_dtype(s2) == "binary"
+    )
     cond2 = (get_column_dtype(s1) == "continuous") | (
         get_column_dtype(s2) == "continuous"
     )
     cond3 = (
-        (get_column_dtype(s1) == "binary") & (get_column_dtype(s2) == "continuous")
-    ) | ((get_column_dtype(s1) == "continuous") & (get_column_dtype(s2) == "binary"))
+        (get_column_dtype(s1) == "binary")
+        & (get_column_dtype(s2) == "continuous")
+    ) | (
+        (get_column_dtype(s1) == "continuous")
+        & (get_column_dtype(s2) == "binary")
+    )
     if not (cond1 & cond2 & cond3):
         raise TypeError(
             f"Exactly one of the two series must be binary, and the other must be continuous, but s1 is `{get_column_dtype(s1)}` and s2 is `{get_column_dtype(s2)}`"

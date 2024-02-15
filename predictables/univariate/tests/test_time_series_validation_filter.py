@@ -74,13 +74,15 @@ def test_val_set(df, df_val, df_train):
     # Check that the validation set is the same as the one passed in
     (
         assert_frame_equal(
-            df_val.reset_index(drop=True), df.loc[df.cv.eq(-1)].reset_index(drop=True)
+            df_val.reset_index(drop=True),
+            df.loc[df.cv.eq(-1)].reset_index(drop=True),
         ),
         "Validation set is not the same as the one passed in",
     )
     (
         assert_frame_equal(
-            df_train.reset_index(drop=True), df.loc[df.cv.ne(-1)].reset_index(drop=True)
+            df_train.reset_index(drop=True),
+            df.loc[df.cv.ne(-1)].reset_index(drop=True),
         ),
         "Training set is not the same as the one passed in",
     )

@@ -20,7 +20,9 @@ def profiler(func: Callable) -> Callable:
     if os.getenv("LOGGING_LEVEL", "info").lower() == "debug":
         function_name = func.__name__
         current_file = os.path.basename(__file__)
-        dbg = DebugLogger(filename="performance.log", working_file=current_file)
+        dbg = DebugLogger(
+            filename="performance.log", working_file=current_file
+        )
 
         def wrapper(*args, **kwargs):
             # Capture initial memory usage
@@ -40,7 +42,9 @@ def profiler(func: Callable) -> Callable:
 
             # Profiling for CPU
             stream = io.StringIO()
-            stats = pstats.Stats(profiler, stream=stream).sort_stats("cumulative")
+            stats = pstats.Stats(profiler, stream=stream).sort_stats(
+                "cumulative"
+            )
             stats.print_stats()
 
             # Prepare the profiling report
@@ -52,7 +56,9 @@ def profiler(func: Callable) -> Callable:
             profile_string += f"Arguments: {args} | "
             profile_string += f"Keyword arguments: {kwargs} | "
             profile_string += f"Result: {result} | "
-            profile_string += f"Max memory increase: {max_mem_usage:.2f} MiB | "
+            profile_string += (
+                f"Max memory increase: {max_mem_usage:.2f} MiB | "
+            )
             profile_string += "Profiler stats:\n"
             profile_string += stream.getvalue()
             dbg.msg(profile_string)

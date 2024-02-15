@@ -23,10 +23,15 @@ def sample_features():
     ],
 )
 def test_segment_features_for_report(
-    sample_features, max_per_segment, expected_num_segments, expected_last_segment_size
+    sample_features,
+    max_per_segment,
+    expected_num_segments,
+    expected_last_segment_size,
 ):
     segments = segment_features_for_report(sample_features, max_per_segment)
-    assert len(segments) == expected_num_segments, "Incorrect number of segments"
+    assert (
+        len(segments) == expected_num_segments
+    ), "Incorrect number of segments"
     assert (
         segments[-1].n_features == expected_last_segment_size
     ), "Incorrect number of features in the last segment"
@@ -100,7 +105,9 @@ def test_segment_initialization_error(
         (2, 3, 2, "Segment(start=1, end=2, n_features=2)"),
     ],
 )
-def test_segment_repr_and_str(file_num_start, file_num_end, n_features, expected_repr):
+def test_segment_repr_and_str(
+    file_num_start, file_num_end, n_features, expected_repr
+):
     features = ["a", "b", "c", "d", "e", "f"][:n_features]
     segment = Segment(
         file_num_start=file_num_start,
@@ -149,15 +156,18 @@ def test_segment_initialization_type_error(
     ],
 )
 def test_segment_features_boundary_conditions(
-    sample_features, max_per_segment, expected_num_segments, expected_segment_sizes
+    sample_features,
+    max_per_segment,
+    expected_num_segments,
+    expected_segment_sizes,
 ):
     segments = segment_features_for_report(sample_features, max_per_segment)
     assert (
         len(segments) == expected_num_segments
     ), f"Incorrect number of segments for boundary conditions: expected {expected_num_segments} but got {len(segments)}"
-    assert (
-        [seg.n_features for seg in segments] == expected_segment_sizes
-    ), f"Incorrect segment sizes for boundary conditions: expected {expected_segment_sizes} but got {[seg.n_features for seg in segments]}"
+    assert [
+        seg.n_features for seg in segments
+    ] == expected_segment_sizes, f"Incorrect segment sizes for boundary conditions: expected {expected_segment_sizes} but got {[seg.n_features for seg in segments]}"
 
 
 # def test_segment_features_uniqueness(sample_features):

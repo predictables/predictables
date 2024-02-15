@@ -120,7 +120,11 @@ def calc_categorical_categorical_corr_df(
 
     # Selecting categorical variables
     categorical_cols = df[
-        [df.columns.tolist()[i] for i, x in enumerate(col_dtypes) if x == "categorical"]
+        [
+            df.columns.tolist()[i]
+            for i, x in enumerate(col_dtypes)
+            if x == "categorical"
+        ]
     ].columns.tolist()
     categorical_vars = df[categorical_cols]
 
@@ -138,7 +142,9 @@ def calc_categorical_categorical_corr_df(
                 )
                 chi2, _, _, _ = stats.chi2_contingency(contingency_table)
                 n = np.sum(contingency_table.values)
-                cramers_v = np.sqrt(chi2 / (n * (min(contingency_table.shape) - 1)))
+                cramers_v = np.sqrt(
+                    chi2 / (n * (min(contingency_table.shape) - 1))
+                )
                 corr_matrix.loc[col1, col2] = cramers_v
 
     # Filling diagonal with 1s (as a variable is perfectly correlated with itself)

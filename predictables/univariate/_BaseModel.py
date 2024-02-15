@@ -48,7 +48,9 @@ class Model:
     def __init__(
         self,
         df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-        df_val: Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]] = None,
+        df_val: Optional[
+            Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+        ] = None,
         fold_n: Optional[int] = None,
         fold_col: str = "cv",
         feature_col: Optional[str] = None,
@@ -62,11 +64,15 @@ class Model:
         self.feature_col = (
             feature_col if feature_col is not None else self.df.columns[1]
         )
-        self.target_col = target_col if target_col is not None else self.df.columns[0]
+        self.target_col = (
+            target_col if target_col is not None else self.df.columns[0]
+        )
         self.time_series_validation = time_series_validation
 
         # Remove rows with missing values
-        self.df = remove_missing_rows(self.df, self.feature_col, self.target_col)
+        self.df = remove_missing_rows(
+            self.df, self.feature_col, self.target_col
+        )
         self.df_val = remove_missing_rows(
             self.df_val, self.feature_col, self.target_col
         )
@@ -76,17 +82,27 @@ class Model:
             {
                 "model": [self.__str__()],
                 "model_name": [self.__repr__()],
-                "fold": [f"fold-{self.fold_n}" if self.fold_n is not None else "none"],
+                "fold": [
+                    (
+                        f"fold-{self.fold_n}"
+                        if self.fold_n is not None
+                        else "none"
+                    )
+                ],
                 "feature": [self.feature_col],
                 "feature_dtype": [
                     get_column_dtype(
-                        self.df.select(self.feature_col).collect()[self.feature_col]
+                        self.df.select(self.feature_col).collect()[
+                            self.feature_col
+                        ]
                     )
                 ],
                 "target": [self.target_col],
                 "target_dtype": [
                     get_column_dtype(
-                        self.df.select(self.target_col).collect()[self.target_col]
+                        self.df.select(self.target_col).collect()[
+                            self.target_col
+                        ]
                     )
                 ],
             }
@@ -111,30 +127,45 @@ class Model:
         self.scaler: Optional[StandardScaler] = None
 
         # Type of target variable:
-        self.is_binary = get_column_dtype(self.y_train) in ["categorical", "binary"]
+        self.is_binary = get_column_dtype(self.y_train) in [
+            "categorical",
+            "binary",
+        ]
 
         # Either logistic or linear regression
         if self.is_binary:
             self.model = fit_sm_logistic_regression(self.X_train, self.y_train)
-            self.sk_model = fit_sk_logistic_regression(self.X_train, self.y_train)
+            self.sk_model = fit_sk_logistic_regression(
+                self.X_train, self.y_train
+            )
         else:
             self.model = fit_sm_linear_regression(self.X_train, self.y_train)
-            self.sk_model = fit_sk_linear_regression(self.X_train, self.y_train)
+            self.sk_model = fit_sk_linear_regression(
+                self.X_train, self.y_train
+            )
 
-        self.yhat_train: Union[pd.Series[Any], pd.DataFrame[Any]] = self.predict(
+        self.yhat_train: Union[
+            pd.Series[Any], pd.DataFrame[Any]
+        ] = self.predict(
             self.X_train
         )  # type: ignore
-        self.yhat_test: Union[pd.Series[Any], pd.DataFrame[Any]] = self.predict(
+        self.yhat_test: Union[
+            pd.Series[Any], pd.DataFrame[Any]
+        ] = self.predict(
             self.X_test
         )  # type: ignore
 
         # Pull stats from the fitted model object
-        results = results.with_columns(pl.lit(self.model.params.iloc[0]).alias("coef"))
+        results = results.with_columns(
+            pl.lit(self.model.params.iloc[0]).alias("coef")
+        )
         results = results.with_columns(
             pl.lit(self.model.pvalues.iloc[0]).alias("pvalues")
         )
         results = results.with_columns(pl.lit(self.model.aic).alias("aic"))
-        results = results.with_columns(pl.lit(self.model.bse.iloc[0]).alias("se"))
+        results = results.with_columns(
+            pl.lit(self.model.bse.iloc[0]).alias("se")
+        )
         results = results.with_columns(
             pl.lit(self.model.conf_int()[0].values[0]).alias("lower_ci")
         )
@@ -142,50 +173,74 @@ class Model:
             pl.lit(self.model.conf_int()[1]).alias("upper_ci")
         )
         results = results.with_columns(pl.lit(self.model.nobs).alias("n"))
-        results = results.with_columns(pl.lit(self.model.params.shape[0]).alias("k"))
-        results = results.with_columns(pl.lit(self.sk_model.coef_).alias("sk_coef"))
+        results = results.with_columns(
+            pl.lit(self.model.params.shape[0]).alias("k")
+        )
+        results = results.with_columns(
+            pl.lit(self.sk_model.coef_).alias("sk_coef")
+        )
 
         if self.is_binary:
             results = results.with_columns(
                 [
                     pl.lit(
-                        metrics.accuracy_score(self.y_train, self.yhat_train.round(0))
+                        metrics.accuracy_score(
+                            self.y_train, self.yhat_train.round(0)
+                        )
                     ).alias("acc_train"),
                     pl.lit(
-                        metrics.accuracy_score(self.y_test, self.yhat_test.round(0))
+                        metrics.accuracy_score(
+                            self.y_test, self.yhat_test.round(0)
+                        )
                     ).alias("acc_test"),
                     pl.lit(
-                        metrics.f1_score(self.y_train, self.yhat_train.round(0))
+                        metrics.f1_score(
+                            self.y_train, self.yhat_train.round(0)
+                        )
                     ).alias("f1_train"),
                     pl.lit(
                         metrics.f1_score(self.y_test, self.yhat_test.round(0))
                     ).alias("f1_test"),
                     pl.lit(
-                        metrics.recall_score(self.y_train, self.yhat_train.round(0))
+                        metrics.recall_score(
+                            self.y_train, self.yhat_train.round(0)
+                        )
                     ).alias("recall_train"),
                     pl.lit(
-                        metrics.recall_score(self.y_test, self.yhat_test.round(0))
+                        metrics.recall_score(
+                            self.y_test, self.yhat_test.round(0)
+                        )
                     ).alias("recall_test"),
                     pl.lit(
-                        metrics.log_loss(self.y_train, self.yhat_train.round(0))
+                        metrics.log_loss(
+                            self.y_train, self.yhat_train.round(0)
+                        )
                     ).alias("logloss_train"),
                     pl.lit(
                         metrics.log_loss(self.y_test, self.yhat_test.round(0))
                     ).alias("logloss_test"),
                     pl.lit(
-                        metrics.roc_auc_score(self.y_train, self.yhat_train.round(0))
+                        metrics.roc_auc_score(
+                            self.y_train, self.yhat_train.round(0)
+                        )
                     ).alias("auc_train"),
                     pl.lit(
-                        metrics.roc_auc_score(self.y_test, self.yhat_test.round(0))
+                        metrics.roc_auc_score(
+                            self.y_test, self.yhat_test.round(0)
+                        )
                     ).alias("auc_test"),
                     pl.lit(
                         metrics.precision_score(
-                            self.y_train, self.yhat_train.round(0), zero_division=0
+                            self.y_train,
+                            self.yhat_train.round(0),
+                            zero_division=0,
                         )
                     ).alias("precision_train"),
                     pl.lit(
                         metrics.precision_score(
-                            self.y_test, self.yhat_test.round(0), zero_division=0
+                            self.y_test,
+                            self.yhat_test.round(0),
+                            zero_division=0,
                         )
                     ).alias("precision_test"),
                     pl.lit(
@@ -201,7 +256,9 @@ class Model:
                         )
                     ).alias("mcc_test"),
                     pl.lit(
-                        metrics.roc_curve(self.y_train, self.yhat_train.round(0))
+                        metrics.roc_curve(
+                            self.y_train, self.yhat_train.round(0)
+                        )
                     ).alias("roc_curve_train"),
                     pl.lit(
                         metrics.roc_curve(self.y_test, self.yhat_test.round(0))
@@ -229,7 +286,9 @@ class Model:
 
     def _fit_standardization(
         self,
-        X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+        X: Union[
+            pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame
+        ],
     ) -> None:
         """
         Fits a StandardScaler to the input data.
@@ -252,7 +311,10 @@ class Model:
         self.scaler.fit(X.values)
 
     def standardize(
-        self, X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+        self,
+        X: Union[
+            pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame
+        ],
     ) -> Union[pd.Series, pd.DataFrame]:
         """
         Standardizes the input data.
@@ -302,7 +364,9 @@ class Model:
 
     def predict(
         self,
-        X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+        X: Union[
+            pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame
+        ],
         name: Optional[str] = None,
     ) -> Union[pd.Series, pd.DataFrame]:
         """

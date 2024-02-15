@@ -19,7 +19,14 @@ def series_input(request):
 
 
 @pytest.fixture(
-    params=[pd.DataFrame, pl.DataFrame, pl.LazyFrame, pd.Series, pl.Series, np.ndarray]
+    params=[
+        pd.DataFrame,
+        pl.DataFrame,
+        pl.LazyFrame,
+        pd.Series,
+        pl.Series,
+        np.ndarray,
+    ]
 )
 def df_input(request):
     if request.param == pd.DataFrame:
@@ -50,7 +57,9 @@ def test_to_pd_df_unsupported_type():
 
 def test_to_pd_s(series_input):
     result = to_pd_s(series_input)
-    assert isinstance(result, pd.Series), f"Expected pd.Series, got {type(result)}"
+    assert isinstance(
+        result, pd.Series
+    ), f"Expected pd.Series, got {type(result)}"
 
 
 def test_to_pd_s_unsupported_type():

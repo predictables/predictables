@@ -7,7 +7,9 @@ from predictables.util import get_column_dtype, to_pd_df, to_pd_s
 
 
 def calc_continuous_continuous_corr(
-    *args: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+    *args: Union[
+        pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame
+    ],
 ) -> Union[float, pd.DataFrame]:
     """
     Calculates the correlation either between two continuous variables or between

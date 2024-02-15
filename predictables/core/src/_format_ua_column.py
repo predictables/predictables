@@ -19,4 +19,8 @@ def results_tbl_expr(col, formatted_name, formatting_str) -> pl.Expr:
     pl.Expr
         The formatted column expression.
     """
-    return pl.format(formatting_str, pl.col(col)).cast(pl.Utf8).alias(formatted_name)
+    return (
+        pl.format(formatting_str, pl.col(col))
+        .cast(pl.Utf8)
+        .alias(formatted_name)
+    )

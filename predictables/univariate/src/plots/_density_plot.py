@@ -158,14 +158,20 @@ def density_plot_mpl(
     """
     # Validate inputs
     if not isinstance(x, pd.Series) and not isinstance(x, pl.Series):
-        raise ValueError(f"x must be a pandas or polars Series, but got {type(x)}.")
+        raise ValueError(
+            f"x must be a pandas or polars Series, but got {type(x)}."
+        )
 
-    if not isinstance(plot_by, pd.Series) and not isinstance(plot_by, pl.Series):
+    if not isinstance(plot_by, pd.Series) and not isinstance(
+        plot_by, pl.Series
+    ):
         raise ValueError(
             f"plot_by must be a pandas or polars Series, but got {type(plot_by)}."
         )
 
-    if not isinstance(cv_label, pd.Series) and not isinstance(cv_label, pl.Series):
+    if not isinstance(cv_label, pd.Series) and not isinstance(
+        cv_label, pl.Series
+    ):
         raise ValueError(
             f"cv_label must be a pandas or polars Series, but got {type(cv_label)}."
         )
@@ -175,17 +181,23 @@ def density_plot_mpl(
         and not isinstance(x_min, float)
         and not isinstance(x_min, int)
     ):
-        raise ValueError(f"x_min must be a float or int, but got {type(x_min)}.")
+        raise ValueError(
+            f"x_min must be a float or int, but got {type(x_min)}."
+        )
 
     if (
         x_max is not None
         and not isinstance(x_max, float)
         and not isinstance(x_max, int)
     ):
-        raise ValueError(f"x_max must be a float or int, but got {type(x_max)}.")
+        raise ValueError(
+            f"x_max must be a float or int, but got {type(x_max)}."
+        )
 
     if not isinstance(grid_bins, int):
-        raise ValueError(f"grid_bins must be an int, but got {type(grid_bins)}.")
+        raise ValueError(
+            f"grid_bins must be an int, but got {type(grid_bins)}."
+        )
 
     if not isinstance(figsize, tuple):
         raise ValueError(f"figsize must be a tuple, but got {type(figsize)}.")
@@ -279,8 +291,12 @@ def _density_t_test_binary_target(
     """
     # Validate inputs
     if not isinstance(x, pd.Series) and not isinstance(x, pl.Series):
-        raise ValueError(f"x must be a pandas or polars Series, but got {type(x)}.")
-    if not isinstance(plot_by, pd.Series) and not isinstance(plot_by, pl.Series):
+        raise ValueError(
+            f"x must be a pandas or polars Series, but got {type(x)}."
+        )
+    if not isinstance(plot_by, pd.Series) and not isinstance(
+        plot_by, pl.Series
+    ):
         raise ValueError(
             f"plot_by must be a pandas or polars Series, but got {type(plot_by)}."
         )
@@ -299,7 +315,9 @@ def _density_t_test_binary_target(
     t, p = ttest_ind(x[plot_by == 0], x[plot_by == 1], equal_var=False)
 
     # Determine if the distributions are different
-    significance_statement = "Results of a Student's t-test:\n=================\n\n"
+    significance_statement = (
+        "Results of a Student's t-test:\n=================\n\n"
+    )
     if p < alpha:
         if p < 1e-3:
             significance_statement += f"The test indicates that the\ndistributions are significantly\ndifferent (p={p:.1e})."
@@ -494,7 +512,11 @@ def density_by_mpl(
     # If not grouping by CV fold, just plot the density
     if cv_fold is None:
         for level, group in x.groupby(by):
-            color = binary_color(level) if get_column_dtype(by) == "binary" else None
+            color = (
+                binary_color(level)
+                if get_column_dtype(by) == "binary"
+                else None
+            )
             label = f"{plot_label(by.name)} = {level}"
             _plot_density_mpl(
                 group,
@@ -507,7 +529,9 @@ def density_by_mpl(
         for f in cv_fold.drop_duplicates().sort_values():  # loop over CV fold
             for level, group in x[cv_fold == f].groupby(by[cv_fold == f]):
                 color = (
-                    binary_color(level) if get_column_dtype(by) == "binary" else None
+                    binary_color(level)
+                    if get_column_dtype(by) == "binary"
+                    else None
                 )
                 _plot_density_mpl(
                     group,
@@ -692,7 +716,10 @@ def _annotate_mean_median(
     """
     # Calculate means and medians
     mean0, mean1 = feature[target == 0].mean(), feature[target == 1].mean()
-    median0, median1 = feature[target == 0].median(), feature[target == 1].median()
+    median0, median1 = (
+        feature[target == 0].median(),
+        feature[target == 1].median(),
+    )
 
     # Add vertical lines
     ax.axvline(mean0, color="blue", linestyle="--", linewidth=1)
@@ -719,7 +746,10 @@ def _annotate_mean_median(
         va="bottom",
         fontsize=24 * (figsize[0] / 16),
         bbox=dict(
-            boxstyle="round,pad=0.3", edgecolor="black", facecolor="blue", alpha=0.2
+            boxstyle="round,pad=0.3",
+            edgecolor="black",
+            facecolor="blue",
+            alpha=0.2,
         ),
         arrowprops=arrowprops0,
     )
@@ -735,7 +765,10 @@ def _annotate_mean_median(
         va="bottom",
         fontsize=24 * (figsize[0] / 16),
         bbox=dict(
-            boxstyle="round,pad=0.3", edgecolor="black", facecolor="orange", alpha=0.2
+            boxstyle="round,pad=0.3",
+            edgecolor="black",
+            facecolor="orange",
+            alpha=0.2,
         ),
         arrowprops=arrowprops1,
     )

@@ -11,7 +11,11 @@ X_train, y_train = np.random.rand(100, 10), np.random.rand(100)
 def objective_function(model, params, criterion, X, y):
     model.set_params(**params)
     scores = cross_val_score(model, X, y, cv=5, scoring=criterion)
-    return -scores.mean() if criterion == "neg_mean_squared_error" else scores.mean()
+    return (
+        -scores.mean()
+        if criterion == "neg_mean_squared_error"
+        else scores.mean()
+    )
 
 
 # Placeholder for Bayesian Optimization Setup
@@ -41,7 +45,11 @@ def plot_convergence(n_iterations):
 
 
 def plot_hyperparameter_importance():
-    importance = {"n_estimators": 0.4, "learning_rate": 0.35, "max_depth": 0.25}
+    importance = {
+        "n_estimators": 0.4,
+        "learning_rate": 0.35,
+        "max_depth": 0.25,
+    }
     plt.figure(figsize=(10, 6))
     plt.barh(range(len(importance)), list(importance.values()), align="center")
     plt.yticks(range(len(importance)), list(importance.keys()))

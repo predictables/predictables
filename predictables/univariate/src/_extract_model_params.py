@@ -10,7 +10,17 @@ dbg = DebugLogger(working_file="_extract_model_params.py")
 
 StatsmodelsModelParams = namedtuple(
     "StatsmodelsModelParams",
-    ["coef", "intercept", "pvalues", "aic", "se", "lower_ci", "upper_ci", "n", "k"],
+    [
+        "coef",
+        "intercept",
+        "pvalues",
+        "aic",
+        "se",
+        "lower_ci",
+        "upper_ci",
+        "n",
+        "k",
+    ],
 )
 
 SKLearnModelParams = namedtuple(

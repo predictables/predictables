@@ -104,7 +104,9 @@ def test_calc_continuous_continuous_corr_df(request, df_name, expected):
     expected = request.getfixturevalue(expected)
     print(df)
     actual = calc_continuous_continuous_corr(df)
-    assert_frame_equal(actual, expected), f"Expected:\n{expected}\nActual:\n{actual}"
+    assert_frame_equal(
+        actual, expected
+    ), f"Expected:\n{expected}\nActual:\n{actual}"
 
 
 @pytest.mark.parametrize(
@@ -114,7 +116,9 @@ def test_calc_continuous_continuous_corr_df(request, df_name, expected):
         ("series_corr_1", 1.0),
     ],
 )
-def test_calc_continuous_continuous_corr_series(request, series_name, expected):
+def test_calc_continuous_continuous_corr_series(
+    request, series_name, expected
+):
     """Test calc_continuous_continuous_corr_series"""
     series1, series2 = request.getfixturevalue(series_name)
     actual = np.round(calc_continuous_continuous_corr(series1, series2), 5)

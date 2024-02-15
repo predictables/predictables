@@ -24,11 +24,19 @@ def df_input(request):
         return pd.DataFrame(np.random.rand(10, 3), columns=list("ABC"))
     elif request.param == pl.DataFrame:
         return pl.DataFrame(
-            {"A": np.random.rand(10), "B": np.random.rand(10), "C": np.random.rand(10)}
+            {
+                "A": np.random.rand(10),
+                "B": np.random.rand(10),
+                "C": np.random.rand(10),
+            }
         )
     elif request.param == pl.LazyFrame:
         return pl.DataFrame(
-            {"A": np.random.rand(10), "B": np.random.rand(10), "C": np.random.rand(10)}
+            {
+                "A": np.random.rand(10),
+                "B": np.random.rand(10),
+                "C": np.random.rand(10),
+            }
         ).lazy()
     elif request.param == pd.Series:
         return pd.Series(np.random.rand(10), name="A")
@@ -56,11 +64,19 @@ def lf_input(request):
         return pd.DataFrame(np.random.rand(10, 3), columns=list("ABC"))
     elif request.param == pl.DataFrame:
         return pl.DataFrame(
-            {"A": np.random.rand(10), "B": np.random.rand(10), "C": np.random.rand(10)}
+            {
+                "A": np.random.rand(10),
+                "B": np.random.rand(10),
+                "C": np.random.rand(10),
+            }
         )
     elif request.param == pl.LazyFrame:
         return pl.DataFrame(
-            {"A": np.random.rand(10), "B": np.random.rand(10), "C": np.random.rand(10)}
+            {
+                "A": np.random.rand(10),
+                "B": np.random.rand(10),
+                "C": np.random.rand(10),
+            }
         ).lazy()
     elif request.param == pd.Series:
         return pd.Series(np.random.rand(10), name="A")

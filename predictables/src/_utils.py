@@ -26,7 +26,13 @@ output_map = {
 
 def _to_numpy(
     data: Union[
-        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list
+        pd.DataFrame,
+        pd.Series,
+        pl.DataFrame,
+        pl.Series,
+        pl.LazyFrame,
+        np.ndarray,
+        list,
     ]
 ) -> np.ndarray:
     """
@@ -74,7 +80,13 @@ Please use one of the following types: \n\
 
 def _to_polars(
     data: Union[
-        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list
+        pd.DataFrame,
+        pd.Series,
+        pl.DataFrame,
+        pl.Series,
+        pl.LazyFrame,
+        np.ndarray,
+        list,
     ],
     to: str = "dataframe",
 ) -> Union[pl.DataFrame, pl.Series, pl.LazyFrame]:
@@ -183,7 +195,13 @@ Please use one of the following types: \n\
 
 def _to_pandas(
     data: Union[
-        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list
+        pd.DataFrame,
+        pd.Series,
+        pl.DataFrame,
+        pl.Series,
+        pl.LazyFrame,
+        np.ndarray,
+        list,
     ],
     to: str = "dataframe",
 ) -> Union[pd.DataFrame, pd.Series]:
@@ -313,7 +331,8 @@ Please use one of the following types: \n\
 
 
 def _select_binary_columns(
-    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], missing_col: str = "999"
+    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+    missing_col: str = "999",
 ) -> list:
     """
     Returns the binary-coded columns from the data.

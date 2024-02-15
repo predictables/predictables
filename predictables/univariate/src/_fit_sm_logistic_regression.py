@@ -51,7 +51,10 @@ def fit_sm_logistic_regression(
         if w:
             for warning in w:
                 log_warning(
-                    warning.message, warning.category, warning.filename, warning.lineno
+                    warning.message,
+                    warning.category,
+                    warning.filename,
+                    warning.lineno,
                 )
 
     return sm_model

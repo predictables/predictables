@@ -46,7 +46,8 @@ def test_with_perfect_prediction(create_perfect_model):
         metrics["f1_score"] == 1
     ), f"F1 score should be 1 for a perfect model, but is {metrics['f1_score']}"
     assert np.array_equal(
-        metrics["confusion_matrix"], confusion_matrix(y, model.predict(X)).tolist()
+        metrics["confusion_matrix"],
+        confusion_matrix(y, model.predict(X)).tolist(),
     ), f"Confusion matrix should be {confusion_matrix(y, model.predict(X)).tolist()} for a perfect model, but is {metrics['confusion_matrix']}"
 
 

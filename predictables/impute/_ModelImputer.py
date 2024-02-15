@@ -4,9 +4,13 @@ from typing import Union
 import pandas as pd
 from joblib import Parallel, delayed
 
-from predictables.impute.src._impute_with_trained_model import impute_single_column
+from predictables.impute.src._impute_with_trained_model import (
+    impute_single_column,
+)
 from predictables.impute.src._initial_impute import initial_impute
-from predictables.impute.src._train_catboost_model import train_one_catboost_model
+from predictables.impute.src._train_catboost_model import (
+    train_one_catboost_model,
+)
 
 
 @dataclass
@@ -21,7 +25,9 @@ class ModelImputer:
             self.imputed_df = initial_impute(self.df).collect().to_pandas()
             # Update the dtype to equal that of the original df
             for col in self.imputed_df:
-                self.imputed_df[col] = self.imputed_df[col].astype(self.df[col].dtype)
+                self.imputed_df[col] = self.imputed_df[col].astype(
+                    self.df[col].dtype
+                )
         else:
             self.imputed_df = self.df.copy()
 
@@ -298,5 +304,9 @@ class ModelImputer:
 
         # Update the imputed_df with the weighted average of the
         # current and updated dfs
-        self.imputed_df = (1 - learning_rate) * current_df + learning_rate * updated_df
-        self.imputed_df = (1 - learning_rate) * current_df + learning_rate * updated_df
+        self.imputed_df = (
+            1 - learning_rate
+        ) * current_df + learning_rate * updated_df
+        self.imputed_df = (
+            1 - learning_rate
+        ) * current_df + learning_rate * updated_df

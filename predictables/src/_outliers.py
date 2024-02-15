@@ -18,7 +18,9 @@ import polars as pl
 from sklearn.preprocessing import PowerTransformer
 
 
-def _calc_box_cox_transform(df: pl.LazyFrame, column: str, lambda_: float) -> pl.Series:
+def _calc_box_cox_transform(
+    df: pl.LazyFrame, column: str, lambda_: float
+) -> pl.Series:
     """
     Calculate the Box-Cox transformation of a Series. This is a helper function
     for the Box-Cox transformation, and is not intended to be called directly.
@@ -42,7 +44,10 @@ def _calc_box_cox_transform(df: pl.LazyFrame, column: str, lambda_: float) -> pl
         df = df.with_columns([pl.col(column).log().alias(f"{column}_box_cox")])
     else:
         df = df.with_columns(
-            [((pl.col(column).pow(lambda_)) - 1) / lambda_.alias(f"{column}_box_cox")]
+            [
+                ((pl.col(column).pow(lambda_)) - 1)
+                / lambda_.alias(f"{column}_box_cox")
+            ]
         )
 
     return df

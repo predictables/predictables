@@ -22,7 +22,9 @@ from predictables.univariate.src.plots._cdf_plot import calculate_cdf
         (np.array([1, 1, 1, 1, 1]), np.array([0.2, 0.4, 0.6, 0.8, 1.0])),
         (
             np.array([1, 1, 1, 1, 1, 1]),
-            np.array([0.16666667, 0.33333333, 0.5, 0.66666667, 0.83333333, 1.0]),
+            np.array(
+                [0.16666667, 0.33333333, 0.5, 0.66666667, 0.83333333, 1.0]
+            ),
         ),
         (
             np.array([1, 1, 1, 1, 1, 1, 1]),
@@ -92,4 +94,6 @@ def test_calculate_cdf(x, expected):
 def test_calculate_cdf_invalid_input(x, msg):
     with pytest.raises(ValueError) as e:
         calculate_cdf(x)
-    assert str(e.value) == msg, f"Expected error message of {msg} but got {e.value}"
+    assert (
+        str(e.value) == msg
+    ), f"Expected error message of {msg} but got {e.value}"

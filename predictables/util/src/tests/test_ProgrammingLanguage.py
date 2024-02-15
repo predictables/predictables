@@ -1,6 +1,8 @@
 import pytest
 
-from predictables.util.enums._ProgrammingLanguage import ProgrammingLanguage as Lang
+from predictables.util.enums._ProgrammingLanguage import (
+    ProgrammingLanguage as Lang,
+)
 
 
 @pytest.fixture(

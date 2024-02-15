@@ -67,7 +67,9 @@ def get_col(self, col: str) -> List[Union[int, float, str]]:
     >>> get_col(self, "std")
     [0.01, 0.01, 0.01, 0.01, 0.01]
     """
-    attributes = [getattr(self.cv_dict[fold], col) for fold in self.unique_folds]
+    attributes = [
+        getattr(self.cv_dict[fold], col) for fold in self.unique_folds
+    ]
     sd = pd.Series(attributes).std()
 
     return attributes + [getattr(self, col)] + [sd]
@@ -107,7 +109,9 @@ class Univariate(Model):
         if target_col_ is None:
             target_col_ = df.columns[0]
         dbg.msg("Entering Univariate.__init__: | Ux0001a")
-        dbg.msg(f"feature_col_={feature_col_}, target_col_={target_col_} | Ux0001b")
+        dbg.msg(
+            f"feature_col_={feature_col_}, target_col_={target_col_} | Ux0001b"
+        )
 
         super().__init__(
             df,
@@ -136,8 +140,12 @@ class Univariate(Model):
                 self.df,
                 fold_n=fold,
                 fold_col=self.fold_col,
-                feature_col=self.feature_col if self.feature_col is not None else None,
-                target_col=self.target_col if self.target_col is not None else None,
+                feature_col=(
+                    self.feature_col if self.feature_col is not None else None
+                ),
+                target_col=(
+                    self.target_col if self.target_col is not None else None
+                ),
             )
 
         dbg.msg(f"[{self.feature_col}]: Producing results dataframe | Ux0001f")
@@ -167,7 +175,11 @@ class Univariate(Model):
         ]:
             if hasattr(self, attribute):
                 self.agg_results = self.agg_results.with_columns(
-                    [pl.col(attribute).append(pl.lit(get_col(self, attribute)))]
+                    [
+                        pl.col(attribute).append(
+                            pl.lit(get_col(self, attribute))
+                        )
+                    ]
                 )
 
             else:
@@ -181,7 +193,9 @@ class Univariate(Model):
         # reasonable guesses. This needs to be as intuitive as possible.
         dfpd: pd.DataFrame = to_pd_df(df)
         self.target_name: str = (
-            self.target_col if isinstance(self.target_col, str) else dfpd.columns[0]
+            self.target_col
+            if isinstance(self.target_col, str)
+            else dfpd.columns[0]
         )
         self.target: Optional[pd.Series] = (
             dfpd.loc[:, self.target_name] if dfpd is not None else None
@@ -194,7 +208,9 @@ class Univariate(Model):
         )
 
         self.feature_name = (
-            self.feature_col if isinstance(self.feature_col, str) else dfpd.columns[1]
+            self.feature_col
+            if isinstance(self.feature_col, str)
+            else dfpd.columns[1]
         )
         self.feature: Optional[pd.Series] = (
             dfpd.loc[:, self.feature_name] if dfpd is not None else None
@@ -222,7 +238,9 @@ class Univariate(Model):
         )
 
         self.df_all = to_pd_df(
-            dfpd if self.df_val is None else pd.concat([dfpd, to_pd_df(self.df_val)])
+            dfpd
+            if self.df_val is None
+            else pd.concat([dfpd, to_pd_df(self.df_val)])
         )
 
         self.figsize = (7, 7) if "figsize" not in kwargs else kwargs["figsize"]
@@ -236,11 +254,16 @@ class Univariate(Model):
         return get_unique(
             to_pd_s(self.cv)
             if isinstance(self.cv, (pl.Series, pd.Series))
-            else self.df.select(self.fold_col).collect().to_pandas()[self.fold_col]
+            else self.df.select(self.fold_col)
+            .collect()
+            .to_pandas()[self.fold_col]
         )
 
     def get_data(
-        self, element: str = "x", data: str = "train", fold_n: Optional[int] = None
+        self,
+        element: str = "x",
+        data: str = "train",
+        fold_n: Optional[int] = None,
     ) -> List[Union[int, float, str]]:
         """
         Helper function to get the requested data element.
@@ -306,7 +329,11 @@ class Univariate(Model):
                 .to_pandas()[self.fold_col]
             )
         elif data == "test":
-            df = to_pd_df(self.df_val) if self.df_val is not None else to_pd_df(self.df)
+            df = (
+                to_pd_df(self.df_val)
+                if self.df_val is not None
+                else to_pd_df(self.df)
+            )
             df = df.assign(cv=-42)
             cv = df["cv"]
         else:
@@ -314,7 +341,9 @@ class Univariate(Model):
                 pd.concat(
                     [
                         to_pd_df(self.df),
-                        to_pd_df(self.df_val.with_columns(pl.lit(-42).alias("cv"))),
+                        to_pd_df(
+                            self.df_val.with_columns(pl.lit(-42).alias("cv"))
+                        ),
                     ]
                 )
                 if to_pd_df(self.df_val)
@@ -357,7 +386,9 @@ class Univariate(Model):
 
         # make plot
         if ax is None:
-            _, ax1 = plt.subplots(figsize=self.figsize if figsize is None else figsize)
+            _, ax1 = plt.subplots(
+                figsize=self.figsize if figsize is None else figsize
+            )
         else:
             ax1 = ax
 
@@ -388,7 +419,9 @@ class Univariate(Model):
         Plots the ROC curve for the target variable in total and for each fold.
         """
         if ax is None:
-            _, ax0 = plt.subplots(figsize=self.figsize if figsize is None else figsize)
+            _, ax0 = plt.subplots(
+                figsize=self.figsize if figsize is None else figsize
+            )
         else:
             ax0 = ax
 
@@ -396,7 +429,9 @@ class Univariate(Model):
             cv = (
                 to_pd_s(self.cv)
                 if self.cv is not None
-                else to_pd_s(self.df.select(self.fold_col).collect()[self.fold_col])
+                else to_pd_s(
+                    self.df.select(self.fold_col).collect()[self.fold_col]
+                )
             )
         else:
             cv = to_pd_s(cv)
@@ -410,7 +445,11 @@ class Univariate(Model):
                 if coef is None
                 else coef
             ),
-            to_pd_df(self.agg_results).loc["Ave.", "coef"].values if se is None else se,
+            (
+                to_pd_df(self.agg_results).loc["Ave.", "coef"].values
+                if se is None
+                else se
+            ),
             self.pvalues if pvalues is None else pvalues,
             ax=ax0,
             figsize=self.figsize if figsize is None else figsize,
@@ -434,7 +473,9 @@ class Univariate(Model):
 
         # make plot
         if ax is None:
-            _, ax0 = plt.subplots(figsize=self.figsize if figsize is None else figsize)
+            _, ax0 = plt.subplots(
+                figsize=self.figsize if figsize is None else figsize
+            )
         else:
             ax0 = ax
 
@@ -507,11 +548,15 @@ class Univariate(Model):
 
         # make plot
         if ax is None:
-            _, ax0 = plt.subplots(figsize=self.figsize if figsize is None else figsize)
+            _, ax0 = plt.subplots(
+                figsize=self.figsize if figsize is None else figsize
+            )
         else:
             ax0 = ax
 
-        yhat_polars = pl.Series(yhat)  # Convert yhat to polars.series.series.Series
+        yhat_polars = pl.Series(
+            yhat
+        )  # Convert yhat to polars.series.series.Series
         ax0 = quintile_lift_plot(
             X,
             y,
@@ -528,7 +573,9 @@ class Univariate(Model):
 
         def density():
             return self.plot_density(
-                data="train", feature_name=self.feature_name, figsize=self.figsize
+                data="train",
+                feature_name=self.feature_name,
+                figsize=self.figsize,
             )
 
         def cdf():
@@ -550,7 +597,9 @@ class Univariate(Model):
 
         return (
             rpt.h2("Univariate Report")
-            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - Results")
+            .h3(
+                f"{plot_label(self.feature_name, incl_bracket=False)} - Results"
+            )
             .spacer(0.5)
             .table(self.get_results())
             .page_break()
@@ -576,7 +625,9 @@ class Univariate(Model):
             )
             .page_break()
             .h2("Univariate Report")
-            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - ROC Curve")
+            .h3(
+                f"{plot_label(self.feature_name, incl_bracket=False)} - ROC Curve"
+            )
             .plot(roc)
             .spacer(0.125)
             .caption(
@@ -587,7 +638,9 @@ class Univariate(Model):
             )
             .page_break()
             .h2("Univariate Report")
-            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - Quintile Lift")
+            .h3(
+                f"{plot_label(self.feature_name, incl_bracket=False)} - Quintile Lift"
+            )
             .plot(quintile)
             .spacer(0.125)
             .caption(
@@ -633,7 +686,9 @@ class Univariate(Model):
                 results[col] = results[col].apply(lambda x: f"{x:.1%}")
 
             # Hierarchy of formatting depending on size of median value in col
-            for col in [c for c in results.columns.tolist() if c not in pct_cols]:
+            for col in [
+                c for c in results.columns.tolist() if c not in pct_cols
+            ]:
                 m = results[col].median()
                 if m > 1.0:
                     results[col] = results[col].apply(lambda x: f"{x:.2f}")

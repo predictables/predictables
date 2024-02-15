@@ -7,7 +7,9 @@ from polars.testing import assert_frame_equal as pl_assert_frame_equal
 from polars.testing import assert_series_equal as pl_assert_series_equal
 
 from predictables.impute.src._get_cv_folds import get_cv_folds
-from predictables.impute.src._get_missing_data_mask import get_missing_data_mask
+from predictables.impute.src._get_missing_data_mask import (
+    get_missing_data_mask,
+)
 from predictables.impute.src._impute_with_mode import impute_with_mode
 from predictables.impute.src._initial_impute import initial_impute
 
@@ -19,7 +21,9 @@ def pd_df():
 
 @pytest.fixture
 def bigger_pd_df():
-    return pd.DataFrame({"a": np.random.randn(1000), "b": np.random.randn(1000)})
+    return pd.DataFrame(
+        {"a": np.random.randn(1000), "b": np.random.randn(1000)}
+    )
 
 
 @pytest.fixture
@@ -319,7 +323,8 @@ def test_get_missing_data_mask_with_single_row_dataframe():
         result.dtypes == [pl.Boolean] * cols
     ), f"Resulting dtype ({result.dtypes}) does not match expected dtype ({[pl.Boolean] * cols})."
     pd_assert_frame_equal(
-        result.collect().to_pandas(), pd.DataFrame({"a": [False], "b": [False]})
+        result.collect().to_pandas(),
+        pd.DataFrame({"a": [False], "b": [False]}),
     )
 
 
@@ -337,7 +342,8 @@ def test_get_missing_data_mask_with_polardf_of_single_row():
         result.dtypes == [pl.Boolean] * cols
     ), f"Resulting dtype ({result.dtypes}) does not match expected dtype ({[pl.Boolean] * cols})."
     pd_assert_frame_equal(
-        result.collect().to_pandas(), pd.DataFrame({"a": [False], "b": [False]})
+        result.collect().to_pandas(),
+        pd.DataFrame({"a": [False], "b": [False]}),
     )
 
 
@@ -488,7 +494,9 @@ def test_impute_col_with_mode_with_pd_series(pd_categorical_series):
     result_df = result.collect().to_pandas()
 
     # Check that no null values remain
-    assert not result_df["colors"].isna().any(), "Null values were not imputed."
+    assert (
+        not result_df["colors"].isna().any()
+    ), "Null values were not imputed."
 
     # Determine the mode of the non-null values in the original series
     mode_value = pd_categorical_series.mode().iloc[0]
@@ -506,10 +514,14 @@ def test_impute_col_with_mode_with_pd_series(pd_categorical_series):
 def test_impute_col_with_mode_with_pl_series(pl_categorical_series):
     df = pl.DataFrame({"colors": pl_categorical_series.cast(pl.Utf8)})
     result = impute_with_mode(df)
-    assert result.collect()["colors"].null_count() == 0, "Null values were not imputed."
+    assert (
+        result.collect()["colors"].null_count() == 0
+    ), "Null values were not imputed."
     pl_assert_frame_equal(
         result.collect(),
-        pl.DataFrame({"colors": ["red", "blue", "blue", "blue", "red", "blue"]}),
+        pl.DataFrame(
+            {"colors": ["red", "blue", "blue", "blue", "red", "blue"]}
+        ),
     )
 
 
@@ -523,14 +535,18 @@ def test_impute_with_mode_empty_series():
 
 def test_impute_with_mode_single_value_series():
     single_value_series = pd.Series(["single_value"], dtype="object")
-    pl_single_value_series = pl.from_pandas(single_value_series).to_frame("column_name")
+    pl_single_value_series = pl.from_pandas(single_value_series).to_frame(
+        "column_name"
+    )
     result = impute_with_mode(pl_single_value_series)
     assert (
         result.collect()["column_name"][0] == "single_value"
     ), "Imputed value should not alter the original single value."
     pl_assert_frame_equal(
         result.collect(),
-        pl.DataFrame({"column_name": pl.Series(["single_value"], dtype=pl.Utf8)}),
+        pl.DataFrame(
+            {"column_name": pl.Series(["single_value"], dtype=pl.Utf8)}
+        ),
     )
 
 
@@ -542,7 +558,8 @@ def test_impute_with_mode_null_only_series():
         result.collect().to_series().null_count() == 3
     ), "Null-only series imputation should not impute values."
     pl_assert_series_equal(
-        result.collect().to_series(), pl.Series([None, None, None], dtype=pl.Utf8)
+        result.collect().to_series(),
+        pl.Series([None, None, None], dtype=pl.Utf8),
     )
 
 
@@ -651,7 +668,9 @@ def test_initial_impute_empty_df():
     assert isinstance(
         result, pl.LazyFrame
     ), f"Result {result} is not a pl.LazyFrame: {type(result)}"
-    assert result.collect().is_empty(), f"Result {result} should be an empty DataFrame"
+    assert (
+        result.collect().is_empty()
+    ), f"Result {result} should be an empty DataFrame"
 
 
 # Test for DataFrame with a single value

@@ -6,11 +6,18 @@ import polars as pl
 import statsmodels.api as sm
 from scipy import stats
 
-from predictables.util import get_column_dtype, select_cols_by_dtype, to_pd_df, to_pd_s
+from predictables.util import (
+    get_column_dtype,
+    select_cols_by_dtype,
+    to_pd_df,
+    to_pd_s,
+)
 
 
 def calc_continuous_categorical_corr(
-    *args: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+    *args: Union[
+        pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame
+    ],
     method: str = "spearman",
 ) -> Union[float, pd.DataFrame]:
     """
@@ -54,7 +61,9 @@ def calc_continuous_categorical_corr(
     if len(args) == 1:
         return calc_continuous_categorical_corr_df(args[0], method)
     elif len(args) == 2:
-        return calc_continuous_categorical_corr_series(args[0], args[1], method)
+        return calc_continuous_categorical_corr_series(
+            args[0], args[1], method
+        )
     else:
         raise TypeError(
             f"Invalid number of arguments: Must be 1 or 2, but got {len(args)}"
@@ -242,9 +251,14 @@ def anova_correlation_coef_df(
             _ = len(groups)
             _ = sum([len(g) for g in groups])
             ss_between = sum(
-                [len(g) * (np.mean(g) - np.mean(df[cont_col])) ** 2 for g in groups]
+                [
+                    len(g) * (np.mean(g) - np.mean(df[cont_col])) ** 2
+                    for g in groups
+                ]
             )
-            ss_total = sum([(val - np.mean(df[cont_col])) ** 2 for val in df[cont_col]])
+            ss_total = sum(
+                [(val - np.mean(df[cont_col])) ** 2 for val in df[cont_col]]
+            )
             eta_sq = ss_between / ss_total
 
             corr_matrix.loc[cont_col, cat_col] = eta_sq
@@ -329,7 +343,9 @@ def anova_correlation_coef_series(
     # Calculate Eta Squared
     _ = len(groups)
     _ = sum([len(g) for g in groups])
-    ss_between = sum([len(g) * (np.mean(g) - np.mean(s1)) ** 2 for g in groups])
+    ss_between = sum(
+        [len(g) * (np.mean(g) - np.mean(s1)) ** 2 for g in groups]
+    )
     ss_total = sum([(val - np.mean(s1)) ** 2 for val in s1])
     eta_sq = ss_between / ss_total
 
@@ -397,7 +413,9 @@ def ancova_correlation_coef_df(
     categorical_vars = select_cols_by_dtype(df, "categorical").columns
 
     # Initialize an empty DataFrame to store correlation values
-    effect_size_matrix = pd.DataFrame(index=continuous_vars, columns=categorical_vars)
+    effect_size_matrix = pd.DataFrame(
+        index=continuous_vars, columns=categorical_vars
+    )
 
     # Calculate ANCOVA for each pair of continuous and categorical variables
     for cont_col in continuous_vars:
@@ -576,7 +594,9 @@ def spearmans_rank_correlation_coef_df(
                 # Rank the continuous variable
                 _ = stats.rankdata(df[cont_col])
                 # Group by categorical variable and calculate mean rank
-                grouped_ranks = df.groupby(cat_col, observed=True)[cont_col].mean()
+                grouped_ranks = df.groupby(cat_col, observed=True)[
+                    cont_col
+                ].mean()
                 # Calculate correlation between categorical variable levels and mean ranks
                 corr, _ = stats.spearmanr(grouped_ranks.index, grouped_ranks)
 

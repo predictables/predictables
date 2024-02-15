@@ -19,7 +19,8 @@ from predictables.src._utils import _to_numpy, _to_pandas
 
 
 def _pearson_correlation_matrix(
-    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], method: str = "pearson"
+    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+    method: str = "pearson",
 ) -> pd.DataFrame:
     """
     Calculates the correlation matrix for the data.
@@ -50,7 +51,9 @@ Please use one of the following types: \n\
     # Check that if either a numpy array or list, that it is 2D
     elif isinstance(data, np.ndarray):
         if len(data.shape) != 2:
-            raise ValueError(f"Input data must be 2D, but is {len(data.shape)}D.")
+            raise ValueError(
+                f"Input data must be 2D, but is {len(data.shape)}D."
+            )
     elif isinstance(data, list):
         if len(data) != 2:
             raise ValueError(f"Input data must be 2D, but is {len(data)}D.")
@@ -86,7 +89,8 @@ Please use 'pearson'. I don't know why this is even an option."
 
 
 def _correlation_matrix(
-    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], method: str = "pearson"
+    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+    method: str = "pearson",
 ) -> pd.DataFrame:
     """
     Calculates the correlation matrix for the data.
@@ -384,7 +388,13 @@ def _correlation_matrix(
 
 def _correlation_matrix_plot(
     data: Union[
-        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list
+        pd.DataFrame,
+        pd.Series,
+        pl.DataFrame,
+        pl.Series,
+        pl.LazyFrame,
+        np.ndarray,
+        list,
     ],
     method: str = "pearson",
     ax: plt.Axes = None,
@@ -429,7 +439,13 @@ def _correlation_matrix_plot(
 
 def _highly_correlated_variables(
     data: Union[
-        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list
+        pd.DataFrame,
+        pd.Series,
+        pl.DataFrame,
+        pl.Series,
+        pl.LazyFrame,
+        np.ndarray,
+        list,
     ],
     method: str = "pearson",
     threshold: float = 0.9,
@@ -477,7 +493,9 @@ def _highly_correlated_variables(
     corr = corr.reset_index()
 
     # 7. Rename columns
-    corr = corr.rename({"level_0": "var1", "level_1": "var2", 0: "corr"}, axis=1)
+    corr = corr.rename(
+        {"level_0": "var1", "level_1": "var2", 0: "corr"}, axis=1
+    )
 
     # 8. Sort by correlation
     corr = corr.sort_values(by="corr", ascending=False)

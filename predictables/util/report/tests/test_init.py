@@ -9,7 +9,9 @@ def test_report_init_default():
     assert (
         report.filename == "test_report.pdf"
     ), f"Expected 'test_report.pdf', got {report.filename}"
-    assert report.pagesize == letter, f"Expected 'letter', got {report.pagesize}"
+    assert (
+        report.pagesize == letter
+    ), f"Expected 'letter', got {report.pagesize}"
     assert report.dpi == 200, f"Expected 200, got {report.dpi}"
     assert (
         report.doc.leftMargin == 0.5 * inch
@@ -74,7 +76,9 @@ def test_report_init_custom_dpi(dpi, expected):
 def test_report_init_custom_pagesize(pagesize, expected):
     custom_pagesize = pagesize
     report = Report(filename="test_report.pdf", pagesize=custom_pagesize)
-    assert report.pagesize == expected, f"Expected {expected}, got {report.pagesize}"
+    assert (
+        report.pagesize == expected
+    ), f"Expected {expected}, got {report.pagesize}"
 
 
 # Assuming additional functionality for error handling is added, test incorrect margins length

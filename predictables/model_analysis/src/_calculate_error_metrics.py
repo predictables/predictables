@@ -41,7 +41,9 @@ def calculate_error_metrics(
     # Predicting using the model
     y_pred = model.predict(X)
     y_pred_proba = (
-        model.predict_proba(X)[:, 1] if hasattr(model, "predict_proba") else None
+        model.predict_proba(X)[:, 1]
+        if hasattr(model, "predict_proba")
+        else None
     )
 
     # Calculating metrics

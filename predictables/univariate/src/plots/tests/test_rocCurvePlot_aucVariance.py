@@ -1,7 +1,9 @@
 import logging
 from typing import Tuple
 
-from predictables.univariate.src.plots._roc_curve_plot import _empirical_auc_variance
+from predictables.univariate.src.plots._roc_curve_plot import (
+    _empirical_auc_variance,
+)
 import numpy as np
 import pandas as pd  # type: ignore
 import pytest
@@ -14,7 +16,9 @@ def sample_data() -> Tuple[pd.Series, pd.Series, pd.Series]:
     """Generate sample data for testing."""
     np.random.seed(42)  # Ensure reproducibility
     yhat_proba_logits = pd.Series(np.random.rand(100))
-    yhat_proba = 1 / (1 + np.exp(-yhat_proba_logits))  # Convert to probabilities
+    yhat_proba = 1 / (
+        1 + np.exp(-yhat_proba_logits)
+    )  # Convert to probabilities
     y = pd.Series(
         np.random.binomial(1, yhat_proba, size=100)
     )  # Simulate binary outcomes
@@ -23,11 +27,14 @@ def sample_data() -> Tuple[pd.Series, pd.Series, pd.Series]:
 
 
 @pytest.fixture
-def sample_variance(sample_data: Tuple[pd.Series, pd.Series, pd.Series]) -> float:
+def sample_variance(
+    sample_data: Tuple[pd.Series, pd.Series, pd.Series]
+) -> float:
     """Calculate the variance of the AUC for the sample data."""
     y, yhat_proba, fold = sample_data
     aucs = [
-        roc_auc_score(y[fold == f], yhat_proba[fold == f]) for f in get_unique(fold)
+        roc_auc_score(y[fold == f], yhat_proba[fold == f])
+        for f in get_unique(fold)
     ]
     return float(np.var(aucs))
 
@@ -112,7 +119,11 @@ def test_single_class_in_fold():
     "y, yhat_proba, fold",
     [
         (pd.Series([]), pd.Series([]), pd.Series([])),  # Empty inputs
-        (pd.Series([1, 0]), pd.Series([0.5]), pd.Series([1])),  # Mismatched lengths
+        (
+            pd.Series([1, 0]),
+            pd.Series([0.5]),
+            pd.Series([1]),
+        ),  # Mismatched lengths
     ],
 )
 def test_invalid_inputs(
@@ -171,9 +182,8 @@ def test_empirical_auc_variance_with_bootstrapping(
     )
     # Check that the variance is within 2 standard deviations of the empirical variance
     var_auc = _empirical_auc_variance(y, yhat_proba, fold)
-    assert (
-        (var_auc_with_bootstrap > var_auc - 2 * s)
-        & (var_auc_with_bootstrap < var_auc + 2 * s)
+    assert (var_auc_with_bootstrap > var_auc - 2 * s) & (
+        var_auc_with_bootstrap < var_auc + 2 * s
     ), f"Variance: {var_auc_with_bootstrap}, empirical variance: {var_auc}, standard deviation: {s}"
 
 
@@ -186,7 +196,9 @@ def test_imbalanced_classes_in_fold(
     y.iloc[:95] = 0
     y.iloc[95:] = 1
     fold.iloc[:50] = 1  # Assign a majority of one class to a single fold
-    fold.iloc[50:] = 2  # Assign the minority of the other class to a single fold
+    fold.iloc[
+        50:
+    ] = 2  # Assign the minority of the other class to a single fold
     fold.iloc[95:97] = 1  # Make sure each class is represented in each fold
     var_auc = _empirical_auc_variance(y, yhat_proba, fold)
     assert isinstance(
@@ -200,7 +212,9 @@ def test_large_data_performance(
     """Test the function's performance on a larger dataset."""
     y, yhat_proba, fold = large_sample_data
     var_auc = _empirical_auc_variance(y, yhat_proba, fold)
-    assert isinstance(var_auc, float), "Variance should be a float on large datasets."
+    assert isinstance(
+        var_auc, float
+    ), "Variance should be a float on large datasets."
 
 
 @pytest.mark.parametrize(
@@ -250,7 +264,9 @@ def test_skewed_probability_distributions(
 ):
     """Test variance calculation with skewed probability distributions."""
     y, yhat_proba, fold = sample_data
-    yhat_proba = yhat_proba.apply(lambda x: min(max(x, skewness), 1 - skewness))
+    yhat_proba = yhat_proba.apply(
+        lambda x: min(max(x, skewness), 1 - skewness)
+    )
     var_auc = _empirical_auc_variance(y, yhat_proba, fold)
     assert isinstance(
         var_auc, float
@@ -262,7 +278,8 @@ def test_skewed_probability_distributions(
     [(True,), (False,)],
 )
 def test_perfect_separation(
-    sample_data: Tuple[pd.Series, pd.Series, pd.Series], perfect_separation: bool
+    sample_data: Tuple[pd.Series, pd.Series, pd.Series],
+    perfect_separation: bool,
 ):
     """Test variance calculation with perfect or near-perfect separation."""
     y, yhat_proba, fold = sample_data

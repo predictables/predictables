@@ -169,7 +169,9 @@ from sklearn.decomposition import PCA  # type: ignore
 #         return ax
 
 
-def get_loadings(pca: PCA, feature_names: List[str], n_components: int) -> pd.DataFrame:
+def get_loadings(
+    pca: PCA, feature_names: List[str], n_components: int
+) -> pd.DataFrame:
     """
     Get the loadings for the first `n_components` components
 
@@ -192,7 +194,9 @@ def get_loadings(pca: PCA, feature_names: List[str], n_components: int) -> pd.Da
     loadings = np.array([x[:n_components] for x in loadings])
     df = pd.DataFrame(
         loadings,
-        columns=[f"PC-{'0' if i < 9 else ''}{i+1}" for i in range(n_components)],
+        columns=[
+            f"PC-{'0' if i < 9 else ''}{i+1}" for i in range(n_components)
+        ],
         index=feature_names,
     )
     df = df.abs()
@@ -348,7 +352,9 @@ def _matplotlib_plot(
     y_label_text = "Cumulative Absolute Loading"
     ax.set_ylabel(y_label_text, fontsize=y_label_fontsize)
     plt.suptitle(
-        main_title_text, fontsize=main_title_fontsize, fontweight=main_title_fontweight
+        main_title_text,
+        fontsize=main_title_fontsize,
+        fontweight=main_title_fontweight,
     )
 
     sub_title_text = f"The cumulative absolute value of the loadings for each feature for the first {n_components} principal components\nThis plot indicates the features' relative contributions to the {explained_variance:.1%} of variance explained by the {n_components} components"
@@ -400,7 +406,9 @@ def create_loading_plot(
 
     # Test to show if any features were hidden
     hidden_features_text = (
-        f" - {hidden_features} features are hidden" if hidden_features > 0 else ""
+        f" - {hidden_features} features are hidden"
+        if hidden_features > 0
+        else ""
     )
 
     # Labels and other text elements will be the same regardless of backend
@@ -461,7 +469,9 @@ def create_loading_plot(
             _, ax = plt.subplots(figsize=figsize)
 
         # Plot the loadings for the first `n_components` components as a stacked bar plot
-        plot_loadings(df, n_components, ax, bar_width, bar_alpha, include_legend)
+        plot_loadings(
+            df, n_components, ax, bar_width, bar_alpha, include_legend
+        )
 
         ax.set_xlabel(
             x_label_filter if filtered_features else x_label_no_filter,

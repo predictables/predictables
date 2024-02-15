@@ -58,9 +58,9 @@ class ScalarDeLong:
     def theta_hat(self, z: float) -> float:
         """Theta represents the probability that a randomly chosen observation from
         X is greater than a randomly chosen observation from Y."""
-        return sum(kernel(x, y) for x, y in itertools.product(self.X(z), self.Y(z))) / (
-            self.m(z) * self.n(z)
-        )
+        return sum(
+            kernel(x, y) for x, y in itertools.product(self.X(z), self.Y(z))
+        ) / (self.m(z) * self.n(z))
 
     def prob_Y_lt_X(self, z: float) -> float:
         """Probability that a randomly chosen observation from Y is less than a randomly chosen observation from X.
@@ -81,7 +81,9 @@ class ScalarDeLong:
             np.mean(
                 [
                     kernel(x, y1) * kernel(x, y2)
-                    for x, y1, y2 in itertools.product(self.X(z), self.Y(z), self.Y(z))
+                    for x, y1, y2 in itertools.product(
+                        self.X(z), self.Y(z), self.Y(z)
+                    )
                     if y1 != y2
                 ]
             )
@@ -94,7 +96,9 @@ class ScalarDeLong:
             np.mean(
                 [
                     kernel(x1, y) * kernel(x2, y)
-                    for x1, x2, y in itertools.product(self.X(z), self.X(z), self.Y(z))
+                    for x1, x2, y in itertools.product(
+                        self.X(z), self.X(z), self.Y(z)
+                    )
                     if x1 != x2
                 ]
             )
@@ -105,7 +109,10 @@ class ScalarDeLong:
         """Returns E[kernel(X_i, Y_j) * kernel(X_i, Y_j)] - theta^2 for i in X and j in Y."""
         ave = float(
             np.mean(
-                [kernel(x, y) ** 2 for x, y in itertools.product(self.X(z), self.Y(z))]
+                [
+                    kernel(x, y) ** 2
+                    for x, y in itertools.product(self.X(z), self.Y(z))
+                ]
             )
         )
         return float(ave - self.theta_hat(z) ** 2)

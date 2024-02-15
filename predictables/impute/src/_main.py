@@ -4,14 +4,19 @@ import pandas as pd
 import polars as pl
 
 from predictables.impute.src._get_cv_folds import get_cv_folds
-from predictables.impute.src._get_missing_data_mask import get_missing_data_mask
-from predictables.impute.src._impute_with_trained_model import impute_with_trained_model
+from predictables.impute.src._get_missing_data_mask import (
+    get_missing_data_mask,
+)
+from predictables.impute.src._impute_with_trained_model import (
+    impute_with_trained_model,
+)
 from predictables.impute.src._initial_impute import initial_impute
 from predictables.impute.src._train_catboost_model import train_catboost_model
 
 
 def integrated_imputation_workflow(
-    df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], learning_rate: float = 0.1
+    df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+    learning_rate: float = 0.1,
 ):
     """
     This function represents the integrated workflow for imputing missing values using CatBoost.
@@ -62,7 +67,11 @@ def integrated_imputation_workflow(
 
     # Imputation with the Trained Models
     final_df = impute_with_trained_model(
-        df_imputed, missing_mask, trained_models, learning_rate, only_missing=True
+        df_imputed,
+        missing_mask,
+        trained_models,
+        learning_rate,
+        only_missing=True,
     )
 
     return final_df

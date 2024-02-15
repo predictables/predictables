@@ -8,7 +8,6 @@ def report():
     return Report(filename="test_report.pdf")
 
 
-
 @pytest.mark.parametrize(
     "heading,style,text,level",
     [
@@ -39,8 +38,12 @@ def test_heading_valid_attributes(report, heading, style, text, level):
     assert isinstance(
         rpt2, Report
     ), f"Expected set method to return self (or at least a Report object), but got {rpt2}, a {type(rpt2)} object"
-    assert len(rpt1.elements) == 1, f"Expected 1 element, got {len(rpt1.elements)}"
-    assert len(rpt2.elements) == 1, f"Expected 1 element, got {len(rpt2.elements)}"
+    assert (
+        len(rpt1.elements) == 1
+    ), f"Expected 1 element, got {len(rpt1.elements)}"
+    assert (
+        len(rpt2.elements) == 1
+    ), f"Expected 1 element, got {len(rpt2.elements)}"
     assert (
         rpt1.elements[0].text == text
     ), f"Expected {text} for rpt1, got {rpt1.elements[0].text}"

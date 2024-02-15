@@ -145,7 +145,9 @@ class PCA:
 
         # Set explained variance
         if self.pca is not None:
-            self.explained_variance = self.pca.explained_variance_ratio_.tolist()
+            self.explained_variance = (
+                self.pca.explained_variance_ratio_.tolist()
+            )
         else:
             self.explained_variance = None
 
@@ -204,7 +206,9 @@ class PCA:
             pass
         else:
             self.pca = self.fit_pca(df=self.df, return_pca_obj=True)
-            self.explained_variance = self.pca.explained_variance_ratio_.tolist()
+            self.explained_variance = (
+                self.pca.explained_variance_ratio_.tolist()
+            )
             self.features = self.df.columns.tolist()
 
     def fit_pca(
@@ -241,7 +245,8 @@ class PCA:
         return pca
 
     def transform_pca(
-        self, df: Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]] = None
+        self,
+        df: Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]] = None,
     ):
         """
         Transforms the provided dataset using the fitted PCA model.
@@ -284,7 +289,9 @@ class PCA:
             self.pca = self.fit_pca(df=self.df, return_pca_obj=True)
 
         # Get principal components
-        principal_components = pd.DataFrame(self.pca.components_, columns=self.features)
+        principal_components = pd.DataFrame(
+            self.pca.components_, columns=self.features
+        )
 
         # Return all components if components is None
         if components is None:

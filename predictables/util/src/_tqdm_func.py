@@ -71,13 +71,19 @@ def tqdm(
         )
     elif nb is not None:
         tqdm_nb = (
-            nb if isinstance(nb, bool) else os.environ.get("TQDM_NOTEBOOK") == "true"
+            nb
+            if isinstance(nb, bool)
+            else os.environ.get("TQDM_NOTEBOOK") == "true"
         )
     else:
         tqdm_nb = os.environ.get("TQDM_NOTEBOOK") == "true"
 
     # Return the appropriate function
     if tqdm_nb:
-        return _tqdm_notebook(x, **desc_dict) if tqdm_enable else identidy_function(x)
+        return (
+            _tqdm_notebook(x, **desc_dict)
+            if tqdm_enable
+            else identidy_function(x)
+        )
     else:
         return _tqdm(x, **desc_dict) if tqdm_enable else identidy_function(x)

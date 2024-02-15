@@ -106,7 +106,9 @@ class Bert:
             string = string[:512]
         elif len(string) < 512:
             # pad string if shorter than 512 tokens
-            string = string + " " + self.padding_symbol * (512 - len(string) + 1)
+            string = (
+                string + " " + self.padding_symbol * (512 - len(string) + 1)
+            )
         else:
             # do nothing if string is 512 tokens
             pass

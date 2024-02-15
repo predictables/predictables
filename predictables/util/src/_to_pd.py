@@ -5,7 +5,9 @@ import pandas as pd
 import polars as pl
 
 
-def to_pd_df(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]) -> pd.DataFrame:
+def to_pd_df(
+    df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+) -> pd.DataFrame:
     """
     Convert a dataframe to a pandas dataframe.
     """
@@ -22,7 +24,9 @@ def to_pd_df(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]) -> pd.DataFram
     elif isinstance(df, np.ndarray):
         return pd.DataFrame(df)
     else:
-        raise TypeError(f"df must be a pandas or polars dataframe. Got {type(df)}.")
+        raise TypeError(
+            f"df must be a pandas or polars dataframe. Got {type(df)}."
+        )
 
 
 def to_pd_s(s: Union[pd.Series, pl.Series]) -> pd.Series:

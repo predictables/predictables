@@ -80,7 +80,13 @@ def objective_function(
             scorer = metric
 
         score = cross_val_score(
-            model, X, y, cv=cv_folds, scoring=scorer, n_jobs=-1, error_score="raise"
+            model,
+            X,
+            y,
+            cv=cv_folds,
+            scoring=scorer,
+            n_jobs=-1,
+            error_score="raise",
         )
         scores.append(score.mean())
 

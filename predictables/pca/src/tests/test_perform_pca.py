@@ -98,7 +98,9 @@ def test_variance_explained(mock_data):
     X_train, _, _, _ = mock_data
 
     # Select number of components for 90% variance (to ensure we are > 80%)
-    n_components = select_n_components_for_variance(X_train, variance_threshold=0.9)
+    n_components = select_n_components_for_variance(
+        X_train, variance_threshold=0.9
+    )
 
     # Perform PCA
     X_train = to_pl_df(pd.DataFrame(X_train))
@@ -109,7 +111,9 @@ def test_variance_explained(mock_data):
         n_components,
         return_pca_obj=True,
     )
-    pca_sklearn = PCA(n_components=n_components).fit(to_pl_df(X_train).to_numpy())
+    pca_sklearn = PCA(n_components=n_components).fit(
+        to_pl_df(X_train).to_numpy()
+    )
 
     # Assert variance explained
     explained_variance_func = sum(pca_func.explained_variance_ratio_)
@@ -166,7 +170,8 @@ def test_pca_comparison_with_sklearn(mock_data):
     # Compare PCA component magnitudes
     for i, comp in enumerate(pca_custom.components_):
         assert np.sqrt(np.sum(np.power(comp, 2))) == pytest.approx(
-            np.sqrt(np.sum(np.power(pca_sklearn.components_[i, :], 2))), rel=1e-2
+            np.sqrt(np.sum(np.power(pca_sklearn.components_[i, :], 2))),
+            rel=1e-2,
         ), f"PCA component magnitude is not 1: {np.sqrt(np.sum(np.power(comp, 2)))}"
 
     # Compare explained variance
@@ -181,10 +186,16 @@ def test_pca_reproducibility(mock_data):
 
     # Perform PCA twice with the same random state
     pca1 = perform_pca(
-        X_train_pd, n_components=n_components, random_state=42, return_pca_obj=True
+        X_train_pd,
+        n_components=n_components,
+        random_state=42,
+        return_pca_obj=True,
     )
     pca2 = perform_pca(
-        X_train_pd, n_components=n_components, random_state=42, return_pca_obj=True
+        X_train_pd,
+        n_components=n_components,
+        random_state=42,
+        return_pca_obj=True,
     )
 
     # Compare results
@@ -275,11 +286,14 @@ def test_pca_with_preprocessing(mock_data):
     )
 
     # Perform PCA on raw data
-    pca_raw = perform_pca(X_train, n_components=n_components, return_pca_obj=True)
+    pca_raw = perform_pca(
+        X_train, n_components=n_components, return_pca_obj=True
+    )
 
     # Compare explained variance
     assert not np.array_equal(
-        pca_processed.explained_variance_ratio_, pca_raw.explained_variance_ratio_
+        pca_processed.explained_variance_ratio_,
+        pca_raw.explained_variance_ratio_,
     ), f"PCA explained variance ratios should differ between preprocessed and raw data:\n{pca_processed.explained_variance_ratio_}\nvs\n{pca_raw.explained_variance_ratio_}"
 
 
@@ -289,7 +303,9 @@ def test_pca_high_dimensional_data():
     n_components = 10
 
     # Perform PCA
-    pca_result = perform_pca(X_train, n_components=n_components, return_pca_obj=True)
+    pca_result = perform_pca(
+        X_train, n_components=n_components, return_pca_obj=True
+    )
 
     # Validate the result
     assert pca_result.components_.shape == (

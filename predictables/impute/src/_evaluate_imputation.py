@@ -138,7 +138,9 @@ def cross_validate_model(
 
         epoch_errors = []
         for _epoch in range(n_epochs):
-            model.fit(X_train, y_train)  # Assuming model retains state across epochs
+            model.fit(
+                X_train, y_train
+            )  # Assuming model retains state across epochs
             predictions = model.predict(X_val)
             error = error_metric(y_val, predictions)
             epoch_errors.append(error)
@@ -160,7 +162,9 @@ def calculate_standard_error_of_mean(errors: list, start_epoch: int) -> float:
         raise ValueError("Invalid input for errors list or start_epoch.")
 
     # Extracting errors from the starting epoch to the last for all folds
-    relevant_errors = np.array([fold_errors[start_epoch:] for fold_errors in errors]).T
+    relevant_errors = np.array(
+        [fold_errors[start_epoch:] for fold_errors in errors]
+    ).T
     print(f"relevant_errors: {relevant_errors}")
 
     # Flatten the list and calculate SEM

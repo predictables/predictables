@@ -50,7 +50,9 @@ def _get_data(
     """
     df_: pd.DataFrame = to_pd_df(df)
     df_validation: pd.DataFrame = (
-        to_pd_df(df_val) if df_val is not None else pd.DataFrame(columns=df.columns)
+        to_pd_df(df_val)
+        if df_val is not None
+        else pd.DataFrame(columns=df.columns)
     )
 
     element_ = element.lower()
@@ -58,9 +60,13 @@ def _get_data(
     unique_folds = get_unique(df_.loc[:, fold_col_name])
 
     if data_ not in ["train", "test", "all"]:
-        raise ValueError(f"data must be one of 'train', 'test', or 'all'. Got {data}.")
+        raise ValueError(
+            f"data must be one of 'train', 'test', or 'all'. Got {data}."
+        )
     if element_ not in ["x", "y", "fold"]:
-        raise ValueError(f"element must be one of 'x', 'y', or 'fold'. Got {element}.")
+        raise ValueError(
+            f"element must be one of 'x', 'y', or 'fold'. Got {element}."
+        )
     if (element_ == "fold") and (
         (fold_n if fold_n is not None else -42) not in unique_folds
     ):
@@ -77,7 +83,9 @@ def _get_data(
     # Otherwise, get the data for the requested fold
     split: pd.DataFrame = _filter_df_for_train_test(df_, df_validation, data)
 
-    return split[feature_col_name if element_ == "x" else target_col_name].tolist()
+    return split[
+        feature_col_name if element_ == "x" else target_col_name
+    ].tolist()
 
 
 def _filter_df_for_cv(
@@ -114,7 +122,9 @@ def _filter_df_for_cv(
         If data is not one of "train", "test", or "all".
     """
     if data not in ["train", "test", "all"]:
-        raise ValueError(f"data must be one of 'train', 'test', or 'all'. Got {data}.")
+        raise ValueError(
+            f"data must be one of 'train', 'test', or 'all'. Got {data}."
+        )
 
     if fold_col not in df.columns:
         raise KeyError(f"No column in the DataFrame called '{fold_col}'")
@@ -132,7 +142,9 @@ def _filter_df_for_cv(
         )
 
 
-def _filter_df_for_cv_train(df: pd.DataFrame, fold: int, fold_col: str) -> pd.DataFrame:
+def _filter_df_for_cv_train(
+    df: pd.DataFrame, fold: int, fold_col: str
+) -> pd.DataFrame:
     """
     Get the training data for the requested fold. This means that we exclude
     all rows having the label of the fold, and return the remaining rows.
@@ -168,7 +180,9 @@ def _filter_df_for_cv_train(df: pd.DataFrame, fold: int, fold_col: str) -> pd.Da
     return df.loc[df[fold_col].ne(fold), :]
 
 
-def _filter_df_for_cv_test(df: pd.DataFrame, fold: int, fold_col: str) -> pd.DataFrame:
+def _filter_df_for_cv_test(
+    df: pd.DataFrame, fold: int, fold_col: str
+) -> pd.DataFrame:
     """
     Get the testing/validation data for the requested fold. This means that
     we only return rows having the cv label of the fold.

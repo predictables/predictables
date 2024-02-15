@@ -57,7 +57,9 @@ def quintile_lift_plot(
         raise ValueError(f"Unknown backend: {backend}")
 
     # Use the figsize parameter, then kwarg, then default to (7, 7)
-    figsize0 = figsize if figsize is not None else kwargs.get("figsize", (7, 7))
+    figsize0 = (
+        figsize if figsize is not None else kwargs.get("figsize", (7, 7))
+    )
 
     if ax is None:
         _, ax = plt.subplots(figsize=figsize0)
@@ -155,7 +157,9 @@ def quintile_lift_plot_matplotlib(
 
     # KL Divergence calculation
     kl_div = _kl_divergence(lift_df)
-    gini_coeff = gini_coefficient(observed_target.to_list(), modeled_target.to_list())
+    gini_coeff = gini_coefficient(
+        observed_target.to_list(), modeled_target.to_list()
+    )
 
     # Add KL divergence and Gini coefficient as annotation to the plot
     ax.annotate(
@@ -165,7 +169,10 @@ def quintile_lift_plot_matplotlib(
         fontsize=20 * font_scale_fct,
         ha="center",
         bbox=dict(
-            boxstyle="round,pad=0.25", edgecolor="black", facecolor="white", alpha=0.85
+            boxstyle="round,pad=0.25",
+            edgecolor="black",
+            facecolor="white",
+            alpha=0.85,
         ),
     )
 
@@ -233,7 +240,9 @@ def quintile_lift_plot_plotly(
 
     # KL Divergence calculation
     kl_div = _kl_divergence(lift_df)
-    gini_coeff = gini_coefficient(observed_target.to_list(), modeled_target.to_list())
+    gini_coeff = gini_coefficient(
+        observed_target.to_list(), modeled_target.to_list()
+    )
 
     # Add KL divergence and Gini coefficient as annotation to the plot
     fig.add_annotation(

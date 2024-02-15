@@ -140,10 +140,14 @@ def fred_unemployment_data():
 
     msa_unemployment = (
         unemployment.loc[
-            unemployment.msa_indicator.eq(1), ["location", "date", "unemployment_rate"]
+            unemployment.msa_indicator.eq(1),
+            ["location", "date", "unemployment_rate"],
         ]
         .rename(
-            columns={"location": "msa", "unemployment_rate": "msa_unemployment_rate"}
+            columns={
+                "location": "msa",
+                "unemployment_rate": "msa_unemployment_rate",
+            }
         )
         .reset_index(drop=True)
         .assign(
@@ -152,7 +156,9 @@ def fred_unemployment_data():
         )
         .assign(msa=lambda x: x.msa.str.replace(" MSA", ""))
     )
-    msa_unemployment["state"] = msa_unemployment["state"].str.replace(" (msa)", "")
+    msa_unemployment["state"] = msa_unemployment["state"].str.replace(
+        " (msa)", ""
+    )
     msa_unemployment.to_parquet("./fred_msa_unemployment.parquet")
 
     state_unemployment = (

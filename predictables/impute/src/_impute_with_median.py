@@ -8,7 +8,8 @@ from predictables.util import to_pl_lf
 
 
 def _check_if_numeric(
-    df: Union[pl.DataFrame, pd.DataFrame, pl.LazyFrame, pd.Series, pl.Series], col: str
+    df: Union[pl.DataFrame, pd.DataFrame, pl.LazyFrame, pd.Series, pl.Series],
+    col: str,
 ) -> bool:
     """Check if a column is numeric.
 
@@ -30,7 +31,8 @@ def _check_if_numeric(
 
 
 def _impute_col_with_median(
-    df: Union[pl.DataFrame, pd.DataFrame, pl.LazyFrame, pd.Series, pl.Series], col: str
+    df: Union[pl.DataFrame, pd.DataFrame, pl.LazyFrame, pd.Series, pl.Series],
+    col: str,
 ) -> pl.Series:
     """Impute missing values with the median of the column.
 
@@ -52,7 +54,9 @@ def _impute_col_with_median(
     # median = df.select(pl.col(col).median().alias("median")).collect()["median"][0]
     return df.with_columns(
         pl.col(col).fill_null(
-            df.select(pl.col(col).median().alias("median")).collect()["median"][0]
+            df.select(pl.col(col).median().alias("median")).collect()[
+                "median"
+            ][0]
         )
     )
     # else:

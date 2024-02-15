@@ -60,8 +60,10 @@ def impute_single_column(
 
     # Get the full-credibility imputed value for only the missing rows in the column
     full_cred_estimate = df.copy()
-    full_cred_estimate.loc[missing_mask[column], column] = trained_model.predict(
-        df.loc[missing_mask[column], ~df.columns.isin([column])]
+    full_cred_estimate.loc[missing_mask[column], column] = (
+        trained_model.predict(
+            df.loc[missing_mask[column], ~df.columns.isin([column])]
+        )
     )
 
     # Update the imputed missing value with the full_cred_estimate if dtype is "c"
@@ -73,8 +75,13 @@ def impute_single_column(
     # Update the imputed missing value by adding
     # learning_rate * (full_cred_estimate - current_value) if dtype is "n"
     elif dtype == "n":
-        df.loc[missing_mask[column], column] = current_value + learning_rate * (
-            full_cred_estimate.loc[missing_mask[column], column] - current_value
+        df.loc[missing_mask[column], column] = (
+            current_value
+            + learning_rate
+            * (
+                full_cred_estimate.loc[missing_mask[column], column]
+                - current_value
+            )
         )
 
     else:

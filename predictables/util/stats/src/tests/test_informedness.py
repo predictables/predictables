@@ -11,13 +11,17 @@ from .._informedness import informedness
 def test_informedness_perfect_classifier():
     y = np.array([0, 0, 1, 1])
     yhat = np.array([0, 0, 1, 1])
-    assert informedness(y, yhat) == 1, f"Expected 1, got {informedness(y, yhat)}"
+    assert (
+        informedness(y, yhat) == 1
+    ), f"Expected 1, got {informedness(y, yhat)}"
 
 
 def test_informedness_completely_wrong_classifier():
     y = np.array([0, 0, 1, 1])
     yhat = np.array([1, 1, 0, 0])
-    assert informedness(y, yhat) == -1, f"Expected -1, got {informedness(y, yhat)}"
+    assert (
+        informedness(y, yhat) == -1
+    ), f"Expected -1, got {informedness(y, yhat)}"
 
 
 def test_informedness_general_case():

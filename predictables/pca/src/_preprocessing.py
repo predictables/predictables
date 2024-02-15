@@ -115,7 +115,9 @@ def preprocess_data_for_pca(
         # Drop high cardinality categorical columns
         if unique_count > high_cardinality_threshold:
             df = df.drop(col)
-            print(f"Dropping column {col} due to high cardinality: {unique_count}")
+            print(
+                f"Dropping column {col} due to high cardinality: {unique_count}"
+            )
 
         # Code the binary categorical columns to 0 and 1
         elif unique_count == 2:
@@ -135,10 +137,16 @@ def preprocess_data_for_pca(
             # Check if the levels are already 0 and 1, and if so, cast to float
             if criterion:
                 if pl.__version__ >= "0.19.12":
-                    df = df.with_columns(pl.col(col).cast(pl.Float64).name.keep())
+                    df = df.with_columns(
+                        pl.col(col).cast(pl.Float64).name.keep()
+                    )
                 else:
-                    df = df.with_columns(pl.col(col).cast(pl.Float64).keep_name())
-                print(f"Binary Column A: {col}, Unique Values: {unique_levels}")
+                    df = df.with_columns(
+                        pl.col(col).cast(pl.Float64).keep_name()
+                    )
+                print(
+                    f"Binary Column A: {col}, Unique Values: {unique_levels}"
+                )
 
             # Otherwise, make the level with the smaller number of counts 0 and the other 1
             else:

@@ -30,13 +30,17 @@ def unambiguous_str():
 
 def ambiguous_cat():
     return (
-        pd.Series(["a", "b", "b", "c", "c"]).astype("category").reset_index(drop=True)
+        pd.Series(["a", "b", "b", "c", "c"])
+        .astype("category")
+        .reset_index(drop=True)
     )
 
 
 def unambiguous_cat():
     return (
-        pd.Series(["a", "b", "b", "b", "c"]).astype("category").reset_index(drop=True)
+        pd.Series(["a", "b", "b", "b", "c"])
+        .astype("category")
+        .reset_index(drop=True)
     )  # mode of 'b'
 
 
@@ -69,11 +73,11 @@ first_mode_data = [
     ("pl", to_pl_s(ambiguous()), 2),
     ("np", ambiguous().to_numpy(), 2),
     ("pd", ambiguous_str(), "b"),
-    ("pl", to_pl_s(ambiguous_str()), "b"), # ERRORS
+    ("pl", to_pl_s(ambiguous_str()), "b"),  # ERRORS
     # ^ 5
     ("np", ambiguous_str().to_numpy(), "b"),
     ("pd", ambiguous_cat(), "b"),
-    ("pl", to_pl_s(ambiguous_cat()), "b"), # ERRORS
+    ("pl", to_pl_s(ambiguous_cat()), "b"),  # ERRORS
     ("np", ambiguous_cat().to_numpy(), "b"),
 ]
 

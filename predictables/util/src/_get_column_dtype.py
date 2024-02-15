@@ -7,7 +7,9 @@ import polars as pl
 from predictables.util.src._to_pd import to_pd_s
 
 
-def get_column_dtype(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> str:
+def get_column_dtype(
+    s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]
+) -> str:
     """
     Returns the dtype of the series as a string. The dtype is determined by
     checking the series against a set of rules. The rules are applied in the
@@ -52,7 +54,9 @@ def get_column_dtype(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) ->
         raise TypeError("Unknown dtype")
 
 
-def is_numeric(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
+def is_numeric(
+    s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]
+) -> bool:
     """
     Returns True if the series is numeric, False otherwise.
 
@@ -73,7 +77,9 @@ def is_numeric(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
         return False
 
 
-def is_integer(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
+def is_integer(
+    s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]
+) -> bool:
     """
     Returns True if the series is integer, False otherwise.
 
@@ -96,7 +102,9 @@ def is_integer(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
         return False
 
 
-def is_binary_integer(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
+def is_binary_integer(
+    s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]
+) -> bool:
     """
     Returns True if the series is an integer with only two unique values,
     False otherwise. Having two unique values is assumed to be a sufficient
@@ -162,7 +170,9 @@ def is_categorical_integer(
         return False
 
 
-def is_datetime(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
+def is_datetime(
+    s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]
+) -> bool:
     """
     Returns True if the series is a datetime, False otherwise.
 
@@ -254,7 +264,9 @@ def is_binary(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
             return to_pd_s(s).drop_duplicates().shape[0] == 2
 
 
-def is_categorical(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
+def is_categorical(
+    s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]
+) -> bool:
     """
     Returns True if the series is categorical, False otherwise. A series is
     considered categorical if it has more than two unique values.
@@ -298,10 +310,14 @@ def is_text(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
     bool
         True if the series is text, False otherwise.
     """
-    return (not is_categorical(s)) and (not is_binary(s)) and (not is_numeric(s))
+    return (
+        (not is_categorical(s)) and (not is_binary(s)) and (not is_numeric(s))
+    )
 
 
-def is_boolean(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
+def is_boolean(
+    s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]
+) -> bool:
     """
     Returns True if the series is boolean, False otherwise. A series is
     considered boolean if it has two unique values and is not binary or

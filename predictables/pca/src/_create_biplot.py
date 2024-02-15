@@ -69,8 +69,20 @@ def create_biplot(
         ax.scatter(scores[:, 0], scores[:, 1], alpha=scatter_alpha)
 
         # Plot X and Y axes
-        ax.axhline(0, color=axes_color, linestyle=axes_ls, alpha=axes_alpha, lw=axes_lw)
-        ax.axvline(0, color=axes_color, linestyle=axes_ls, alpha=axes_alpha, lw=axes_lw)
+        ax.axhline(
+            0,
+            color=axes_color,
+            linestyle=axes_ls,
+            alpha=axes_alpha,
+            lw=axes_lw,
+        )
+        ax.axvline(
+            0,
+            color=axes_color,
+            linestyle=axes_ls,
+            alpha=axes_alpha,
+            lw=axes_lw,
+        )
 
         # Plot loadings and feature labels
         for i in range(pca.components_.shape[0]):
@@ -92,7 +104,9 @@ def create_biplot(
                 # shift the text a bit away from the arrow, but in the direction of the arrow
                 magnitude = np.sqrt(np.sum(loading_vector**2))
                 text_shift = (
-                    (magnitude / 10) * loading_vector / np.linalg.norm(loading_vector)
+                    (magnitude / 10)
+                    * loading_vector
+                    / np.linalg.norm(loading_vector)
                 )
                 ax.text(
                     loading_vector[0] + text_shift[0],
@@ -115,7 +129,9 @@ def create_biplot(
                     0,
                     0,  # Start the arrow at the origin
                     pca.components_[i, 0],
-                    pca.components_[i, 1],  # End the arrow at the (PC1, PC2) location
+                    pca.components_[
+                        i, 1
+                    ],  # End the arrow at the (PC1, PC2) location
                     color=arrow_color,
                     alpha=arrow_alpha,
                     lw=arrow_lw,

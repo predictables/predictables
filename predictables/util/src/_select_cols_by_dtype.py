@@ -39,7 +39,13 @@ def select_cols_by_dtype(
     """
     # Ensure dtype is valid
     dtype = dtype.lower()
-    if dtype not in ["continuous", "categorical", "datetime", "integer", "binary"]:
+    if dtype not in [
+        "continuous",
+        "categorical",
+        "datetime",
+        "integer",
+        "binary",
+    ]:
         raise ValueError(
             f"dtype must be one of the following: 'continuous', 'categorical', 'datetime', 'integer', 'binary', but got {dtype}"
         )
@@ -49,7 +55,11 @@ def select_cols_by_dtype(
 
     # Get the names of the columns of the specified dtype
     cols = df[
-        [df.columns.tolist()[i] for i, x in enumerate(col_dtypes) if x == dtype]
+        [
+            df.columns.tolist()[i]
+            for i, x in enumerate(col_dtypes)
+            if x == dtype
+        ]
     ].columns.tolist()
 
     # Return a df with only the columns of the specified dtype

@@ -13,9 +13,7 @@ class SingularValueDecomposition:
 
         # Singular values of A
         self.U = None  # m x m orthogonal matrix
-        self.S = (
-            None  # m x n diagonal matrix with non-negative real numbers on the diagonal
-        )
+        self.S = None  # m x n diagonal matrix with non-negative real numbers on the diagonal
         self.V = None  # n x n orthogonal matrix
 
     def subspace_iteration(self):
@@ -24,7 +22,9 @@ class SingularValueDecomposition:
         """
         # Initial values
         V = pl.DataFrame(
-            pl.Series([1] + ([0] * (self.n_rows - 1))).cast(pl.Float32).alias("Col0")
+            pl.Series([1] + ([0] * (self.n_rows - 1)))
+            .cast(pl.Float32)
+            .alias("Col0")
         )
 
         V = V.with_columns(

@@ -41,13 +41,18 @@ def df(noise, logistic_coef, linear_coef):
         .with_columns(
             [
                 # Logits
-                pl.col("X").mul(logistic_coef).alias("logit")
+                pl.col("X")
+                .mul(logistic_coef)
+                .alias("logit")
             ]
         )
         .with_columns(
             [
                 # Probability
-                pl.col("logit").exp().truediv(1 + pl.col("logit").exp()).alias("prob"),
+                pl.col("logit")
+                .exp()
+                .truediv(1 + pl.col("logit").exp())
+                .alias("prob"),
             ]
         )
         .with_columns(
@@ -70,7 +75,8 @@ def sm_logistic_model(df):
     from predictables.util import to_pd_df, to_pd_s
 
     return fit_sm_logistic_regression(
-        to_pd_df(df.select("X")), to_pd_s(df.select("y_logistic")["y_logistic"])
+        to_pd_df(df.select("X")),
+        to_pd_s(df.select("y_logistic")["y_logistic"]),
     )
 
 
@@ -94,7 +100,8 @@ def sk_logistic_model(df):
     from predictables.util import to_pd_df, to_pd_s
 
     return fit_sk_logistic_regression(
-        to_pd_df(df.select("X")), to_pd_s(df.select("y_logistic")["y_logistic"])
+        to_pd_df(df.select("X")),
+        to_pd_s(df.select("y_logistic")["y_logistic"]),
     )
 
 
@@ -178,7 +185,9 @@ def test_extract_model_params_sm_GLM(sm_logistic_model, logistic_coef):
     ), f"Expected model degrees of freedom close to {sm_logistic_model.df_model}, got {result.k}"
 
 
-def test_extract_model_params_sk_LogisticRegression(sk_logistic_model, logistic_coef):
+def test_extract_model_params_sk_LogisticRegression(
+    sk_logistic_model, logistic_coef
+):
     from predictables.univariate.src._extract_model_params import (
         extract_model_params_sk_LogisticRegression,
     )
@@ -189,7 +198,9 @@ def test_extract_model_params_sk_LogisticRegression(sk_logistic_model, logistic_
     ), f"Expected fitted coeficient close to {logistic_coef}, got {result.coef}"
 
 
-def test_extract_model_params_sk_LinearRegression(sk_linear_model, linear_coef):
+def test_extract_model_params_sk_LinearRegression(
+    sk_linear_model, linear_coef
+):
     from predictables.univariate.src._extract_model_params import (
         extract_model_params_sk_LinearRegression,
     )

@@ -336,7 +336,9 @@ def calc_auc_curve_data_from_folds(
         dbg.msg(f"fold: {fold} | y.name: {y.name} | ROC000Fa ")
         fpr, tpr = create_auc_data(
             pd.Series(y.values[fold.values == f]),
-            yhat_proba.reset_index(drop=True)[fold.reset_index(drop=True) == f],
+            yhat_proba.reset_index(drop=True)[
+                fold.reset_index(drop=True) == f
+            ],
             n_bins,
         )
         fprs[f"fold_{f}"] = fpr
@@ -446,7 +448,11 @@ def plot_roc_auc_curves_and_confidence_bands(
     if isinstance(figax, Axes):
 
         def params(col):
-            d = dict(alpha=cv_alpha, label="_" + col.replace("_", " ").title(), lw=0.5)
+            d = dict(
+                alpha=cv_alpha,
+                label="_" + col.replace("_", " ").title(),
+                lw=0.5,
+            )
             if col == "mean":
                 d["alpha"] = 1
                 d["label"] = col.replace("_", " ").title()
@@ -473,7 +479,12 @@ def plot_roc_auc_curves_and_confidence_bands(
         )
 
         figax.plot(
-            [0, 1], [0, 1], alpha=0.5, ls="--", color="grey", label="Random Guess"
+            [0, 1],
+            [0, 1],
+            alpha=0.5,
+            ls="--",
+            color="grey",
+            label="Random Guess",
         )
 
     if call_legend:
@@ -513,9 +524,13 @@ def delong_statistic_annotation_mpl(
     """
     z, p = _delong_test_against_chance(y, yhat_proba, fold)
 
-    significance_message = "DeLong Test Statistic\nAgainst the 45-degree Line:\n\n"
+    significance_message = (
+        "DeLong Test Statistic\nAgainst the 45-degree Line:\n\n"
+    )
     significance_message += f"z = {z:.3f}\n"
-    significance_message += f"p-value = {p:.1e}" if p < 1e-3 else f"p-value = {p:.3f}"
+    significance_message += (
+        f"p-value = {p:.1e}" if p < 1e-3 else f"p-value = {p:.3f}"
+    )
     significance_message += "\n" + (
         "\nThe indicated AUC is\nsignificantly different\nfrom random guessing at \nthe 95% confidence level."
         if p < 0.05
@@ -596,7 +611,9 @@ def coefficient_annotation_mpl(
         else f"Coefficient is not significantly\ndifferent from 0 at the {1 - alpha:.1%} level"
     )
 
-    annotation_text = "Logistic Regression Fit Statistics\n======================\n\n"
+    annotation_text = (
+        "Logistic Regression Fit Statistics\n======================\n\n"
+    )
     annotation_text += (
         f"Estimated Coefficient: {coef:.1e}\n"
         if coef < 1e-3
@@ -613,7 +630,9 @@ def coefficient_annotation_mpl(
         else f"95% Confidence Interval:\n[{ci_lower:.2f}, {ci_upper:.2f}]\n"
     )
     annotation_text += (
-        f"p-value: {pvalue:.1e}\n\n" if pvalue < 1e-3 else f"p-value: {pvalue:.2f}\n\n"
+        f"p-value: {pvalue:.1e}\n\n"
+        if pvalue < 1e-3
+        else f"p-value: {pvalue:.2f}\n\n"
     )
     annotation_text += f"{significance_statement}"
 
@@ -622,7 +641,9 @@ def coefficient_annotation_mpl(
         xy=(0.1, 0.05),
         xycoords="axes fraction",
         fontsize=24
-        * (figsize[0] / 16),  # scale the font size depending on the figure size
+        * (
+            figsize[0] / 16
+        ),  # scale the font size depending on the figure size
         bbox=dict(
             boxstyle="round,pad=0.3",
             edgecolor="lightgrey",
@@ -766,7 +787,9 @@ def roc_curve_plot_mpl(
         figsize=figsize,
         cv_alpha=cv_alpha,
     )
-    ax = delong_statistic_annotation_mpl(y=y, yhat_proba=yhat_proba, fold=fold, ax=ax)
+    ax = delong_statistic_annotation_mpl(
+        y=y, yhat_proba=yhat_proba, fold=fold, ax=ax
+    )
     ax = coefficient_annotation_mpl(
         coef=coef, std_error=se, pvalue=pvalue, ax=ax, figsize=figsize  # type: ignore
     )
@@ -959,7 +982,9 @@ def _delong_test_against_chance(
     auc = roc_auc_score(y, yhat_proba)
     var_auc = _empirical_auc_variance(y, yhat_proba, fold)
     if np.sqrt(var_auc) == 0:
-        logging.warning(f"Variance of AUC is {var_auc}. Returning p-value of 1.0.")
+        logging.warning(
+            f"Variance of AUC is {var_auc}. Returning p-value of 1.0."
+        )
         return 0.0, 1.0
     z_statistic = np.subtract(auc, 0.5) / np.sqrt(var_auc)
     p_value = 2 * (1 - norm.cdf(abs(z_statistic)))

@@ -9,7 +9,9 @@ from predictables.util import get_column_dtype, to_pd_df
 
 
 def train_one_catboost_model(
-    df: pd.DataFrame, target_column: str, cv_folds: Optional[Union[int, list]] = None
+    df: pd.DataFrame,
+    target_column: str,
+    cv_folds: Optional[Union[int, list]] = None,
 ) -> Union[CatBoostRegressor, CatBoostClassifier]:
     """
     Trains a CatBoost model (regressor or classifier) based on the target column's data type.
@@ -82,7 +84,9 @@ def train_one_catboost_model(
                 model = CatBoostClassifier()
 
             # Get categorical features
-            categorical_features = X.select_dtypes(include="category").columns.tolist()
+            categorical_features = X.select_dtypes(
+                include="category"
+            ).columns.tolist()
 
             # Fit the model
             model.fit(
@@ -116,7 +120,9 @@ def train_one_catboost_model(
             model = CatBoostClassifier()
 
         # Get categorical features
-        categorical_features = X.select_dtypes(include="category").columns.tolist()
+        categorical_features = X.select_dtypes(
+            include="category"
+        ).columns.tolist()
 
         # Fit the model
         model.fit(X, y, verbose=False, cat_features=categorical_features)
@@ -124,7 +130,9 @@ def train_one_catboost_model(
         return model
 
 
-def train_catboost_model(df, missing_mask, cv_folds: Optional[Union[int, list]] = None):
+def train_catboost_model(
+    df, missing_mask, cv_folds: Optional[Union[int, list]] = None
+):
     """
     Trains a CatBoost model (regressor or classifier) for each column in the df.
 

@@ -239,7 +239,11 @@ def calculate_lift(feature: pd.Series, target: pd.Series) -> pd.DataFrame:
 
     overall_positive_rate = target.mean()
     df = pd.DataFrame({"Feature": feature, "Target": target})
-    lift_data = df.groupby("Feature", observed=True)["Target"].mean().reset_index()
+    lift_data = (
+        df.groupby("Feature", observed=True)["Target"].mean().reset_index()
+    )
     lift_data["lift"] = lift_data["Target"] / overall_positive_rate
 
-    return lift_data.sort_values("lift", ascending=False).reset_index(drop=True)
+    return lift_data.sort_values("lift", ascending=False).reset_index(
+        drop=True
+    )

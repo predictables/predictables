@@ -174,7 +174,14 @@ class DataType(Enum):
             "float32",
         ]
 
-        categorical_dtypes = ["object", "string", "str", "category", "boolean", "bool"]
+        categorical_dtypes = [
+            "object",
+            "string",
+            "str",
+            "category",
+            "boolean",
+            "bool",
+        ]
 
         date_dtypes = [
             "datetime64[ns]",

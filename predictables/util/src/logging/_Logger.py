@@ -30,7 +30,9 @@ class Logger:
         """
         self.name = name
         self.file_name = (
-            file_name if file_name else f"{name.lower().replace(' ', '_')}.json"
+            file_name
+            if file_name
+            else f"{name.lower().replace(' ', '_')}.json"
         )
         self.session_ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.session_id = str(uuid.uuid4())

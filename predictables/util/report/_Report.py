@@ -652,7 +652,9 @@ class Report:
 
         # Add element to chain
         self.elements.append(
-            Paragraph(f'<a href="#{inner_link}">{text}</a>', self.styles["Hyperlink"])
+            Paragraph(
+                f'<a href="#{inner_link}">{text}</a>', self.styles["Hyperlink"]
+            )
         )
         return self
 
@@ -691,7 +693,9 @@ class Report:
         ... ) # Will create a pdf called test.pdf with an unordered list with three items.
         """
         for t in text:
-            self.elements.append(Paragraph(f"{bullet_char} {t}", self.styles["Normal"]))
+            self.elements.append(
+                Paragraph(f"{bullet_char} {t}", self.styles["Normal"])
+            )
         return self
 
     def _number_style(self, n: int, style: str):
@@ -743,7 +747,9 @@ class Report:
             while number > 0:
                 number -= 1
                 result += (
-                    alphabet[number % 26] if is_upper else alphabet[number % 26].lower()
+                    alphabet[number % 26]
+                    if is_upper
+                    else alphabet[number % 26].lower()
                 )
                 number //= 26
 
@@ -801,7 +807,9 @@ class Report:
         styled_numbers = self._number_style(len(text), number_style)
         for t in text:
             self.elements.append(
-                Paragraph(f"{next(styled_numbers)}. {t}", self.styles["Normal"])
+                Paragraph(
+                    f"{next(styled_numbers)}. {t}", self.styles["Normal"]
+                )
             )
         return self
 

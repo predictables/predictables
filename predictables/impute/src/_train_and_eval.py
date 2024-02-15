@@ -3,11 +3,19 @@ from typing import Tuple
 
 import pandas as pd
 
-from predictables.impute.src._evaluate_imputation import check_stopping_criterion
-from predictables.impute.src._get_missing_data_mask import get_missing_data_mask
-from predictables.impute.src._impute_with_trained_model import impute_with_trained_model
+from predictables.impute.src._evaluate_imputation import (
+    check_stopping_criterion,
+)
+from predictables.impute.src._get_missing_data_mask import (
+    get_missing_data_mask,
+)
+from predictables.impute.src._impute_with_trained_model import (
+    impute_with_trained_model,
+)
 from predictables.impute.src._initial_impute import initial_impute
-from predictables.impute.src._train_catboost_model import train_one_catboost_model
+from predictables.impute.src._train_catboost_model import (
+    train_one_catboost_model,
+)
 
 
 def train_and_predict(
