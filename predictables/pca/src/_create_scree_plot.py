@@ -1,11 +1,12 @@
 from typing import List, Tuple, Optional
 
-import matplotlib.axes as Axes
+from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.decomposition import PCA
+import pandas as pd
+from sklearn.decomposition import PCA  # type: ignore
 
-from predictables.util import to_pd_df
+from predictables.util import to_pl_df
 
 from ._preprocessing import preprocess_data_for_pca
 
@@ -15,7 +16,7 @@ def create_scree_plot(
     variance_levels: Optional[List[float]] = None,
     y_pos_adjustment: float = 0.1,
     ax: Optional[Axes] = None,
-    figsize: Tuple[int, int] = (10, 10),
+    figsize: Tuple[int, int] = (7, 7),
 ):
     """
     Creates a scree plot for PCA analysis of the given dataset.
@@ -38,6 +39,8 @@ def create_scree_plot(
         Adjustment for the y position of the annotations, by default 0.05.
     ax : matplotlib.axes.Axes, optional
         The Axes object to plot on. If None, a new figure and Axes object is created.
+    figsize : tuple of int, optional
+        The size of the figure, by default (10, 10).
 
     Returns
     -------
@@ -71,15 +74,18 @@ def create_scree_plot(
         variance_levels = [0.75, 0.90, 0.95, 0.99]
 
     # Perform PCA
-    X = to_pd_df(preprocess_data_for_pca(X))
-    pca = PCA().fit(X)
+    X0 = to_pl_df(pd.DataFrame(X))
+    X_ = preprocess_data_for_pca(X0).to_numpy()
+    pca = PCA().fit(X_)
     variance_ratios = pca.explained_variance_ratio_
     cumulative_variance = np.cumsum(variance_ratios)
 
     # Create scree plot
     if ax is None:
-        _, ax = plt.subplots(figsize=figsize)
-    ax.plot(range(1, len(cumulative_variance) + 1), cumulative_variance, marker="o")
+        _, ax0 = plt.subplots(figsize=figsize)
+    else:
+        ax0 = ax
+    ax0.plot(range(1, len(cumulative_variance) + 1), cumulative_variance, marker="o")
 
     # Get features
     n_features = X.shape[1]
@@ -123,13 +129,13 @@ def create_scree_plot(
         )
 
         # Plot the horizontal and vertical lines
-        ax.plot(
+        ax0.plot(
             [0, extends_to_x],
             [extends_to_y, extends_to_y],
             color="r",
             linestyle="--",
         )
-        ax.plot(
+        ax0.plot(
             [extends_to_x, extends_to_x],
             [0, extends_to_y],
             color="g",
@@ -138,7 +144,7 @@ def create_scree_plot(
 
         # Give the data point corresponding to the level a red circle instead of
         # the normal blue circle
-        ax.plot(
+        ax0.plot(
             n_components,
             cumulative_variance[n_components - 1],
             marker="o",
@@ -154,8 +160,9 @@ def create_scree_plot(
             fc="white",
             alpha=0.75,  # White, partly see-through face
         )
-        ax.annotate(
-            f"{int(level*100)}%\n{n_components} component{'s' if n_components > 1 else ''}",
+        ax0.annotate(
+            f"{int(level*100)}%\n{n_components} "
+            f"component{'s' if n_components > 1 else ''}",
             xy=(
                 extends_to_x,
                 extends_to_y,
@@ -172,10 +179,12 @@ def create_scree_plot(
             arrowprops=dict(arrowstyle="->"),
         )
 
-    # One more annotation for the first component, and the first component that explains 100% of the variance
+    # One more annotation for the first component, and the first component that
+    # explains 100% of the variance
     n_components_for_100 = np.sum(np.less_equal(cumulative_variance, 0.9999)) + 1
-    ax.annotate(
-        f"100%\n{n_components_for_100} component{'s' if n_components_for_100 > 1 else ''}",
+    ax0.annotate(
+        f"100%\n{n_components_for_100} "
+        f"component{'s' if n_components_for_100 > 1 else ''}",
         xy=(n_components_for_100, 1),
         xytext=(n_components_for_100 + 0.75, 0.925),
         textcoords="data",
@@ -200,12 +209,12 @@ def create_scree_plot(
         f"{components[variance_levels.index(0.9)]:d}"
         "components to retain at least 90% of the variance."
     )
-    if ax is not None:
-        ax.text(
+    if ax0 is not None:
+        ax0.text(
             0.975,
             0.025,
             scree_interpretation,
-            transform=ax.transAxes,
+            transform=ax0.transAxes,
             ha="right",
             va="bottom",
             bbox=dict(
@@ -218,10 +227,10 @@ def create_scree_plot(
         )
 
     # Set limits
-    if ax is not None:
-        ax.set_xlabel("Number of Components")
-        ax.set_ylabel("Cumulative Explained Variance")
+    if ax0 is not None:
+        ax0.set_xlabel("Number of Components")
+        ax0.set_ylabel("Cumulative Explained Variance")
         plt.suptitle("Scree Plot", fontsize=16, fontweight="bold")
-        ax.set_title("Cumulative Variance Explained by N Principal Components")
+        ax0.set_title("Cumulative Variance Explained by N Principal Components")
 
-    return ax
+    return ax0
