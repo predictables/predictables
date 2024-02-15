@@ -319,13 +319,16 @@ class Model:
             X = pd.DataFrame(X)
 
         # Standardize and return the input data
-        return pd.DataFrame(
-            self.scaler.transform(
-                np.array(X.values).reshape(-1, 1) if X.shape[1] == 1 else X
-            ),  # type: ignore
-            index=X.index,
-            columns=X.columns,
-        )
+        if isinstance(self.scaler, StandardScaler):
+            return pd.DataFrame(
+                self.scaler.transform(
+                    np.array(X.values).reshape(-1, 1) if X.shape[1] == 1 else X
+                ),  # type: ignore
+                index=X.index,
+                columns=X.columns,
+            )
+        else:
+            raise ValueError("Scaler is not fitted.")
 
     def predict(
         self,
