@@ -60,7 +60,13 @@ class UnivariateAnalysis:
             setattr(
                 self,
                 obj_name,
-                Univariate(self.df, self.df_val, "cv", col, self.target_column_name),
+                Univariate(
+                    self.df,
+                    self.df_val,
+                    self.cv_column_name,
+                    col,
+                    self.target_column_name,
+                ),
             )
             feature_list.append(obj_name)
             try:
