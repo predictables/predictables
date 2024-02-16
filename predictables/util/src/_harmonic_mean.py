@@ -57,7 +57,17 @@ def _harmonic_mean_args(*args) -> float:
         return float(args[0])
 
     # Convert input to numpy array if it's not already
-    args_ = np.array(*args)
+    elif isinstance(args[0], list):
+        args_ = np.array(*args[0])
+    elif isinstance(args[0], np.ndarray):
+        args_ = args[0]
+    elif len(args) > 1:
+        args_ = np.array(args)
+    else:
+        raise TypeError(
+            "Input must be a number, list, or numpy array. Got "
+            f"{type(args[0])} instead."
+        )
 
     # if all elements are zero, return zero
     if np.all(args_ == 0):
