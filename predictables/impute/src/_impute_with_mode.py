@@ -1,16 +1,18 @@
 """
-This module provides functionality to impute missing values in dataframes with the mode.
-It can work with both `pandas` and `polars` data structures, converting them into `polars`
-DataFrames for processing. It is designed to impute values specifically for categorical columns.
+This module provides functionality to impute missing values in dataframes with the
+mode. It can work with both `pandas` and `polars` data structures, converting them
+into `polars` DataFrames for processing. It is designed to impute values specifically
+for categorical columns.
 
 Functions:
     - `_is_numeric_dtype`: Check if a polars data type is numeric.
     - `_check_if_categorical`: Check if a column in the dataframe is categorical.
     - `_impute_col_with_mode`: Impute missing values in a column with the mode.
-    - `impute_with_mode`: Apply mode imputation to all categorical columns in the dataframe.
+    - `impute_with_mode`: Apply mode imputation to all categorical columns in
+       the dataframe.
 
-The main entry point is the `impute_with_mode` function, which takes a dataframe and applies
-mode imputation to all eligible columns.
+The main entry point is the `impute_with_mode` function, which takes a dataframe
+and applies mode imputation to all eligible columns.
 
 Example:
     >>> import pandas as pd
@@ -44,7 +46,18 @@ def _is_mode_ambiguous(s: Union[pl.Series, pd.Series, np.ndarray]) -> bool:
 
 def _first_mode(s: Union[pl.Series, pd.Series, np.ndarray]) -> str:
     """
-    Returns the first mode listed in the dataset. Used to resolve multimodal categorical distributions.
+    Returns the first mode listed in the dataset. Used to resolve multimodal
+    categorical distributions.
+
+    Parameters
+    ----------
+    s : Union[pl.Series, pd.Series, np.ndarray]
+        The series to find the mode for.
+
+    Returns
+    -------
+    str
+        The first mode in the series.
     """
     # Convert to pandas series no matter what the input
     s = to_pd_s(s)
@@ -73,7 +86,7 @@ def _first_mode(s: Union[pl.Series, pd.Series, np.ndarray]) -> str:
         mode_df = pd.DataFrame({"mode": modes, "idx": mode_idx})
 
         # Mode (as a string) corresponding to the minimum idx:
-        return mode_df.loc[mode_df.idx.idxmin(), "mode"]
+        return str(mode_df.loc[mode_df.idx.idxmin(), "mode"])
 
 
 def _is_numeric_dtype(dtype) -> bool:
@@ -121,12 +134,18 @@ def _impute_col_with_mode(df: pl.DataFrame, col: str) -> pl.DataFrame:
     """
     Impute missing values in a column with the mode.
 
-    :param df: A polars DataFrame with potential missing values.
-    :type df: pl.DataFrame
-    :param col: The name of the column for which to impute missing values.
-    :type col: str
-    :return: A new DataFrame with missing values in the specified column imputed with the mode.
-    :rtype: pl.DataFrame
+    Parameters
+    ----------
+    df : pl.DataFrame
+        A polars DataFrame with potential missing values.
+    col : str
+        The name of the column for which to impute missing values.
+
+    Returns
+    -------
+    pl.DataFrame
+        A new DataFrame with missing values in the specified column imputed
+        with the mode.
     """
     if _check_if_categorical(df, col):
         if pl.__version__ >= "0.20.5":
@@ -182,12 +201,23 @@ def impute_with_mode(
     """
     Impute missing values with the mode for categorical columns in the dataframe.
 
-    :param df: A dataframe which can be a pandas DataFrame, Series, polars DataFrame, Series, or LazyFrame.
-    :type df: Union[pl.DataFrame, pd.DataFrame, pl.LazyFrame, pd.Series, pl.Series]
-    :return: A new DataFrame with missing values in categorical columns imputed with the mode.
-    :rtype: pl.DataFrame
+    Parameters
+    ----------
+    df : Union[pl.DataFrame, pd.DataFrame, pl.LazyFrame, pd.Series, pl.Series]
+        A dataframe which can be a pandas DataFrame, Series, polars DataFrame,
+        Series, or LazyFrame.
+
+    Returns
+    -------
+    pl.LazyFrame
+        A new DataFrame with missing values in categorical columns imputed with
+        the mode.
     """
-    df = to_pl_df(df)
+    df = (
+        to_pl_df(df)
+        if isinstance(df, (pd.DataFrame, pl.DataFrame, pl.LazyFrame))
+        else to_pl_df(df.to_frame())
+    )
     n_rows = df.shape[0]
 
     for col in df.columns:

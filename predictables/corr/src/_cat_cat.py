@@ -3,7 +3,7 @@ from typing import Union
 import numpy as np
 import pandas as pd
 import polars as pl
-from scipy import stats
+from scipy import stats  # type: ignore
 
 from predictables.util import get_column_dtype, to_pd_df, to_pd_s
 
@@ -33,11 +33,11 @@ def calc_categorical_categorical_corr(
 
     Notes
     -----
-    Cramér's :math:`V` is a measure of association between two categorical variables and ranges from
-    :math:`0` to :math:`+1` (inclusive).
+    Cramér's :math:`V` is a measure of association between two categorical variables
+    and ranges from :math:`0` to :math:`+1` (inclusive).
 
-    Cramér's :math:`V` is defined as the square root of the chi-squared statistic divided by
-    the sample size:
+    Cramér's :math:`V` is defined as the square root of the chi-squared statistic
+    divided by the sample size:
 
     .. math::
 
@@ -45,13 +45,14 @@ def calc_categorical_categorical_corr(
 
     where :math:`\chi^2` is the chi-squared statistic and :math:`n` is the sample size.
 
-    It is also known as the mean square contingency coefficient. It is a generalization of
-    the phi coefficient, which is used when both variables are binary. In particular, in the
-    case of a 2x2 contingency table, Cramér's :math:`V` is equivalent to the absolute value of the
-    phi coefficient.
+    It is also known as the mean square contingency coefficient. It is a
+    generalization of the phi coefficient, which is used when both variables
+    are binary. In particular, in the case of a 2x2 contingency table,
+    Cramér's :math:`V` is equivalent to the absolute value of the phi coefficient.
 
-    Cramér's :math:`V` is symmetric. That is, the correlation between variable :math:`A` and variable :math:`B` is
-    the same as the correlation between variable :math:`B` and variable :math:`A`.
+    Cramér's :math:`V` is symmetric. That is, the correlation between variable
+    :math:`A` and variable :math:`B` is the same as the correlation between variable
+    :math:`B` and variable :math:`A`.
 
     References
     ----------
@@ -59,9 +60,10 @@ def calc_categorical_categorical_corr(
     - https://www.statisticshowto.com/v-statistics
     """
     if len(args) == 1:
-        return calc_categorical_categorical_corr_df(args[0])
+        return calc_categorical_categorical_corr_df(pd.DataFrame(args[0]))
     elif len(args) == 2:
-        return calc_categorical_categorical_corr_series(args[0], args[1])
+        arg1 = to_pd_s(args[0]) if isinstance(args[0], pl.Series) else args[0]
+        return calc_categorical_categorical_corr_series(arg1, args[1])
     else:
         raise TypeError(
             f"Invalid number of arguments: Must be 1 or 2, but got {len(args)}"
@@ -87,11 +89,11 @@ def calc_categorical_categorical_corr_df(
 
     Notes
     -----
-    Cramér's :math:`V` is a measure of association between two categorical variables and ranges from
-    :math:`0` to :math:`+1` (inclusive).
+    Cramér's :math:`V` is a measure of association between two categorical variables
+    and ranges from :math:`0` to :math:`+1` (inclusive).
 
-    Cramér's :math:`V` is defined as the square root of the chi-squared statistic divided by
-    the sample size:
+    Cramér's :math:`V` is defined as the square root of the chi-squared statistic
+    divided by the sample size:
 
     .. math::
 
@@ -99,13 +101,14 @@ def calc_categorical_categorical_corr_df(
 
     where :math:`\chi^2` is the chi-squared statistic and :math:`n` is the sample size.
 
-    It is also known as the mean square contingency coefficient. It is a generalization of
-    the phi coefficient, which is used when both variables are binary. In particular, in the
-    case of a 2x2 contingency table, Cramér's :math:`V` is equivalent to the absolute value of the
-    phi coefficient.
+    It is also known as the mean square contingency coefficient. It is a
+    generalization of the phi coefficient, which is used when both variables
+    are binary. In particular, in the case of a 2x2 contingency table,
+    Cramér's :math:`V` is equivalent to the absolute value of the phi coefficient.
 
-    Cramér's :math:`V` is symmetric. That is, the correlation between variable :math:`A` and variable :math:`B` is
-    the same as the correlation between variable :math:`B` and variable :math:`A`.
+    Cramér's :math:`V` is symmetric. That is, the correlation between variable
+    :math:`A` and variable :math:`B` is the same as the correlation between variable
+    :math:`B` and variable :math:`A`.
 
     References
     ----------
@@ -167,11 +170,11 @@ def calc_categorical_categorical_corr_series(
 
     Notes
     -----
-    Cramér's :math:`V` is a measure of association between two categorical variables and ranges from
-    :math:`0` to :math:`+1` (inclusive).
+    Cramér's :math:`V` is a measure of association between two categorical variables
+    and ranges from :math:`0` to :math:`+1` (inclusive).
 
-    Cramér's :math:`V` is defined as the square root of the chi-squared statistic divided by
-    the sample size:
+    Cramér's :math:`V` is defined as the square root of the chi-squared statistic
+    divided by the sample size:
 
     .. math::
 
@@ -179,13 +182,14 @@ def calc_categorical_categorical_corr_series(
 
     where :math:`\chi^2` is the chi-squared statistic and :math:`n` is the sample size.
 
-    It is also known as the mean square contingency coefficient. It is a generalization of
-    the phi coefficient, which is used when both variables are binary. In particular, in the
-    case of a 2x2 contingency table, Cramér's :math:`V` is equivalent to the absolute value of the
-    phi coefficient.
+    It is also known as the mean square contingency coefficient. It is a
+    generalization of the phi coefficient, which is used when both variables are
+    binary. In particular, in the case of a 2x2 contingency table, Cramér's :math:`V`
+    is equivalent to the absolute value of the phi coefficient.
 
-    Cramér's :math:`V` is symmetric. That is, the correlation between variable :math:`A` and variable :math:`B` is
-    the same as the correlation between variable :math:`B` and variable :math:`A`.
+    Cramér's :math:`V` is symmetric. That is, the correlation between variable
+    :math:`A` and variable :math:`B` is the same as the correlation between variable
+    :math:`B` and variable :math:`A`.
 
     References
     ----------
@@ -205,6 +209,4 @@ def calc_categorical_categorical_corr_series(
     contingency_table = pd.crosstab(s1, s2)
     chi2, _, _, _ = stats.chi2_contingency(contingency_table)
     n = np.sum(contingency_table.values)
-    cramers_v = np.sqrt(chi2 / (n * (min(contingency_table.shape) - 1)))
-
-    return cramers_v
+    return np.sqrt(chi2 / (n * (min(contingency_table.shape) - 1)))

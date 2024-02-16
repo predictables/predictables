@@ -19,7 +19,8 @@ def integrated_imputation_workflow(
     learning_rate: float = 0.1,
 ):
     """
-    This function represents the integrated workflow for imputing missing values using CatBoost.
+    This function represents the integrated workflow for imputing missing values
+    using CatBoost.
 
     Parameters
     ----------
@@ -66,12 +67,10 @@ def integrated_imputation_workflow(
     trained_models = train_catboost_model(df_imputed, cv_folds)
 
     # Imputation with the Trained Models
-    final_df = impute_with_trained_model(
+    return impute_with_trained_model(
         df_imputed,
         missing_mask,
         trained_models,
         learning_rate,
         only_missing=True,
     )
-
-    return final_df

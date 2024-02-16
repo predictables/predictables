@@ -12,7 +12,8 @@ def impute_single_column(
     only_missing: bool = True,
 ) -> pd.DataFrame:
     """
-    Impute missing values in a single column of a dataframe using a trained CatBoost model.
+    Impute missing values in a single column of a dataframe using a trained
+    CatBoost model.
 
     Parameters
     ----------
@@ -43,9 +44,10 @@ def impute_single_column(
     assert isinstance(
         missing_mask, pd.DataFrame
     ), f"missing_mask must be a pandas DataFrame, not {type(missing_mask)}"
-    assert (
-        df.shape == missing_mask.shape
-    ), f"df and missing_mask must have the same shape. df.shape: {df.shape}, missing_mask.shape: {missing_mask.shape}"
+    assert df.shape == missing_mask.shape, (
+        f"df and missing_mask must have the same shape. df.shape: {df.shape}, "
+        f"missing_mask.shape: {missing_mask.shape}"
+    )
 
     # if only_missing is true, check that the column has missing values.
     # if not, return the df unadjusted
@@ -61,7 +63,7 @@ def impute_single_column(
     # Get the full-credibility imputed value for only the missing rows in the column
     full_cred_estimate = df.copy()
     full_cred_estimate.loc[missing_mask[column], column] = trained_model.predict(
-        df.loc[missing_mask[column], ~df.columns.isin([column])]
+        df.loc[missing_mask[column], ~df.columns.isin([column])].values
     )
 
     # Update the imputed missing value with the full_cred_estimate if dtype is "c"
@@ -99,7 +101,8 @@ def impute_with_trained_model(
     missing_mask : pd.DataFrame
         The mask indicating which values are missing in the df.
     trained_models : dict
-        A dictionary of trained CatBoost models whose keys are the column names of the data frame.
+        A dictionary of trained CatBoost models whose keys are the column names of
+        the data frame.
     learning_rate : float, optional
         The learning rate to use for the CatBoost models. The default is 0.1.
 
@@ -117,9 +120,10 @@ def impute_with_trained_model(
     assert isinstance(
         missing_mask, pd.DataFrame
     ), f"missing_mask must be a pandas DataFrame, not {type(missing_mask)}"
-    assert (
-        df.shape == missing_mask.shape
-    ), f"df and missing_mask must have the same shape. df.shape: {df.shape}, missing_mask.shape: {missing_mask.shape}"
+    assert df.shape == missing_mask.shape, (
+        f"df and missing_mask must have the same shape. df.shape: {df.shape}, "
+        f"missing_mask.shape: {missing_mask.shape}"
+    )
 
     # Loop through each column name from the keys of trained_models
     for column in trained_models:

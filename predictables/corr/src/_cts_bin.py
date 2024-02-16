@@ -42,10 +42,11 @@ def calc_continuous_binary_corr(
         r_{pb} = \frac{\bar{x}_1 -\bar{x}_0}{s} \sqrt{\frac{n_1 n_0}{n^2}}
 
 
-    where :math:`\bar{x}_1` and :math:`\bar{x}_0` are the means of the continuous variable for the
-    two groups defined by the binary variable, :math:`s` is the standard deviation of the
-    continuous variable, :math:`n_1` and :math:`n_0` are the number of observations in the two
-    groups, and :math:`n = n_0 + n_1` is the total number of observations.
+    where :math:`\bar{x}_1` and :math:`\bar{x}_0` are the means of the continuous
+    variable for the two groups defined by the binary variable, :math:`s` is the
+    standard deviation of the continuous variable, :math:`n_1` and :math:`n_0` are
+    the number of observations in the two groups, and :math:`n = n_0 + n_1` is the
+    total number of observations.
 
     References
     ----------
@@ -53,9 +54,25 @@ def calc_continuous_binary_corr(
     - https://www.statisticshowto.com/point-biserial-correlation/
     """
     if len(args) == 1:
-        return calc_continuous_binary_corr_df(args[0])
+        if isinstance(args[0], (pd.Series, pl.Series)):
+            return calc_continuous_binary_corr_df(to_pd_df(args[0].to_frame()))
+        if isinstance(args[0], (pd.DataFrame, pl.DataFrame, pl.LazyFrame)):
+            return calc_continuous_binary_corr_df(args[0])
+        else:
+            raise TypeError(
+                "Invalid argument type: Expected pandas.core.frame.DataFrame, "
+                "polars.dataframe.frame.DataFrame, or LazyFrame"
+            )
     elif len(args) == 2:
-        return calc_continuous_binary_corr_series(args[0], args[1])
+        if isinstance(args[0], (pd.Series, pl.Series)) and isinstance(
+            args[1], (pd.Series, pl.Series)
+        ):
+            return calc_continuous_binary_corr_series(args[0], args[1])
+        else:
+            raise TypeError(
+                "Invalid argument types: Expected pandas.core.series.Series "
+                "or polars.series.series.Series"
+            )
     else:
         raise TypeError(
             f"Invalid number of arguments: Must be 1 or 2, but got {len(args)}"
@@ -66,7 +83,8 @@ def calc_continuous_binary_corr_df(
     df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
 ) -> pd.DataFrame:
     r"""
-    Calculate the point-biserial correlation coefficient for continuous-binary variable pairs in a df.
+    Calculate the point-biserial correlation coefficient for continuous-binary
+    variable pairs in a df.
 
     Parameters
     ----------
@@ -90,10 +108,11 @@ def calc_continuous_binary_corr_df(
 
         r_{pb} = \frac{\bar{x}_1 - \bar{x}_0}{s} \sqrt{\frac{n_1 n_0}{n^2}}
 
-    where :math:`\bar{x}_1` and :math:`\bar{x}_0` are the means of the continuous variable for the
-    two groups defined by the binary variable, :math:`s` is the standard deviation of the
-    continuous variable, :math:`n_1` and :math:`n_0` are the number of observations in the two
-    groups, and :math:`n` is the total number of observations.
+    where :math:`\bar{x}_1` and :math:`\bar{x}_0` are the means of the continuous
+    variable for the two groups defined by the binary variable, :math:`s` is the
+    standard deviation of the continuous variable, :math:`n_1` and :math:`n_0` are
+    the number of observations in the two groups, and :math:`n` is the total number
+    of observations.
 
     References
     ----------
@@ -123,17 +142,20 @@ def calc_continuous_binary_corr_df(
         index=continuous_vars.columns, columns=binary_vars.columns
     )
 
-    # Calculate point-biserial correlation for each pair of continuous and binary variables
+    # Calculate point-biserial correlation for each pair of continuous and binary
+    # variables
     for cont_col in continuous_vars:
         for bin_col in binary_vars:
             # recode binary variable to 0.0/1.0
             lookup = binary_vars[bin_col].drop_duplicates().sort_values().tolist()
-            binary_vars.loc[:, bin_col] = binary_vars[bin_col].replace(
-                dict(zip(lookup, [0.0, 1.0]))
+            binary_vars.loc[:, [bin_col]] = (
+                binary_vars.loc[:, [bin_col]]
+                .replace(dict(zip(lookup, [0.0, 1.0])))
+                .values.tolist()
             )
 
-            corr_matrix.loc[cont_col, bin_col] = continuous_vars[cont_col].corr(
-                binary_vars[bin_col], method="pearson"
+            corr_matrix.loc[pd.Index([cont_col]), pd.Index([bin_col])] = (
+                continuous_vars[cont_col].corr(binary_vars[bin_col], method="pearson")
             )
 
     return corr_matrix
@@ -143,7 +165,8 @@ def calc_continuous_binary_corr_series(
     s1: Union[pd.Series, pl.Series], s2: Union[pd.Series, pl.Series]
 ) -> float:
     r"""
-    Calculate the point-biserial correlation coefficient for a continuous-binary variable pair.
+    Calculate the point-biserial correlation coefficient for a continuous-binary
+    variable pair.
 
     Parameters
     ----------
@@ -168,10 +191,11 @@ def calc_continuous_binary_corr_series(
 
         r_{pb} = \frac{\bar{x}_1 - \bar{x}_0}{s} \sqrt{\frac{n_1 n_0}{n^2}}
 
-    where :math:`\bar{x}_1` and :math:`\bar{x}_0` are the means of the continuous variable for the
-    two groups defined by the binary variable, :math:`s` is the standard deviation of the
-    continuous variable, :math:`n_1` and :math:`n_0` are the number of observations in the two
-    groups, and :math:`n` is the total number of observations.
+    where :math:`\bar{x}_1` and :math:`\bar{x}_0` are the means of the continuous
+    variable for the two groups defined by the binary variable, :math:`s` is the
+    standard deviation of the continuous variable, :math:`n_1` and :math:`n_0` are
+    the number of observations in the two groups, and :math:`n` is the total number
+    of observations.
 
     References
     ----------
@@ -192,7 +216,9 @@ def calc_continuous_binary_corr_series(
     ) | ((get_column_dtype(s1) == "continuous") & (get_column_dtype(s2) == "binary"))
     if not (cond1 & cond2 & cond3):
         raise TypeError(
-            f"Exactly one of the two series must be binary, and the other must be continuous, but s1 is `{get_column_dtype(s1)}` and s2 is `{get_column_dtype(s2)}`"
+            f"Exactly one of the two series must be binary, and the other must be "
+            f"continuous, but s1 is `{get_column_dtype(s1)}` and s2 is "
+            f"`{get_column_dtype(s2)}`"
         )
 
     # Recode binary variable to 0.0/1.0

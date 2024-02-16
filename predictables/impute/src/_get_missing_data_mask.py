@@ -1,7 +1,14 @@
 """
-This module contains the get_missing_data_mask function for getting a mask of the missing data in a dataframe.
+_get_missing_data_mask.py
+-------------------------
+This module contains the get_missing_data_mask function for getting a mask of
+the missing data in a dataframe.
 
-Andy Weaver
+Functions:
+    - get_missing_data_mask: Get a mask of the missing data in the dataframe.
+
+Author:
+    Andy Weaver
 """
 
 from typing import Union
@@ -26,7 +33,8 @@ def get_missing_data_mask(
     Returns
     -------
     pl.LazyFrame
-        A lazy frame of the same size as the input dataframe that contains True for missing data and False for non-missing data.
+        A lazy frame of the same size as the input dataframe that contains True for
+        missing data and False for non-missing data.
 
     Raises
     ------

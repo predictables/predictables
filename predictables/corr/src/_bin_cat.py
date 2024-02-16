@@ -3,7 +3,7 @@ from typing import Union
 import numpy as np
 import pandas as pd
 import polars as pl
-from scipy import stats
+from scipy import stats  # type: ignore
 
 from predictables.util import get_column_dtype, to_pd_df, to_pd_s
 

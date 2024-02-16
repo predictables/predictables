@@ -22,12 +22,13 @@ Note: The stopping criterion is based on the assumption that if the error in
       warranting the cessation of further training.
 """
 
-from typing import Callable
+from typing import Callable, Union
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import KFold
+from sklearn.metrics import mean_squared_error  # type: ignore
+from sklearn.model_selection import KFold  # type: ignore
+from catboost import CatBoostRegressor, CatBoostClassifier  # type: ignore
 
 
 def evaluate_imputation_one_column(
@@ -39,11 +40,21 @@ def evaluate_imputation_one_column(
     """
     Evaluate the imputation of a single column.
 
-    :param imputed_df: The imputed dataframe.
-    :param original_df: The original dataframe.
-    :param missing_mask: A mask indicating where the original dataframe had missing values.
-    :param column: The name of the column to evaluate.
-    :return: The imputation error for the column.
+    Parameters
+    ----------
+    imputed_df : pd.DataFrame
+        The imputed dataframe.
+    original_df : pd.DataFrame
+        The original dataframe.
+    missing_mask : pd.DataFrame
+        A mask indicating where the original dataframe had missing values.
+    column : str
+        The name of the column to evaluate.
+
+    Returns
+    -------
+    tuple
+        The imputation error for the column.
     """
     # Check if the column exists in both dataframes
     if column not in imputed_df.columns or column not in original_df.columns:
@@ -89,9 +100,7 @@ def train_model_on_fold(
     model.fit(X_train, y_train)
 
     # Predict on validation set
-    predictions = model.predict(X_val)
-
-    return predictions
+    return model.predict(X_val)
 
 
 def calculate_fold_error(
@@ -121,13 +130,25 @@ def cross_validate_model(
     """
     Perform cross-validation and return the errors for each epoch in each fold.
 
-    :param model: The model to train.
-    :param X: The features.
-    :param y: The labels.
-    :param n_folds: The number of folds to use.
-    :param n_epochs: The number of epochs to train each fold.
-    :param error_metric: The error metric to use.
-    :return: A list of lists containing errors for each epoch in each fold.
+    Parameters
+    ----------
+    model : Callable
+        The model to train.
+    X : np.ndarray
+        The features.
+    y : np.ndarray
+        The labels.
+    n_folds : int
+        The number of folds to use.
+    n_epochs : int
+        The number of epochs to train each fold.
+    error_metric : Callable, optional
+        The error metric to use, by default mean_squared_error.
+
+    Returns
+    -------
+    list
+        A list of lists containing errors for each epoch in each fold.
     """
     kf = KFold(n_splits=n_folds)
     fold_errors = []
@@ -138,8 +159,9 @@ def cross_validate_model(
 
         epoch_errors = []
         for _epoch in range(n_epochs):
-            model.fit(X_train, y_train)  # Assuming model retains state across epochs
-            predictions = model.predict(X_val)
+            model_: Union[CatBoostRegressor, CatBoostClassifier] = model
+            model_.fit(X_train, y_train)
+            predictions = model_.predict(X_val)
             error = error_metric(y_val, predictions)
             epoch_errors.append(error)
 
@@ -152,9 +174,17 @@ def calculate_standard_error_of_mean(errors: list, start_epoch: int) -> float:
     """
     Calculate the standard error of the mean from a starting epoch to the last epoch.
 
-    :param errors: A list of lists, each inner list containing errors for each epoch in a fold.
-    :param start_epoch: The starting epoch to calculate the SEM from.
-    :return: The standard error of the mean.
+    Parameters
+    ----------
+    errors : list
+        A list of lists, each inner list containing errors for each epoch in a fold.
+    start_epoch : int
+        The starting epoch to calculate the SEM from.
+
+    Returns
+    -------
+    float
+        The standard error of the mean.
     """
     if not errors or not errors[0] or start_epoch >= len(errors[0]):
         raise ValueError("Invalid input for errors list or start_epoch.")
@@ -173,7 +203,8 @@ def calculate_standard_error_of_mean(errors: list, start_epoch: int) -> float:
 
 def check_stopping_criterion(errors):
     """
-    The model will stop training if the error in two consecutive epochs is within one standard error of each other.
+    The model will stop training if the error in two consecutive epochs is within
+    one standard error of each other.
     """
     # Ensure there are at least three folds to compare
     if len(errors) < 3:

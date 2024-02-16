@@ -17,6 +17,39 @@ def mean_encode_df(
     keep_cat_col: bool = True,
     laplace_alpha: int = 0,
 ) -> pl.DataFrame:
+    """
+    Mean-encode a list of categorical columns in a dataframe using lazy evaluation
+    and window functions. Calculate running sums of `col1` and `col2` up to but not
+    including the date in each row.
+
+    Parameters
+    ----------
+    df : pl.DataFrame
+        The dataframe to mean-encode.
+    cat_cols : List[str]
+        The list of categorical columns to mean-encode.
+    col1 : str
+        The name of the first column to use for mean encoding.
+    col2 : str
+        The name of the second column to use for mean encoding.
+    date_col : str
+        The name of the date column to use for mean encoding.
+    date_offset : int, optional
+        The number of days to offset the date column. Default is 1.
+    drop_cols : bool, optional
+        Whether to drop the intermediate columns. Default is True.
+    drop_mean_ratio : bool, optional
+        Whether to drop the mean ratio column. Default is True.
+    keep_cat_col : bool, optional
+        Whether to keep the original categorical column. Default is True.
+    laplace_alpha : int, optional
+        The Laplace smoothing parameter. Default is 0.
+
+    Returns
+    -------
+    pl.DataFrame
+        The mean-encoded dataframe.
+    """
     for c in tqdm(cat_cols, desc="Mean-encoding columns"):
         df = mean_encoding_with_ratio_lazy(
             df,
@@ -76,14 +109,16 @@ def mean_encoding_with_ratio_lazy(
     laplace_alpha: int = 0,
 ) -> pl.DataFrame:
     """
-    Perform mean encoding on a categorical column using lazy evaluation and window functions.
-    Calculate running sums of `col1` and `col2` up to but not including the date in each row.
+    Perform mean encoding on a categorical column using lazy evaluation and window
+    functions. Calculate running sums of `col1` and `col2` up to but not including
+    the date in each row.
     """
 
     # Get the number of unique features in the categorical column
     n_cats = df.select(pl.col(cat_col)).n_unique()
 
-    # Laplace label for new column name - only when laplace_alpha > 0 and keep_cat_col = True
+    # Laplace label for new column name - only when laplace_alpha > 0 and
+    # keep_cat_col = True
     laplace_label = f"(laplace_alpha={laplace_alpha})" if laplace_alpha > 0 else ""
 
     # polars>=0.20.5 requires .len() instead of .count()
@@ -131,7 +166,8 @@ def mean_encoding_with_ratio_lazy(
         # integrate the Laplace smoothing here
         .with_columns(
             [
-                # if the category changes - sorted by category so this means it is a new category
+                # if the category changes - sorted by category so this means it
+                # is a new category
                 pl.when(pl.col(cat_col).shift(date_offset) != pl.col(cat_col))
                 .then(
                     (
