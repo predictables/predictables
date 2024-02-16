@@ -41,7 +41,8 @@ def predictor_target_corr(X, y):
             output.append(calc_categorical_categorical_corr(df)["target"])
         else:
             print(
-                f"Skipping {col} because it is not a valid predictor, having dtype={X_dtype[i]}"
+                f"Skipping {col} because it is not a valid predictor, "
+                f"having dtype={X_dtype[i]}"
             )
 
     output = pd.concat(output, axis=1)

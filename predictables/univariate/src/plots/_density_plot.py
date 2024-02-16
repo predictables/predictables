@@ -247,9 +247,9 @@ def density_plot_mpl(
     # Add a title reflecting the t-test results
     title = (
         "Kernel Density Plot of "
-        f"{plot_label(x.name if x.name is not None else 'Var')}"
+        f"{plot_label(x.name if x.name is not None else 'Var')}"  # type: ignore
         " by "
-        f"{plot_label(plot_by.name if plot_by.name is not None else 'Groupby Var')}."
+        f"{plot_label(plot_by.name if plot_by.name is not None else 'Groupby Var')}."  # type: ignore
     )
     title += "Distributions by level are"
     title += " not " if p >= t_test_alpha else " "
@@ -258,7 +258,7 @@ def density_plot_mpl(
     ax0.set_title(title)
 
     # Set the x-axis label
-    ax0.set_xlabel(plot_label(x.name if x.name is not None else "Var"), False)
+    ax0.set_xlabel(plot_label(x.name if x.name is not None else "Var"), False)  # type: ignore
 
     if call_legend:
         plt.legend(fontsize=24 * (figsize[0] / 16))
@@ -401,7 +401,7 @@ def _plot_density_mpl(
     x_grid = np.linspace(x_min, x_max, grid_bins)
 
     if label is None:
-        label = x.name if x.name is not None else "Var"
+        label = x.name if x.name is not None else "Var"  # type: ignore
 
     if fill_under:
         ax.plot(
@@ -523,12 +523,12 @@ def density_by_mpl(
             byname = by.name if by.name is not None else "Groupby Var"
             color_ = binary_color(level) if get_column_dtype(by) == "binary" else None
             color__ = color_ if color_ is not None else None
-            label = f"{plot_label(byname)} = {level}"
+            label = f"{plot_label(byname)} = {level}"  # type: ignore
             _plot_density_mpl(
                 group,
                 label=label,
-                line_color=color__,
-                **params,
+                line_color=color__,  # type: ignore
+                **params,  # type: ignore
             )
     # Otherwise, plot the density by CV fold
     else:
@@ -541,8 +541,8 @@ def density_by_mpl(
                 _plot_density_mpl(
                     group,
                     label="_nolegend_",  # don't label the plot if we're filling under
-                    line_color=color__,
-                    **params,
+                    line_color=color__,  # type: ignore
+                    **params,  # type: ignore
                 )
 
     return ax
@@ -570,7 +570,7 @@ def calculate_density_sd(
             sd[f"{f}_{level}"] = density(sd["x"])
 
     sd = sd.drop(columns=["x"])
-    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)
+    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)  # type: ignore
 
     # smooth the standard deviation (should not deviate much from one
     # x value to the next)
@@ -601,7 +601,7 @@ def _calculate_single_density_sd(
         sd[f"{f}"] = density(sd["x"])
 
     sd = sd.drop(columns=["x"])
-    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)
+    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)  # type: ignore
 
     # smooth the standard deviation (should not deviate much from one
     # x value to the next)
@@ -612,7 +612,7 @@ def _calculate_single_density_sd(
     sd_smooth[len(sd_smooth) - 1] = np.mean(sd[-2:])
     sd_smooth[len(sd_smooth) - 2] = np.mean(sd[-3:])
 
-    return sd_smooth, sd
+    return sd_smooth, sd  # type: ignore
 
 
 def _plot_single_density_pm_standard_deviation(
@@ -738,7 +738,7 @@ def _annotate_mean_median(
     arrowprops1 = dict(arrowstyle="->", lw=1)
 
     # Extract the figure size
-    figsize = ax.get_figure().get_size_inches()
+    figsize = ax.get_figure().get_size_inches()  # type: ignore
 
     # Annotate for target=0
     ax.annotate(

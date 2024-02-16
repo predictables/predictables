@@ -1,8 +1,8 @@
-from typing import Union
+from typing import Union, Optional
 
 import pandas as pd
 import polars as pl
-from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA  # type: ignore
 
 from predictables.util import to_pd_df
 
@@ -11,8 +11,8 @@ from ._preprocessing import preprocess_data_for_pca
 
 def perform_pca(
     X_train: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-    X_val: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] = None,
-    X_test: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame] = None,
+    X_val: Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]] = None,
+    X_test: Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]] = None,
     n_components: int = 10,
     return_pca_obj: bool = False,
     preprocess_data: bool = True,
@@ -118,21 +118,12 @@ def perform_pca(
     if return_pca_obj:
         return pca.fit(to_pd_df(X_train))
 
-    # Fit and transform X_train
+    # Fit and transform X_train, X_val, and X_test
     X_train_pca = pca.fit_transform(to_pd_df(X_train))
-
-    if X_val is None:
-        # If X_val was not provided, return only X_train_pca
-        out = X_train_pca
-    else:
-        # If X_val was provided, transform it and add it to the output
-        X_val_pca = pca.transform(to_pd_df(X_val))
-        out = (X_train_pca, X_val_pca)
+    X_val_pca = pca.transform(to_pd_df(X_val)) if X_val is not None else None
+    X_test_pca = pca.transform(to_pd_df(X_test)) if X_test is not None else None
 
     # If X_test was provided, transform it and add it to the output,
     # regardless of whether X_val was provided
-    if X_test is not None:
-        X_test_pca = pca.transform(to_pd_df(X_test))
-        out = (*out, X_test_pca) if isinstance(out, tuple) else (out, X_test_pca)
-
-    return out
+    out = X_train_pca if X_val_pca is None else (X_train_pca, X_val_pca)
+    return (*out, X_test_pca) if X_test_pca is not None else out

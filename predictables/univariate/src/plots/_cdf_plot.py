@@ -99,7 +99,7 @@ def cdf_plot_matplotlib(
     ax0 = cdf_plot_matplotlib_levels(
         x=x,
         plot_by=plot_by,
-        x_label=(plot_label(x_label) if x_label is not None else plot_label(_name)),
+        x_label=(plot_label(x_label) if x_label is not None else plot_label(_name)),  # type: ignore
         y_label=(
             y_label
             if y_label is not None
@@ -114,7 +114,7 @@ def cdf_plot_matplotlib(
         x=x,
         plot_by=plot_by,
         cv_folds=cv_folds,
-        x_label=(plot_label(x_label) if x_label is not None else plot_label(_name)),
+        x_label=(plot_label(x_label) if x_label is not None else plot_label(_name)),  # type: ignore
         y_label=(
             y_label
             if y_label is not None
@@ -128,7 +128,7 @@ def cdf_plot_matplotlib(
     if x_label is not None:
         ax0.set_xlabel(plot_label(x_label))
     else:
-        ax0.set_xlabel(plot_label(_name))
+        ax0.set_xlabel(plot_label(_name))  # type: ignore
     if y_label is not None:
         ax0.set_ylabel(y_label)
     else:
@@ -142,7 +142,7 @@ def cdf_plot_matplotlib(
     ax0.axhline(0, color="black", linestyle="--", linewidth=1, label="_nolegend_")
     ax0.axhline(1, color="black", linestyle="--", linewidth=1, label="_nolegend_")
 
-    title = create_title(_name, plot_by.name if plot_by.name is not None else "plot_by")
+    title = create_title(_name, plot_by.name if plot_by.name is not None else "plot_by")  # type: ignore
     ax0.set_title(title)
 
     plt.legend(
@@ -198,10 +198,10 @@ def cdf_plot_matplotlib_levels(
 
     # For each level of plot_by, plot the cdf of x, conditional on plot_by
     for level in plot_by.drop_duplicates().sort_values().values:
-        label = plot_label(_plotby_name)
+        label = plot_label(_plotby_name)  # type: ignore
         label += f" = {level}"
         x_cdf = calculate_cdf(x[plot_by == level])
-        ax_ = x_cdf.plot.line(ax=ax_, label=label, color=binary_color(level), **kwargs)
+        ax_ = x_cdf.plot.line(ax=ax_, label=label, color=binary_color(level), **kwargs)  # type: ignore
 
     if x_label is not None:
         ax_.set_xlabel(x_label)
@@ -256,9 +256,9 @@ def cdf_plot_matplotlib_levels_cv(
 
     # For each level of plot_by, plot the cdf of x, conditional on plot_by
     for level in plot_by.drop_duplicates().sort_values().values:
-        for fold in cv_folds.unique().sort():
-            x_cdf = calculate_cdf(x[(plot_by == level) & (cv_folds == fold)])
-            ax_ = x_cdf.plot.line(ax=ax_, color=binary_color(level), **kwargs)
+        for fold in cv_folds.unique().sort():  # type: ignore
+            x_cdf = calculate_cdf(x[(plot_by == level) & (cv_folds == fold)])  # type: ignore
+            ax_ = x_cdf.plot.line(ax=ax_, color=binary_color(level), **kwargs)  # type: ignore
 
     ax_.set_xlabel(x_label) if x_label is not None else ax_.set_xlabel(x.name)
     (
@@ -291,8 +291,13 @@ def jenson_shannon_divergence(
         The Jenson-Shannon divergence between `x` conditioned on each level
         of `plot_by`.
     """
-    x0 = x[plot_by == plot_by.drop_duplicates().sort_values()[0]]
-    x1 = x[plot_by == plot_by.drop_duplicates().sort_values()[1]]
+    pb_test = (
+        plot_by.unique().sort()
+        if isinstance(plot_by, pl.Series)
+        else np.unique(plot_by)
+    )
+    x0 = x[plot_by == pb_test[0]]
+    x1 = x[plot_by == pb_test[1]]
     return js_divergence(x0, x1)
 
 
@@ -345,10 +350,10 @@ def calculate_cdf(
         raise ValueError("The array must not contain NaNs.")
     # Can't contain infs:
     if get_column_dtype(x) == "continuous":
-        if np.isinf(x.values).any():
+        if np.isinf(x.values).any():  # type: ignore
             raise ValueError("The array must not contain infs.")
     # Can't contain non-numeric values:
-    if not np.issubdtype(x, np.number):
+    if not np.issubdtype(x, np.number):  # type: ignore
         raise ValueError("The array must not contain non-numeric values.")
     # Calculate the CDF
     x = x.sort_values()

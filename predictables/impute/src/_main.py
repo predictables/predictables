@@ -68,9 +68,9 @@ def integrated_imputation_workflow(
 
     # Imputation with the Trained Models
     return impute_with_trained_model(
-        df_imputed,
-        missing_mask,
+        df_imputed,  # type: ignore
+        missing_mask,  # type: ignore
         trained_models,
         learning_rate,
-        only_missing=True,
+        only_missing=True,  # type: ignore
     )

@@ -7,7 +7,6 @@ import polars.selectors as cs
 from predictables.util import to_pl_lf
 
 
-# trunk-ignore(sourcery/low-code-quality)
 def preprocess_data_for_pca(
     df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
     high_cardinality_threshold: int = 10,

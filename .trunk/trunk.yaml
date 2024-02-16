@@ -21,7 +21,9 @@ lint:
     - git-diff-check
     - pyright
     - pylance
+    - isort
   enabled:
+    - dotenv-linter@3.3.0
     - hadolint@2.12.0
     - terrascan@1.18.11
     - prettier@3.2.5
@@ -43,7 +45,7 @@ lint:
     - svgo@3.2.0
     - trivy@0.49.1
     - trufflehog@3.67.6
-    - yamllint@1.34.0
+    - yamllint@1.35.0
   ignore:
     - linters: [ALL]
       paths: [
@@ -62,7 +64,6 @@ lint:
           htmlcov/**,
           venv/**,
           env/**,
-          "*.pyi",
           .env/**,
           .venv/**,
           .docker/**,

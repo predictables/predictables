@@ -62,8 +62,8 @@ def calc_categorical_categorical_corr(
     if len(args) == 1:
         return calc_categorical_categorical_corr_df(pd.DataFrame(args[0]))
     elif len(args) == 2:
-        arg1 = to_pd_s(args[0]) if isinstance(args[0], pl.Series) else args[0]
-        return calc_categorical_categorical_corr_series(arg1, args[1])
+        arg1 = to_pd_s(args[0]) if isinstance(args[0], pl.Series) else args[0]  # type: ignore
+        return calc_categorical_categorical_corr_series(arg1, args[1])  # type: ignore
     else:
         raise TypeError(
             f"Invalid number of arguments: Must be 1 or 2, but got {len(args)}"
