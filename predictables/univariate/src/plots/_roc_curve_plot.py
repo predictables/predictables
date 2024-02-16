@@ -948,11 +948,11 @@ def _empirical_auc_variance(
         )
         return np.var(auc_, ddof=1) * (1 - bagging_fraction) / bagging_fraction
 
-    return (
+    return float(
         np.var(
             [
                 roc_auc_score(
-                    y.loc[fold.eq(f).values], yhat_proba.loc[fold.eq(f).values]
+                    y.loc[fold.eq(f).values], yhat_proba.loc[fold.eq(f).values]  # type: ignore
                 )
                 for f in get_unique(fold)
             ],

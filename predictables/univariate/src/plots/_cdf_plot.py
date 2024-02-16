@@ -271,7 +271,7 @@ def cdf_plot_matplotlib_levels_cv(
     (
         ax_.set_xlabel(x_label)
         if x_label is not None
-        else ax_.set_xlabel(x.name if x.name is not None else "x")
+        else ax_.set_xlabel(x.name if x.name is not None else "x")  # type: ignore
     )
     (
         ax_.set_ylabel(y_label)
