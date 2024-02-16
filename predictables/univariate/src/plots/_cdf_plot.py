@@ -215,9 +215,9 @@ def cdf_plot_matplotlib_levels_cv(
     x: Union[pl.Series, pd.Series, np.ndarray],
     plot_by: Union[pl.Series, pd.Series, np.ndarray],
     cv_folds: Union[pl.Series, pd.Series, np.ndarray],
-    x_label: Optional[Union[str, None]] = None,
+    x_label: Optional[str] = None,
     y_label: Optional[str] = "Empirical Cumulative Distribution Function",
-    ax: Optional[Union[Axes, None]] = None,
+    ax: Optional[Axes] = None,
     **kwargs,
 ) -> Axes:
     """
@@ -246,8 +246,9 @@ def cdf_plot_matplotlib_levels_cv(
     Axes
         The axes on which the CDF was plotted.
     """
-    x = to_pd_s(x)
-    plot_by = to_pd_s(plot_by)
+    x = to_pd_s(x) if isinstance(x, pl.Series) else x
+    plot_by = to_pd_s(plot_by) if plot_by is not None else None
+    cv_folds = to_pd_s(cv_folds) if cv_folds is not None else None
 
     if ax is None:
         _, ax_ = plt.subplots()
@@ -256,11 +257,22 @@ def cdf_plot_matplotlib_levels_cv(
 
     # For each level of plot_by, plot the cdf of x, conditional on plot_by
     for level in plot_by.drop_duplicates().sort_values().values:
-        for fold in cv_folds.unique().sort():  # type: ignore
-            x_cdf = calculate_cdf(x[(plot_by == level) & (cv_folds == fold)])  # type: ignore
-            ax_ = x_cdf.plot.line(ax=ax_, color=binary_color(level), **kwargs)  # type: ignore
+        if cv_folds is not None:
+            for fold in cv_folds.drop_duplicates().sort_values().values:
+                x_cdf = calculate_cdf(
+                    x[(to_pd_s(plot_by) == level) & (cv_folds == fold)]
+                )
+                ax_ = x_cdf.plot(
+                    kind="line", ax=ax_, color=binary_color(level), **kwargs
+                )
+        else:
+            return ax_
 
-    ax_.set_xlabel(x_label) if x_label is not None else ax_.set_xlabel(x.name)
+    (
+        ax_.set_xlabel(x_label)
+        if x_label is not None
+        else ax_.set_xlabel(x.name if x.name is not None else "x")
+    )
     (
         ax_.set_ylabel(y_label)
         if y_label is not None

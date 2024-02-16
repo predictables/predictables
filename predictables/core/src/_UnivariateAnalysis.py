@@ -284,7 +284,7 @@ class UnivariateAnalysis:
             rpt = self._rpt_title_page(filename_, margins_)
             rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
             for X in tqdm(features, self._build_desc(len(features), max_per_file)):
-                rpt = getattr(self, X)._add_to_report(rpt)
+                rpt = getattr(self, X.lower())._add_to_report(rpt)
                 counter += 1
 
                 if counter == max_per_file:
@@ -395,16 +395,17 @@ class UnivariateAnalysis:
         cols = []
         total_df = []
         for col in self.feature_column_names:
-            if hasattr(self, col):
-                ua = getattr(self, col)
-            else:
-                ua = Univariate(
-                    self.df,
-                    "cv",
-                    col,
-                    self.target_column_name,
-                    time_series_validation=self.has_time_series_structure,
-                )
+            # if hasattr(self, col):
+            #     ua = getattr(self, col)
+            # else:
+            #     ua = Univariate(
+            #         self.df,
+            #         "cv",
+            #         col,
+            #         self.target_column_name,
+            #         time_series_validation=self.has_time_series_structure,
+            #     )
+            ua = getattr(self, col.lower().replace(" ", "_").replace("-", "_"))
             cols.append(col)
             total_df.append(
                 ua.results.select(
@@ -428,13 +429,9 @@ class UnivariateAnalysis:
                         .alias("Ave."),
                     ]
                 )
-                .sort(
-                    "Ave.",
-                    descending=True,
-                )
                 .collect()
                 .to_pandas()
                 .set_index("Feature")
             )
-        df = pd.concat(total_df).T
+        df = pd.concat(total_df)
         return df.sort_values("Ave.", ascending=False)

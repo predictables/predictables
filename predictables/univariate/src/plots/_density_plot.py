@@ -251,14 +251,14 @@ def density_plot_mpl(
         " by "
         f"{plot_label(plot_by.name if plot_by.name is not None else 'Groupby Var')}."  # type: ignore
     )
-    title += "Distributions by level are"
+    title += "\nDistributions by level are"
     title += " not " if p >= t_test_alpha else " "
     title += f"significantly different at the {1 - t_test_alpha:.0%} level."
 
     ax0.set_title(title)
 
     # Set the x-axis label
-    ax0.set_xlabel(plot_label(x.name if x.name is not None else "Var"), False)  # type: ignore
+    ax0.set_xlabel(plot_label(x.name if x.name is not None else "Var", False))  # type: ignore
 
     if call_legend:
         plt.legend(fontsize=24 * (figsize[0] / 16))

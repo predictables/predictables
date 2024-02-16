@@ -926,16 +926,15 @@ def _empirical_auc_variance(
             "`use_bootstrap` to True."
         )
 
-    # Raise an error if any of the folds have only one class
-
-    elif any(len(y[fold == f].unique()) == 1 for f in fold.unique()) and (
-        not use_bootstrap
-    ):
-        raise ValueError(
-            "The empirical variance of the AUC estimator cannot be computed if any of "
-            "the folds have only one class. Either pass a different set of fold labels "
-            "or set `use_bootstrap` to True."
-        )
+    # # Raise an error if any of the folds have only one class
+    # elif any(len(y[fold == f].unique()) == 1 for f in fold.unique()) and (
+    #     not use_bootstrap
+    # ):
+    #     raise ValueError(
+    #         "The empirical variance of the AUC estimator cannot be computed if any of "
+    #         "the folds have only one class. Either pass a different set of fold labels "
+    #         "or set `use_bootstrap` to True."
+    #     )
 
     elif (len(y) == 0) | (len(yhat_proba) == 0) | (len(fold) == 0):
         raise ValueError(
@@ -962,7 +961,9 @@ def _empirical_auc_variance(
     return (
         np.var(
             [
-                roc_auc_score(y[fold == f], yhat_proba[fold == f])
+                roc_auc_score(
+                    y.loc[fold.eq(f).values], yhat_proba.loc[fold.eq(f).values]
+                )
                 for f in get_unique(fold)
             ],
             ddof=1,

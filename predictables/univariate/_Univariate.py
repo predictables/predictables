@@ -3,6 +3,7 @@ from typing import Any, List, Optional, Tuple, Union
 import matplotlib.pyplot as plt
 import pandas as pd
 import polars as pl
+import numpy as np
 from matplotlib.axes import Axes
 from sklearn.preprocessing import MinMaxScaler, StandardScaler  # type: ignore
 
@@ -91,6 +92,7 @@ class Univariate(Model):
 
     normalization_obj: Optional[Union[MinMaxScaler, StandardScaler]]
 
+    # trunk-ignore-all(sourcery)
     def __init__(
         self,
         df_: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
@@ -130,6 +132,7 @@ class Univariate(Model):
         self.unique_folds = get_unique(
             self.df.select(self.fold_col).collect().to_pandas()[self.fold_col]
         )
+        self.unique_folds_str = [f"Fold-{f}".zfill(2) for f in self.unique_folds]
 
         self.cv_dict = {}
         for fold in self.unique_folds:
@@ -145,8 +148,8 @@ class Univariate(Model):
             )
 
         dbg.msg(f"[{self.feature_col}]: Producing results dataframe | Ux0001f")
-        self.agg_results = pl.DataFrame(
-            {"fold": self.unique_folds + ["mean", "std"]}
+        self.agg_results = pl.from_pandas(
+            pd.DataFrame({"fold": self.unique_folds_str + ["mean", "std"]})
         ).lazy()
         for attribute in [
             "coef",
@@ -169,9 +172,19 @@ class Univariate(Model):
             "logloss_train",
             "logloss_test",
         ]:
-            if hasattr(self, attribute):
+            if (self.results is not None) and (attribute in self.results.columns):
+                # Get the attribute from the cv_dict for each fold
+                att = [
+                    self.cv_dict[fold].results.select(attribute).collect().item(0, 0)
+                    for fold in self.unique_folds
+                ]
+
+                # Get the mean and standard deviation of the attribute
+                std = pd.Series(att).std()
+                att += [self.results.select(pl.col(attribute)).collect().item(0, 0)]
+                att += [std]
                 self.agg_results = self.agg_results.with_columns(
-                    [pl.col(attribute).append(pl.lit(get_col(self, attribute)))]
+                    pl.Series(att).alias(attribute)
                 )
 
             else:
@@ -416,16 +429,16 @@ class Univariate(Model):
             to_pd_s(self.yhat_test) if yhat is None else to_pd_s(yhat),
             cv,
             (
-                to_pd_df(self.agg_results).loc["Ave.", "coef"].values
+                to_pd_df(self.agg_results).loc["Ave.", "coef"].values  # type: ignore
                 if coef is None
                 else coef
             ),
             (
-                to_pd_df(self.agg_results).loc["Ave.", "coef"].values
+                to_pd_df(self.agg_results).loc["Ave.", "coef"].values  # type: ignore
                 if se is None
                 else se
             ),
-            self.pvalues if pvalues is None else pvalues,
+            self.get("pvalues") if pvalues is None else pvalues,
             ax=ax0,
             figsize=self.figsize if figsize is None else figsize,
             **kwargs,
@@ -559,10 +572,10 @@ class Univariate(Model):
             return self.plot_roc_curve(
                 y=self.y,
                 yhat=self.yhat_train,
-                cv=self.df.cv,
-                coef=self.coef,
-                se=self.se,
-                pvalues=self.pvalues,
+                cv=self.df.select(self.fold_col).collect().to_pandas()[self.fold_col],  # type: ignore
+                coef=self.get("coef"),
+                se=self.get("se"),
+                pvalues=self.get("pvalues"),
                 figsize=self.figsize,
             )
 
@@ -693,11 +706,11 @@ class Univariate(Model):
                 results[col] = results[col].apply(lambda x: f"{x:.1%}")
 
             # Hierarchy of formatting depending on size of median value in col
-            for col in [c for c in results.columns.tolist() if c not in pct_cols]:
+            for col in [c for c in results.columns.tolist()[1:] if c not in pct_cols]:
                 m = results[col].median()
-                if m > 1.0:
+                if np.abs(m) > 1.0:
                     results[col] = results[col].apply(lambda x: f"{x:.2f}")
-                elif m > 0.1:
+                elif np.abs(m) > 0.1:
                     results[col] = results[col].apply(lambda x: f"{x:.3f}")
                 else:
                     results[col] = results[col].apply(lambda x: f"{x:.1e}")
@@ -705,6 +718,7 @@ class Univariate(Model):
             # Apply an index at the end
             results.columns = pd.Index(
                 [
+                    "CV Fold",
                     "Fitted Coef.",
                     "Fitted p-Value",
                     "Fitted Std. Err.",
@@ -727,12 +741,12 @@ class Univariate(Model):
                 ]
             )
 
-            results.index = pd.Index(
-                [f"Fold-{i}" for i in self.unique_folds]
-                + [
-                    "Agg. Mean",
-                    "Agg. SD",
-                ]
-            )
+            # results.index = pd.Index(
+            #     [f"Fold-{i}" for i in self.unique_folds]
+            #     + [
+            #         "Agg. Mean",
+            #         "Agg. SD",
+            #     ]
+            # )
 
-        return results.T
+        return results.set_index("CV Fold").T

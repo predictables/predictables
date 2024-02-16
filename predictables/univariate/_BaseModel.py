@@ -244,6 +244,22 @@ class Model:
             f"cv={f'fold-{self.fold_n}' if self.fold_n is not None else 'none'})"
         )
 
+    def get(self, attr: str) -> Any:
+        """
+        Returns the value of the attribute.
+
+        Parameters
+        ----------
+        attr : str
+            The attribute to return.
+
+        Returns
+        -------
+        Any
+            The value of the attribute.
+        """
+        return self.results.select(attr).collect().item(0, 0)
+
     def _fit_standardization(
         self,
         X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame],
