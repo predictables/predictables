@@ -65,6 +65,21 @@ class Model:
         self.target_col = target_col if target_col is not None else self.df.columns[0]
         self.time_series_validation = time_series_validation
 
+        # If there are any np.inf values, replace them with np.nan (so they will get removed
+        # in the next step)
+        self.df = self.df.select(
+            [
+                pl.col(col).replace(pl.lit(np.inf), pl.lit(np.nan))
+                for col in self.df.columns
+            ]
+        )
+        self.df_val = self.df_val.select(
+            [
+                pl.col(col).replace(pl.lit(np.inf), pl.lit(np.nan))
+                for col in self.df_val.columns
+            ]
+        )
+
         # Remove rows with missing values
         self.df = remove_missing_rows(self.df, self.feature_col, self.target_col)
         self.df_val = remove_missing_rows(
@@ -120,11 +135,31 @@ class Model:
 
         # Either logistic or linear regression
         if self.is_binary:
-            self.model = fit_sm_logistic_regression(self.X_train, self.y_train)
-            self.sk_model = fit_sk_logistic_regression(self.X_train, self.y_train)
+            try:
+                self.model = fit_sm_logistic_regression(self.X_train, self.y_train)
+                self.sk_model = fit_sk_logistic_regression(self.X_train, self.y_train)
+            except np.linalg.LinAlgError:
+                self.model = fit_sm_logistic_regression(
+                    self.X_train.loc[self.X_train.iloc[:, 0].ne(0)],
+                    self.y_train[self.X_train.iloc[:, 0].ne(0)],
+                )
+                self.sk_model = fit_sk_logistic_regression(
+                    self.X_train.loc[self.X_train.iloc[:, 0].ne(0)],
+                    self.y_train[self.X_train.iloc[:, 0].ne(0)],
+                )
         else:
-            self.model = fit_sm_linear_regression(self.X_train, self.y_train)
-            self.sk_model = fit_sk_linear_regression(self.X_train, self.y_train)
+            try:
+                self.model = fit_sm_linear_regression(self.X_train, self.y_train)
+                self.sk_model = fit_sk_linear_regression(self.X_train, self.y_train)
+            except np.linalg.LinAlgError:
+                self.model = fit_sm_linear_regression(
+                    self.X_train.loc[self.X_train.iloc[:, 0].ne(0)],
+                    self.y_train[self.X_train.iloc[:, 0].ne(0)],
+                )
+                self.sk_model = fit_sk_linear_regression(
+                    self.X_train.loc[self.X_train.iloc[:, 0].ne(0)],
+                    self.y_train[self.X_train.iloc[:, 0].ne(0)],
+                )
 
         self.yhat_train: Union[pd.Series[Any], pd.DataFrame[Any]] = self.predict(
             self.X_train

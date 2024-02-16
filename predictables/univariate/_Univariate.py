@@ -1,9 +1,9 @@
 from typing import Any, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import polars as pl
-import numpy as np
 from matplotlib.axes import Axes
 from sklearn.preprocessing import MinMaxScaler, StandardScaler  # type: ignore
 
@@ -88,7 +88,7 @@ class Univariate(Model):
     fold_name: str
     folds: Optional[pd.Series]
 
-    df_all: pd.DataFrame
+    # df_all: pd.DataFrame
 
     normalization_obj: Optional[Union[MinMaxScaler, StandardScaler]]
 
@@ -239,9 +239,9 @@ class Univariate(Model):
             dfpd.loc[:, self.fold_name] if dfpd is not None else None
         )
 
-        self.df_all = to_pd_df(
-            dfpd if self.df_val is None else pd.concat([dfpd, to_pd_df(self.df_val)])
-        )
+        # self.df_all = to_pd_df(
+        #     dfpd if self.df_val is None else pd.concat([dfpd, to_pd_df(self.df_val)])
+        # )
 
         self.figsize = (7, 7) if "figsize" not in kwargs else kwargs["figsize"]
 
