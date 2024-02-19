@@ -75,8 +75,9 @@ def _cv_filter_ts(
     in with negative labels sometimes. This is why we use less than or equal to, but not
     negative.
     """
-    return pd.Series(
-        np.logical_and(
-            to_pd_s(fold_col).lt(fold).values, to_pd_s(fold_col).ge(0).values
-        )
-    )
+    fold_col = pd.Series(fold_col)
+    if isinstance(fold, pd.Series):
+        fold = fold.iloc[0]  # or any other logic to extract the single value
+    fold = int(fold)
+    return_val = (fold_col < fold) & (fold_col >= 0)
+    return return_val.reset_index(drop=True)

@@ -70,6 +70,7 @@ def roc_curve_plot(
     """
     if backend == "matplotlib":
         print(f"ts valid: 3: {time_series_validation}")
+        print(f"point1: y: {y} | yhat_proba: {yhat_proba}")
         return roc_curve_plot_mpl(
             y=y,
             yhat_proba=yhat_proba,
@@ -127,7 +128,9 @@ def create_auc_data(
     tpr : pd.Series
         The true positive rate, ranging from 0 to 1, at each threshold.
     """
-    roc: Tuple[np.ndarray, np.ndarray] = roc_curve(y, yhat_proba)
+    print(f"y: {y.shape} | yhat_proba: {yhat_proba.shape} | n_bins: {n_bins} ")
+    print(f"y: {y} | yhat_proba: {yhat_proba} ")
+    roc: Tuple[np.ndarray, np.ndarray] = roc_curve(y.round(0).astype(int), yhat_proba)
 
     # Interpolate the data to get a smoother curve
     fpr: pd.Series = pd.Series(np.linspace(0, 1, n_bins))
@@ -197,6 +200,7 @@ def plot_individual_roc_curves(
     figax : Union[go.Figure, Axes]
         The plot.
     """
+    print(f"point2: y: {y} | yhat_proba: {yhat_proba}")
     fpr, tpr = create_auc_data(y, yhat_proba, n_bins)
 
     # Handle the case where figax is an alias for either fig or ax
@@ -313,8 +317,8 @@ def plot_cv_roc_curves(
 
     for f in fold.drop_duplicates().sort_values().values:
         figax = plot_individual_roc_curves(
-            y=y[cv_filter(fold, f, time_series_validation)],
-            yhat_proba=yhat_proba[cv_filter(fold, f, time_series_validation)],
+            y=y[cv_filter(f, fold, time_series_validation)],
+            yhat_proba=yhat_proba[cv_filter(f, fold, time_series_validation)],
             curve_name=f"Fold {f}",
             figax=figax,
             n_bins=n_bins if n_bins is not None else 200,
@@ -370,9 +374,9 @@ def calc_auc_curve_data_from_folds(
         dbg.msg(f"fold: {fold} | y.name: {y.name} | ROC000Fa ")
         print(f"ts valid: 6: {time_series_validation}")
         fpr, tpr = create_auc_data(
-            pd.Series(y.values[cv_filter(fold, f, time_series_validation)]),
+            pd.Series(y.values[cv_filter(f, fold, time_series_validation)]),
             yhat_proba.reset_index(drop=True)[
-                cv_filter(fold, f, time_series_validation)
+                cv_filter(f, fold, time_series_validation)
             ],
             n_bins,
         )
@@ -1006,7 +1010,7 @@ def _empirical_auc_variance(
     # would result in a variance of 0, which is not useful for the
     # DeLong test)
     for f in unique_folds:
-        fold_indices = fold[cv_filter(fold, f, time_series_validation)].index
+        fold_indices = fold[cv_filter(f, fold, time_series_validation)].index
         if len(y.loc[fold_indices].unique()) < 2:
             raise ValueError(
                 "The empirical variance of the AUC estimator cannot be computed "
@@ -1018,7 +1022,7 @@ def _empirical_auc_variance(
 
     for f in unique_folds:
         # Find indices for the current fold
-        fold_indices = fold[cv_filter(fold, f, time_series_validation)].index
+        fold_indices = fold[cv_filter(f, fold, time_series_validation)].index
 
         # Calculate AUC score for the current fold
         auc_score = roc_auc_score(y[fold_indices], yhat_proba[fold_indices])
