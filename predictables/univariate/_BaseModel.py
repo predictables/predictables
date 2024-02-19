@@ -72,29 +72,6 @@ class Model:
         self.target_col = target_col if target_col is not None else self.df.columns[0]
         self.time_series_validation = time_series_validation
 
-        # If there are any np.inf values, replace them with np.nan (so they will get removed
-        # in the next step)
-        # dbg.msg("Replacing np.inf with np.nan in the dataframes.")
-        # dbg.msg(
-        #     f"df.shape before: {self.df.collect().shape if isinstance(self.df, pl.LazyFrame) else self.df.shape}"
-        # )
-        # self.df = self.df.select(
-        #     [pl.col(col).replace(np.inf, np.nan) for col in self.df.columns]
-        # )
-        # dbg.msg(
-        #     f"df.shape after: {self.df.collect().shape if isinstance(self.df, pl.LazyFrame) else self.df.shape}"
-        # )
-
-        # dbg.msg(
-        #     f"df_val.shape before: {self.df_val.collect().shape if isinstance(self.df_val, pl.LazyFrame) else self.df_val.shape}"
-        # )
-        # self.df_val = self.df_val.select(
-        #     [pl.col(col).replace(np.inf, np.nan) for col in self.df_val.columns]
-        # )
-        # dbg.msg(
-        #     f"df_val.shape after: {self.df_val.collect().shape if isinstance(self.df_val, pl.LazyFrame) else self.df_val.shape}"
-        # )
-
         # Remove rows with missing values
         self.df = remove_missing_rows(self.df, self.feature_col, self.target_col)
         self.df_val = remove_missing_rows(

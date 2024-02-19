@@ -3,7 +3,7 @@ from typing import Optional, Union
 import pandas as pd
 import polars as pl
 
-from predictables.util import to_pl_lf
+from predictables.util import cv_filter, to_pl_lf
 
 
 def time_series_validation_filter(
@@ -39,12 +39,15 @@ def time_series_validation_filter(
         # If a fold is passed, we are doing cross validation so don't use any
         # validation set
         df = df.select([feature_col, target_col, fold_col])
-        if time_series_validation:
-            df_train = df.filter(pl.col(fold_col) < fold)
-            df_test = df.filter(pl.col(fold_col) >= fold)
-        else:
-            df_train = df.filter(pl.col(fold_col) != fold)
-            df_test = df.filter(pl.col(fold_col) == fold)
+        fold_filter = pl.from_pandas(
+            cv_filter(
+                fold,
+                df.select(fold_col).collect()[fold_col],
+                ts_cv=time_series_validation,
+            )
+        )
+        df_train = df.filter(fold_filter)
+        df_test = df.filter(~fold_filter)
 
     # Split into X, y and train, test
     X_test = (
