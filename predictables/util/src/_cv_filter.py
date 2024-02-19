@@ -68,4 +68,5 @@ def _cv_filter_ts(
     in with negative labels sometimes. This is why we use less than or equal to, but not
     negative.
     """
-    return to_pd_s(np.logical_and(to_pd_s(fold_col).lt(fold), to_pd_s(fold_col).ge(0)))
+    fold_col = pd.Series(fold_col)
+    return (fold_col < fold) & (fold_col >= 0)
