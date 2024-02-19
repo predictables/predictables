@@ -69,6 +69,7 @@ def roc_curve_plot(
         The configured Axes object.
     """
     if backend == "matplotlib":
+        print(f"ts valid: 3: {time_series_validation}")
         return roc_curve_plot_mpl(
             y=y,
             yhat_proba=yhat_proba,
@@ -367,6 +368,7 @@ def calc_auc_curve_data_from_folds(
 
     for f in fold.drop_duplicates().sort_values().values:
         dbg.msg(f"fold: {fold} | y.name: {y.name} | ROC000Fa ")
+        print(f"ts valid: 6: {time_series_validation}")
         fpr, tpr = create_auc_data(
             pd.Series(y.values[cv_filter(fold, f, time_series_validation)]),
             yhat_proba.reset_index(drop=True)[
@@ -483,6 +485,7 @@ def plot_roc_auc_curves_and_confidence_bands(
     dbg.msg(
         f"y: {y.shape} | yhat_proba: {yhat_proba.shape} | fold: {fold.shape} | n_bins: {n_bins} | cv_alpha: {cv_alpha} | figax: {figax} | call_legend: {call_legend} "
     )
+    print(f"ts valid: 5: {time_series_validation}")
     fprs, tprs = calc_auc_curve_data_from_folds(
         y,
         yhat_proba,
@@ -836,6 +839,7 @@ def roc_curve_plot_mpl(
     if ax is None:
         _, ax = plt.subplots(figsize=figsize)
 
+    print(f"ts valid: 4: {time_series_validation}")
     ax = plot_roc_auc_curves_and_confidence_bands(
         y,
         yhat_proba,

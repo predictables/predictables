@@ -15,7 +15,7 @@ def cv_filter(
     """
     Filter data based on cross-validation fold.
     """
-    print(f"time_series_validation: {time_series_validation}")
+    print(f"ts valid: 7: {time_series_validation}")
     return (
         _cv_filter_ts(fold, fold_col)
         if time_series_validation
