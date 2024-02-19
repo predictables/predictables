@@ -42,7 +42,7 @@ def filter_by_cv_fold(
     s = to_pd_s(s)
 
     # filter based on cross-validation fold
-    return s[~cv_filter(f, folds, time_series_validation)]
+    return s[cv_filter(f, folds, time_series_validation, train_test)]
 
 
 def cv_filter(
