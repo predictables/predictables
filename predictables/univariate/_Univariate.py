@@ -400,6 +400,7 @@ class Univariate(Model):
         y: Optional[Union[pd.Series, pl.Series]] = None,
         yhat: Optional[Union[pd.Series, pl.Series]] = None,
         cv: Optional[Union[pd.Series, pl.Series]] = None,
+        time_series_validation: bool = True,
         coef: Optional[float] = None,
         se: Optional[float] = None,
         pvalues: Optional[float] = None,
@@ -574,6 +575,7 @@ class Univariate(Model):
                 y=self.y,
                 yhat=self.yhat_train,
                 cv=self.df.select(self.fold_col).collect().to_pandas()[self.fold_col],  # type: ignore
+                time_series_validation=self.time_series_validation,
                 coef=self.get("coef"),
                 se=self.get("se"),
                 pvalues=self.get("pvalues"),

@@ -43,7 +43,7 @@ def time_series_validation_filter(
             cv_filter(
                 fold,
                 df.select(fold_col).collect()[fold_col],
-                ts_cv=time_series_validation,
+                time_series_validation=time_series_validation,
             )
         )
         df_train = df.filter(fold_filter)
