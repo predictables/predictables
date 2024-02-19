@@ -47,6 +47,7 @@ class Model:
     yhat_train: pd.Series
     yhat_test: pd.Series
 
+    # trunk-ignore(sourcery/low-code-quality)
     def __init__(
         self,
         df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
@@ -59,9 +60,6 @@ class Model:
     ) -> None:
         dbg.msg(f"__init__ called on {self.__class__.__name__} with df and df_val.")
         dbg.msg(f"feature_col: {feature_col}, target_col: {target_col}")
-        dbg.msg(
-            f"df.shape: {df.collect().shape if isinstance(df, pl.LazyFrame) else df.shape}"
-        )
         self.df = to_pl_lf(df)
         self.df_val = to_pl_lf(df_val) if df_val is not None else to_pl_lf(df)
         self.fold_n = fold_n
@@ -135,40 +133,47 @@ class Model:
                     f"LinAlgError caught for {self.feature_col}. "
                     "Fitting model without missing rows, and removing 0s."
                 )
-                dbg.msg(
-                    f"X_train.shape before: {self.X_train.collect().shape if isinstance(self.X_train, pl.LazyFrame) else self.X_train.shape}"
+                missing_zero_idx = (
+                    to_pd_df(self.X_train)
+                    .iloc[:, 0]
+                    .fillna(0)
+                    .eq(0)
+                    .reset_index(drop=True)
                 )
-                self.X_train = self.X_train.loc[self.X_train.iloc[:, 0].ne(0)]
-                dbg.msg(
-                    f"X_train.shape after: {self.X_train.collect().shape if isinstance(self.X_train, pl.LazyFrame) else self.X_train.shape}"
+                X_train = (
+                    to_pd_df(self.X_train).reset_index(drop=True).loc[~missing_zero_idx]
                 )
-                dbg.msg(
-                    f"y_train.shape before: {self.y_train.collect().shape if isinstance(self.y_train, pl.LazyFrame) else self.y_train.shape}"
-                )
+                y_train = to_pd_s(self.y_train).reset_index(drop=True)[
+                    ~missing_zero_idx
+                ]
+
                 try:
-                    self.y_train = self.y_train.reset_index(drop=True)[
-                        self.X_train.iloc[:, 0].ne(0).reset_index(drop=True)
-                    ]
+                    self.model = fit_sm_logistic_regression(self.X_train, self.y_train)
+                    self.sk_model = fit_sk_logistic_regression(
+                        self.X_train, self.y_train
+                    )
                 except Exception as e:
                     dbg.msg(f"Error: {e}")  # type: ignore
-                dbg.msg(
-                    f"y_train.shape after: {self.y_train.collect().shape if isinstance(self.y_train, pl.LazyFrame) else self.y_train.shape}"
-                )
-                self.model = fit_sm_logistic_regression(self.X_train, self.y_train)
-                self.sk_model = fit_sk_logistic_regression(self.X_train, self.y_train)
         else:
             try:
                 self.model = fit_sm_linear_regression(self.X_train, self.y_train)
                 self.sk_model = fit_sk_linear_regression(self.X_train, self.y_train)
             except np.linalg.LinAlgError:
-                self.model = fit_sm_linear_regression(
-                    self.X_train.loc[self.X_train.iloc[:, 0].ne(0)],
-                    self.y_train[self.X_train.iloc[:, 0].ne(0)],
+                missing_zero_idx = (
+                    to_pd_df(self.X_train)
+                    .iloc[:, 0]
+                    .fillna(0)
+                    .eq(0)
+                    .reset_index(drop=True)
                 )
-                self.sk_model = fit_sk_linear_regression(
-                    self.X_train.loc[self.X_train.iloc[:, 0].ne(0)],
-                    self.y_train[self.X_train.iloc[:, 0].ne(0)],
+                X_train = (
+                    to_pd_df(self.X_train).reset_index(drop=True).loc[~missing_zero_idx]
                 )
+                y_train = to_pd_s(self.y_train).reset_index(drop=True)[
+                    ~missing_zero_idx
+                ]
+                self.model = fit_sm_linear_regression(X_train, y_train)
+                self.sk_model = fit_sk_linear_regression(X_train, y_train)
 
         self.yhat_train: Union[pd.Series[Any], pd.DataFrame[Any]] = self.predict(
             self.X_train

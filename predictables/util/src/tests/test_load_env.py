@@ -75,7 +75,10 @@ def test_load_env_large_number_of_variables(mock_dotenv_values, mock_load_dotenv
 @patch("predictables.util.src._load_env.dotenv_values")
 def test_load_env_non_string_keys_values(mock_dotenv_values, mock_load_dotenv):
     mock_load_dotenv.return_value = True
-    non_string_keys_values = {123: 456, True: False}  # a dictionary with non-string keys and values
+    non_string_keys_values = {
+        123: 456,
+        True: False,
+    }  # a dictionary with non-string keys and values
     mock_dotenv_values.return_value = non_string_keys_values
     with pytest.raises(ValueError):
         load_env()

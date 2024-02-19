@@ -16,7 +16,7 @@ def df():
             "feature_col": list(range(50)),
             "target_col": [i * 10 for i in range(50)],
             "cv": 15 * [1] + 15 * [2] + 15 * [3] + 5 * [-1],
-            'cv2': 15 * [1] + 15 * [2] + 15 * [3] + 5 * [4],
+            "cv2": 15 * [1] + 15 * [2] + 15 * [3] + 5 * [4],
         }
     )
 
@@ -195,7 +195,7 @@ def test_cv2_false(
 
     train = df.loc[df.cv2.ne(2)].reset_index(drop=True)
     test = df.loc[df.cv2.eq(2)].reset_index(drop=True)
-    
+
     (
         assert_frame_equal(
             train[["feature_col"]].reset_index(drop=True),
