@@ -8,12 +8,19 @@ from predictables.util.src._to_pd import to_pd_s
 
 
 def cv_filter(
-    fold, fold_col: Union[pd.Series, pl.Series, np.ndarray], ts_cv: bool = False
+    fold,
+    fold_col: Union[pd.Series, pl.Series, np.ndarray],
+    time_series_validation: bool = False,
 ):
     """
     Filter data based on cross-validation fold.
     """
-    return _cv_filter_ts(fold, fold_col) if ts_cv else _cv_filter_no_ts(fold, fold_col)
+    print(f"time_series_validation: {time_series_validation}")
+    return (
+        _cv_filter_ts(fold, fold_col)
+        if time_series_validation
+        else _cv_filter_no_ts(fold, fold_col)
+    )
 
 
 def _cv_filter_no_ts(
