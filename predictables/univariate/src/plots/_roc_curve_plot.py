@@ -4,13 +4,12 @@ from typing import Optional, Tuple, Union
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd  # type: ignore
-import polars as pl
 import plotly.graph_objects as go  # type: ignore
 from matplotlib.axes import Axes
 from scipy.stats import norm  # type: ignore
 from sklearn.metrics import RocCurveDisplay, roc_auc_score, roc_curve  # type: ignore
 
-from predictables.util import DebugLogger, get_unique
+from predictables.util import DebugLogger
 
 dbg = DebugLogger(working_file="_roc_curve_plot.py")
 
