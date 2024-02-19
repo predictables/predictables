@@ -16,7 +16,13 @@ from predictables.univariate.src.plots import (
     roc_curve_plot,
 )
 from predictables.univariate.src.plots.util import plot_label
-from predictables.util import DebugLogger, get_unique, to_pd_df, to_pd_s
+from predictables.util import (
+    DebugLogger,
+    get_unique,
+    to_pd_df,
+    to_pd_s,
+    filter_by_cv_fold,
+)
 from predictables.util.report import Report
 
 dbg = DebugLogger(working_file="_Univariate.py")
@@ -240,10 +246,6 @@ class Univariate(Model):
         self.fold: Optional[pd.Series[Any]] = (
             dfpd.loc[:, self.fold_name] if dfpd is not None else None
         )
-
-        # self.df_all = to_pd_df(
-        #     dfpd if self.df_val is None else pd.concat([dfpd, to_pd_df(self.df_val)])
-        # )
 
         self.figsize = (7, 7) if "figsize" not in kwargs else kwargs["figsize"]
 

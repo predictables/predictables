@@ -1,7 +1,7 @@
 from typing import Any, Optional, Union
 
 import numpy as np
-import pandas as pd
+import pandas as pd  # type: ignore
 import polars as pl
 import sklearn.metrics as metrics  # type: ignore
 from sklearn.preprocessing import StandardScaler  # type: ignore

@@ -2,13 +2,13 @@ from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
+import pandas as pd  # type: ignore
 import polars as pl
 from matplotlib.axes import Axes
 from scipy.stats import gaussian_kde, ttest_ind  # type: ignore
 
 from predictables.univariate.src.plots.util import binary_color, plot_label
-from predictables.util import get_column_dtype, to_pd_s
+from predictables.util import get_column_dtype, to_pd_s, filter_by_cv_fold
 
 
 def density_plot(
@@ -25,6 +25,7 @@ def density_plot(
     figsize: Tuple[int, int] = (7, 7),
     call_legend: bool = True,
     backend: str = "matplotlib",
+    time_series_validation: bool = True,
 ) -> Axes:
     """
     Plot density function as well as cross-validation densities using the
@@ -68,6 +69,9 @@ def density_plot(
         Defaults to True.
     backend : str, optional
         The backend to use for plotting. Defaults to "matplotlib".
+    time_series_validation : bool, optional
+        Whether the cross-validation is based on a time series. Defaults
+        to True.
 
     Returns
     -------
@@ -90,6 +94,7 @@ def density_plot(
             t_test_alpha=t_test_alpha,
             figsize=figsize,
             call_legend=call_legend,
+            time_series_validation=time_series_validation,
         )
     elif backend == "plotly":
         raise NotImplementedError(
@@ -113,6 +118,7 @@ def density_plot_mpl(
     t_test_alpha: float = 0.05,
     figsize: Tuple[int, int] = (7, 7),
     call_legend: bool = True,
+    time_series_validation: bool = True,
 ) -> Axes:
     """
     Plot density function as well as cross-validation densities.
@@ -153,6 +159,9 @@ def density_plot_mpl(
     call_legend : bool, optional
         Whether to call plt.legend() at the end of the function.
         Defaults to True.
+    time_series_validation : bool, optional
+        Whether the cross-validation is based on a time series. Defaults
+        to True.
 
     Returns
     -------
@@ -218,6 +227,7 @@ def density_plot_mpl(
         alpha=cv_alpha,
         fill_under=False,
         line_width=cv_line_width,
+        time_series_validation=time_series_validation,
     )
 
     # Add vertical lines at the means and medians of the densities:
@@ -348,6 +358,7 @@ def _plot_density_mpl(
     fill_under: bool = True,
     fill_alpha: float = 0.3,
     figsize: Tuple[int, int] = (7, 7),
+    time_series_validation: bool = True,
 ) -> Axes:
     """
     Plot the density of x.
@@ -382,6 +393,8 @@ def _plot_density_mpl(
         The alpha value to use for the fill. Defaults to 0.3.
     figsize : tuple, optional
         The size of the figure to create. Defaults to (7, 7). Only used if ax is None.
+    time_series_validation : bool, optional
+        Whether the cross-validation is based on a time series. Defaults to True.
 
     Returns
     -------
@@ -436,17 +449,18 @@ def _plot_density_mpl(
 def density_by_mpl(
     x: pd.Series,
     by: pd.Series,
-    cv_fold: Optional[Union[pd.Series, None]] = None,
-    x_min: Optional[Optional[float]] = None,
-    x_max: Optional[Optional[float]] = None,
-    ax: Optional[Optional[Axes]] = None,
-    use_labels: Optional[bool] = True,
-    grid_bins: Optional[int] = 200,
-    line_width: Optional[float] = 1.0,
-    alpha: Optional[float] = 1.0,
-    fill_under: Optional[bool] = True,
-    fill_alpha: Optional[float] = 0.3,
-    figsize: Optional[Tuple[int, int]] = (7, 7),
+    cv_fold: Optional[pd.Series] = None,
+    x_min: Optional[float] = None,
+    x_max: Optional[float] = None,
+    ax: Optional[Axes] = None,
+    use_labels: bool = True,
+    grid_bins: int = 200,
+    line_width: float = 1.0,
+    alpha: float = 1.0,
+    fill_under: bool = True,
+    fill_alpha: float = 0.3,
+    figsize: Tuple[int, int] = (7, 7),
+    time_series_validation: bool = True,
 ):
     """
     Plot the density of x by the levels of by, using matplotlib,
@@ -487,6 +501,8 @@ def density_by_mpl(
         fill_under is False.
     figsize : tuple, optional
         The size of the figure to create. Defaults to (7, 7). Only used if ax is None.
+    time_series_validation : bool, optional
+        Whether the cross-validation is based on a time series. Defaults to True.
 
     Returns
     -------
@@ -531,9 +547,12 @@ def density_by_mpl(
                 **params,  # type: ignore
             )
     # Otherwise, plot the density by CV fold
+
     else:
         for f in cv_fold.drop_duplicates().sort_values():  # loop over CV fold
-            for level, group in x[cv_fold == f].groupby(by[cv_fold == f]):
+            x_ = filter_by_cv_fold(x, f, cv_fold, time_series_validation, "test")
+            by_ = filter_by_cv_fold(by, f, cv_fold, time_series_validation, "test")
+            for level, group in x_.groupby(by_):
                 color_ = (
                     binary_color(level) if get_column_dtype(by) == "binary" else None
                 )
@@ -553,6 +572,7 @@ def calculate_density_sd(
     by: pd.Series,
     cv_fold: Union[pd.Series, None] = None,
     grid_bins: int = 200,
+    time_series_validation: bool = True,
 ):
     """
     Using the cross-validation folds, calculate the standard deviation of the
@@ -565,7 +585,9 @@ def calculate_density_sd(
         {"x": np.linspace(x.min(), x.max(), grid_bins)}, index=range(grid_bins)
     )
     for f in cv_fold.drop_duplicates().sort_values():
-        for level, group in x[cv_fold == f].groupby(by[cv_fold == f]):
+        x_ = filter_by_cv_fold(x, f, cv_fold, time_series_validation, "test")
+        by_ = filter_by_cv_fold(by, f, cv_fold, time_series_validation, "test")
+        for level, group in x_.groupby(by_):
             density = gaussian_kde(group)
             sd[f"{f}_{level}"] = density(sd["x"])
 
@@ -588,6 +610,7 @@ def _calculate_single_density_sd(
     x: pd.Series,
     cv_fold: pd.Series,
     grid_bins: int = 200,
+    time_series_validation: bool = True,
 ) -> pd.Series:
     """
     Using the cross-validation folds, calculate the standard deviation of the
@@ -597,7 +620,8 @@ def _calculate_single_density_sd(
         {"x": np.linspace(x.min(), x.max(), grid_bins)}, index=range(grid_bins)
     )
     for f in cv_fold.drop_duplicates().sort_values():
-        density = gaussian_kde(x[cv_fold == f])
+        x_ = filter_by_cv_fold(x, f, cv_fold, time_series_validation, "test")
+        density = gaussian_kde(x_)
         sd[f"{f}"] = density(sd["x"])
 
     sd = sd.drop(columns=["x"])
@@ -628,6 +652,7 @@ def _plot_single_density_pm_standard_deviation(
     alpha: float = 0.5,
     fill_alpha: float = 0.3,
     figsize: Tuple[int, int] = (7, 7),
+    time_series_validation: bool = True,
 ) -> Axes:
     """
     Plot the density of x.
@@ -662,6 +687,8 @@ def _plot_single_density_pm_standard_deviation(
         The alpha value to use for the fill. Defaults to 0.3.
     figsize : tuple, optional
         The size of the figure to create. Defaults to (7, 7). Only used if ax is None.
+    time_series_validation : bool, optional
+        Whether the cross-validation is based on a time series. Defaults to True.
 
     Returns
     -------

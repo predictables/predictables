@@ -10,7 +10,7 @@ from matplotlib.axes import Axes
 from scipy.stats import norm  # type: ignore
 from sklearn.metrics import RocCurveDisplay, roc_auc_score, roc_curve  # type: ignore
 
-from predictables.util import DebugLogger, cv_filter
+from predictables.util import DebugLogger, filter_by_cv_fold
 
 dbg = DebugLogger(working_file="_roc_curve_plot.py")
 
@@ -316,9 +316,11 @@ def plot_cv_roc_curves(
         figax = ax
 
     for f in fold.drop_duplicates().sort_values().values:
+        y_ = filter_by_cv_fold(y, f, fold, time_series_validation, "test")
+        yhat_ = filter_by_cv_fold(yhat_proba, f, fold, time_series_validation, "test")
         figax = plot_individual_roc_curves(
-            y=y[cv_filter(f, fold, time_series_validation)],
-            yhat_proba=yhat_proba[cv_filter(f, fold, time_series_validation)],
+            y=y_,
+            yhat_proba=yhat_,
             curve_name=f"Fold {f}",
             figax=figax,
             n_bins=n_bins if n_bins is not None else 200,
@@ -374,22 +376,12 @@ def calc_auc_curve_data_from_folds(
         f"fold.drop_duplicates().sort_values().values: {fold.drop_duplicates().sort_values().values} | ROC000Fe"
     )
     for f in fold.drop_duplicates().sort_values().values:
+        y_ = filter_by_cv_fold(y, f, fold, time_series_validation, "test")
+        yhat_ = filter_by_cv_fold(yhat_proba, f, fold, time_series_validation, "test")
         if f > 0:
-            dbg.msg(f"f: {f} | fold: {fold} | y.shape: {y.shape} | ROC000Fa ")
-            dbg.msg(f"time_series_validation: {time_series_validation} | ROC000Fb ")
-            cvf = cv_filter(f, fold, time_series_validation)
-            dbg.msg(f"cv_filter.shape: {cvf.shape} | ROC000Fc ")
-            dbg.msg(f"\ncv_filter:\n{cvf} | ROC000Fd ")
-            dbg.msg(
-                f"y[cvf].shape: {y[cvf].shape} | ROC000Fg\n==========================\n{y[cvf]} "
-            )
-            dbg.msg(
-                f"yhat_proba[cvf].shape: {yhat_proba[cvf].shape} | ROC000Fh\n==========================\n{yhat_proba[cvf]} "
-            )
-
             fpr, tpr = create_auc_data(
-                y[cvf].reset_index(drop=True),
-                yhat_proba[cvf].reset_index(drop=True),
+                y_,
+                yhat_,
                 n_bins,
             )
             fprs[f"fold_{f}"] = fpr
@@ -499,7 +491,7 @@ def plot_roc_auc_curves_and_confidence_bands(
         _, figax = plt.subplots(figsize=figsize)
 
     dbg.msg(
-        f"y: {y.shape} | yhat_proba: {yhat_proba.shape} | fold: {fold.shape} | n_bins: {n_bins} | cv_alpha: {cv_alpha} | figax: {figax} | call_legend: {call_legend} "
+        f"y: {y.shape} | yhat_proba: {yhat_proba.shape} | fold: {fold.shape} | n_bins: {n_bins} | cv_alpha: {cv_alpha} | ROC_0001c"
     )
     fprs, tprs = calc_auc_curve_data_from_folds(
         y,
@@ -852,38 +844,40 @@ def roc_curve_plot_mpl(
         )
 
     if ax is None:
-        _, ax = plt.subplots(figsize=figsize)
+        _, ax0 = plt.subplots(figsize=figsize)
+    else:
+        ax0 = ax
 
-    ax = plot_roc_auc_curves_and_confidence_bands(
+    ax0 = plot_roc_auc_curves_and_confidence_bands(
         y,
         yhat_proba,
         fold,
         time_series_validation=time_series_validation,
-        ax=(None if isinstance(ax, go.Figure) else ax),
+        ax=ax0,
         n_bins=n_bins,
         backend="matplotlib",
         figsize=figsize,
         cv_alpha=cv_alpha,
     )
-    ax = delong_statistic_annotation_mpl(
+    ax0 = delong_statistic_annotation_mpl(
         y=y,
         yhat_proba=yhat_proba,
         fold=fold,
         time_series_validation=time_series_validation,
-        ax=ax,
+        ax=ax0,
     )
-    ax = coefficient_annotation_mpl(
+    ax0 = coefficient_annotation_mpl(
         coef=coef,
         std_error=se,
         pvalue=pvalue,
-        ax=ax,
+        ax=ax0,
         figsize=figsize,  # type: ignore
     )
     a = auc(y, yhat_proba)
     _, p = _delong_test_against_chance(y, yhat_proba, fold, time_series_validation)
-    ax = finalize_plot(ax, figsize=figsize, auc=a, auc_p_value=p)  # type: ignore
+    ax0 = finalize_plot(ax0, figsize=figsize, auc=a, auc_p_value=p)  # type: ignore
 
-    return ax
+    return ax0
 
 
 def _compute_auc_variance(
@@ -1021,21 +1015,26 @@ def _empirical_auc_variance(
     counter = 0
     for f in unique_folds:
         try:
-            cvfilter = cv_filter(f, fold, time_series_validation).values
-            if len(y[cvfilter].unique()) < 2:
+            _y_: pd.Series = filter_by_cv_fold(
+                y, f, fold, time_series_validation, "test"
+            )
+            _yhat_proba_: pd.Series = filter_by_cv_fold(
+                yhat_proba, f, fold, time_series_validation, "test"
+            )
+            if len(_y_.drop_duplicates()) < 2:
                 auc_scores.append(0)
                 continue
 
             # Calculate AUC score for the current fold
             auc_score = roc_auc_score(
-                y[cvfilter],
-                yhat_proba[cvfilter],
+                _y_,
+                _yhat_proba_,
             )
             auc_scores.append(auc_score)
             counter += 1
         except ValueError as e:
             dbg.msg(
-                f"y: {y} | yhat_proba: {yhat_proba} | fold: {fold} | time_series_validation: {time_series_validation} | f: {f} | cvfilter: {cvfilter} | error: {e} | ROC_0001aw"
+                f"y: {y_} | yhat_proba: {yhat_proba_} | fold: {fold} | time_series_validation: {time_series_validation} | f: {f} | error: {e} | ROC_0001aw"
             )
 
     # Compute empirical variance of AUC scores

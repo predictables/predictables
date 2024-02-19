@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-import pandas as pd
+import pandas as pd  # type: ignore
 import polars as pl
 
 from predictables.util import cv_filter, to_pl_lf
@@ -11,8 +11,8 @@ def time_series_validation_filter(
     df_val: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
     fold: Optional[int] = None,
     fold_col: str = "cv",
-    feature_col: Optional[str] = None,
-    target_col: Optional[str] = None,
+    feature_col: str = "feature",
+    target_col: str = "target",
     time_series_validation: bool = False,
 ) -> tuple:
     """
@@ -38,16 +38,38 @@ def time_series_validation_filter(
     else:
         # If a fold is passed, we are doing cross validation so don't use any
         # validation set
-        df = df.select([feature_col, target_col, fold_col])
-        fold_filter = pl.from_pandas(
-            cv_filter(
-                fold,
-                df.select(fold_col).collect()[fold_col],
-                time_series_validation=time_series_validation,
+        df = df.select(
+            [
+                pl.col(feature_col).name.keep(),
+                pl.col(target_col).name.keep(),
+                pl.col(fold_col).name.keep(),
+            ]
+        ).with_row_index()
+
+        def train() -> pl.Series:
+            x = pl.from_pandas(
+                cv_filter(
+                    fold,
+                    df.select(fold_col).collect()[fold_col],
+                    time_series_validation=time_series_validation,
+                    train_test="train",
+                )
             )
-        )
-        df_train = df.filter(fold_filter)
-        df_test = df.filter(~fold_filter)
+            return x if isinstance()
+            .to_series()
+
+        def test() -> pl.Series:
+            return pl.from_pandas(
+                cv_filter(
+                    fold,
+                    df.select(fold_col).collect()[fold_col],
+                    time_series_validation=time_series_validation,
+                    train_test="test",
+                )
+            ).to_series()
+
+        df_train = df.filter(train())
+        df_test = df.filter(test())
 
     # Split into X, y and train, test
     X_test = (

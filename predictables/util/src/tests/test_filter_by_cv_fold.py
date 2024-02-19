@@ -1,7 +1,10 @@
-import pandas as pd
+import pandas as pd  # type: ignore
 import polars as pl
+import polars.testing as pltest
 import pytest
-from predictables.util.src import _cv_filter as cvf
+from predictables.util.src import _cv_filter as cvf, _to_pl
+
+to_pl_s = _to_pl.to_pl_s
 
 
 @pytest.fixture
@@ -36,8 +39,9 @@ def pd_series():
 )
 @pytest.mark.parametrize("dtype", ["pandas", "polars", "numpy"])
 @pytest.mark.parametrize("dtype2", ["pandas", "polars", "numpy"])
+@pytest.mark.parametrize("output_type", ["pandas", "polars"])
 def test_filter_by_cv_fold_ts(
-    pd_cv_fold_data_ts, pd_series, f, train_test, expected, dtype, dtype2
+    pd_cv_fold_data_ts, pd_series, f, train_test, expected, dtype, dtype2, output_type
 ):
     if dtype == "pandas":
         s = pd_series
@@ -54,16 +58,28 @@ def test_filter_by_cv_fold_ts(
         folds = pd_cv_fold_data_ts.values
 
     result = cvf.filter_by_cv_fold(
-        s, f, folds, time_series_validation=True, train_test=train_test
+        s,
+        f,
+        folds,
+        time_series_validation=True,
+        train_test=train_test,
+        return_type=output_type,
     )
-    result.name = None
+    if output_type == "pandas":
+        result = result.reset_index(drop=True)
+        result.name = None
+    expected_output_type = pd.Series if output_type == "pandas" else pl.Series
     assert isinstance(
-        result, pd.Series
-    ), f"result is {type(result)}, expected pd.Series"
+        result, expected_output_type
+    ), f"result is {type(result)}, expected {expected_output_type}"
 
-    pd.testing.assert_series_equal(
-        result.reset_index(drop=True), expected.reset_index(drop=True)
-    )
+    if output_type == "pandas":
+        pd.testing.assert_series_equal(
+            result.reset_index(drop=True), expected.reset_index(drop=True)
+        )
+    else:
+        expected_pl = to_pl_s(expected)
+        pltest.assert_series_equal(result, expected_pl)
 
 
 @pytest.mark.parametrize(
@@ -87,8 +103,16 @@ def test_filter_by_cv_fold_ts(
 )
 @pytest.mark.parametrize("dtype", ["pandas", "polars", "numpy"])
 @pytest.mark.parametrize("dtype2", ["pandas", "polars", "numpy"])
+@pytest.mark.parametrize("output_type", ["pandas", "polars"])
 def test_filter_by_cv_fold_no_ts(
-    pd_cv_fold_data_no_ts, pd_series, f, train_test, expected, dtype, dtype2
+    pd_cv_fold_data_no_ts,
+    pd_series,
+    f,
+    train_test,
+    expected,
+    dtype,
+    dtype2,
+    output_type,
 ):
     if dtype == "pandas":
         s = pd_series
@@ -105,13 +129,26 @@ def test_filter_by_cv_fold_no_ts(
         folds = pd_cv_fold_data_no_ts.values
 
     result = cvf.filter_by_cv_fold(
-        s, f, folds, time_series_validation=False, train_test=train_test
-    ).reset_index(drop=True)
-    result.name = None
-    assert isinstance(
-        result.reset_index(drop=True), pd.Series
-    ), f"result is {type(result)}, expected pd.Series"
-
-    pd.testing.assert_series_equal(
-        result.reset_index(drop=True), expected.reset_index(drop=True)
+        s,
+        f,
+        folds,
+        time_series_validation=False,
+        train_test=train_test,
+        return_type=output_type,
     )
+
+    if output_type == "pandas":
+        result.name = None
+
+    expected_output_type = pd.Series if output_type == "pandas" else pl.Series
+    assert isinstance(
+        result, expected_output_type
+    ), f"result is {type(result)}, expected {expected_output_type}"
+
+    if output_type == "pandas":
+        pd.testing.assert_series_equal(
+            result.reset_index(drop=True), expected.reset_index(drop=True)
+        )
+    else:
+        expected_pl = to_pl_s(expected)
+        pltest.assert_series_equal(result, expected_pl)

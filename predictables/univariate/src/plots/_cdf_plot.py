@@ -8,7 +8,7 @@ from matplotlib.axes import Axes
 from scipy.spatial.distance import jensenshannon as js_divergence  # type: ignore
 
 from predictables.univariate.src.plots.util import binary_color, plot_label
-from predictables.util import get_column_dtype, to_pd_s
+from predictables.util import get_column_dtype, to_pd_s, filter_by_cv_fold
 
 
 def cdf_plot(
@@ -20,6 +20,7 @@ def cdf_plot(
     ax: Optional[Axes] = None,
     figsize: Tuple[int, int] = (7, 7),
     backend: str = "matplotlib",
+    time_series_validation: bool = True,
     **kwargs,
 ) -> Axes:
     """
@@ -45,6 +46,8 @@ def cdf_plot(
         The size of the figure, by default (7, 7).
     backend : str, optional
         The plotting backend to use, by default "matplotlib".
+    time_series_validation : bool, optional
+        Whether the cross-validation is based on a time series, by default True.
 
     Returns
     -------
@@ -64,6 +67,7 @@ def cdf_plot(
             x_label=x_label,
             y_label=y_label,
             ax=ax_,
+            time_series_validation=time_series_validation,
             **kwargs,
         )
     else:
@@ -77,6 +81,7 @@ def cdf_plot_matplotlib(
     x_label: Union[str, None] = None,
     y_label: Union[str, None] = "Empirical Cumulative Distribution Function",
     ax: Union[Axes, None] = None,
+    time_series_validation: bool = True,
     **kwargs,
 ) -> Axes:
     """
@@ -84,6 +89,11 @@ def cdf_plot_matplotlib(
     fold in `cv_folds`. This plot is meant to show a "distribution" of possible CDF
     plots that could have been pulled from the real distribution. This plot is
     rendered using matplotlib.
+
+    Whether using standard or time series cross-validation, the CDFs are plotted
+    for the test set, to show the distribution of possible CDFs that could have
+    been pulled from the real distribution and minimize overlap between the
+    curves.
     """
     x = to_pd_s(x)
     plot_by = to_pd_s(plot_by)
@@ -106,6 +116,7 @@ def cdf_plot_matplotlib(
             else "Empirical Cumulative Distribution Function"
         ),
         ax=ax0,
+        time_series_validation=time_series_validation,
         **kwargs,
     )
 
@@ -122,6 +133,7 @@ def cdf_plot_matplotlib(
         ),
         ax=ax0,
         alpha=0.3,
+        time_series_validation=time_series_validation,
         **kwargs,
     )
 
@@ -218,6 +230,7 @@ def cdf_plot_matplotlib_levels_cv(
     x_label: Optional[str] = None,
     y_label: Optional[str] = "Empirical Cumulative Distribution Function",
     ax: Optional[Axes] = None,
+    time_series_validation: bool = True,
     **kwargs,
 ) -> Axes:
     """
@@ -240,6 +253,8 @@ def cdf_plot_matplotlib_levels_cv(
         The label of the y-axis.
     ax : Axes, optional
         The axes to plot the CDF on, by default None.
+    time_series_validation : bool, optional
+        Whether the cross-validation is based on a time series, by default True.
 
     Returns
     -------
@@ -260,7 +275,9 @@ def cdf_plot_matplotlib_levels_cv(
         if cv_folds is not None:
             for fold in cv_folds.drop_duplicates().sort_values().values:
                 x_cdf = calculate_cdf(
-                    x[(to_pd_s(plot_by) == level) & (cv_folds == fold)]
+                    filter_by_cv_fold(
+                        x, fold, cv_folds, time_series_validation, "test"
+                    )[(to_pd_s(plot_by) == level)]
                 )
                 ax_ = x_cdf.plot(
                     kind="line", ax=ax_, color=binary_color(level), **kwargs

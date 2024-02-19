@@ -19,5 +19,5 @@ from ._tqdm_func import tqdm  # noqa F401
 from .logging._DebugLogger import DebugLogger  # noqa F401
 from .logging._Logger import Logger  # noqa F401
 from .logging._LogLevel import LogLevel  # noqa F401
-from ._cv_filter import cv_filter  # noqa F401
+from ._cv_filter import cv_filter, filter_by_cv_fold, filter_df_by_cv_fold  # noqa F401
 from ._load_env import load_env  # noqa F401

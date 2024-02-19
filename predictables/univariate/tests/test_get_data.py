@@ -1,6 +1,6 @@
-import pandas as pd
+import pandas as pd  # type: ignore
 import pytest
-from pandas.testing import assert_frame_equal
+import pandas.testing as pdt  # type: ignore
 
 from predictables.univariate.src._get_data import (
     _filter_df_for_cv,
@@ -49,11 +49,11 @@ def test_filter_df_for_cv_train_valid_input(sample_dataframe):
         {"fold_col": [1, 2, 4, 5], "data": ["A", "B", "D", "E"]}
     )
 
-    output = _filter_df_for_cv_train(sample_dataframe, fold, fold_col).reset_index(
-        drop=True
-    )
+    output = _filter_df_for_cv_train(
+        sample_dataframe, fold, fold_col, False
+    ).reset_index(drop=True)
     (
-        assert_frame_equal(output, expected_output),
+        pdt.assert_frame_equal(output, expected_output),
         f"Expected {expected_output}, got {output}",
     )
 
@@ -68,7 +68,7 @@ def test_filter_df_for_cv_test_valid_input(sample_dataframe):
         drop=True
     )
     (
-        assert_frame_equal(output, expected_output),
+        pdt.assert_frame_equal(output, expected_output),
         f"Expected {expected_output}, got {output}",
     )
 
@@ -92,11 +92,17 @@ def test_filter_df_for_cv_valid_input(sample_dataframe, data, fold_col, values):
         }
     )
 
-    output = _filter_df_for_cv(sample_dataframe, fold, "fold_col", data).reset_index(
-        drop=True
-    )
+    output = _filter_df_for_cv(
+        sample_dataframe,
+        fold,
+        "fold_col",
+        data,
+        time_series_validation=False,
+    ).reset_index(drop=True)
+    print(f"\n\noutput:\n=======================\n{output}")
+    print(f"\n\nexpected_output:\n=======================\n{expected_output}")
     (
-        assert_frame_equal(output, expected_output),
+        pdt.assert_frame_equal(output, expected_output),
         f"Expected {expected_output}, got {output}",
     )
 
@@ -245,7 +251,7 @@ def test_filter_df_for_train_test_all(sample_dataframe, sample_val_dataframe):
         sample_dataframe, sample_val_dataframe, data="all"
     ).reset_index(drop=True)
     (
-        assert_frame_equal(output, expected_output),
+        pdt.assert_frame_equal(output, expected_output),
         f"Expected {expected_output}, got {output}",
     )
 
@@ -262,7 +268,7 @@ def test_filter_df_for_train_test_train(sample_dataframe, sample_val_dataframe):
         sample_dataframe, sample_val_dataframe, data="train"
     )
     (
-        assert_frame_equal(output, expected_output),
+        pdt.assert_frame_equal(output, expected_output),
         f"Expected {expected_output}, got {output}",
     )
 
@@ -274,7 +280,7 @@ def test_filter_df_for_train_test_test(sample_dataframe, sample_val_dataframe):
         sample_dataframe, sample_val_dataframe, data="test"
     )
     (
-        assert_frame_equal(output, expected_output),
+        pdt.assert_frame_equal(output, expected_output),
         f"Expected {expected_output}, got {output}",
     )
 

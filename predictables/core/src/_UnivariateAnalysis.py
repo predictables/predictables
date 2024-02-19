@@ -5,6 +5,7 @@ from typing import List, Optional
 import numpy as np
 import pandas as pd
 import polars as pl
+from dotenv import load_dotenv
 
 from predictables.univariate import Univariate
 from predictables.util import DebugLogger, Report, to_pd_df, tqdm
@@ -13,8 +14,18 @@ from predictables.util.report.src._segment_features_for_report import (
     segment_features_for_report,
 )
 
+load_dotenv()
+
 dbg = DebugLogger(working_file="_UnivariateAnalysis.py")
 current_date = datetime.datetime.now()
+
+
+def _fmt_col_name(col_name: str) -> str:
+    """
+    Formats a column name to be used as an attribute name. Helper function for
+    UnivariateAnalysis.
+    """
+    return col_name.replace(" ", "_").replace("-", "_").lower()
 
 
 class UnivariateAnalysis:
@@ -50,8 +61,7 @@ class UnivariateAnalysis:
             "features",
         ):
             obj_name = (
-                col.lower()
-                .replace(" ", "_")
+                col.replace(" ", "_")
                 .replace("-", "_")
                 .replace("/", "_")
                 .replace("(", "")
@@ -216,7 +226,7 @@ class UnivariateAnalysis:
         return segment_features_for_report(features, max_per_file)
 
     def _add_to_report(self, rpt: Report, feature: str) -> Report:
-        ua = getattr(self, feature)
+        ua = getattr(self, _fmt_col_name(feature))
         return ua._add_to_report(rpt)
 
     def _generate_segment_report(
@@ -285,7 +295,7 @@ class UnivariateAnalysis:
             rpt = self._rpt_title_page(filename_, margins_)
             rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
             for X in tqdm(features, self._build_desc(len(features), max_per_file)):
-                rpt = getattr(self, X.lower())._add_to_report(rpt)
+                rpt = getattr(self, _fmt_col_name(X))._add_to_report(rpt)
                 counter += 1
 
                 if counter == max_per_file:
@@ -308,7 +318,7 @@ class UnivariateAnalysis:
                 self.feature_column_names,
                 f"Building {len(features)} univariate analysis reports",
             ):
-                rpt = getattr(self, X)._add_to_report(rpt)
+                rpt = getattr(self, _fmt_col_name(X))._add_to_report(rpt)
 
         rpt.build()
 
@@ -397,9 +407,16 @@ class UnivariateAnalysis:
         total_df = []
         for col in self.feature_column_names:
             try:
-                ua = getattr(self, col.lower().replace(" ", "_").replace("-", "_"))
+                ua = getattr(self, _fmt_col_name(col))
+            except Exception as e:
+                dbg.msg(f"AttributeError: {e} | _sort_features_by_ua | UA0010A")
 
+            try:
                 cols.append(col)
+            except Exception as e:
+                dbg.msg(f"AttributeError: {e} | _sort_features_by_ua | UA0010B")
+
+            try:
                 total_df.append(
                     ua.results.select(
                         [
@@ -426,7 +443,7 @@ class UnivariateAnalysis:
                     .to_pandas()
                     .set_index("Feature")
                 )
-            except Exception:
-                pass
+            except Exception as e:
+                dbg.msg(f"AttributeError: {e} | _sort_features_by_ua | UA0010C")
         df = pd.concat(total_df)
         return df.sort_values("Ave.", ascending=False)
