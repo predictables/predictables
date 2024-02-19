@@ -949,19 +949,34 @@ def _empirical_auc_variance(
         )
         return np.var(auc_, ddof=1) * (1 - bagging_fraction) / bagging_fraction
 
-    fold_idx = [[fold.eq(f).values] for f in get_unique(fold)]
-    # Otherwise, compute the variance using the empirical variance
-    return float(
-        np.var(
-            [
-                roc_auc_score(y[fold_idx[i]], yhat_proba[fold_idx[i]])
-                for i in range(len(fold.unique()))
-            ],
-            ddof=1,
-        )
-        * (len(fold.unique()) - 1)
-        / len(fold.unique())
-    )
+    # Calculate unique folds
+    unique_folds = fold.unique()
+
+    # Raise an error if any of the folds have only one class (this
+    # would result in a variance of 0, which is not useful for the
+    # DeLong test)
+    for f in unique_folds:
+        fold_indices = fold[fold == f].index
+        if len(y.loc[fold_indices].unique()) < 2:
+            raise ValueError(
+                "The empirical variance of the AUC estimator cannot be computed "
+                "if any of the folds have only one class."
+            )
+
+    # Initialize a list to hold AUC scores for each fold
+    auc_scores = []
+
+    for f in unique_folds:
+        # Find indices for the current fold
+        fold_indices = fold[fold == f].index
+
+        # Calculate AUC score for the current fold
+        auc_score = roc_auc_score(y[fold_indices], yhat_proba[fold_indices])
+        auc_scores.append(auc_score)
+
+    # Compute empirical variance of AUC scores
+    var_auc = np.var(auc_scores, ddof=1) * (len(unique_folds) - 1) / len(unique_folds)
+    return float(var_auc)
 
 
 def _delong_test_against_chance(

@@ -21,7 +21,7 @@ def sample_data() -> Tuple[pd.Series, pd.Series, pd.Series]:
         np.random.binomial(1, yhat_proba, size=100)
     )  # Simulate binary outcomes
     fold = pd.Series(np.random.choice([1, 2, 3, 4, 5], size=100))
-    return y, yhat_proba, fold
+    return y, pd.Series(yhat_proba), fold
 
 
 @pytest.fixture
@@ -44,11 +44,11 @@ def sample_variance_bootstrap(
     )
 
     # Turn y and yhat from a pd.Series (vector) to a np.array (matrix) of shape (n, 2500)
-    y = np.array([y.iloc[i] for i in idx])
-    yhat_proba = np.array([yhat_proba.iloc[i] for i in idx])
+    y_ = np.array([y.iloc[i] for i in idx])
+    yhat_proba_ = np.array([yhat_proba.iloc[i] for i in idx])
 
     # Calculate the AUC for each bootstrap sample
-    aucs = np.array([roc_auc_score(y[i], yhat_proba[i]) for i in range(2500)])
+    aucs = np.array([roc_auc_score(y_[i], yhat_proba_[i]) for i in range(2500)])
 
     # Calculate the mean and standard deviation of the AUCs
     logging.info(f"Mean AUC: {np.mean(aucs)}, std AUC: {np.std(aucs)}")
@@ -282,3 +282,17 @@ def test_perfect_separation(
     assert isinstance(
         var_auc, float
     ), f"Expected variance to be a float for (near-)perfect separation, not {type(var_auc)}"
+
+
+def test_empirical_auc_variance_multi_fold():
+    # Generate mock data
+    y = pd.Series(np.random.randint(0, 2, size=100))
+    yhat_proba = pd.Series(np.random.rand(100))
+    fold = pd.Series(np.random.choice([0, 1, 2, 3, 4], size=100))
+
+    # Call the function
+    var_auc = _empirical_auc_variance(y, yhat_proba, fold)
+
+    # Assert the variance is a float and non-negative
+    assert isinstance(var_auc, float)
+    assert var_auc >= 0
