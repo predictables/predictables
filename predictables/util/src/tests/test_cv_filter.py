@@ -29,11 +29,11 @@ def get_folds(folds_pd, folds_pl, folds_np):
     return dict(pd_s=folds_pd, pl_s=folds_pl, np_s=folds_np)
 
 
-@pytest.mark.parametrize("fold", [0, 1, 2, 3, 4, 5])
+@pytest.mark.parametrize("fold", [1, 2, 3, 4, 5])
 @pytest.mark.parametrize("k", ["pd_s", "pl_s", "np_s"])
 def test_cv_filter_no_ts(get_folds, fold, k):
     folds = get_folds[k]
-    expected = np.equal(folds, fold) if isinstance(folds, np.ndarray) else folds == fold
+    expected = np.logical_not(np.equal(folds, fold)) if isinstance(folds, np.ndarray) else folds != fold
     result = cv_filter(fold, folds, ts_cv=False)
     f = [r == e for r, e in zip(result.to_numpy(), expected)]
     assert all(f), (
@@ -50,7 +50,7 @@ def test_cv_filter_no_ts(get_folds, fold, k):
 def test_cv_filter_ts(get_folds, fold, k):
     folds = get_folds[k]
     expected = (
-        np.less_equal(folds, fold) if isinstance(folds, np.ndarray) else folds <= fold
+        np.less(folds, fold) if isinstance(folds, np.ndarray) else folds < fold
     )
     result = cv_filter(fold, folds, ts_cv=True)
     f = [r == e for r, e in zip(result.to_numpy(), expected)]

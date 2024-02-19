@@ -5,7 +5,6 @@ from pandas.testing import assert_frame_equal, assert_series_equal
 from predictables.univariate.src._time_series_validation_filter import (
     time_series_validation_filter,
 )
-from predictables.util import load_env
 
 
 # Define a synthetic dataset
@@ -17,6 +16,7 @@ def df():
             "feature_col": list(range(50)),
             "target_col": [i * 10 for i in range(50)],
             "cv": 15 * [1] + 15 * [2] + 15 * [3] + 5 * [-1],
+            'cv2': 15 * [1] + 15 * [2] + 15 * [3] + 5 * [4],
         }
     )
 
@@ -28,7 +28,7 @@ def df_val(df):
 
 @pytest.fixture
 def df_train(df):
-    return df.loc[df.cv.ne(-1)].reset_index(drop=True)
+    return df.loc[df.cv.ge(0)].reset_index(drop=True)
 
 
 @pytest.fixture
@@ -38,7 +38,7 @@ def df_train1(df):
 
 @pytest.fixture
 def df_train2_ts(df):
-    return df.loc[df.cv.eq(1) | df.cv.eq(-1)].reset_index(drop=True)
+    return df.loc[df.cv.lt(2) & df.cv.ge(0)].reset_index(drop=True)
 
 
 @pytest.fixture
@@ -137,10 +137,6 @@ def test_cv1_false(
     df,
     df_train1,
     df_test1,
-    # df_train2,
-    # df_test2,
-    # df_train3,
-    # df_test3,
 ):
     train = df_train1
     test = df_test1
@@ -186,25 +182,20 @@ def test_cv1_false(
 
 def test_cv2_false(
     df,
-    # df_train1,
-    # df_test1,
-    df_train2,
-    df_test2,
-    # df_train3,
-    # df_test3,
 ):
-    train = df_train2
-    test = df_test2
-    print(type(df))
     result = time_series_validation_filter(
         df=df,
         df_val=None,
         fold=2,
-        fold_col="cv",
+        fold_col="cv2",
         feature_col="feature_col",
         target_col="target_col",
         time_series_validation=False,
     )
+
+    train = df.loc[df.cv2.ne(2)].reset_index(drop=True)
+    test = df.loc[df.cv2.eq(2)].reset_index(drop=True)
+    
     (
         assert_frame_equal(
             train[["feature_col"]].reset_index(drop=True),
@@ -237,39 +228,33 @@ def test_cv2_false(
 
 def test_cv2_true(
     df,
-    df_train2_ts,
-    df_test2_ts,
 ):
-    train = df_train2_ts
-    test = df_test2_ts
-    print(type(df))
     result = time_series_validation_filter(
         df=df,
         df_val=None,
         fold=2,
-        fold_col="cv",
+        fold_col="cv2",
         feature_col="feature_col",
         target_col="target_col",
         time_series_validation=True,
     )
-    expected_train_feature = train[["feature_col"]].reset_index(drop=True)
-    expected_train_target = train["target_col"].reset_index(drop=True)
-    expected_test_feature = test[["feature_col"]].reset_index(drop=True)
-    expected_test_target = test["target_col"].reset_index(drop=True)
+    train = df.loc[df.cv2.lt(2) & df.cv2.ge(0)]
+    test = df.loc[df.cv2.ge(2)]
 
+    expected_train_feature = train[["feature_col"]].loc[train.cv.lt(2) & train.cv.ge(0)]
     (
         assert_frame_equal(
-            train[["feature_col"]].reset_index(drop=True),
+            expected_train_feature.reset_index(drop=True),
             result[0].reset_index(drop=True),
             (
-                f"X_train: {train[['feature_col']]} is not the "
+                f"X_train: {expected_train_feature} is not the "
                 f"same as the one returned: {result[0]}"
             ),
         )
     )
     (
         assert_series_equal(
-            train["target_col"],
+            train["target_col"].reset_index(drop=True),
             result[1].reset_index(drop=True),
             f"y_train: {train['target_col']} is not the same as the one returned: {result[1]}",
         )
@@ -283,7 +268,7 @@ def test_cv2_true(
     )
     (
         assert_series_equal(
-            test["target_col"],
+            test["target_col"].reset_index(drop=True),
             result[3].reset_index(drop=True),
             f"y_test: {test['target_col']} is not the same as the one returned: {result[3]}",
         )

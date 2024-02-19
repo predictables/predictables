@@ -36,7 +36,7 @@ def _cv_filter_no_ts(
     pd.Series
         A boolean series indicating whether the fold is equal to the given fold.
     """
-    return to_pd_s(fold_col).eq(fold)
+    return to_pd_s(fold_col).ne(fold)
 
 
 def _cv_filter_ts(
@@ -68,4 +68,4 @@ def _cv_filter_ts(
     in with negative labels sometimes. This is why we use less than or equal to, but not
     negative.
     """
-    return to_pd_s(fold_col).le(fold) & to_pd_s(fold_col).ge(0)
+    return to_pd_s(np.logical_and(to_pd_s(fold_col).lt(fold), to_pd_s(fold_col).ge(0)))
