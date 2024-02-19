@@ -14,6 +14,7 @@ ADD . /
 # Update the package list and install software
 RUN apt-get update && apt-get install -y \
     bash \
+    git \
     && apt-get clean
 
 
