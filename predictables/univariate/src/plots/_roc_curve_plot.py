@@ -69,8 +69,7 @@ def roc_curve_plot(
         The configured Axes object.
     """
     if backend == "matplotlib":
-        print(f"ts valid: 3: {time_series_validation}")
-        print(f"point1: y: {y} | yhat_proba: {yhat_proba}")
+        dbg.msg(f"point1: y: {y} | yhat_proba: {yhat_proba} | ROC_0001a")
         return roc_curve_plot_mpl(
             y=y,
             yhat_proba=yhat_proba,
@@ -128,8 +127,9 @@ def create_auc_data(
     tpr : pd.Series
         The true positive rate, ranging from 0 to 1, at each threshold.
     """
-    print(f"y: {y.shape} | yhat_proba: {yhat_proba.shape} | n_bins: {n_bins} ")
-    print(f"y: {y} | yhat_proba: {yhat_proba} ")
+    dbg.msg(
+        f"y: {y.shape} | yhat_proba: {yhat_proba.shape} | n_bins: {n_bins} | y:\n{y} | yhat_proba:\n{yhat_proba} |\nROC_0001d"
+    )
     roc: Tuple[np.ndarray, np.ndarray] = roc_curve(y.round(0).astype(int), yhat_proba)
 
     # Interpolate the data to get a smoother curve
@@ -200,7 +200,7 @@ def plot_individual_roc_curves(
     figax : Union[go.Figure, Axes]
         The plot.
     """
-    print(f"point2: y: {y} | yhat_proba: {yhat_proba}")
+    dbg.msg(f"point2: y: {y} | yhat_proba: {yhat_proba} | ROC_0001b")
     fpr, tpr = create_auc_data(y, yhat_proba, n_bins)
 
     # Handle the case where figax is an alias for either fig or ax
@@ -370,18 +370,30 @@ def calc_auc_curve_data_from_folds(
     # Calculate the standard error of the ROC curve for each fold
     fprs, tprs = pd.DataFrame(), pd.DataFrame()
 
+    dbg.msg(
+        f"fold.drop_duplicates().sort_values().values: {fold.drop_duplicates().sort_values().values} | ROC000Fe"
+    )
     for f in fold.drop_duplicates().sort_values().values:
-        dbg.msg(f"fold: {fold} | y.name: {y.name} | ROC000Fa ")
-        print(f"ts valid: 6: {time_series_validation}")
-        fpr, tpr = create_auc_data(
-            pd.Series(y.values[cv_filter(f, fold, time_series_validation)]),
-            yhat_proba.reset_index(drop=True)[
-                cv_filter(f, fold, time_series_validation)
-            ],
-            n_bins,
-        )
-        fprs[f"fold_{f}"] = fpr
-        tprs[f"fold_{f}"] = tpr
+        if f > 0:
+            dbg.msg(f"f: {f} | fold: {fold} | y.shape: {y.shape} | ROC000Fa ")
+            dbg.msg(f"time_series_validation: {time_series_validation} | ROC000Fb ")
+            cvf = cv_filter(f, fold, time_series_validation)
+            dbg.msg(f"cv_filter.shape: {cvf.shape} | ROC000Fc ")
+            dbg.msg(f"\ncv_filter:\n{cvf} | ROC000Fd ")
+            dbg.msg(
+                f"y[cvf].shape: {y[cvf].shape} | ROC000Fg\n==========================\n{y[cvf]} "
+            )
+            dbg.msg(
+                f"yhat_proba[cvf].shape: {yhat_proba[cvf].shape} | ROC000Fh\n==========================\n{yhat_proba[cvf]} "
+            )
+
+            fpr, tpr = create_auc_data(
+                y[cvf].reset_index(drop=True),
+                yhat_proba[cvf].reset_index(drop=True),
+                n_bins,
+            )
+            fprs[f"fold_{f}"] = fpr
+            tprs[f"fold_{f}"] = tpr
 
     total_fpr, total_tpr = create_auc_data(y, yhat_proba, n_bins)
     fprs["mean"] = total_fpr
@@ -489,7 +501,6 @@ def plot_roc_auc_curves_and_confidence_bands(
     dbg.msg(
         f"y: {y.shape} | yhat_proba: {yhat_proba.shape} | fold: {fold.shape} | n_bins: {n_bins} | cv_alpha: {cv_alpha} | figax: {figax} | call_legend: {call_legend} "
     )
-    print(f"ts valid: 5: {time_series_validation}")
     fprs, tprs = calc_auc_curve_data_from_folds(
         y,
         yhat_proba,
@@ -843,7 +854,6 @@ def roc_curve_plot_mpl(
     if ax is None:
         _, ax = plt.subplots(figsize=figsize)
 
-    print(f"ts valid: 4: {time_series_validation}")
     ax = plot_roc_auc_curves_and_confidence_bands(
         y,
         yhat_proba,
@@ -1006,30 +1016,30 @@ def _empirical_auc_variance(
     # Calculate unique folds
     unique_folds = fold.unique()
 
-    # Raise an error if any of the folds have only one class (this
-    # would result in a variance of 0, which is not useful for the
-    # DeLong test)
-    for f in unique_folds:
-        fold_indices = fold[cv_filter(f, fold, time_series_validation)].index
-        if len(y.loc[fold_indices].unique()) < 2:
-            raise ValueError(
-                "The empirical variance of the AUC estimator cannot be computed "
-                "if any of the folds have only one class."
-            )
-
     # Initialize a list to hold AUC scores for each fold
     auc_scores = []
-
+    counter = 0
     for f in unique_folds:
-        # Find indices for the current fold
-        fold_indices = fold[cv_filter(f, fold, time_series_validation)].index
+        try:
+            cvfilter = cv_filter(f, fold, time_series_validation).values
+            if len(y[cvfilter].unique()) < 2:
+                auc_scores.append(0)
+                continue
 
-        # Calculate AUC score for the current fold
-        auc_score = roc_auc_score(y[fold_indices], yhat_proba[fold_indices])
-        auc_scores.append(auc_score)
+            # Calculate AUC score for the current fold
+            auc_score = roc_auc_score(
+                y[cvfilter],
+                yhat_proba[cvfilter],
+            )
+            auc_scores.append(auc_score)
+            counter += 1
+        except ValueError as e:
+            dbg.msg(
+                f"y: {y} | yhat_proba: {yhat_proba} | fold: {fold} | time_series_validation: {time_series_validation} | f: {f} | cvfilter: {cvfilter} | error: {e} | ROC_0001aw"
+            )
 
     # Compute empirical variance of AUC scores
-    var_auc = np.var(auc_scores, ddof=1) * (len(unique_folds) - 1) / len(unique_folds)
+    var_auc = np.var(auc_scores, ddof=1) * (counter - 1) / counter
     return float(var_auc)
 
 
@@ -1068,7 +1078,7 @@ def _delong_test_against_chance(
     p_value : float
         The p-value.
     """
-    auc = roc_auc_score(y, yhat_proba, time_series_validation)
+    auc = roc_auc_score(y, yhat_proba)
     var_auc = _empirical_auc_variance(y, yhat_proba, fold, time_series_validation)
     if np.sqrt(var_auc) == 0:
         logging.warning(f"Variance of AUC is {var_auc}. Returning p-value of 1.0.")

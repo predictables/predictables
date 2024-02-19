@@ -7,24 +7,62 @@ import polars as pl
 from predictables.util.src._to_pd import to_pd_s
 
 
+def filter_by_cv_fold(
+    s: Union[pd.Series, pl.Series, np.ndarray],
+    f: int,
+    folds: Union[pd.Series, pl.Series, np.ndarray],
+    time_series_validation: bool = True,
+    train_test: str = "train",
+) -> pd.Series:
+    """
+    Filter data based on cross-validation fold. Returns a series filtered
+    for the given fold.
+
+    Parameters
+    ----------
+    s : pd.Series, pl.Series, or np.ndarray
+        The column to filter.
+    f : int
+        The fold to filter for.
+    folds : pd.Series, pl.Series, or np.ndarray
+        The column containing the fold information.
+    time_series_validation : bool, default=True
+        Whether the cross-validation is based on a time series.
+    train_test : str, default="train"
+        Whether to return the training or test set. If "train", returns the
+        training set. If "test", returns the test set.
+
+    Returns
+    -------
+    pd.Series
+        The filtered series.
+    """
+    # make sure `folds` and `s` are pandas series
+    folds = to_pd_s(folds)
+    s = to_pd_s(s)
+
+    # filter based on cross-validation fold
+    return s[~cv_filter(f, folds, time_series_validation)]
+
+
 def cv_filter(
     fold,
     fold_col: Union[pd.Series, pl.Series, np.ndarray],
-    time_series_validation: bool = False,
-):
+    time_series_validation: bool = True,
+    train_test: str = "train",
+) -> pd.Series:
     """
     Filter data based on cross-validation fold.
     """
-    print(f"ts valid: 7: {time_series_validation}")
     return (
-        _cv_filter_ts(fold, fold_col)
+        _cv_filter_ts(fold, fold_col, train_test)
         if time_series_validation
-        else _cv_filter_no_ts(fold, fold_col)
+        else _cv_filter_no_ts(fold, fold_col, train_test)
     )
 
 
 def _cv_filter_no_ts(
-    fold: int, fold_col: Union[pd.Series, pl.Series, np.ndarray]
+    fold: int, fold_col: Union[pd.Series, pl.Series, np.ndarray], train_test: str
 ) -> pd.Series:
     """
     Filter data based on cross-validation fold. This is a helper function
@@ -37,17 +75,24 @@ def _cv_filter_no_ts(
         The fold to filter for.
     fold_col : pd.Series, pl.Series, or np.ndarray
         The column containing the fold information.
+    train_test : str
+        Whether to return the training or test set. If "train", returns the
+        training set. If "test", returns the test set.
 
     Returns
     -------
     pd.Series
         A boolean series indicating whether the fold is equal to the given fold.
     """
-    return to_pd_s(fold_col).ne(fold)
+    return (
+        to_pd_s(fold_col).ne(fold)
+        if train_test.lower() == "train"
+        else to_pd_s(fold_col).eq(fold)
+    )
 
 
 def _cv_filter_ts(
-    fold: int, fold_col: Union[pd.Series, pl.Series, np.ndarray]
+    fold: int, fold_col: Union[pd.Series, pl.Series, np.ndarray], train_test: str
 ) -> pd.Series:
     """
     Fiter data based on cross-validation fold. This is a helper function for
@@ -62,6 +107,9 @@ def _cv_filter_ts(
         The fold to filter for.
     fold_col : pd.Series, pl.Series, or np.ndarray
         The column containing the fold information.
+    train_test : str
+        Whether to return the training or test set. If "train", returns the
+        training set. If "test", returns the test set.
 
     Returns
     -------
@@ -77,7 +125,8 @@ def _cv_filter_ts(
     """
     fold_col = pd.Series(fold_col)
     if isinstance(fold, pd.Series):
-        fold = fold.iloc[0]  # or any other logic to extract the single value
+        fold = fold.iloc[0]
     fold = int(fold)
-    return_val = (fold_col < fold) & (fold_col >= 0)
-    return return_val.reset_index(drop=True)
+    return_val_train = ((fold_col < fold) & (fold_col >= 0)).reset_index(drop=True)
+    return_val_test = (fold_col == fold).reset_index(drop=True)
+    return return_val_train if train_test.lower() == "train" else return_val_test

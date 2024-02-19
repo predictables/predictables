@@ -427,10 +427,6 @@ class Univariate(Model):
         else:
             cv = to_pd_s(cv)
 
-        print(f"ts valid: 2: {self.time_series_validation}")
-        print(
-            f"point1-univariate: y: {to_pd_s(self.y_test) if y is None else to_pd_s(y)}\nyhat_proba: {to_pd_s(self.yhat_test) if yhat is None else to_pd_s(yhat)}"
-        )
         ax0 = roc_curve_plot(
             to_pd_s(self.y_test) if y is None else to_pd_s(y),
             to_pd_s(self.yhat_test) if yhat is None else to_pd_s(yhat),
@@ -577,7 +573,6 @@ class Univariate(Model):
             return self.plot_cdf(data="train", figsize=self.figsize)
 
         def roc():
-            print(f"ts valid: 1: {self.time_series_validation}")
             return self.plot_roc_curve(
                 y=self.y,
                 yhat=self.yhat_train,
