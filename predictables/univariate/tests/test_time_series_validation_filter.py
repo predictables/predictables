@@ -5,6 +5,7 @@ from pandas.testing import assert_frame_equal, assert_series_equal
 from predictables.univariate.src._time_series_validation_filter import (
     time_series_validation_filter,
 )
+from predictables.util import load_env
 
 
 # Define a synthetic dataset
@@ -251,6 +252,11 @@ def test_cv2_true(
         target_col="target_col",
         time_series_validation=True,
     )
+    expected_train_feature = train[["feature_col"]].reset_index(drop=True)
+    expected_train_target = train["target_col"].reset_index(drop=True)
+    expected_test_feature = test[["feature_col"]].reset_index(drop=True)
+    expected_test_target = test["target_col"].reset_index(drop=True)
+
     (
         assert_frame_equal(
             train[["feature_col"]].reset_index(drop=True),
