@@ -428,7 +428,7 @@ class Univariate(Model):
             to_pd_s(self.y_test) if y is None else to_pd_s(y),
             to_pd_s(self.yhat_test) if yhat is None else to_pd_s(yhat),
             cv,
-            (
+            self.time_series_validation(
                 to_pd_df(self.agg_results).loc["Ave.", "coef"].values  # type: ignore
                 if coef is None
                 else coef
