@@ -3,7 +3,7 @@ import os
 from typing import List, Optional
 
 import numpy as np
-import pandas as pd
+import pandas as pd  # type: ignore
 import polars as pl
 from dotenv import load_dotenv
 
@@ -22,10 +22,35 @@ current_date = datetime.datetime.now()
 
 def _fmt_col_name(col_name: str) -> str:
     """
-    Formats a column name to be used as an attribute name. Helper function for
-    UnivariateAnalysis.
+    Formats a column name to be used as an attribute name within the UnivariateAnalysis class.
+
+    Parameters
+    ----------
+    col_name : str
+        The original column name to format.
+
+    Returns
+    -------
+    str
+        The formatted column name suitable for use as a Python attribute.
+
+    Examples
+    --------
+    >>> _fmt_col_name("Total Revenue - 2020")
+    'total_revenue_2020'
     """
-    return col_name.replace(" ", "_").replace("-", "_").lower()
+    return (
+        col_name.replace(" ", "_")
+        .replace("-", "_")
+        .replace(")", "")
+        .replace("(", "")
+        .replace("/", "_")
+        .replace("__", "_")
+        .replace("__", "_")
+        .replace("__", "_")
+        .replace("__", "_")
+        .lower()
+    )
 
 
 class UnivariateAnalysis:
