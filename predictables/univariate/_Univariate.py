@@ -100,6 +100,7 @@ class Univariate(Model):
         fold_col_: str = "cv",
         feature_col_: Optional[str] = None,
         target_col_: Optional[str] = None,
+        time_series_validation: bool = True,
         **kwargs,
     ) -> None:
         df: pd.DataFrame = to_pd_df(df_)
@@ -117,6 +118,7 @@ class Univariate(Model):
             fold_col=fold_col_,
             feature_col=feature_col_,
             target_col=target_col_,
+            time_series_validation=time_series_validation,
         )
 
         dbg.msg(
