@@ -1,4 +1,5 @@
 import logging
+import warnings as warning
 from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
@@ -9,7 +10,7 @@ from matplotlib.axes import Axes
 from scipy.stats import norm  # type: ignore
 from sklearn.metrics import RocCurveDisplay, roc_auc_score, roc_curve  # type: ignore
 
-from predictables.util import DebugLogger
+from predictables.util import DebugLogger, cv_filter
 
 dbg = DebugLogger(working_file="_roc_curve_plot.py")
 
@@ -18,6 +19,7 @@ def roc_curve_plot(
     y: pd.Series,
     yhat_proba: pd.Series,
     fold: pd.Series,
+    time_series_validation: bool,
     coef: float,
     se: float,
     pvalue: float,
@@ -38,6 +40,9 @@ def roc_curve_plot(
         The predicted probabilities.
     fold : pd.Series
         The fold number for each observation.
+    time_series_validation : bool
+        Whether the data has time series structure. If True, the data will be filtered
+        by fold and time, otherwise it will be filtered by fold only.
     coef : float
         The estimated coefficient.
     se : float
@@ -64,10 +69,12 @@ def roc_curve_plot(
         The configured Axes object.
     """
     if backend == "matplotlib":
+        dbg.msg(f"point1: y: {y} | yhat_proba: {yhat_proba} | ROC_0001a")
         return roc_curve_plot_mpl(
             y=y,
             yhat_proba=yhat_proba,
             fold=fold,
+            time_series_validation=time_series_validation,
             figsize=figsize if figsize is not None else (7, 7),
             n_bins=n_bins if n_bins is not None else 200,
             cv_alpha=cv_alpha if cv_alpha is not None else 0.4,
@@ -120,7 +127,10 @@ def create_auc_data(
     tpr : pd.Series
         The true positive rate, ranging from 0 to 1, at each threshold.
     """
-    roc: Tuple[np.ndarray, np.ndarray] = roc_curve(y, yhat_proba)
+    dbg.msg(
+        f"y: {y.shape} | yhat_proba: {yhat_proba.shape} | n_bins: {n_bins} | y:\n{y} | yhat_proba:\n{yhat_proba} |\nROC_0001d"
+    )
+    roc: Tuple[np.ndarray, np.ndarray] = roc_curve(y.round(0).astype(int), yhat_proba)
 
     # Interpolate the data to get a smoother curve
     fpr: pd.Series = pd.Series(np.linspace(0, 1, n_bins))
@@ -190,6 +200,7 @@ def plot_individual_roc_curves(
     figax : Union[go.Figure, Axes]
         The plot.
     """
+    dbg.msg(f"point2: y: {y} | yhat_proba: {yhat_proba} | ROC_0001b")
     fpr, tpr = create_auc_data(y, yhat_proba, n_bins)
 
     # Handle the case where figax is an alias for either fig or ax
@@ -254,6 +265,7 @@ def plot_cv_roc_curves(
     y: pd.Series,
     yhat_proba: pd.Series,
     fold: pd.Series,
+    time_series_validation: bool,
     figax: Optional[Union[go.Figure, Axes, None]] = None,
     n_bins: int = 200,
     cv_alpha: float = 0.4,
@@ -273,6 +285,9 @@ def plot_cv_roc_curves(
         The predicted probabilities.
     fold : pd.Series
         The fold number for each observation.
+    time_series_validation : bool
+        Whether the data has time series structure. If True, the data will be filtered
+        by fold and time, otherwise it will be filtered by fold only.
     figax : Union[go.Figure, Axes, None], optional
         The plot.
     n_bins : int, optional
@@ -302,8 +317,8 @@ def plot_cv_roc_curves(
 
     for f in fold.drop_duplicates().sort_values().values:
         figax = plot_individual_roc_curves(
-            y=y[fold == f],
-            yhat_proba=yhat_proba[fold == f],
+            y=y[cv_filter(f, fold, time_series_validation)],
+            yhat_proba=yhat_proba[cv_filter(f, fold, time_series_validation)],
             curve_name=f"Fold {f}",
             figax=figax,
             n_bins=n_bins if n_bins is not None else 200,
@@ -316,7 +331,11 @@ def plot_cv_roc_curves(
 
 
 def calc_auc_curve_data_from_folds(
-    y: pd.Series, yhat_proba: pd.Series, fold: pd.Series, n_bins: int = 200
+    y: pd.Series,
+    yhat_proba: pd.Series,
+    fold: pd.Series,
+    time_series_validation: bool,
+    n_bins: int = 200,
 ):
     """
     Calculate the standard error of the ROC curve for each fold. Filters the data for
@@ -330,6 +349,9 @@ def calc_auc_curve_data_from_folds(
         The predicted probabilities.
     fold : pd.Series
         The fold number for each observation.
+    time_series_validation : bool
+        Whether the data has time series structure. If True, the data will be filtered
+        by fold and time, otherwise it will be filtered by fold only.
     n_bins : int, optional
         The number of bins to use when calculating the ROC curve. Generally, the
         more bins, the smoother the curve. Defaults to 200.
@@ -348,15 +370,30 @@ def calc_auc_curve_data_from_folds(
     # Calculate the standard error of the ROC curve for each fold
     fprs, tprs = pd.DataFrame(), pd.DataFrame()
 
+    dbg.msg(
+        f"fold.drop_duplicates().sort_values().values: {fold.drop_duplicates().sort_values().values} | ROC000Fe"
+    )
     for f in fold.drop_duplicates().sort_values().values:
-        dbg.msg(f"fold: {fold} | y.name: {y.name} | ROC000Fa ")
-        fpr, tpr = create_auc_data(
-            pd.Series(y.values[fold.values == f]),
-            yhat_proba.reset_index(drop=True)[fold.reset_index(drop=True) == f],
-            n_bins,
-        )
-        fprs[f"fold_{f}"] = fpr
-        tprs[f"fold_{f}"] = tpr
+        if f > 0:
+            dbg.msg(f"f: {f} | fold: {fold} | y.shape: {y.shape} | ROC000Fa ")
+            dbg.msg(f"time_series_validation: {time_series_validation} | ROC000Fb ")
+            cvf = cv_filter(f, fold, time_series_validation)
+            dbg.msg(f"cv_filter.shape: {cvf.shape} | ROC000Fc ")
+            dbg.msg(f"\ncv_filter:\n{cvf} | ROC000Fd ")
+            dbg.msg(
+                f"y[cvf].shape: {y[cvf].shape} | ROC000Fg\n==========================\n{y[cvf]} "
+            )
+            dbg.msg(
+                f"yhat_proba[cvf].shape: {yhat_proba[cvf].shape} | ROC000Fh\n==========================\n{yhat_proba[cvf]} "
+            )
+
+            fpr, tpr = create_auc_data(
+                y[cvf].reset_index(drop=True),
+                yhat_proba[cvf].reset_index(drop=True),
+                n_bins,
+            )
+            fprs[f"fold_{f}"] = fpr
+            tprs[f"fold_{f}"] = tpr
 
     total_fpr, total_tpr = create_auc_data(y, yhat_proba, n_bins)
     fprs["mean"] = total_fpr
@@ -396,6 +433,7 @@ def plot_roc_auc_curves_and_confidence_bands(
     y: pd.Series,
     yhat_proba: pd.Series,
     fold: pd.Series,
+    time_series_validation: bool,
     figax: Optional[Union[go.Figure, Axes, None]] = None,
     n_bins: int = 200,
     cv_alpha: float = 0.4,
@@ -417,6 +455,9 @@ def plot_roc_auc_curves_and_confidence_bands(
         The predicted probabilities.
     fold : pd.Series
         The fold number for each observation.
+    time_series_validation : bool
+        Whether the data has time series structure. If True, the data will be filtered
+        by fold and time, otherwise it will be filtered by fold only.
     figax : Union[go.Figure, Axes, None], optional
         The plot.
     n_bins : int, optional
@@ -461,7 +502,11 @@ def plot_roc_auc_curves_and_confidence_bands(
         f"y: {y.shape} | yhat_proba: {yhat_proba.shape} | fold: {fold.shape} | n_bins: {n_bins} | cv_alpha: {cv_alpha} | figax: {figax} | call_legend: {call_legend} "
     )
     fprs, tprs = calc_auc_curve_data_from_folds(
-        y, yhat_proba, fold, n_bins if n_bins is not None else 200
+        y,
+        yhat_proba,
+        fold,
+        time_series_validation,
+        n_bins if n_bins is not None else 200,
     )
 
     if isinstance(figax, Axes):
@@ -513,7 +558,11 @@ def plot_roc_auc_curves_and_confidence_bands(
 
 
 def delong_statistic_annotation_mpl(
-    y: pd.Series, yhat_proba: pd.Series, fold: pd.Series, ax: Axes
+    y: pd.Series,
+    yhat_proba: pd.Series,
+    fold: pd.Series,
+    time_series_validation: bool,
+    ax: Axes,
 ):
     """
     Implement the DeLong test to compare the ROC AUC against the 45-degree
@@ -533,6 +582,9 @@ def delong_statistic_annotation_mpl(
         The predicted probabilities.
     fold : pd.Series
         The fold number for each observation.
+    time_series_validation : bool
+        Whether the data has time series structure. If True, the data will be filtered
+        by fold and time, otherwise it will be filtered by fold only.
     ax : Axes
         The Axes object to be configured.
 
@@ -541,7 +593,7 @@ def delong_statistic_annotation_mpl(
     ax : matplotlib.Axes.Axes
         The Axes object annotated with the DeLong test statistic and p-value.
     """
-    z, p = _delong_test_against_chance(y, yhat_proba, fold)
+    z, p = _delong_test_against_chance(y, yhat_proba, fold, time_series_validation)
 
     significance_message = "DeLong Test Statistic\nAgainst the 45-degree Line:\n\n"
     significance_message += f"z = {z:.3f}\n"
@@ -748,6 +800,7 @@ def roc_curve_plot_mpl(
     y: pd.Series,
     yhat_proba: pd.Series,
     fold: pd.Series,
+    time_series_validation: bool,
     coef: float,
     se: float,
     pvalue: float,
@@ -768,6 +821,9 @@ def roc_curve_plot_mpl(
         The predicted probabilities.
     fold : pd.Series
         The fold number for each observation.
+    time_series_validation : bool
+        Whether the data has time series structure. If True, the data will be filtered
+        by fold and time, otherwise it will be filtered by fold only.
     coef : float
         The estimated coefficient.
     se : float
@@ -802,13 +858,20 @@ def roc_curve_plot_mpl(
         y,
         yhat_proba,
         fold,
+        time_series_validation=time_series_validation,
         ax=(None if isinstance(ax, go.Figure) else ax),
         n_bins=n_bins,
         backend="matplotlib",
         figsize=figsize,
         cv_alpha=cv_alpha,
     )
-    ax = delong_statistic_annotation_mpl(y=y, yhat_proba=yhat_proba, fold=fold, ax=ax)
+    ax = delong_statistic_annotation_mpl(
+        y=y,
+        yhat_proba=yhat_proba,
+        fold=fold,
+        time_series_validation=time_series_validation,
+        ax=ax,
+    )
     ax = coefficient_annotation_mpl(
         coef=coef,
         std_error=se,
@@ -817,14 +880,17 @@ def roc_curve_plot_mpl(
         figsize=figsize,  # type: ignore
     )
     a = auc(y, yhat_proba)
-    _, p = _delong_test_against_chance(y, yhat_proba, fold)
+    _, p = _delong_test_against_chance(y, yhat_proba, fold, time_series_validation)
     ax = finalize_plot(ax, figsize=figsize, auc=a, auc_p_value=p)  # type: ignore
 
     return ax
 
 
 def _compute_auc_variance(
-    y: pd.Series, yhat: pd.Series, fold: Optional[pd.Series]
+    y: pd.Series,
+    yhat: pd.Series,
+    fold: Optional[pd.Series],
+    time_series_validation: bool,
 ) -> float:
     """
     This function is depricated. Use _empirical_auc_variance instead for new code. I am
@@ -873,29 +939,18 @@ def _compute_auc_variance(
     -------
     var_auc : variance of the AUC estimator
     """
-    # auc = roc_auc_score(y, yhat)
-    # auc2 = np.power(auc, 2)
-
-    # # Count of positive and negative classes
-    # n = y.shape[0]
-    # n1 = y[y == 1].sum()
-    # n0 = n - n1
-
-    # # Q1 and Q2 for variance calculation
-    # Q1 = auc / np.subtract(2, auc)
-    # Q0 = np.divide((2 * auc2), np.add(1, auc))
-
-    # # Compute the variance
-    # return (
-    #     auc * np.subtract(1, auc) + (n1 - 1) * (Q1 - auc2) + (n0 - 1) * (Q0 - auc2)
-    # ) / (n1 * n0)
-    return _empirical_auc_variance(y, yhat, fold)  # type: ignore
+    warning.warn(
+        "This function is deprecated and will be removed in a future release. "
+        "Use `_empirical_auc_variance` instead."
+    )
+    return _empirical_auc_variance(y, yhat, fold, time_series_validation)  # type: ignore
 
 
 def _empirical_auc_variance(
     y: pd.Series,
     yhat_proba: pd.Series,
     fold: pd.Series,
+    time_series_validation: bool,
     use_bootstrap: bool = False,
     n_bootstraps: int = 1000,
     bagging_fraction: float = 0.8,
@@ -913,6 +968,9 @@ def _empirical_auc_variance(
         The predicted probabilities.
     fold : pd.Series
         The fold number for each observation.
+    time_series_validation : bool
+        Whether the data has time series structure. If True, the data will be filtered
+        by fold and time, otherwise it will be filtered by fold only.
     use_bootstrap : bool, optional
         Whether to use bootstrapping to compute the variance. Defaults to False.
     n_bootstraps : int, optional
@@ -958,35 +1016,38 @@ def _empirical_auc_variance(
     # Calculate unique folds
     unique_folds = fold.unique()
 
-    # Raise an error if any of the folds have only one class (this
-    # would result in a variance of 0, which is not useful for the
-    # DeLong test)
-    for f in unique_folds:
-        fold_indices = fold[fold == f].index
-        if len(y.loc[fold_indices].unique()) < 2:
-            raise ValueError(
-                "The empirical variance of the AUC estimator cannot be computed "
-                "if any of the folds have only one class."
-            )
-
     # Initialize a list to hold AUC scores for each fold
     auc_scores = []
-
+    counter = 0
     for f in unique_folds:
-        # Find indices for the current fold
-        fold_indices = fold[fold == f].index
+        try:
+            cvfilter = cv_filter(f, fold, time_series_validation).values
+            if len(y[cvfilter].unique()) < 2:
+                auc_scores.append(0)
+                continue
 
-        # Calculate AUC score for the current fold
-        auc_score = roc_auc_score(y[fold_indices], yhat_proba[fold_indices])
-        auc_scores.append(auc_score)
+            # Calculate AUC score for the current fold
+            auc_score = roc_auc_score(
+                y[cvfilter],
+                yhat_proba[cvfilter],
+            )
+            auc_scores.append(auc_score)
+            counter += 1
+        except ValueError as e:
+            dbg.msg(
+                f"y: {y} | yhat_proba: {yhat_proba} | fold: {fold} | time_series_validation: {time_series_validation} | f: {f} | cvfilter: {cvfilter} | error: {e} | ROC_0001aw"
+            )
 
     # Compute empirical variance of AUC scores
-    var_auc = np.var(auc_scores, ddof=1) * (len(unique_folds) - 1) / len(unique_folds)
+    var_auc = np.var(auc_scores, ddof=1) * (counter - 1) / counter
     return float(var_auc)
 
 
 def _delong_test_against_chance(
-    y: pd.Series, yhat_proba: pd.Series, fold: pd.Series
+    y: pd.Series,
+    yhat_proba: pd.Series,
+    fold: pd.Series,
+    time_series_validation: bool,
 ) -> Tuple[float, float]:
     """
     Implement the DeLong test to compare the ROC AUC against the 45-degree
@@ -1006,6 +1067,9 @@ def _delong_test_against_chance(
         The predicted probabilities.
     fold : pd.Series
         The fold number for each observation.
+    time_series_validation : bool
+        Whether the data has time series structure. If True, the data will be filtered
+        by fold and time, otherwise it will be filtered by fold only.
 
     Returns
     -------
@@ -1015,7 +1079,7 @@ def _delong_test_against_chance(
         The p-value.
     """
     auc = roc_auc_score(y, yhat_proba)
-    var_auc = _empirical_auc_variance(y, yhat_proba, fold)
+    var_auc = _empirical_auc_variance(y, yhat_proba, fold, time_series_validation)
     if np.sqrt(var_auc) == 0:
         logging.warning(f"Variance of AUC is {var_auc}. Returning p-value of 1.0.")
         return 0.0, 1.0

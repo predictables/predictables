@@ -27,7 +27,7 @@ class UnivariateAnalysis:
         df_val: pd.DataFrame,
         target_column_name: str,
         feature_column_names: List[str],
-        has_time_series_structure: bool,
+        time_series_validation: bool,
         cv_column_name: Optional[str] = None,
         cv_folds: Optional[pd.Series] = None,
     ):
@@ -41,7 +41,7 @@ class UnivariateAnalysis:
         self.cv_folds = (
             to_pd_df(self.df)[cv_column_name] if cv_folds is None else cv_folds
         )
-        self.has_time_series_structure = has_time_series_structure
+        self.time_series_validation = time_series_validation
 
         feature_list = []
         for col in tqdm(
@@ -66,6 +66,7 @@ class UnivariateAnalysis:
                     self.cv_column_name,
                     col,
                     self.target_column_name,
+                    time_series_validation=self.time_series_validation,
                 ),
             )
             feature_list.append(obj_name)
@@ -395,16 +396,6 @@ class UnivariateAnalysis:
         cols = []
         total_df = []
         for col in self.feature_column_names:
-            # if hasattr(self, col):
-            #     ua = getattr(self, col)
-            # else:
-            #     ua = Univariate(
-            #         self.df,
-            #         "cv",
-            #         col,
-            #         self.target_column_name,
-            #         time_series_validation=self.has_time_series_structure,
-            #     )
             try:
                 ua = getattr(self, col.lower().replace(" ", "_").replace("-", "_"))
 

@@ -100,6 +100,7 @@ class Univariate(Model):
         fold_col_: str = "cv",
         feature_col_: Optional[str] = None,
         target_col_: Optional[str] = None,
+        time_series_validation: bool = True,
         **kwargs,
     ) -> None:
         df: pd.DataFrame = to_pd_df(df_)
@@ -117,6 +118,7 @@ class Univariate(Model):
             fold_col=fold_col_,
             feature_col=feature_col_,
             target_col=target_col_,
+            time_series_validation=time_series_validation,
         )
 
         dbg.msg(
@@ -400,6 +402,7 @@ class Univariate(Model):
         y: Optional[Union[pd.Series, pl.Series]] = None,
         yhat: Optional[Union[pd.Series, pl.Series]] = None,
         cv: Optional[Union[pd.Series, pl.Series]] = None,
+        time_series_validation: bool = True,
         coef: Optional[float] = None,
         se: Optional[float] = None,
         pvalues: Optional[float] = None,
@@ -428,6 +431,7 @@ class Univariate(Model):
             to_pd_s(self.y_test) if y is None else to_pd_s(y),
             to_pd_s(self.yhat_test) if yhat is None else to_pd_s(yhat),
             cv,
+            self.time_series_validation,
             (
                 to_pd_df(self.agg_results).loc["Ave.", "coef"].values  # type: ignore
                 if coef is None
@@ -573,6 +577,7 @@ class Univariate(Model):
                 y=self.y,
                 yhat=self.yhat_train,
                 cv=self.df.select(self.fold_col).collect().to_pandas()[self.fold_col],  # type: ignore
+                time_series_validation=self.time_series_validation,
                 coef=self.get("coef"),
                 se=self.get("se"),
                 pvalues=self.get("pvalues"),
