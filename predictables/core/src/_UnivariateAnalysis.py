@@ -405,34 +405,37 @@ class UnivariateAnalysis:
             #         self.target_column_name,
             #         time_series_validation=self.has_time_series_structure,
             #     )
-            ua = getattr(self, col.lower().replace(" ", "_").replace("-", "_"))
-            
-            cols.append(col)
-            total_df.append(
-                ua.results.select(
-                    [
-                        pl.col("feature").alias("Feature"),
-                        pl.col("acc_test").alias("Accuracy"),
-                        pl.col("precision_test").alias("Precision"),
-                        pl.col("recall_test").alias("Recall"),
-                        pl.col("auc_test").alias("AUC"),
-                        pl.col("f1_test").alias("F1"),
-                        pl.col("mcc_test").alias("MCC"),
-                        (
-                            pl.col("acc_test")
-                            + pl.col("precision_test")
-                            + pl.col("recall_test")
-                            + pl.col("auc_test")
-                            + pl.col("f1_test")
-                            + pl.col("mcc_test")
-                        )
-                        .truediv(6.0)
-                        .alias("Ave."),
-                    ]
+            try:
+                ua = getattr(self, col.lower().replace(" ", "_").replace("-", "_"))
+
+                cols.append(col)
+                total_df.append(
+                    ua.results.select(
+                        [
+                            pl.col("feature").alias("Feature"),
+                            pl.col("acc_test").alias("Accuracy"),
+                            pl.col("precision_test").alias("Precision"),
+                            pl.col("recall_test").alias("Recall"),
+                            pl.col("auc_test").alias("AUC"),
+                            pl.col("f1_test").alias("F1"),
+                            pl.col("mcc_test").alias("MCC"),
+                            (
+                                pl.col("acc_test")
+                                + pl.col("precision_test")
+                                + pl.col("recall_test")
+                                + pl.col("auc_test")
+                                + pl.col("f1_test")
+                                + pl.col("mcc_test")
+                            )
+                            .truediv(6.0)
+                            .alias("Ave."),
+                        ]
+                    )
+                    .collect()
+                    .to_pandas()
+                    .set_index("Feature")
                 )
-                .collect()
-                .to_pandas()
-                .set_index("Feature")
-            )
+            except Exception:
+                pass
         df = pd.concat(total_df)
         return df.sort_values("Ave.", ascending=False)

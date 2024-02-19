@@ -457,6 +457,9 @@ def plot_roc_auc_curves_and_confidence_bands(
     elif figax is None:
         _, figax = plt.subplots(figsize=figsize)
 
+    dbg.msg(
+        f"y: {y.shape} | yhat_proba: {yhat_proba.shape} | fold: {fold.shape} | n_bins: {n_bins} | cv_alpha: {cv_alpha} | figax: {figax} | call_legend: {call_legend} "
+    )
     fprs, tprs = calc_auc_curve_data_from_folds(
         y, yhat_proba, fold, n_bins if n_bins is not None else 200
     )
@@ -807,7 +810,11 @@ def roc_curve_plot_mpl(
     )
     ax = delong_statistic_annotation_mpl(y=y, yhat_proba=yhat_proba, fold=fold, ax=ax)
     ax = coefficient_annotation_mpl(
-        coef=coef, std_error=se, pvalue=pvalue, ax=ax, figsize=figsize  # type: ignore
+        coef=coef,
+        std_error=se,
+        pvalue=pvalue,
+        ax=ax,
+        figsize=figsize,  # type: ignore
     )
     a = auc(y, yhat_proba)
     _, p = _delong_test_against_chance(y, yhat_proba, fold)
