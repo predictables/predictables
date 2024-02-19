@@ -406,6 +406,7 @@ class UnivariateAnalysis:
             #         time_series_validation=self.has_time_series_structure,
             #     )
             ua = getattr(self, col.lower().replace(" ", "_").replace("-", "_"))
+            
             cols.append(col)
             total_df.append(
                 ua.results.select(

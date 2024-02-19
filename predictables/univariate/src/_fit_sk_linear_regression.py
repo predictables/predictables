@@ -56,7 +56,15 @@ def fit_sk_linear_regression(
     if not isinstance(fit_intercept, bool):
         raise TypeError(f"fit_intercept must be a bool. Got {type(fit_intercept)}")
 
-    X_ = to_pd_df(X) if isinstance(X, (pl.DataFrame, pl.LazyFrame, pd.DataFrame)) else X
-    y_ = to_pd_s(y).values.ravel() if isinstance(y, (pl.Series, pd.Series)) else y
+    X_ = (
+        to_pd_df(X).reset_index(drop=True)
+        if isinstance(X, (pl.DataFrame, pl.LazyFrame, pd.DataFrame))
+        else X
+    )
+    y_ = (
+        to_pd_s(y).reset_index(drop=True).values.ravel()
+        if isinstance(y, (pl.Series, pd.Series))
+        else y
+    )
 
     return LinearRegression(fit_intercept=fit_intercept).fit(X_, y_)

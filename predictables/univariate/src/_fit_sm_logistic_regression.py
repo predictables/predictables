@@ -32,8 +32,8 @@ def fit_sm_logistic_regression(
 
     """
     dbg.msg("Entering fit_sm_logistic_regression function")
-    X_ = to_pd_df(X)
-    y_ = to_pd_s(y).astype(float)
+    X_ = to_pd_df(X).reset_index(drop=True)
+    y_ = to_pd_s(y).reset_index(drop=True).astype(float)
 
     dbg.msg(f"X_=\n{X_},\n\ny_=\n{y_}")
 

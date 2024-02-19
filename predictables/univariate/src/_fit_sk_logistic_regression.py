@@ -33,6 +33,12 @@ def fit_sk_logistic_regression(
         The fitted model
     """
     X_ = to_pd_df(X) if isinstance(X, (pd.DataFrame, pl.DataFrame, pl.LazyFrame)) else X
-    y_ = to_pd_s(y).values.ravel() if isinstance(y, (pd.Series, pl.Series)) else y
+    y_ = (
+        to_pd_s(y).reset_index(drop=True).values.ravel()
+        if isinstance(y, (pd.Series, pl.Series))
+        else y
+    )
 
-    return LogisticRegression(fit_intercept=fit_intercept).fit(X_, y_)
+    return LogisticRegression(fit_intercept=fit_intercept).fit(
+        X_.reset_index(drop=True), y_
+    )

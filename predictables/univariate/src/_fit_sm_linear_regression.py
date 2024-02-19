@@ -29,6 +29,6 @@ def fit_sm_linear_regression(
         The fitted model
 
     """
-    X = to_pd_df(X)
-    y = to_pd_s(y).values.ravel()
+    X = to_pd_df(X).reset_index(drop=True)
+    y = to_pd_s(y).reset_index(drop=True).values.ravel()
     return sm.OLS(y, X).fit()

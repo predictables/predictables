@@ -14,7 +14,9 @@ from predictables.univariate.src import (
     remove_missing_rows,
     time_series_validation_filter,
 )
-from predictables.util import get_column_dtype, to_pd_df, to_pd_s, to_pl_lf
+from predictables.util import DebugLogger, get_column_dtype, to_pd_df, to_pd_s, to_pl_lf
+
+dbg = DebugLogger(working_file="_BaseModel.py")
 
 
 class Model:
@@ -55,6 +57,11 @@ class Model:
         target_col: Optional[str] = None,
         time_series_validation: bool = False,
     ) -> None:
+        dbg.msg(f"__init__ called on {self.__class__.__name__} with df and df_val.")
+        dbg.msg(f"feature_col: {feature_col}, target_col: {target_col}")
+        dbg.msg(
+            f"df.shape: {df.collect().shape if isinstance(df, pl.LazyFrame) else df.shape}"
+        )
         self.df = to_pl_lf(df)
         self.df_val = to_pl_lf(df_val) if df_val is not None else to_pl_lf(df)
         self.fold_n = fold_n
@@ -67,18 +74,26 @@ class Model:
 
         # If there are any np.inf values, replace them with np.nan (so they will get removed
         # in the next step)
-        self.df = self.df.select(
-            [
-                pl.col(col).replace(pl.lit(np.inf), pl.lit(np.nan))
-                for col in self.df.columns
-            ]
-        )
-        self.df_val = self.df_val.select(
-            [
-                pl.col(col).replace(pl.lit(np.inf), pl.lit(np.nan))
-                for col in self.df_val.columns
-            ]
-        )
+        # dbg.msg("Replacing np.inf with np.nan in the dataframes.")
+        # dbg.msg(
+        #     f"df.shape before: {self.df.collect().shape if isinstance(self.df, pl.LazyFrame) else self.df.shape}"
+        # )
+        # self.df = self.df.select(
+        #     [pl.col(col).replace(np.inf, np.nan) for col in self.df.columns]
+        # )
+        # dbg.msg(
+        #     f"df.shape after: {self.df.collect().shape if isinstance(self.df, pl.LazyFrame) else self.df.shape}"
+        # )
+
+        # dbg.msg(
+        #     f"df_val.shape before: {self.df_val.collect().shape if isinstance(self.df_val, pl.LazyFrame) else self.df_val.shape}"
+        # )
+        # self.df_val = self.df_val.select(
+        #     [pl.col(col).replace(np.inf, np.nan) for col in self.df_val.columns]
+        # )
+        # dbg.msg(
+        #     f"df_val.shape after: {self.df_val.collect().shape if isinstance(self.df_val, pl.LazyFrame) else self.df_val.shape}"
+        # )
 
         # Remove rows with missing values
         self.df = remove_missing_rows(self.df, self.feature_col, self.target_col)
@@ -139,14 +154,31 @@ class Model:
                 self.model = fit_sm_logistic_regression(self.X_train, self.y_train)
                 self.sk_model = fit_sk_logistic_regression(self.X_train, self.y_train)
             except np.linalg.LinAlgError:
-                self.model = fit_sm_logistic_regression(
-                    self.X_train.loc[self.X_train.iloc[:, 0].ne(0)],
-                    self.y_train[self.X_train.iloc[:, 0].ne(0)],
+                dbg.msg(
+                    f"LinAlgError caught for {self.feature_col}. "
+                    "Fitting model without missing rows, and removing 0s."
                 )
-                self.sk_model = fit_sk_logistic_regression(
-                    self.X_train.loc[self.X_train.iloc[:, 0].ne(0)],
-                    self.y_train[self.X_train.iloc[:, 0].ne(0)],
+                dbg.msg(
+                    f"X_train.shape before: {self.X_train.collect().shape if isinstance(self.X_train, pl.LazyFrame) else self.X_train.shape}"
                 )
+                self.X_train = self.X_train.loc[self.X_train.iloc[:, 0].ne(0)]
+                dbg.msg(
+                    f"X_train.shape after: {self.X_train.collect().shape if isinstance(self.X_train, pl.LazyFrame) else self.X_train.shape}"
+                )
+                dbg.msg(
+                    f"y_train.shape before: {self.y_train.collect().shape if isinstance(self.y_train, pl.LazyFrame) else self.y_train.shape}"
+                )
+                try:
+                    self.y_train = self.y_train.reset_index(drop=True)[
+                        self.X_train.iloc[:, 0].ne(0).reset_index(drop=True)
+                    ]
+                except Exception as e:
+                    dbg.msg(f"Error: {e}")  # type: ignore
+                dbg.msg(
+                    f"y_train.shape after: {self.y_train.collect().shape if isinstance(self.y_train, pl.LazyFrame) else self.y_train.shape}"
+                )
+                self.model = fit_sm_logistic_regression(self.X_train, self.y_train)
+                self.sk_model = fit_sk_logistic_regression(self.X_train, self.y_train)
         else:
             try:
                 self.model = fit_sm_linear_regression(self.X_train, self.y_train)
