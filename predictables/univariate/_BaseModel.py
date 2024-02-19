@@ -12,9 +12,16 @@ from predictables.univariate.src import (
     fit_sm_linear_regression,
     fit_sm_logistic_regression,
     remove_missing_rows,
-    time_series_validation_filter,
 )
-from predictables.util import DebugLogger, get_column_dtype, to_pd_df, to_pd_s, to_pl_lf
+from predictables.util import (
+    DebugLogger,
+    get_column_dtype,
+    to_pd_df,
+    to_pd_s,
+    to_pl_lf,
+    to_pl_s,
+    filter_df_by_cv_fold,
+)
 
 dbg = DebugLogger(working_file="_BaseModel.py")
 
@@ -100,25 +107,36 @@ class Model:
         ).lazy()
 
         # Split into train and test sets
-        (
-            self.X_train,
-            self.y_train,
-            self.X_test,
-            self.y_test,
-        ) = time_series_validation_filter(
-            df=self.df,
-            df_val=self.df_val,
-            fold=self.fold_n,
-            fold_col=self.fold_col,
-            feature_col=self.feature_col,
-            target_col=self.target_col,
-            time_series_validation=self.time_series_validation,
-        )
+        if self.fold_n is None:
+            train = self.df
+            test = self.df_val
+
+        else:
+            train = filter_df_by_cv_fold(
+                self.df,
+                self.fold_n,
+                self.df.select([self.fold_col]).collect().to_series(),
+                self.time_series_validation,
+                "train",
+                "pl",
+            )
+            test = filter_df_by_cv_fold(
+                self.df,
+                self.fold_n,
+                self.df.select([self.fold_col]).collect().to_series(),
+                self.time_series_validation,
+                "test",
+                "pl",
+            )
+        self.X_train = train.select([self.feature_col])
+        self.y_train = train.select([self.target_col])
+        self.X_test = test.select([self.feature_col])
+        self.y_test = test.select([self.target_col])
 
         self.scaler: Optional[StandardScaler] = None
 
         # Type of target variable:
-        self.is_binary = get_column_dtype(self.y_train) in [
+        self.is_binary = get_column_dtype(self.GetY("train")) in [
             "categorical",
             "binary",
         ]
@@ -126,60 +144,68 @@ class Model:
         # Either logistic or linear regression
         if self.is_binary:
             try:
-                self.model = fit_sm_logistic_regression(self.X_train, self.y_train)
-                self.sk_model = fit_sk_logistic_regression(self.X_train, self.y_train)
+                self.model = fit_sm_logistic_regression(
+                    self.GetX("train"), self.GetY("train")
+                )
+                self.sk_model = fit_sk_logistic_regression(
+                    self.GetX("train"), self.GetY("train")
+                )
             except np.linalg.LinAlgError:
                 dbg.msg(
                     f"LinAlgError caught for {self.feature_col}. "
                     "Fitting model without missing rows, and removing 0s."
                 )
                 missing_zero_idx = (
-                    to_pd_df(self.X_train)
+                    to_pd_df(self.GetX("train"))
                     .iloc[:, 0]
                     .fillna(0)
                     .eq(0)
                     .reset_index(drop=True)
                 )
-                X_train = (
-                    to_pd_df(self.X_train).reset_index(drop=True).loc[~missing_zero_idx]
+                X = (
+                    to_pd_df(self.GetX("train"))
+                    .reset_index(drop=True)
+                    .loc[~missing_zero_idx]
                 )
-                y_train = to_pd_s(self.y_train).reset_index(drop=True)[
-                    ~missing_zero_idx
-                ]
+                y = self.GetY("train").reset_index(drop=True)[~missing_zero_idx]
 
                 try:
-                    self.model = fit_sm_logistic_regression(self.X_train, self.y_train)
-                    self.sk_model = fit_sk_logistic_regression(
-                        self.X_train, self.y_train
-                    )
+                    self.model = fit_sm_logistic_regression(X, y)
+                    self.sk_model = fit_sk_logistic_regression(X, y)
                 except Exception as e:
                     dbg.msg(f"Error: {e}")  # type: ignore
         else:
             try:
-                self.model = fit_sm_linear_regression(self.X_train, self.y_train)
-                self.sk_model = fit_sk_linear_regression(self.X_train, self.y_train)
+                self.model = fit_sm_linear_regression(
+                    self.GetX("train"), self.GetY("train")
+                )
+                self.sk_model = fit_sk_linear_regression(
+                    self.GetX("train"), self.GetY("train")
+                )
             except np.linalg.LinAlgError:
                 missing_zero_idx = (
-                    to_pd_df(self.X_train)
+                    to_pd_df(self.GetX("train"))
                     .iloc[:, 0]
                     .fillna(0)
                     .eq(0)
                     .reset_index(drop=True)
                 )
-                X_train = (
-                    to_pd_df(self.X_train).reset_index(drop=True).loc[~missing_zero_idx]
+                X = (
+                    to_pd_df(self.GetX("train"))
+                    .reset_index(drop=True)
+                    .loc[~missing_zero_idx]
                 )
-                y_train = to_pd_s(self.y_train).reset_index(drop=True)[
+                y = to_pd_s(self.GetY("train")).reset_index(drop=True)[
                     ~missing_zero_idx
                 ]
-                self.model = fit_sm_linear_regression(X_train, y_train)
-                self.sk_model = fit_sk_linear_regression(X_train, y_train)
+                self.model = fit_sm_linear_regression(X, y)
+                self.sk_model = fit_sk_linear_regression(X, y)
 
         self.yhat_train: Union[pd.Series[Any], pd.DataFrame[Any]] = self.predict(
-            self.X_train
+            self.GetX("train")
         )  # type: ignore
         self.yhat_test: Union[pd.Series[Any], pd.DataFrame[Any]] = self.predict(
-            self.X_test
+            self.GetX("test")
         )  # type: ignore
 
         # Pull stats from the fitted model object
@@ -203,70 +229,80 @@ class Model:
             results = results.with_columns(
                 [
                     pl.lit(
-                        metrics.accuracy_score(self.y_train, self.yhat_train.round(0))
+                        metrics.accuracy_score(
+                            self.GetY("train"), self.yhat_train.round(0)
+                        )
                     ).alias("acc_train"),
                     pl.lit(
-                        metrics.accuracy_score(self.y_test, self.yhat_test.round(0))
+                        metrics.accuracy_score(
+                            self.GetY("test"), self.yhat_test.round(0)
+                        )
                     ).alias("acc_test"),
                     pl.lit(
-                        metrics.f1_score(self.y_train, self.yhat_train.round(0))
+                        metrics.f1_score(self.GetY("train"), self.yhat_train.round(0))
                     ).alias("f1_train"),
                     pl.lit(
-                        metrics.f1_score(self.y_test, self.yhat_test.round(0))
+                        metrics.f1_score(self.GetY("test"), self.yhat_test.round(0))
                     ).alias("f1_test"),
                     pl.lit(
-                        metrics.recall_score(self.y_train, self.yhat_train.round(0))
+                        metrics.recall_score(
+                            self.GetY("train"), self.yhat_train.round(0)
+                        )
                     ).alias("recall_train"),
                     pl.lit(
-                        metrics.recall_score(self.y_test, self.yhat_test.round(0))
+                        metrics.recall_score(self.GetY("test"), self.yhat_test.round(0))
                     ).alias("recall_test"),
                     pl.lit(
-                        metrics.log_loss(self.y_train, self.yhat_train.round(0))
+                        metrics.log_loss(self.GetY("train"), self.yhat_train.round(0))
                     ).alias("logloss_train"),
                     pl.lit(
-                        metrics.log_loss(self.y_test, self.yhat_test.round(0))
+                        metrics.log_loss(self.GetY("test"), self.yhat_test.round(0))
                     ).alias("logloss_test"),
                     pl.lit(
-                        metrics.roc_auc_score(self.y_train, self.yhat_train.round(0))
+                        metrics.roc_auc_score(
+                            self.GetY("train"), self.yhat_train.round(0)
+                        )
                     ).alias("auc_train"),
                     pl.lit(
-                        metrics.roc_auc_score(self.y_test, self.yhat_test.round(0))
+                        metrics.roc_auc_score(
+                            self.GetY("test"), self.yhat_test.round(0)
+                        )
                     ).alias("auc_test"),
                     pl.lit(
                         metrics.precision_score(
-                            self.y_train,
+                            self.GetY("train"),
                             self.yhat_train.round(0),
                             zero_division=0,
                         )
                     ).alias("precision_train"),
                     pl.lit(
                         metrics.precision_score(
-                            self.y_test,
+                            self.GetY("test"),
                             self.yhat_test.round(0),
                             zero_division=0,
                         )
                     ).alias("precision_test"),
                     pl.lit(
                         metrics.matthews_corrcoef(
-                            self.y_train.replace(0, -1),
+                            self.GetY("test").replace(0, -1),
                             self.yhat_train.round(0).replace(0, -1),
                         )
                     ).alias("mcc_train"),
                     pl.lit(
                         metrics.matthews_corrcoef(
-                            self.y_test.replace(0, -1),
+                            self.GetY("test").replace(0, -1),
                             self.yhat_test.round(0).replace(0, -1),
                         )
                     ).alias("mcc_test"),
                     pl.lit(
-                        metrics.roc_curve(self.y_train, self.yhat_train.round(0))
+                        metrics.roc_curve(self.GetY("train"), self.yhat_train.round(0))
                     ).alias("roc_curve_train"),
                     pl.lit(
-                        metrics.roc_curve(self.y_test, self.yhat_test.round(0))
+                        metrics.roc_curve(self.GetY("test"), self.yhat_test.round(0))
                     ).alias("roc_curve_test"),
                     pl.lit(
                         metrics.precision_recall_curve(
-                            self.y_train, self.yhat_train.round(0)
+                            self.GetY("train"), self.yhat_train.round(0)
                         )
                     ).alias("pr_curve_train"),
                     pl.lit(
@@ -426,3 +462,63 @@ class Model:
             self.model.predict(X),
             name=self.target_col + "_hat" if name is None else name,
         )
+
+    def GetX(
+        self, train_test: str = "train", return_type: str = "pd"
+    ) -> Union[pd.DataFrame, pl.DataFrame]:
+        """
+        Returns the input data for the specified train or test set.
+
+        Parameters
+        ----------
+        train_test : str
+            The train or test set to return the input data for.
+        return_type : str
+            The type of data to return. Choices are "pd" for pandas or "pl" for polars.
+
+        Returns
+        -------
+        Union[pd.DataFrame, pl.DataFrame]
+            The input data for the specified train or test set.
+        """
+        if train_test == "train":
+            return (
+                to_pd_df(self.X_train)
+                if return_type == "pd"
+                else to_pl_lf(self.X_train)
+            )
+        elif train_test == "test":
+            return (
+                to_pd_df(self.X_test) if return_type == "pd" else to_pl_lf(self.X_test)
+            )
+        else:
+            raise ValueError(f"train_test must be 'train' or 'test'. Got {train_test}.")
+
+    def GetY(self, train_test: str = "train", return_type: str = "pd") -> pd.Series:
+        """
+        Returns the target variable for the specified train or test set.
+
+        Parameters
+        ----------
+        train_test : str
+            The train or test set to return the target variable for.
+
+        Returns
+        -------
+        pd.Series
+            The target variable for the specified train or test set.
+        """
+        if train_test == "train":
+            return (
+                to_pd_s(self.y_train.collect().to_series())
+                if return_type == "pd"
+                else to_pl_s(self.y_train.collect().to_series())
+            )
+        elif train_test == "test":
+            return (
+                to_pd_s(self.y_test.collect().to_series())
+                if return_type == "pd"
+                else to_pl_s(self.y_test.collect().to_series())
+            )
+        else:
+            raise ValueError(f"train_test must be 'train' or 'test'. Got {train_test}.")

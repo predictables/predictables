@@ -81,7 +81,7 @@ def large_sample_data():
 def test_delong_test_against_chance_basic(sample_data):
     """Test basic functionality of the DeLong test."""
     y, yhat_proba, fold = sample_data
-    z_stat, p_value = _delong_test_against_chance(y, yhat_proba, fold)
+    z_stat, p_value = _delong_test_against_chance(y, yhat_proba, fold, False)
     assert isinstance(z_stat, float) and isinstance(
         p_value, float
     ), f"Z-statistic {z_stat} and p-value {p_value} should be floats, not {type(z_stat)} and {type(p_value)}."
@@ -126,7 +126,7 @@ def test_delong_test_against_chance_known_values(cancer):
     andy_p_value = 2 * (1 - norm.cdf(np.abs(andy_Z)))
 
     # DeLong test against chance
-    z_stat, p_value = _delong_test_against_chance(y, yhat_proba, folds)
+    z_stat, p_value = _delong_test_against_chance(y, yhat_proba, folds, False)
 
     # Test they are pretty close
     assert (
@@ -153,7 +153,7 @@ def test_delong_test_gives_significant_estimate(cancer):
     # Predict probabilities
     yhat_proba = clf_total.predict_proba(X.values.reshape(-1, 1))[:, 1]
 
-    _, p_value = _delong_test_against_chance(y, yhat_proba, folds)
+    _, p_value = _delong_test_against_chance(y, yhat_proba, folds, False)
     assert (
         p_value < 0.05
     ), "P-value should indicate significance for perfect prediction."
@@ -166,7 +166,7 @@ def test_delong_test_random_prediction():
     yhat_proba = pd.Series(np.random.rand(10000))
     fold = pd.Series(np.random.choice([1, 2, 3, 4, 5], 10000))
 
-    z_stat, p_value = _delong_test_against_chance(y, yhat_proba, fold)
+    z_stat, p_value = _delong_test_against_chance(y, yhat_proba, fold, False)
     assert (
         p_value > 0.05
     ), f"P-value ({p_value}) should not indicate significance for random predictions, but the z-score is {z_stat}."
@@ -180,7 +180,7 @@ def test_delong_test_constant_predictions(constant_value):
     fold = pd.Series([1, 2] * 50)
 
     with pytest.raises(ValueError):
-        _delong_test_against_chance(y, yhat_proba, fold)
+        _delong_test_against_chance(y, yhat_proba, fold, False)
 
 
 def test_delong_test_invalid_inputs():
@@ -190,7 +190,7 @@ def test_delong_test_invalid_inputs():
     fold = pd.Series([1, 2])
 
     with pytest.raises(ValueError):
-        _delong_test_against_chance(y, yhat_proba, fold)
+        _delong_test_against_chance(y, yhat_proba, fold, False)
 
 
 @pytest.mark.parametrize("n_folds", [(5,), (10,)])
@@ -210,7 +210,9 @@ def test_delong_test_cross_validation_consistency(n_folds, p):
         y_test = y.iloc[test_index].reset_index(drop=True)
         yhat_proba_test = yhat_proba.iloc[test_index].reset_index(drop=True)
         fold = pd.Series(test_index % n_folds[0]).reset_index(drop=True)
-        z_stat, p_value = _delong_test_against_chance(y_test, yhat_proba_test, fold)
+        z_stat, p_value = _delong_test_against_chance(
+            y_test, yhat_proba_test, fold, False
+        )
         z_stats.append(z_stat)
         p_values.append(p_value)
 

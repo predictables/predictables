@@ -17,10 +17,5 @@ from ._get_data import (  # noqa F401
 )
 from ._remove_missing_rows import remove_missing_rows  # noqa F401
 
-# trunk-ignore(flake8/F401)
-from ._time_series_validation_filter import (
-    time_series_validation_filter,  # noqa F401
-)  # noqa F401
-
 # import the main plots themselves
 from .plots import quintile_lift_plot, stacked_bar_chart  # noqa F401

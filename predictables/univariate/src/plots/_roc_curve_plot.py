@@ -10,7 +10,7 @@ from matplotlib.axes import Axes
 from scipy.stats import norm  # type: ignore
 from sklearn.metrics import RocCurveDisplay, roc_auc_score, roc_curve  # type: ignore
 
-from predictables.util import DebugLogger, filter_by_cv_fold
+from predictables.util import DebugLogger, filter_by_cv_fold, to_pd_s, get_column_dtype
 
 dbg = DebugLogger(working_file="_roc_curve_plot.py")
 
@@ -985,10 +985,37 @@ def _empirical_auc_variance(
             "`use_bootstrap` to True."
         )
 
-    elif (len(y) == 0) | (len(yhat_proba) == 0) | (len(fold) == 0):
+    if (len(y) == 0) | (len(yhat_proba) == 0) | (len(fold) == 0):
         raise ValueError(
             f"The input arrays are empty:\n y: {len(y)}\n yhat_proba: "
             f"{len(yhat_proba)}\n fold: {len(fold)}"
+        )
+
+    if get_column_dtype(y) != "binary":
+        raise ValueError(
+            f"y must be a binary variable, but it is of type: {get_column_dtype(y)}"
+        )
+
+    if to_pd_s(y).isnull().sum() > 0:
+        print(
+            f"y: {y} | yhat_proba: {yhat_proba} | fold: {fold} | time_series_validation: {time_series_validation} | ROC_0001a"
+        )
+        raise ValueError(
+            f"y cannot contain missing values, but it contains {y.isnull().sum()} missing values."
+        )
+    if to_pd_s(yhat_proba).isnull().sum() > 0:
+        print(
+            f"y: {y} | yhat_proba: {yhat_proba} | fold: {fold} | time_series_validation: {time_series_validation} | ROC_0001b"
+        )
+        raise ValueError(
+            f"yhat_proba cannot contain missing values, but it contains {yhat_proba.isnull().sum()} missing values."
+        )
+    if to_pd_s(fold).isnull().sum() > 0:
+        print(
+            f"y: {y} | yhat_proba: {yhat_proba} | fold: {fold} | time_series_validation: {time_series_validation} | ROC_0001c"
+        )
+        raise ValueError(
+            f"fold cannot contain missing values, but it contains {fold.isnull().sum()} missing values."
         )
 
     # If bootstrapping is enabled, compute the variance using bootstrapping
@@ -1077,6 +1104,12 @@ def _delong_test_against_chance(
     p_value : float
         The p-value.
     """
+    if to_pd_s(yhat_proba).nunique() == 1:
+        raise ValueError(
+            "yhat_proba must have more than one unique value, "
+            f"but it has only one unique value: {yhat_proba.unique()}"
+        )
+
     auc = roc_auc_score(y, yhat_proba)
     var_auc = _empirical_auc_variance(y, yhat_proba, fold, time_series_validation)
     if np.sqrt(var_auc) == 0:
