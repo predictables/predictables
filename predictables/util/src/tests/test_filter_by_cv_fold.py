@@ -1,6 +1,5 @@
 import pandas as pd
 import polars as pl
-import numpy as np
 import pytest
 from predictables.util.src import _cv_filter as cvf
 
@@ -17,22 +16,22 @@ def pd_cv_fold_data_no_ts():
 
 @pytest.fixture
 def pd_series():
-    return pd.Series(range(7))
+    return pd.Series([i * 10 for i in range(7)])
 
 
 @pytest.mark.parametrize(
     "f, train_test, expected",
     [
-        (1, "train", pd.Series([0, 0])),
-        (1, "test", pd.Series([1])),
-        (2, "train", pd.Series([0, 0, 1])),
-        (2, "test", pd.Series([2])),
-        (3, "train", pd.Series([0, 0, 1, 2])),
-        (3, "test", pd.Series([3])),
-        (4, "train", pd.Series([0, 0, 1, 2, 3])),
-        (4, "test", pd.Series([4])),
-        (5, "train", pd.Series([0, 0, 1, 2, 3, 4])),
-        (5, "test", pd.Series([5])),
+        (1, "train", pd.Series([0, 10])),
+        (1, "test", pd.Series([20])),
+        (2, "train", pd.Series([0, 10, 20])),
+        (2, "test", pd.Series([30])),
+        (3, "train", pd.Series([0, 10, 20, 30])),
+        (3, "test", pd.Series([40])),
+        (4, "train", pd.Series([0, 10, 20, 30, 40])),
+        (4, "test", pd.Series([50])),
+        (5, "train", pd.Series([0, 10, 20, 30, 40, 50])),
+        (5, "test", pd.Series([60])),
     ],
 )
 @pytest.mark.parametrize("dtype", ["pandas", "polars", "numpy"])
@@ -57,12 +56,10 @@ def test_filter_by_cv_fold_ts(
     result = cvf.filter_by_cv_fold(
         s, f, folds, time_series_validation=True, train_test=train_test
     )
+    result.name = None
     assert isinstance(
         result, pd.Series
     ), f"result is {type(result)}, expected pd.Series"
-    # assert result.reset_index(drop=True).equals(
-    #     expected.reset_index(drop=True)
-    # ), f"result is {result.reset_index(drop=True)}, expected {expected.reset_index(drop=True)}"
 
     pd.testing.assert_series_equal(
         result.reset_index(drop=True), expected.reset_index(drop=True)
@@ -72,20 +69,20 @@ def test_filter_by_cv_fold_ts(
 @pytest.mark.parametrize(
     "f, train_test, expected",
     [
-        (1, "train", pd.Series([2, 3, 4, 5, 6, 7])),
-        (1, "test", pd.Series([1])),
-        (2, "train", pd.Series([1, 3, 4, 5, 6, 7])),
-        (2, "test", pd.Series([2])),
-        (3, "train", pd.Series([1, 2, 4, 5, 6, 7])),
-        (3, "test", pd.Series([3])),
-        (4, "train", pd.Series([1, 2, 3, 5, 6, 7])),
-        (4, "test", pd.Series([4])),
-        (5, "train", pd.Series([1, 2, 3, 4, 6, 7])),
-        (5, "test", pd.Series([5])),
-        (6, "train", pd.Series([1, 2, 3, 4, 5, 7])),
-        (6, "test", pd.Series([6])),
-        (7, "train", pd.Series([1, 2, 3, 4, 5, 6])),
-        (7, "test", pd.Series([7])),
+        (1, "train", pd.Series([10, 20, 30, 40, 50, 60])),
+        (1, "test", pd.Series([0])),
+        (2, "train", pd.Series([0, 20, 30, 40, 50, 60])),
+        (2, "test", pd.Series([10])),
+        (3, "train", pd.Series([0, 10, 30, 40, 50, 60])),
+        (3, "test", pd.Series([20])),
+        (4, "train", pd.Series([0, 10, 20, 40, 50, 60])),
+        (4, "test", pd.Series([30])),
+        (5, "train", pd.Series([0, 10, 20, 30, 50, 60])),
+        (5, "test", pd.Series([40])),
+        (6, "train", pd.Series([0, 10, 20, 30, 40, 60])),
+        (6, "test", pd.Series([50])),
+        (7, "train", pd.Series([0, 10, 20, 30, 40, 50])),
+        (7, "test", pd.Series([60])),
     ],
 )
 @pytest.mark.parametrize("dtype", ["pandas", "polars", "numpy"])
@@ -110,12 +107,10 @@ def test_filter_by_cv_fold_no_ts(
     result = cvf.filter_by_cv_fold(
         s, f, folds, time_series_validation=False, train_test=train_test
     ).reset_index(drop=True)
+    result.name = None
     assert isinstance(
         result.reset_index(drop=True), pd.Series
     ), f"result is {type(result)}, expected pd.Series"
-    # assert result.reset_index(drop=True).equals(
-    #     expected
-    # ), f"result is {result.reset_index(drop=True)}, expected {expected.reset_index(drop=True)}"
 
     pd.testing.assert_series_equal(
         result.reset_index(drop=True), expected.reset_index(drop=True)

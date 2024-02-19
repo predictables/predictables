@@ -5,6 +5,7 @@ import pandas as pd
 import polars as pl
 
 from predictables.util.src._to_pd import to_pd_s
+from predictables.util.src.logging._DebugLogger import DebugLogger
 
 
 def filter_by_cv_fold(

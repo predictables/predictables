@@ -34,7 +34,7 @@ class DebugLogger(_logging.Logger):
         # Load the .env file to get the logging level - if we are not at the debug
         # level, we don't want to log anything.
         self.turned_on = (
-            LogLevel.convert_str(os.getenv("LOGGING_LEVEL", "info").lower()) == "DEBUG"
+            LogLevel.convert_str(os.getenv("LOGGING_LEVEL", "info").lower()) == "debug"
         )
 
         if self.turned_on:
