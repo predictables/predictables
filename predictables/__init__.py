@@ -1,1 +1,1 @@
-from .core import PredicTables  # noqa F401
+# from .core import PredicTables  # noqa F401

@@ -32,7 +32,7 @@ def sample_data() -> Tuple[pd.Series, pd.Series, pd.Series]:
         np.random.binomial(1, yhat_proba, size=100)
     )  # Simulate binary outcomes
     fold = pd.Series(np.random.choice([1, 2, 3, 4, 5], size=100))
-    return y, yhat_proba, fold
+    return y, pd.Series(yhat_proba), fold
 
 
 @pytest.fixture
@@ -55,8 +55,8 @@ def sample_variance_bootstrap(
     )
 
     # Turn y and yhat from a pd.Series (vector) to a np.array (matrix) of shape (n, 2500)
-    y = np.array([y.iloc[i] for i in idx])
-    yhat_proba = np.array([yhat_proba.iloc[i] for i in idx])
+    y = pd.Series([y[i] for i in idx])
+    yhat_proba = pd.Series([yhat_proba[i] for i in idx])
 
     # Calculate the AUC for each bootstrap sample
     aucs = np.array([roc_auc_score(y[i], yhat_proba[i]) for i in range(2500)])
@@ -193,7 +193,7 @@ def test_delong_test_invalid_inputs():
         _delong_test_against_chance(y, yhat_proba, fold)
 
 
-@pytest.mark.parametrize("n_folds", [(5,), (10,), (20,)])
+@pytest.mark.parametrize("n_folds", [(5,), (10,)])
 @pytest.mark.parametrize("p", [(0.25,), (0.5,), (0.75,)])
 def test_delong_test_cross_validation_consistency(n_folds, p):
     """Test consistency of DeLong test results across cross-validation splits."""

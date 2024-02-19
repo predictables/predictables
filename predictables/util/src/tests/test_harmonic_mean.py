@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import polars as pl
-import pytest
 
 from predictables.util.src._harmonic_mean import (
     _harmonic_from_list,
@@ -209,25 +208,3 @@ def test_harmonic_mean_negative():
     assert np.isclose(
         harmonic_mean(pl.Series([-1, -2])), result
     ), f"For harmonic_mean(pl.Series([-1, -2])), expected {result}, got {harmonic_mean(pl.Series([-1, -2]))}"
-
-
-# @pytest.mark.parametrize(
-#     "input",
-#     [
-#         (None),
-#         (True),
-#         (False),
-#         (1j),
-#         (1 + 1j),
-#         ("string"),
-#         ([1, "string"]),
-#         ({"a": 1, "b": 2}),
-#     ],
-# )
-# def test_invalid_input(input):
-#     with pytest.raises(TypeError) as err:
-#         harmonic_mean(input)
-#     assert (
-#         "'Input must be a list, numpy array, pandas series, or polars series of numbers.'"
-#         in str(err.value).replace('"', "'")
-#     ), f"Input: {input},\nType: {type(input)}\nError: {err.value}\nExpected: TypeError: Input must be a list, numpy array, pandas series, or polars series of numbers."

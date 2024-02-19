@@ -4,6 +4,7 @@ from typing import Optional, Tuple, Union
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd  # type: ignore
+import polars as pl
 import plotly.graph_objects as go  # type: ignore
 from matplotlib.axes import Axes
 from scipy.stats import norm  # type: ignore
@@ -948,13 +949,13 @@ def _empirical_auc_variance(
         )
         return np.var(auc_, ddof=1) * (1 - bagging_fraction) / bagging_fraction
 
+    fold_idx = [[fold.eq(f).values] for f in get_unique(fold)]
+    # Otherwise, compute the variance using the empirical variance
     return float(
         np.var(
             [
-                roc_auc_score(
-                    y.loc[fold.eq(f).values], yhat_proba.loc[fold.eq(f).values]  # type: ignore
-                )
-                for f in get_unique(fold)
+                roc_auc_score(y[fold_idx[i]], yhat_proba[fold_idx[i]])
+                for i in range(len(fold.unique()))
             ],
             ddof=1,
         )
