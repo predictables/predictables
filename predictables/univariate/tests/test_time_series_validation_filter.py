@@ -255,7 +255,10 @@ def test_cv2_true(
         assert_frame_equal(
             train[["feature_col"]].reset_index(drop=True),
             result[0].reset_index(drop=True),
-            f"X_train: {train[['feature_col']]} is not the same as the one returned: {result[0]}",
+            (
+                f"X_train: {train[['feature_col']]} is not the "
+                f"same as the one returned: {result[0]}"
+            ),
         )
     )
     (

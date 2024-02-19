@@ -61,5 +61,11 @@ def _cv_filter_ts(
     pd.Series
         A boolean series indicating whether the fold is less than or equal to the
         given fold.
+
+    Notes
+    -----
+    When combining training and test sets, test "cv folds" do not exist, so are filled
+    in with negative labels sometimes. This is why we use less than or equal to, but not
+    negative.
     """
-    return to_pd_s(fold_col).le(fold)
+    return to_pd_s(fold_col).le(fold) & to_pd_s(fold_col).ge(0)
