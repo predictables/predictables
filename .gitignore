@@ -170,7 +170,7 @@ logs/
 npm_modules/
 node_modules/
 
-.vscode/
+.vscode
 
 # Added by cargo
 
