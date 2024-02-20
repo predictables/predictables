@@ -230,84 +230,98 @@ class Model:
                 [
                     pl.lit(
                         metrics.accuracy_score(
-                            self.GetY("train"), self.yhat_train.round(0)
+                            self.GetY("train"), self.GetYhat("train").round(0)
                         )
                     ).alias("acc_train"),
                     pl.lit(
                         metrics.accuracy_score(
-                            self.GetY("test"), self.yhat_test.round(0)
+                            self.GetY("test"), self.GetYhat("test").round(0)
                         )
                     ).alias("acc_test"),
                     pl.lit(
-                        metrics.f1_score(self.GetY("train"), self.yhat_train.round(0))
+                        metrics.f1_score(
+                            self.GetY("train"), self.GetYhat("train").round(0)
+                        )
                     ).alias("f1_train"),
                     pl.lit(
-                        metrics.f1_score(self.GetY("test"), self.yhat_test.round(0))
+                        metrics.f1_score(
+                            self.GetY("test"), self.GetYhat("test").round(0)
+                        )
                     ).alias("f1_test"),
                     pl.lit(
                         metrics.recall_score(
-                            self.GetY("train"), self.yhat_train.round(0)
+                            self.GetY("train"), self.GetYhat("train").round(0)
                         )
                     ).alias("recall_train"),
                     pl.lit(
-                        metrics.recall_score(self.GetY("test"), self.yhat_test.round(0))
+                        metrics.recall_score(
+                            self.GetY("test"), self.GetYhat("test").round(0)
+                        )
                     ).alias("recall_test"),
                     pl.lit(
-                        metrics.log_loss(self.GetY("train"), self.yhat_train.round(0))
+                        metrics.log_loss(
+                            self.GetY("train"), self.GetYhat("train").round(0)
+                        )
                     ).alias("logloss_train"),
                     pl.lit(
-                        metrics.log_loss(self.GetY("test"), self.yhat_test.round(0))
+                        metrics.log_loss(
+                            self.GetY("test"), self.GetYhat("test").round(0)
+                        )
                     ).alias("logloss_test"),
                     pl.lit(
                         metrics.roc_auc_score(
-                            self.GetY("train"), self.yhat_train.round(0)
+                            self.GetY("train"), self.GetYhat("train").round(0)
                         )
                     ).alias("auc_train"),
                     pl.lit(
                         metrics.roc_auc_score(
-                            self.GetY("test"), self.yhat_test.round(0)
+                            self.GetY("test"), self.GetYhat("test").round(0)
                         )
                     ).alias("auc_test"),
                     pl.lit(
                         metrics.precision_score(
                             self.GetY("train"),
-                            self.yhat_train.round(0),
+                            self.GetYhat("train").round(0),
                             zero_division=0,
                         )
                     ).alias("precision_train"),
                     pl.lit(
                         metrics.precision_score(
                             self.GetY("test"),
-                            self.yhat_test.round(0),
+                            self.GetYhat("test").round(0),
                             zero_division=0,
                         )
                     ).alias("precision_test"),
                     pl.lit(
                         metrics.matthews_corrcoef(
                             self.GetY("train").replace(0, -1),
-                            self.yhat_train.round(0).replace(0, -1),
+                            self.GetYhat("train").round(0).replace(0, -1),
                         )
                     ).alias("mcc_train"),
                     pl.lit(
                         metrics.matthews_corrcoef(
                             self.GetY("test").replace(0, -1),
-                            self.yhat_test.round(0).replace(0, -1),
+                            self.GetYhat("test").round(0).replace(0, -1),
                         )
                     ).alias("mcc_test"),
                     pl.lit(
-                        metrics.roc_curve(self.GetY("train"), self.yhat_train.round(0))
+                        metrics.roc_curve(
+                            self.GetY("train"), self.GetYhat("train").round(0)
+                        )
                     ).alias("roc_curve_train"),
                     pl.lit(
-                        metrics.roc_curve(self.GetY("test"), self.yhat_test.round(0))
+                        metrics.roc_curve(
+                            self.GetY("test"), self.GetYhat("test").round(0)
+                        )
                     ).alias("roc_curve_test"),
                     pl.lit(
                         metrics.precision_recall_curve(
-                            self.GetY("train"), self.yhat_train.round(0)
+                            self.GetY("train"), self.GetYhat("train").round(0)
                         )
                     ).alias("pr_curve_train"),
                     pl.lit(
                         metrics.precision_recall_curve(
-                            self.GetY("test"), self.yhat_test.round(0)
+                            self.GetY("test"), self.GetYhat("test").round(0)
                         )
                     ).alias("pr_curve_test"),
                 ]
@@ -520,5 +534,30 @@ class Model:
                 if return_type == "pd"
                 else to_pl_s(self.y_test.collect().to_series())
             )
+        else:
+            raise ValueError(f"train_test must be 'train' or 'test'. Got {train_test}.")
+
+    def GetYhat(
+        self, train_test: str = "train", return_type: str = "pd"
+    ) -> Union[pd.Series, pd.DataFrame]:
+        """
+        Returns the predicted target variable for the specified train or test set.
+
+        Parameters
+        ----------
+        train_test : str
+            The train or test set to return the predicted target variable for.
+        return_type : str
+            The type of data to return. Choices are "pd" for pandas or "pl" for polars.
+
+        Returns
+        -------
+        Union[pd.Series, pd.DataFrame]
+            The predicted target variable for the specified train or test set.
+        """
+        if train_test == "train":
+            return self.yhat_train if return_type == "pd" else to_pl_s(self.yhat_train)
+        elif train_test == "test":
+            return self.yhat_test if return_type == "pd" else to_pl_s(self.yhat_test)
         else:
             raise ValueError(f"train_test must be 'train' or 'test'. Got {train_test}.")

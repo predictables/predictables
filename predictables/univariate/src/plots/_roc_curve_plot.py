@@ -379,6 +379,9 @@ def calc_auc_curve_data_from_folds(
         print(
             f"f: {f} | type(y): {type(y)} | type(yhat_proba): {type(yhat_proba)} | type(fold): {type(fold)} | type(time_series_validation): {type(time_series_validation)} | type(n_bins): {type(n_bins)} | ROC_0001f"
         )
+        print(
+            f"y.shape: {y.shape} | yhat_proba.shape: {yhat_proba.shape} | fold.shape: {fold.shape} | n_bins: {n_bins} | ROC_0001g"
+        )
         y_ = filter_by_cv_fold(y, f, fold, time_series_validation, "test")
         yhat_ = filter_by_cv_fold(yhat_proba, f, fold, time_series_validation, "test")
         if f > 0:

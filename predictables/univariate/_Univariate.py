@@ -430,8 +430,8 @@ class Univariate(Model):
             cv = to_pd_s(cv)
 
         ax0 = roc_curve_plot(
-            to_pd_s(self.y_test) if y is None else to_pd_s(y),
-            to_pd_s(self.yhat_test) if yhat is None else to_pd_s(yhat),
+            to_pd_s(self.GetY("train")) if y is None else to_pd_s(y),
+            to_pd_s(self.GetYhat("train")) if yhat is None else to_pd_s(yhat),
             cv,
             self.time_series_validation,
             (
@@ -576,8 +576,8 @@ class Univariate(Model):
 
         def roc():
             return self.plot_roc_curve(
-                y=self.y,
-                yhat=self.yhat_train,
+                y=self.GetY("train"),
+                yhat=self.GetYhat("train"),
                 cv=self.df.select(self.fold_col).collect().to_pandas()[self.fold_col],  # type: ignore
                 time_series_validation=self.time_series_validation,
                 coef=self.get("coef"),
