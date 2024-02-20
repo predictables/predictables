@@ -549,7 +549,7 @@ class Univariate(Model):
         else:
             ax0 = ax
 
-        yhat_polars = pl.Series(yhat)  # Convert yhat to polars.series.series.Series
+        yhat_polars = pl.Series(yhat)
         ax0 = quintile_lift_plot(
             X,
             y,

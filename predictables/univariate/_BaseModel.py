@@ -15,12 +15,12 @@ from predictables.univariate.src import (
 )
 from predictables.util import (
     DebugLogger,
+    filter_df_by_cv_fold,
     get_column_dtype,
     to_pd_df,
     to_pd_s,
     to_pl_lf,
     to_pl_s,
-    filter_df_by_cv_fold,
 )
 
 dbg = DebugLogger(working_file="_BaseModel.py")
@@ -284,7 +284,7 @@ class Model:
                     ).alias("precision_test"),
                     pl.lit(
                         metrics.matthews_corrcoef(
-                            self.GetY("test").replace(0, -1),
+                            self.GetY("train").replace(0, -1),
                             self.yhat_train.round(0).replace(0, -1),
                         )
                     ).alias("mcc_train"),
@@ -307,7 +307,7 @@ class Model:
                     ).alias("pr_curve_train"),
                     pl.lit(
                         metrics.precision_recall_curve(
-                            self.y_test, self.yhat_test.round(0)
+                            self.GetY("test"), self.yhat_test.round(0)
                         )
                     ).alias("pr_curve_test"),
                 ]

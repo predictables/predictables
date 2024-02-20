@@ -8,7 +8,7 @@ from matplotlib.axes import Axes
 from scipy.spatial.distance import jensenshannon as js_divergence  # type: ignore
 
 from predictables.univariate.src.plots.util import binary_color, plot_label
-from predictables.util import get_column_dtype, to_pd_s, filter_by_cv_fold
+from predictables.util import filter_by_cv_fold, get_column_dtype, to_pd_s
 
 
 def cdf_plot(
@@ -116,7 +116,6 @@ def cdf_plot_matplotlib(
             else "Empirical Cumulative Distribution Function"
         ),
         ax=ax0,
-        time_series_validation=time_series_validation,
         **kwargs,
     )
 

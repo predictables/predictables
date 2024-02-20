@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd  # type: ignore
 import polars as pl
 
-from predictables.util.src._to_pd import to_pd_s, to_pd_df
-from predictables.util.src._to_pl import to_pl_s, to_pl_lf
+from predictables.util.src._to_pd import to_pd_df, to_pd_s
+from predictables.util.src._to_pl import to_pl_lf, to_pl_s
 from predictables.util.src.logging._DebugLogger import DebugLogger
 
 dbg = DebugLogger(working_file="_cv_filter.py")
@@ -110,10 +110,12 @@ def filter_by_cv_fold(
         "pd.Series",
         "np.ndarray",
     ]:
-        folds = to_pd_s(folds)
-        s = to_pd_s(s)
+        folds_ = to_pd_s(folds).reset_index(drop=True)
+        s_ = to_pd_s(s).reset_index(drop=True)
         # filter based on cross-validation fold
-        return s[cv_filter(f, folds, time_series_validation, train_test)]
+        idx = cv_filter(f, folds_, time_series_validation, train_test)
+        print(f"\n\nidx: {idx}")
+        return s_[idx]
 
     elif return_type in ["pl", "polars", "pl.Series"]:
         folds = to_pl_s(folds)
@@ -122,10 +124,10 @@ def filter_by_cv_fold(
         return s.filter(cv_filter(f, folds, time_series_validation, train_test, "pl"))
     else:
         dbg.msg(f"Unknown return type: {return_type}. Defaulting to pandas.")
-        folds = to_pd_s(folds)
-        s = to_pd_s(s)
+        folds_ = to_pd_s(folds)
+        s_ = to_pd_s(s)
         # filter based on cross-validation fold
-        return s[cv_filter(f, folds, time_series_validation, train_test)]
+        return s_[cv_filter(f, folds_, time_series_validation, train_test)]
 
 
 def cv_filter(

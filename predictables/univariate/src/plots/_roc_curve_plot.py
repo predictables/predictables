@@ -10,7 +10,7 @@ from matplotlib.axes import Axes
 from scipy.stats import norm  # type: ignore
 from sklearn.metrics import RocCurveDisplay, roc_auc_score, roc_curve  # type: ignore
 
-from predictables.util import DebugLogger, filter_by_cv_fold, to_pd_s, get_column_dtype
+from predictables.util import DebugLogger, filter_by_cv_fold, get_column_dtype, to_pd_s
 
 dbg = DebugLogger(working_file="_roc_curve_plot.py")
 
@@ -372,10 +372,13 @@ def calc_auc_curve_data_from_folds(
     # Calculate the standard error of the ROC curve for each fold
     fprs, tprs = pd.DataFrame(), pd.DataFrame()
 
-    dbg.msg(
+    print(
         f"fold.drop_duplicates().sort_values().values: {fold.drop_duplicates().sort_values().values} | ROC000Fe"
     )
     for f in fold.drop_duplicates().sort_values().values:
+        print(
+            f"f: {f} | type(y): {type(y)} | type(yhat_proba): {type(yhat_proba)} | type(fold): {type(fold)} | type(time_series_validation): {type(time_series_validation)} | type(n_bins): {type(n_bins)} | ROC_0001f"
+        )
         y_ = filter_by_cv_fold(y, f, fold, time_series_validation, "test")
         yhat_ = filter_by_cv_fold(yhat_proba, f, fold, time_series_validation, "test")
         if f > 0:
@@ -852,7 +855,7 @@ def roc_curve_plot_mpl(
         y,
         yhat_proba,
         fold,
-        time_series_validation=time_series_validation,
+        time_series_validation,
         ax=ax0,
         n_bins=n_bins,
         backend="matplotlib",
