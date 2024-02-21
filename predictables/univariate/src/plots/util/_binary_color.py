@@ -1,13 +1,13 @@
-import pandas as pd
+from typing import Union
 
 
-def binary_color(x: int) -> pd.Series:
+def binary_color(x: Union[int, float, str, bool]) -> str:
     """
     Return a color for each value in x, based on whether it is 0 or 1.
 
     Parameters
     ----------
-    x : int
+    x : Union[int, float, str, bool]
         The value to get the color for.
 
     Returns
@@ -15,9 +15,30 @@ def binary_color(x: int) -> pd.Series:
     int
         The color for x.
     """
-    if x == 0:
-        return "blue"
-    elif x == 1:
-        return "orange"
-    else:
-        raise ValueError(f"Invalid value {x} for binary variable.")
+
+    if isinstance(x, (str, bool)):
+        x_ = x.lower() if isinstance(x, str) else str(x).lower()
+        x_ = x_.strip().replace("+", "")
+        if x_ in [
+            "0",
+            "-1",
+            "false",
+            "f",
+            "no",
+            "n",
+        ]:
+            return "blue"
+        elif x_ in ["1", "true", "t", "yes", "y"]:
+            return "orange"
+        else:
+            raise ValueError(f"Invalid value {x} for binary variable.")
+    elif isinstance(x, (int, float)):
+        x_1 = float(x)
+        if x_1 in [0.0, -1.0]:
+            return "blue"
+        elif x_1 in [1.0]:
+            return "orange"
+        else:
+            raise ValueError(f"Invalid value {x_1} for binary variable.")
+
+    raise ValueError(f"Invalid value {x} for binary variable.")
