@@ -33,3 +33,17 @@ build-backend = "hatchling.build"
 
 [tool.black]
 line-length = 88
+
+[tool.coverage.run]
+source = ["predictables"]
+
+[tool.coverage.report]
+precision = 1
+sort = "Miss"
+
+[tool.coverage.html]
+directory = "coverage/html"
+
+[tool.coverage.json]
+output = "coverage/coverage.json"
+

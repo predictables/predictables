@@ -3,7 +3,6 @@ import os
 from typing import List, Optional, Union
 import re
 
-import numpy as np
 import pandas as pd  # type: ignore
 import polars as pl
 from dotenv import load_dotenv
@@ -209,11 +208,7 @@ class UnivariateAnalysis:
             "features",
         ):
             obj_name = (
-                col.replace(" ", "_")
-                .replace("-", "_")
-                .replace("/", "_")
-                .replace("(", "")
-                .replace(")", "")
+                _fmt_col_name(col) if not hasattr(self, _fmt_col_name(col)) else col
             )
             setattr(
                 self,
@@ -298,7 +293,7 @@ class UnivariateAnalysis:
                 dbg.msg(f"Univariate object not found for feature {col}")
 
         if total_df:
-            df = pl.concat(total_df, parallel=True).sort("Ave.", reverse=True)
+            df = pl.concat(total_df, parallel=True).sort("Ave.", descending=True)
             if return_pd:
                 return df.collect().to_pandas().set_index("Feature")
             else:
@@ -602,7 +597,7 @@ class UnivariateAnalysis:
                 "starting point for further analysis."
             )
             .spacer(0.125)
-            .table(formatted_df.collect().to_pandas())
+            .table(formatted_df.collect().to_pandas().set_index("Feature"))
             .spacer(0.125)
             .caption(
                 "This table shows an overview of the results for the "

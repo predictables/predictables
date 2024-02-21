@@ -114,7 +114,7 @@ def filter_by_cv_fold(
         s_ = to_pd_s(s).reset_index(drop=True)
         # filter based on cross-validation fold
         idx = cv_filter(f, folds_, time_series_validation, train_test)
-        print(f"\n\nidx.shape: {idx.shape}\n\nidx:\n{idx}\n\n")
+        # print(f"\n\nidx.shape: {idx.shape}")
         return s_[idx]
 
     elif return_type in ["pl", "polars", "pl.Series"]:
