@@ -438,7 +438,7 @@ def _density_t_test_binary_target(
             else f"are significantly\ndifferent (p={p:.3f})."
         )
     else:
-        significance_statement += "The test indicates no significant\ndifference"
+        significance_statement += "The test indicates no significant\ndifference "
         significance_statement += (
             f"between the distributions\n(p={p:.3f}) at the {1-alpha:.0%} level."
         )

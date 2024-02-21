@@ -756,4 +756,4 @@ class Univariate(Model):
             #     ]
             # )
 
-        return results.set_index("CV Fold").T
+        return results.set_index("CV Fold")
