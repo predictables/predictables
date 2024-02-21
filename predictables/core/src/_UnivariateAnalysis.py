@@ -5,6 +5,7 @@ import re
 
 import pandas as pd  # type: ignore
 import polars as pl
+import numpy as np
 from dotenv import load_dotenv
 
 from predictables.univariate import Univariate
@@ -536,7 +537,11 @@ class UnivariateAnalysis:
                 self.feature_column_names,
                 f"Building {len(features)} univariate analysis reports",
             ):
-                rpt = getattr(self, _fmt_col_name(X))._add_to_report(rpt)
+                try:
+                    rpt = getattr(self, _fmt_col_name(X))._add_to_report(rpt)
+                except np.linalg.LinAlgError as e:
+                    print(f"Error processing {X}:\n    {e}")
+                    continue
 
         rpt.build()
 
