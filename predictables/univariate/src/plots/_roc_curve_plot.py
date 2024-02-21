@@ -372,16 +372,7 @@ def calc_auc_curve_data_from_folds(
     # Calculate the standard error of the ROC curve for each fold
     fprs, tprs = pd.DataFrame(), pd.DataFrame()
 
-    print(
-        f"fold.drop_duplicates().sort_values().values: {fold.drop_duplicates().sort_values().values} | ROC000Fe"
-    )
     for f in fold.drop_duplicates().sort_values().values:
-        print(
-            f"f: {f} | type(y): {type(y)} | type(yhat_proba): {type(yhat_proba)} | type(fold): {type(fold)} | type(time_series_validation): {type(time_series_validation)} | type(n_bins): {type(n_bins)} | ROC_0001f"
-        )
-        print(
-            f"y.shape: {y.shape} | yhat_proba.shape: {yhat_proba.shape} | fold.shape: {fold.shape} | n_bins: {n_bins} | ROC_0001g"
-        )
         y_ = filter_by_cv_fold(y, f, fold, time_series_validation, "test")
         yhat_ = filter_by_cv_fold(yhat_proba, f, fold, time_series_validation, "test")
         if f > 0:
@@ -846,7 +837,11 @@ def roc_curve_plot_mpl(
     """
     if isinstance(ax, go.Figure):
         raise TypeError(
-            "ax must be a matplotlib.axes.Axes object when using the matplotlib backend"
+            "The ax parameter should be a matplotlib.axes.Axes object when using the matplotlib backend"
+        )
+    elif (not isinstance(ax, Axes)) and (ax is not None):
+        raise TypeError(
+            "The ax parameter should be a matplotlib.axes.Axes object when using the matplotlib backend"
         )
 
     if ax is None:
@@ -1003,23 +998,14 @@ def _empirical_auc_variance(
         )
 
     if to_pd_s(y).isnull().sum() > 0:
-        print(
-            f"y: {y} | yhat_proba: {yhat_proba} | fold: {fold} | time_series_validation: {time_series_validation} | ROC_0001a"
-        )
         raise ValueError(
             f"y cannot contain missing values, but it contains {y.isnull().sum()} missing values."
         )
     if to_pd_s(yhat_proba).isnull().sum() > 0:
-        print(
-            f"y: {y} | yhat_proba: {yhat_proba} | fold: {fold} | time_series_validation: {time_series_validation} | ROC_0001b"
-        )
         raise ValueError(
             f"yhat_proba cannot contain missing values, but it contains {yhat_proba.isnull().sum()} missing values."
         )
     if to_pd_s(fold).isnull().sum() > 0:
-        print(
-            f"y: {y} | yhat_proba: {yhat_proba} | fold: {fold} | time_series_validation: {time_series_validation} | ROC_0001c"
-        )
         raise ValueError(
             f"fold cannot contain missing values, but it contains {fold.isnull().sum()} missing values."
         )
