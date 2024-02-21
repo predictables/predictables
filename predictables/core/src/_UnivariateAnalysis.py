@@ -238,8 +238,12 @@ class UnivariateAnalysis:
                 self,
                 obj_name,
                 Univariate(
-                    self.df,
-                    self.df_val,
+                    self.df.filter(pl.col(col).is_not_null()).filter(
+                        pl.col(col).is_finite()
+                    ),
+                    self.df_val.filter(pl.col(col).is_not_null()).filter(
+                        pl.col(col).is_finite()
+                    ),
                     self.cv_column_name,
                     col,
                     self.target_column_name,
@@ -263,6 +267,8 @@ class UnivariateAnalysis:
             if skewness > 0.5:
                 # Considered to be right-skewed, so add a log-transformed
                 # version of the feature
+                print(f"Feature {col} is right-skewed: skewness = {skewness}")
+                print(f"Adding log-transformed version of {col}: log1p_{col}")
                 self.df = self.df.with_columns(
                     [pl.col(col).log1p().alias(f"log1p_{_fmt_col_name(col)}")]
                 )
@@ -279,8 +285,12 @@ class UnivariateAnalysis:
                     self,
                     transformed_obj_name,
                     Univariate(
-                        self.df,
-                        self.df_val,
+                        self.df.filter(
+                            pl.col(f"log1p_{_fmt_col_name(col)}").is_not_null()
+                        ).filter(pl.col(f"log1p_{_fmt_col_name(col)}").is_finite()),
+                        self.df_val.filter(
+                            pl.col(f"log1p_{_fmt_col_name(col)}").is_not_null()
+                        ).filter(pl.col(f"log1p_{_fmt_col_name(col)}").is_finite()),
                         self.cv_column_name,
                         f"log1p_{_fmt_col_name(col)}",
                         self.target_column_name,
