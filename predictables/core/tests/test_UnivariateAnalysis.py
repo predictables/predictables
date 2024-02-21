@@ -1,7 +1,8 @@
 import pytest
 import pandas as pd  # type: ignore
 from predictables.core.src._UnivariateAnalysis import UnivariateAnalysis
-from predictables.univariate import Univariate  # type: ignore
+from predictables.univariate import Univariate
+from predictables.util import to_pd_df, to_pd_s
 
 
 @pytest.fixture
@@ -63,8 +64,14 @@ def test_univariate_analysis_init(test_data):
 
     # Verify basic attributes
     assert ua.model_name == model_name, f"Expected {model_name}, got {ua.model_name}"
-    pd.testing.assert_frame_equal(ua.df, df_train)
-    pd.testing.assert_frame_equal(ua.df_val, df_val)
+    pd.testing.assert_frame_equal(
+        to_pd_df(ua.df).reset_index(drop=True),
+        to_pd_df(df_train).reset_index(drop=True),
+    )
+    pd.testing.assert_frame_equal(
+        to_pd_df(ua.df_val).reset_index(drop=True),
+        to_pd_df(df_val).reset_index(drop=True),
+    )
     assert (
         ua.target_column_name == target_column_name
     ), f"Expected {target_column_name}, got {ua.target_column_name}"
@@ -77,7 +84,9 @@ def test_univariate_analysis_init(test_data):
     assert (
         ua.cv_column_name == cv_column_name
     ), f"Expected {cv_column_name}, got {ua.cv_column_name}"
-    assert ua.cv_folds.equals(cv_folds), f"Expected {cv_folds}, got {ua.cv_folds}"
+    assert to_pd_s(ua.cv_folds).equals(
+        to_pd_s(cv_folds)
+    ), f"Expected {to_pd_s(cv_folds)}, got {to_pd_s(ua.cv_folds)}"
 
 
 @pytest.mark.parametrize(
@@ -98,3 +107,55 @@ def test_get_file_stem(ua, filename, default, expected):
     assert (
         ua._get_file_stem(filename, default) == expected
     ), f"Expected {expected} but got a different result"
+
+
+@pytest.mark.parametrize(
+    "file_stem,file_num_start_num,end_num,default,expected",
+    [
+        ("analysis", None, None, "Univariate Analysis Report", "analysis.pdf"),
+        ("report", 1, 2, "Univariate Analysis Report", "report_2_3.pdf"),
+        (None, None, None, "Univariate Analysis Report", "Univariate Analysis Report"),
+        ("only_stem", 1, None, "Univariate Analysis Report", "only_stem.pdf"),
+        ("only_stem", None, 2, "Univariate Analysis Report", "only_stem.pdf"),
+    ],
+)
+def test_rpt_filename(ua, file_stem, file_num_start_num, end_num, default, expected):
+    result = ua._rpt_filename(
+        file_stem=file_stem,
+        start_num=file_num_start_num,
+        end_num=end_num,
+        default=default,
+    )
+    assert result == expected, f"Expected filename '{expected}', but got '{result}'"
+
+
+@pytest.mark.parametrize(
+    "total_features,max_per_file,expected",
+    [
+        (
+            100,
+            10,
+            "Building 100 univariate analysis reports,and packaging in increments of 10",
+        ),
+        (
+            50,
+            25,
+            "Building 50 univariate analysis reports,and packaging in increments of 25",
+        ),
+        (
+            1,
+            1,
+            "Building 1 univariate analysis reports,and packaging in increments of 1",
+        ),
+        (
+            0,
+            10,
+            "Building 0 univariate analysis reports,and packaging in increments of 10",
+        ),
+    ],
+)
+def test_build_desc(total_features, max_per_file, expected):
+    description = UnivariateAnalysis._build_desc(total_features, max_per_file)
+    assert (
+        description == expected
+    ), f"Expected description '{expected}', but got '{description}'"

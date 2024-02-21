@@ -1,6 +1,7 @@
 import datetime
 import os
-from typing import List, Optional
+from typing import List, Optional, Union
+import re
 
 import numpy as np
 import pandas as pd  # type: ignore
@@ -8,7 +9,7 @@ import polars as pl
 from dotenv import load_dotenv
 
 from predictables.univariate import Univariate
-from predictables.util import DebugLogger, Report, to_pd_df, tqdm
+from predictables.util import DebugLogger, Report, to_pl_lf, tqdm
 from predictables.util.report.src._segment_features_for_report import (
     Segment,
     segment_features_for_report,
@@ -22,7 +23,10 @@ current_date = datetime.datetime.now()
 
 def _fmt_col_name(col_name: str) -> str:
     """
-    Formats a column name to be used as an attribute name within the UnivariateAnalysis class.
+    Formats a column name to be used as an attribute name within the
+    UnivariateAnalysis class. Removes non-alphanumeric characters, replaces
+    spaces and special characters with underscores, and ensures the resulting
+    string does not end with an underscore.
 
     Parameters
     ----------
@@ -32,50 +36,169 @@ def _fmt_col_name(col_name: str) -> str:
     Returns
     -------
     str
-        The formatted column name suitable for use as a Python attribute.
+        The formatted column name suitable for use as a Python attribute,
+        not ending with an underscore.
 
     Examples
     --------
     >>> _fmt_col_name("Total Revenue - 2020")
     'total_revenue_2020'
+    >>> _fmt_col_name("Cost/Unit_")
+    'cost_unit'
     """
+    col_name = re.sub(r"\W+", "_", col_name)  # Replace all non-word characters with _
+    col_name = re.sub(
+        r"__+", "_", col_name
+    )  # Normalize multiple underscores to single _
+    col_name = col_name.lower()  # Convert to lowercase
+    if col_name.endswith("_"):
+        col_name = col_name[:-1]  # Remove trailing underscore if present
+    return col_name
+
+
+def _format_values(col: str) -> pl.Expr:
     return (
-        col_name.replace(" ", "_")
-        .replace("-", "_")
-        .replace(")", "")
-        .replace("(", "")
-        .replace("/", "_")
-        .replace("__", "_")
-        .replace("__", "_")
-        .replace("__", "_")
-        .replace("__", "_")
-        .lower()
+        pl.when(pl.col(col) < 1)
+        .then(
+            (pl.col(col) * 100).cast(pl.Float64).round(decimals=1).cast(pl.Utf8) + "%"
+        )
+        .otherwise(pl.col(col).round(decimals=1).cast(pl.Utf8))
     )
 
 
 class UnivariateAnalysis:
+    """
+    Perform univariate analysis on a dataset to evaluate the impact of individual features on a target variable.
+
+    This class facilitates the exploration and evaluation of each feature's predictive power and importance
+    by creating Univariate objects for each feature in the dataset. It supports both cross-validation and
+    time-series validation strategies to assess feature performance. The class also provides functionalities
+    to rank features based on their performance metrics and to format feature names to be used as valid
+    Python attribute names.
+
+    After initializing the class, the user can access the Univariate objects for each feature to view the
+    results of the univariate analysis. The user can also generate a report containing the results of the
+    univariate analysis for all features in the dataset.
+
+    Attributes
+    ----------
+    model_name : str
+        Name of the model for which the univariate analysis is being performed.
+    df : pd.DataFrame
+        Training dataset containing features and the target variable.
+    df_val : pd.DataFrame
+        Validation dataset used for evaluating feature performance.
+    target_column_name : str
+        Name of the target variable in the dataset.
+    feature_column_names : List[str]
+        List of names of the features to be analyzed.
+    cv_column_name : Optional[str]
+        Name of the column used for cross-validation splitting. Defaults to "cv" if not provided.
+    cv_folds : Optional[pd.Series]
+        Series containing cross-validation fold identifiers for each row in the dataset. If not provided,
+        it is assumed that the cv_column_name in the dataset is used.
+    time_series_validation : bool
+        Indicates whether to use time series validation strategy for feature evaluation.
+
+    Methods
+    -------
+    __init__(self, model_name, df_train, df_val, target_column_name, feature_column_names, time_series_validation, cv_column_name=None, cv_folds=None):
+        Initializes the UnivariateAnalysis class with the dataset, features, and validation settings.
+    _fmt_col_name(col_name):
+        Formats a column name to be used as a Python attribute name.
+    _sort_features_by_ua():
+        Sorts features based on their average performance metrics.
+    get_features():
+        Returns a list of feature names that have been analyzed.
+    _get_file_stem(filename=None, default="Univariate Analysis Report"):
+        Helper function to get the file stem from a filename.
+    _rpt_filename(file_stem=None, start_num=None, end_num=None, default="Univariate Analysis Report"):
+        Helper function to get the file name from a filename.
+    _build_desc(total_features, max_per_file):
+        Helper function to build a description for the report generation process to keep the user informed
+        about the progress of the report generation.
+    _segment_features(features, max_per_file):
+        Segments features into chunks for report generation.
+    _add_to_report(rpt, feature):
+        Adds the results of the univariate analysis for a feature to the report.
+    _generate_segment_report(segment, filestem_, margins_):
+        Generates a report for a specific segment of features.
+    build_report(filename=None, margins=None, max_per_file=25):
+        Builds a report for the univariate analysis.
+
+    Examples
+    --------
+    >>> df_train = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6], 'target': [0, 1, 1]})
+    >>> df_val = pd.DataFrame({'A': [2, 3, 4], 'B': [5, 6, 7], 'target': [1, 0, 1]})
+    >>> ua = UnivariateAnalysis("MyModel", df_train, df_val, "target", ["A", "B"], False)
+    >>> ua.A.results.head()
+    [1] feature  |  acc_test  |  precision_test  |  recall_test  |  auc_test  |  f1_test  |  mcc_test
+    [2] A
+    [3] B
+    >>> ua.get_features()
+    ['A', 'B']
+    >>> ua.build_report("Univariate Analysis Report.pdf")
+    >>> # This will generate a report containing the results of the univariate analysis for the features in the dataset.
+    """
+
     cv_folds: pd.Series
 
     def __init__(
         self,
         model_name: str,
-        df_train: pd.DataFrame,
-        df_val: pd.DataFrame,
+        df_train: pl.LazyFrame,
+        df_val: pl.LazyFrame,
         target_column_name: str,
         feature_column_names: List[str],
         time_series_validation: bool,
         cv_column_name: Optional[str] = None,
-        cv_folds: Optional[pd.Series] = None,
+        cv_folds: Optional[pl.Series] = None,
     ):
-        dbg.msg("Initializing UnivariateAnalysis class - UA0001")  # debug only
+        """
+        Initializes the UnivariateAnalysis class with the dataset, features, and validation settings.
+
+        Parameters
+        ----------
+        model_name : str
+            Name of the model for which the univariate analysis is being performed.
+        df_train : pl.LazyFrame
+            The training dataset containing features and the target variable.
+        df_val : pl.LazyFrame
+            The validation dataset used for evaluating feature performance.
+        target_column_name : str
+            The name of the target variable in the dataset.
+        feature_column_names : List[str]
+            A list of names of the features to be analyzed.
+        time_series_validation : bool
+            Indicates whether to use a time series validation strategy for feature evaluation.
+        cv_column_name : Optional[str], optional
+            The name of the column used for cross-validation splitting, by default None. If None,
+            a default column name "cv" is assumed.
+        cv_folds : Optional[pl.Series], optional
+            A series containing cross-validation fold identifiers for each row in the dataset. If None,
+            it is assumed that the `cv_column_name` in `df_train` is used, by default None.
+
+        Raises
+        ------
+        ValueError
+            If any of the required parameters are missing or if the datasets do not contain the specified columns.
+
+        Examples
+        --------
+        >>> df_train = pl.from_pandas(pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6], 'target': [0, 1, 1]})).lazy()
+        >>> df_val = pl.from_pandas(pd.DataFrame({'A': [2, 3, 4], 'B': [5, 6, 7], 'target': [1, 0, 1]})).lazy()
+        >>> ua = UnivariateAnalysis("MyModel", df_train, df_val, "target", ["A", "B"], False)
+        """
         self.model_name = model_name
-        self.df = df_train
-        self.df_val = df_val
+        self.df = to_pl_lf(df_train)
+        self.df_val = to_pl_lf(df_val)
         self.target_column_name = target_column_name
         self.feature_column_names = feature_column_names
         self.cv_column_name = cv_column_name if cv_column_name is not None else "cv"
         self.cv_folds = (
-            to_pd_df(self.df)[cv_column_name] if cv_folds is None else cv_folds
+            self.df.select([pl.col(self.cv_column_name)]).collect().to_series()
+            if cv_folds is None
+            else cv_folds
         )
         self.time_series_validation = time_series_validation
 
@@ -115,6 +238,75 @@ class UnivariateAnalysis:
                     f"No results attribute found for feature {col} | UA0001b"
                 )  # debug only
         self._feature_list = feature_list
+
+    def _sort_features_by_ua(
+        self, return_pd: bool = False
+    ) -> Union[pl.LazyFrame, pd.DataFrame]:
+        """
+        Sorts features based on their average performance metrics in univariate analysis.
+
+        Parameters
+        ----------
+        return_pd : bool, optional
+            If True, returns a pandas DataFrame. Otherwise, returns a Polars LazyFrame.
+            The default is False.
+
+        Returns
+        -------
+        Union[pl.LazyFrame, pd.DataFrame]
+            Sorted features based on average performance metrics. The format of the return
+            value depends on the `return_pd` parameter.
+
+        Raises
+        ------
+        AttributeError
+            If an expected Univariate object is not found for a feature.
+        """
+        total_df = []
+
+        for col in self.feature_column_names:
+            obj_name = _fmt_col_name(col)
+            if hasattr(self, obj_name):
+                ua = getattr(self, obj_name)
+                try:
+                    total_df.append(
+                        ua.results.select(
+                            [
+                                pl.col("feature").alias("Feature"),
+                                pl.col("acc_test").alias("Accuracy"),
+                                pl.col("precision_test").alias("Precision"),
+                                pl.col("recall_test").alias("Recall"),
+                                pl.col("auc_test").alias("AUC"),
+                                pl.col("f1_test").alias("F1"),
+                                pl.col("mcc_test").alias("MCC"),
+                                (
+                                    pl.col("acc_test")
+                                    + pl.col("precision_test")
+                                    + pl.col("recall_test")
+                                    + pl.col("auc_test")
+                                    + pl.col("f1_test")
+                                    + pl.col("mcc_test")
+                                )
+                                .truediv(6.0)
+                                .alias("Ave."),
+                            ]
+                        )
+                    )
+                except Exception as e:
+                    dbg.msg(f"Error processing results for feature {col}: {e}")
+            else:
+                dbg.msg(f"Univariate object not found for feature {col}")
+
+        if total_df:
+            df = pl.concat(total_df, parallel=True).sort("Ave.", reverse=True)
+            if return_pd:
+                return df.collect().to_pandas().set_index("Feature")
+            else:
+                return df
+        else:
+            raise AttributeError(
+                "No valid Univariate analysis results found for any feature."
+            )
 
     def get_features(self):
         dbg.msg("Getting features - UA0002")  # debug only
@@ -303,7 +495,13 @@ class UnivariateAnalysis:
         """
         # Handle the case when None is passed as the filename
         filestem_ = self._get_file_stem(filename)
-        features = self._sort_features_by_ua().index.tolist()
+        features = (
+            self._sort_features_by_ua()
+            .select("Feature")
+            .collect()
+            .to_series()
+            .to_list()
+        )
         # Handle the case when None is passed to the margins
         margins_: List[float] = margins if margins is not None else [0.5, 0.5, 0.5, 0.5]
         filename_: str
@@ -348,13 +546,30 @@ class UnivariateAnalysis:
         rpt.build()
 
     def _rpt_overview_page(self, rpt: Report, first_idx: int, last_idx: int) -> Report:
-        overview_df = self._sort_features_by_ua().iloc[first_idx : last_idx + 1]
-
-        # Reformat to be a percentage with one decimal
-        overview_df = overview_df.map(
-            lambda x: (f"{np.round(x, 3):.1%}" if x < 1 else f"{np.round(x, 3):.1f}")
+        # overview_df = self._sort_features_by_ua().iloc[first_idx : last_idx + 1]
+        overview_df = self._sort_features_by_ua().slice(
+            first_idx, last_idx - first_idx + 1
         )
-        overview_df.index = overview_df.index.map(lambda x: x.replace("_", " ").title())
+
+        formatted_df = overview_df.select(
+            [
+                pl.col("Feature")
+                .str.replace("_", " ")
+                .str.to_titlecase()
+                .alias("Feature")
+            ]
+            + [
+                _format_values(col).name.keep()
+                for col in overview_df.columns
+                if col != "Feature"
+            ]
+        )
+
+        # # Reformat to be a percentage with one decimal
+        # overview_df = overview_df.map(
+        #     lambda x: (f"{np.round(x, 3):.1%}" if x < 1 else f"{np.round(x, 3):.1f}")
+        # )
+        # overview_df.index = overview_df.index.map(lambda x: x.replace("_", " ").title())
 
         return (
             rpt.h1("Overview")
@@ -387,7 +602,7 @@ class UnivariateAnalysis:
                 "starting point for further analysis."
             )
             .spacer(0.125)
-            .table(overview_df)
+            .table(formatted_df.collect().to_pandas())
             .spacer(0.125)
             .caption(
                 "This table shows an overview of the results for the "
@@ -426,49 +641,3 @@ class UnivariateAnalysis:
             .h3(date)
             .page_break()
         )
-
-    def _sort_features_by_ua(self):
-        cols = []
-        total_df = []
-        for col in self.feature_column_names:
-            try:
-                ua = getattr(self, _fmt_col_name(col))
-            except Exception as e:
-                dbg.msg(f"AttributeError: {e} | _sort_features_by_ua | UA0010A")
-
-            try:
-                cols.append(col)
-            except Exception as e:
-                dbg.msg(f"AttributeError: {e} | _sort_features_by_ua | UA0010B")
-
-            try:
-                total_df.append(
-                    ua.results.select(
-                        [
-                            pl.col("feature").alias("Feature"),
-                            pl.col("acc_test").alias("Accuracy"),
-                            pl.col("precision_test").alias("Precision"),
-                            pl.col("recall_test").alias("Recall"),
-                            pl.col("auc_test").alias("AUC"),
-                            pl.col("f1_test").alias("F1"),
-                            pl.col("mcc_test").alias("MCC"),
-                            (
-                                pl.col("acc_test")
-                                + pl.col("precision_test")
-                                + pl.col("recall_test")
-                                + pl.col("auc_test")
-                                + pl.col("f1_test")
-                                + pl.col("mcc_test")
-                            )
-                            .truediv(6.0)
-                            .alias("Ave."),
-                        ]
-                    )
-                    .collect()
-                    .to_pandas()
-                    .set_index("Feature")
-                )
-            except Exception as e:
-                dbg.msg(f"AttributeError: {e} | _sort_features_by_ua | UA0010C")
-        df = pd.concat(total_df)
-        return df.sort_values("Ave.", ascending=False)

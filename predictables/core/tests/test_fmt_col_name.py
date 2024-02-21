@@ -10,6 +10,12 @@ from predictables.core.src._UnivariateAnalysis import _fmt_col_name
     ],
 )
 def test_fmt_col_name(input, output):
-    assert (
-        _fmt_col_name(input) == output
-    ), f"Expected: {output} but got {_fmt_col_name(input)}"
+    result = _fmt_col_name(input)
+
+    assert result == output, f"Expected: {output} but got {result}"
+    assert not result.endswith(
+        "_"
+    ), f"Expected: {output} (no trailing underscore), but got {result}"
+    assert not result.startswith(
+        "_"
+    ), f"Expected: {output} (no leading underscore), but got {result}"
