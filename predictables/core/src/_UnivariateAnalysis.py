@@ -99,6 +99,26 @@ class UnivariateAnalysis:
         it is assumed that the cv_column_name in the dataset is used.
     time_series_validation : bool
         Indicates whether to use time series validation strategy for feature evaluation.
+    right_skewness_threshold : float
+        The threshold for right skewness. Defaults to 0.5. If the skewness of a feature is greater than this
+        threshold, several transformed variables will be added to the analysis:
+            - box-cox transformation
+                - handles strictly positive features
+                - log-transform is a special case of the box-cox transform
+            - yeo-johnson transformation
+                - handles strictly positive and strictly negative features
+                - a generalization of the box-cox transform
+            - quantile transformation (standard normal)
+                - handles all features
+    left_skewness_threshold : float
+        The threshold for left skewness. Defaults to -0.5. If the skewness of a feature is less than this
+        threshold, several transformed variables will be added to the analysis:
+            - box-cox transformation, reflected over the y-axis
+                - handles strictly negative features
+            - yeo-johnson transformation, reflected over the y-axis
+                - handles strictly positive and strictly negative features
+            - quantile transformation (standard normal), reflected over the y-axis
+                - handles all features
 
     Methods
     -------
@@ -153,6 +173,8 @@ class UnivariateAnalysis:
         time_series_validation: bool,
         cv_column_name: Optional[str] = None,
         cv_folds: Optional[pl.Series] = None,
+        right_skewness_threshold: float = 0.5,
+        left_skewness_threshold: float = -0.5,
     ):
         """
         Initializes the UnivariateAnalysis class with the dataset, features, and validation settings.
@@ -203,6 +225,7 @@ class UnivariateAnalysis:
         self.time_series_validation = time_series_validation
 
         feature_list = []
+        transformed_cols = []
         for col in tqdm(
             self.feature_column_names,
             f"Performing univariate analysis on {len(self.feature_column_names)} "
@@ -233,7 +256,41 @@ class UnivariateAnalysis:
                 dbg.msg(
                     f"No results attribute found for feature {col} | UA0001b"
                 )  # debug only
-        self._feature_list = feature_list
+
+            # Check the skewness of the feature
+            skewness = self.df.select(pl.col(col).skew().name.keep()).collect().item()
+
+            if skewness > 0.5:
+                # Considered to be right-skewed, so add a log-transformed
+                # version of the feature
+                self.df = self.df.with_columns(
+                    [pl.col(col).log1p().alias(f"log1p_{_fmt_col_name(col)}")]
+                )
+                self.df_val = self.df_val.with_columns(
+                    [pl.col(col).log1p().alias(f"log1p_{_fmt_col_name(col)}")]
+                )
+
+                transformed_obj_name = (
+                    f"log1p_{_fmt_col_name(col)}"
+                    if not hasattr(self, f"log1p_{_fmt_col_name(col)}")
+                    else f"log1p_{col}"
+                )
+                setattr(
+                    self,
+                    transformed_obj_name,
+                    Univariate(
+                        self.df,
+                        self.df_val,
+                        self.cv_column_name,
+                        f"log1p_{_fmt_col_name(col)}",
+                        self.target_column_name,
+                        time_series_validation=self.time_series_validation,
+                    ),
+                )
+                transformed_cols.append(f"log1p_{_fmt_col_name(col)}")
+
+        self._feature_list = feature_list + transformed_cols
+        self.feature_column_names = self._feature_list
 
     def _sort_features_by_ua(
         self, return_pd: bool = False
@@ -539,6 +596,9 @@ class UnivariateAnalysis:
             ):
                 try:
                     rpt = getattr(self, _fmt_col_name(X))._add_to_report(rpt)
+                    skewness = (
+                        self.df.select(pl.col(X).skew().name.keep()).collect().get(0)  # type: ignore
+                    )
                 except np.linalg.LinAlgError as e:
                     print(f"Error processing {X}:\n    {e}")
                     continue

@@ -37,7 +37,7 @@ def ua(df_train, df_val):
         df_train,
         df_val,
         "y",
-        ["worst_area", "PC1"],
+        ["worst_area", "pc1"],
         False,
         "fold",
     )
@@ -47,7 +47,7 @@ def test_univariate_analysis_init(test_data):
     df_train, df_val, cv_folds = test_data
     model_name = "test_model"
     target_column_name = "y"
-    feature_column_names = ["worst_area", "PC1"]
+    feature_column_names = ["worst_area", "pc1"]
     time_series_validation = False
     cv_column_name = "fold"
 
@@ -64,20 +64,25 @@ def test_univariate_analysis_init(test_data):
 
     # Verify basic attributes
     assert ua.model_name == model_name, f"Expected {model_name}, got {ua.model_name}"
+    print(ua.df.columns)
     pd.testing.assert_frame_equal(
-        to_pd_df(ua.df).reset_index(drop=True),
+        to_pd_df(ua.df)
+        .drop(columns=["log1p_worst_area", "log1p_pc1"])
+        .reset_index(drop=True),
         to_pd_df(df_train).reset_index(drop=True),
     )
     pd.testing.assert_frame_equal(
-        to_pd_df(ua.df_val).reset_index(drop=True),
+        to_pd_df(ua.df_val)
+        .drop(columns=["log1p_worst_area", "log1p_pc1"])
+        .reset_index(drop=True),
         to_pd_df(df_val).reset_index(drop=True),
     )
     assert (
         ua.target_column_name == target_column_name
     ), f"Expected {target_column_name}, got {ua.target_column_name}"
     assert (
-        ua.feature_column_names == feature_column_names
-    ), f"Expected {feature_column_names}, got {ua.feature_column_names}"
+        ua.feature_column_names[:-2] == feature_column_names
+    ), f"Expected {feature_column_names}, got {ua.feature_column_names[:-2]}"
     assert (
         ua.time_series_validation == time_series_validation
     ), f"Expected {time_series_validation}, got {ua.time_series_validation}"

@@ -21,7 +21,6 @@ from predictables.util import (
     get_unique,
     to_pd_df,
     to_pd_s,
-    filter_by_cv_fold,
 )
 from predictables.util.report import Report
 
@@ -248,6 +247,14 @@ class Univariate(Model):
         )
 
         self.figsize = (7, 7) if "figsize" not in kwargs else kwargs["figsize"]
+
+        self.skewness = (
+            self.df.select(pl.col(self.feature_name).skew().name.keep())
+            .collect()
+            .item()
+        )
+        self.is_right_skewed = self.skewness > 0.5
+        self.is_left_skewed = self.skewness < -0.5
 
     def _get_folds(self) -> List[Union[int, float, str]]:
         """
@@ -747,13 +754,5 @@ class Univariate(Model):
                     "Val Log-Loss",
                 ]
             )
-
-            # results.index = pd.Index(
-            #     [f"Fold-{i}" for i in self.unique_folds]
-            #     + [
-            #         "Agg. Mean",
-            #         "Agg. SD",
-            #     ]
-            # )
 
         return results.set_index("CV Fold")
