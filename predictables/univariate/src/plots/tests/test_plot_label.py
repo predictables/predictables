@@ -44,3 +44,13 @@ def test_plot_label_with_single_character():
     assert (
         plot_label(input_str) == expected_output
     ), f"Plot label not formatted correctly: expected: {expected_output}, got: {plot_label(input_str)}"
+
+
+def test_plot_label_without_brackets():
+    # Test when incl_bracket is set to False
+    input_str = "hello_world"
+    expected_output = "Hello World"
+    assert plot_label(input_str, incl_bracket=False) == expected_output, (
+        f"Plot label not formatted correctly: expected: {expected_output}, "
+        f"got: {plot_label(input_str, incl_bracket=False)}"
+    )
