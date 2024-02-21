@@ -1,4 +1,5 @@
-from typing import Optional, Tuple, Union
+from functools import wraps
+from typing import Optional, Tuple, Union, Callable
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -104,7 +105,104 @@ def density_plot(
         raise ValueError(f"Invalid backend {backend}.")
 
 
-# trunk-ignore(sourcery/low-code-quality)
+def validate_density_plot_mpl(func: Callable):
+    """
+    Decorator to validate the inputs to the density plot functions.
+
+    Parameters
+    ----------
+    func : Callable
+        The function to decorate.
+
+    Returns
+    -------
+    Callable
+        The decorated function.
+
+    Raises
+    ------
+    ValueError
+        If any of the inputs are invalid.
+    """
+
+    @wraps(func)
+    def wrapper(
+        x: Union[pd.Series, pl.Series],
+        plot_by: Union[pd.Series, pl.Series],
+        cv_label: Union[pd.Series, pl.Series],
+        x_min: Optional[float] = None,
+        x_max: Optional[float] = None,
+        ax: Optional["plt.axes.Axes"] = None,
+        grid_bins: int = 200,
+        cv_alpha: float = 0.5,
+        cv_line_width: float = 0.5,
+        t_test_alpha: float = 0.05,
+        figsize: Tuple[int, int] = (7, 7),
+        call_legend: bool = True,
+        time_series_validation: bool = True,
+    ):
+        # Input validations
+        if not isinstance(x, (pd.Series, pl.Series)):
+            raise ValueError(
+                f"`x` must be a pandas or polars Series, but got {type(x)}."
+            )
+
+        if not isinstance(plot_by, (pd.Series, pl.Series)):
+            raise ValueError(
+                f"`plot_by` must be a pandas or polars Series, but got {type(plot_by)}."
+            )
+
+        if not isinstance(cv_label, (pd.Series, pl.Series)):
+            raise ValueError(
+                f"`cv_label` must be a pandas or polars Series, but got {type(cv_label)}."
+            )
+
+        def validate_float_int(value, arg_name):
+            try:
+                # Attempt to convert the value to a float
+                return float(value)
+            except ValueError:
+                # If conversion fails, raise an informative error
+                raise ValueError(
+                    f"Argument `{arg_name}` must be convertible to float, but got value `{value}` of type `{type(value).__name__}`."
+                )
+
+        # Inside the wrapper function of the decorator
+        if x_min is not None:
+            x_min = validate_float_int(x_min, "x_min")
+
+        if x_max is not None:
+            x_max = validate_float_int(x_max, "x_max")
+
+        if not isinstance(grid_bins, int):
+            raise ValueError(f"`grid_bins` must be an int, but got {type(grid_bins)}.")
+
+        if not isinstance(figsize, tuple) or len(figsize) != 2:
+            raise ValueError(
+                f"`figsize` must be a tuple of length 2, but got {type(figsize)} with length {len(figsize)}."
+            )
+
+        # Call the decorated function if all validations pass
+        return func(
+            x,
+            plot_by,
+            cv_label,
+            x_min,
+            x_max,
+            ax,
+            grid_bins,
+            cv_alpha,
+            cv_line_width,
+            t_test_alpha,
+            figsize,
+            call_legend,
+            time_series_validation,
+        )
+
+    return wrapper
+
+
+@validate_density_plot_mpl
 def density_plot_mpl(
     x: Union[pd.Series, pl.Series],
     plot_by: Union[pd.Series, pl.Series],
@@ -167,46 +265,7 @@ def density_plot_mpl(
     -------
     matplotlib.axes.Axes
         The axes the plot was drawn on.
-
-    Raises
-    ------
-    ValueError
-        If plot_by is None.
     """
-    # Validate inputs
-    if not isinstance(x, pd.Series) and not isinstance(x, pl.Series):
-        raise ValueError(f"x must be a pandas or polars Series, but got {type(x)}.")
-
-    if not isinstance(plot_by, pd.Series) and not isinstance(plot_by, pl.Series):
-        raise ValueError(
-            f"plot_by must be a pandas or polars Series, but got {type(plot_by)}."
-        )
-
-    if not isinstance(cv_label, pd.Series) and not isinstance(cv_label, pl.Series):
-        raise ValueError(
-            f"cv_label must be a pandas or polars Series, but got {type(cv_label)}."
-        )
-
-    if (
-        x_min is not None
-        and not isinstance(x_min, float)
-        and not isinstance(x_min, int)
-    ):
-        raise ValueError(f"x_min must be a float or int, but got {type(x_min)}.")
-
-    if (
-        x_max is not None
-        and not isinstance(x_max, float)
-        and not isinstance(x_max, int)
-    ):
-        raise ValueError(f"x_max must be a float or int, but got {type(x_max)}.")
-
-    if not isinstance(grid_bins, int):
-        raise ValueError(f"grid_bins must be an int, but got {type(grid_bins)}.")
-
-    if not isinstance(figsize, tuple):
-        raise ValueError(f"figsize must be a tuple, but got {type(figsize)}.")
-
     if ax is None:
         _, ax0 = plt.subplots(figsize=figsize)
     else:
@@ -217,7 +276,11 @@ def density_plot_mpl(
     plot_by = to_pd_s(plot_by)
 
     cv_label_ = to_pd_s(cv_label)  # Convert cv_label to a pandas Series
+
+    # Plot the density of x by the levels of plot_by
     ax0 = density_by_mpl(x, plot_by, fill_under=False, ax=ax0)
+
+    # Plot the density of x by the levels of plot_by for each cv fold
     ax0 = density_by_mpl(
         x,
         plot_by,
@@ -233,10 +296,31 @@ def density_plot_mpl(
     # Add vertical lines at the means and medians of the densities:
     ax0 = _annotate_mean_median(ax0, x, plot_by)
 
-    # Annotate the t-test results:
+    # Calculate the t-test results:
     _, p, significance_statement = _density_t_test_binary_target(
         x, plot_by, t_test_alpha
     )
+
+    # Add a significance annotation for the t-test results
+    ax0 = _significance_annotation(significance_statement, ax0, figsize)
+
+    # Add a dynamic title reflecting the t-test results
+    ax0.set_title(
+        _get_title(x, plot_by, p, t_test_alpha), fontsize=24 * (figsize[0] / 16)
+    )
+
+    # Set the x-axis label
+    ax0.set_xlabel(plot_label(x.name if x.name is not None else "Var", False))  # type: ignore
+
+    if call_legend:
+        plt.legend(fontsize=24 * (figsize[0] / 16))
+
+    return ax0
+
+
+def _significance_annotation(
+    significance_statement: str, ax0: plt.Axes, figsize: Tuple[int, int]
+) -> plt.Axes:
     ax0.annotate(
         significance_statement,
         xy=(0.5, 0.5),
@@ -253,7 +337,29 @@ def density_plot_mpl(
             alpha=0.5,
         ),
     )
+    return ax0
 
+
+def _get_title(x: pd.Series, plot_by: pd.Series, p: float, t_test_alpha: float) -> str:
+    """
+    Get the title for the density plot. Helper function for density_plot_mpl.
+
+    Parameters
+    ----------
+    x : pd.Series
+        The variable to plot the density of.
+    plot_by : pd.Series
+        The variable to group by.
+    p : float
+        The p-value of the t-test.
+    t_test_alpha : float
+        The alpha value to use for the t-test.
+
+    Returns
+    -------
+    str
+        The title for the density plot.
+    """
     # Add a title reflecting the t-test results
     title = (
         "Kernel Density Plot of "
@@ -264,16 +370,7 @@ def density_plot_mpl(
     title += "\nDistributions by level are"
     title += " not " if p >= t_test_alpha else " "
     title += f"significantly different at the {1 - t_test_alpha:.0%} level."
-
-    ax0.set_title(title)
-
-    # Set the x-axis label
-    ax0.set_xlabel(plot_label(x.name if x.name is not None else "Var", False))  # type: ignore
-
-    if call_legend:
-        plt.legend(fontsize=24 * (figsize[0] / 16))
-
-    return ax0
+    return title
 
 
 def _density_t_test_binary_target(
@@ -607,15 +704,58 @@ def calculate_density_sd(
 
 
 def _calculate_single_density_sd(
-    x: pd.Series,
-    cv_fold: pd.Series,
+    x: Union[pd.Series, pl.Series, np.ndarray],
+    cv_fold: Union[pd.Series, pl.Series, np.ndarray],
     grid_bins: int = 200,
     time_series_validation: bool = True,
 ) -> pd.Series:
     """
-    Using the cross-validation folds, calculate the standard deviation of the
-    density of x.
+    Calculates the standard deviation of the density estimates of `x` across
+    different cross-validation folds.
+
+    This function computes the kernel density estimate (KDE) of `x` for each unique
+    value in `cv_fold`. It then calculates the standard deviation of these density
+    estimates at a fixed set of points defined by `grid_bins`. The result is a
+    smoothed series of standard deviations representing the variability of the
+    density estimate across folds.
+
+    Parameters
+    ----------
+    x : Union[pd.Series, pl.Series, np.ndarray]
+        The data series for which the density's standard deviation is to be computed.
+    cv_fold : Union[pd.Series, pl.Series, np.ndarray]
+        A series indicating the cross-validation fold of each observation in `x`.
+        Unique values in `cv_fold` are treated as separate folds.
+    grid_bins : int, optional
+        The number of points at which to evaluate the density and its standard
+        deviation. Defaults to 200.
+    time_series_validation : bool, optional
+        Indicates whether the cross-validation is based on a time series split.
+        This parameter is passed to `filter_by_cv_fold` to determine how the data
+        is split into training and testing sets. Defaults to True.
+
+    Returns
+    -------
+    pd.Series
+        A pandas Series containing the smoothed standard deviations of the density
+        estimates across the cross-validation folds.
+
+    Notes
+    -----
+    The smoothing is applied by averaging the standard deviations within a sliding
+    window of 5 points, with special handling for the first two and last two points
+    to avoid boundary effects.
     """
+    # Convert to pandas Series
+    x = to_pd_s(x)
+    cv_fold = to_pd_s(cv_fold)
+
+    # Raise an error if either `x` or `cv_fold` is empty
+    if x.shape[0] == 0:
+        raise ValueError("The input series `x` cannot be empty.")
+    if cv_fold.shape[0] == 0:
+        raise ValueError("The input series `cv_fold` cannot be empty.")
+
     sd = pd.DataFrame(
         {"x": np.linspace(x.min(), x.max(), grid_bins)}, index=range(grid_bins)
     )
@@ -697,15 +837,15 @@ def _plot_single_density_pm_standard_deviation(
     """
 
     if ax is None:
-        _, ax = plt.subplots(figsize=figsize)
+        _, ax_ = plt.subplots(figsize=figsize)
+    else:
+        ax_ = ax
 
     x = x.dropna()
 
     # Set min and max if not set
-    if x_min is None:
-        x_min = x.min()
-    if x_max is None:
-        x_max = x.max()
+    x_min = x.min() if x_min is None else x_min
+    x_max = x.max() if x_max is None else x_max
 
     # Calculate density
     density = gaussian_kde(x)
@@ -718,11 +858,13 @@ def _plot_single_density_pm_standard_deviation(
     df1 = pd.DataFrame({"x": np.linspace(df.x.min(), df.x.max(), grid_bins)})
     df1["density"] = density(np.linspace(df.x.min(), df.x.max(), grid_bins))
 
-    return ax
+    return ax_
 
 
 def _annotate_mean_median(
-    ax: plt.Axes, feature: pd.Series, target: pd.Series
+    feature: Union[pd.Series, pl.Series, np.ndarray],
+    target: Union[pd.Series, pl.Series, np.ndarray],
+    ax: Optional[plt.Axes] = None,
 ) -> plt.Axes:
     """
     Annotates the mean and median of the feature variable for each target class.
@@ -736,28 +878,77 @@ def _annotate_mean_median(
     to curving up for the mean and curving down for the median. The arrows are
     annotated with the Mean/Median ratios for each target class.
 
-    Parameters:
-    -----------
-    ax (matplotlib.axes.Axes): The axis to add the annotations to.
-    feature (pandas.Series): The feature variable data.
-    target (pandas.Series): The target variable data.
+    Parameters
+    ----------
+    feature : Union[pd.Series, pl.Series, np.ndarray]
+        The feature variable.
+    target : Union[pd.Series, pl.Series, np.ndarray]
+        The target variable.
+    ax : plt.Axes, optional
+        The axes to annotate. If None, a new figure and axes is created.
 
-    Returns:
-    --------
-    ax (matplotlib.axes.Axes): The axis with the annotations added.
+    Returns
+    -------
+    plt.Axes
+        The axes with the annotations added.
     """
+    # Raise an error if the feature and target are not the same length
+    if len(feature) != len(target):
+        raise ValueError(
+            "The feature and target variables must be the same length, "
+            f"but got {len(feature)} and {len(target)}."
+        )
+    elif (len(feature) == 0) | (len(target) == 0):
+        raise ValueError(
+            "The feature and target series should not contain NaN or missing values"
+        )
+
+    # Raise an error if either the feature or target contain NaNs
+    if isinstance(feature, pd.Series) and feature.isnull().any():
+        raise ValueError(
+            "The feature and target series should not contain NaN or missing values"
+        )
+    elif isinstance(feature, pl.Series) and feature.is_null().any():
+        raise ValueError(
+            "The feature and target series should not contain NaN or missing values"
+        )
+    elif isinstance(feature, np.ndarray) and np.isnan(feature).any():
+        raise ValueError(
+            "The feature and target series should not contain NaN or missing values"
+        )
+
+    if isinstance(target, pd.Series) and target.isnull().any():
+        raise ValueError(
+            "The feature and target series should not contain NaN or missing values"
+        )
+    elif isinstance(target, pl.Series) and target.is_null().any():
+        raise ValueError(
+            "The feature and target series should not contain NaN or missing values"
+        )
+    elif isinstance(target, np.ndarray) and np.isnan(target).any():
+        raise ValueError(
+            "The feature and target series should not contain NaN or missing values"
+        )
+
+    # Convert to pandas Series
+    feature_ = to_pd_s(feature)
+    target_ = to_pd_s(target)
+
     # Calculate means and medians
-    mean0, mean1 = feature[target == 0].mean(), feature[target == 1].mean()
+    mean0, mean1 = feature_[target_ == 0].mean(), feature_[target_ == 1].mean()
     median0, median1 = (
-        feature[target == 0].median(),
-        feature[target == 1].median(),
+        feature_[target_ == 0].median(),
+        feature_[target_ == 1].median(),
     )
 
+    # If no axis passed, create one
+    ax_ = plt.subplots()[1] if ax is None else ax
+
     # Add vertical lines
-    ax.axvline(mean0, color="blue", linestyle="--", linewidth=1)
-    ax.axvline(mean1, color="orange", linestyle="--", linewidth=1)
-    ax.axvline(median0, color="blue", linestyle="dotted", linewidth=1)
-    ax.axvline(median1, color="orange", linestyle="dotted", linewidth=1)
+    ax_.axvline(mean0, color="blue", linestyle="--", linewidth=1)
+    ax_.axvline(mean1, color="orange", linestyle="--", linewidth=1)
+    ax_.axvline(median0, color="blue", linestyle="dotted", linewidth=1)
+    ax_.axvline(median1, color="orange", linestyle="dotted", linewidth=1)
 
     # Define annotation position and arrow properties based on mean0 and mean1
     pos0, pos1 = ("right", "left") if mean0 < mean1 else ("left", "right")
@@ -765,11 +956,11 @@ def _annotate_mean_median(
     arrowprops1 = dict(arrowstyle="->", lw=1)
 
     # Extract the figure size
-    figsize = ax.get_figure().get_size_inches()  # type: ignore
+    figsize = ax_.get_figure().get_size_inches()  # type: ignore
 
     # Annotate for target=0
-    ax.annotate(
-        f"{target.name}=0\n===========\nMean / Median =\n{mean0 / median0:.2f}",
+    ax_.annotate(
+        f"{target_.name}=0\n===========\nMean / Median =\n{mean0 / median0:.2f}",
         xy=(mean0, 0.2),
         xycoords="data",
         xytext=(-20 if pos0 == "right" else 20, -20),
@@ -787,8 +978,8 @@ def _annotate_mean_median(
     )
 
     # Annotate for target=1
-    ax.annotate(
-        f"{target.name}=1\n===========\nMean / Median =\n{mean1 / median1:.2f}",
+    ax_.annotate(
+        f"{target_.name}=1\n===========\nMean / Median =\n{mean1 / median1:.2f}",
         xy=(mean1, 0.2),
         xycoords="data",
         xytext=(-20 if pos1 == "right" else 20, -20),
@@ -805,4 +996,4 @@ def _annotate_mean_median(
         arrowprops=arrowprops1,
     )
 
-    return ax
+    return ax_
