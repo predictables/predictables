@@ -21,3 +21,4 @@ from .logging._Logger import Logger  # noqa F401
 from .logging._LogLevel import LogLevel  # noqa F401
 from ._cv_filter import cv_filter, filter_by_cv_fold, filter_df_by_cv_fold  # noqa F401
 from ._load_env import load_env  # noqa F401
+from ._graph_min_max import graph_min_max  # noqa F401

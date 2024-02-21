@@ -9,7 +9,12 @@ from matplotlib.axes import Axes
 from scipy.stats import gaussian_kde, ttest_ind  # type: ignore
 
 from predictables.univariate.src.plots.util import binary_color, plot_label
-from predictables.util import get_column_dtype, to_pd_s, filter_by_cv_fold
+from predictables.util import (
+    get_column_dtype,
+    to_pd_s,
+    filter_by_cv_fold,
+    graph_min_max,
+)
 
 
 def density_plot(
@@ -542,7 +547,6 @@ def _plot_density_mpl(
     return ax
 
 
-# trunk-ignore(sourcery/low-code-quality)
 def density_by_mpl(
     x: pd.Series,
     by: pd.Series,
@@ -616,8 +620,7 @@ def density_by_mpl(
         _, ax = plt.subplots(figsize=figsize)
 
     # Set min and max if not set, and build params dict
-    x_min = x_min if x_min is not None else x.dropna().min()
-    x_max = x_max if x_max is not None else x.dropna().max()
+    x_min, x_max = graph_min_max(x, x_min, x_max)
     params = {
         "x_min": x_min,
         "x_max": x_max,
@@ -640,7 +643,7 @@ def density_by_mpl(
             _plot_density_mpl(
                 group,
                 label=label,
-                line_color=color__,  # type: ignore
+                line_color=color__,
                 **params,  # type: ignore
             )
     # Otherwise, plot the density by CV fold
@@ -656,8 +659,8 @@ def density_by_mpl(
                 color__ = color_ if color_ is not None else None
                 _plot_density_mpl(
                     group,
-                    label="_nolegend_",  # don't label the plot if we're filling under
-                    line_color=color__,  # type: ignore
+                    label="_nolegend_",
+                    line_color=color__,
                     **params,  # type: ignore
                 )
 
@@ -665,22 +668,78 @@ def density_by_mpl(
 
 
 def calculate_density_sd(
-    x: pd.Series,
-    by: pd.Series,
-    cv_fold: Union[pd.Series, None] = None,
+    x: Union[pd.Series, pl.Series, np.ndarray],
+    by: Union[pd.Series, pl.Series, np.ndarray],
+    cv_fold: Union[pd.Series, pl.Series, np.ndarray],
+    x_min: Optional[float] = None,
+    x_max: Optional[float] = None,
     grid_bins: int = 200,
     time_series_validation: bool = True,
 ):
     """
-    Using the cross-validation folds, calculate the standard deviation of the
-    density of x by the levels of by.
-    """
-    if cv_fold is None:
-        raise ValueError("cv_fold cannot be None.")
+    Calculates the standard deviation of the kernel density estimates (KDE) of `x`
+    grouped by the levels of `by` across different cross-validation folds specified
+    by `cv_fold`.
 
-    sd = pd.DataFrame(
-        {"x": np.linspace(x.min(), x.max(), grid_bins)}, index=range(grid_bins)
-    )
+    This function computes the KDE of `x` for each group defined by unique values
+    in `by` for each cross-validation fold. It then calculates the standard deviation
+    of these density estimates at a fixed set of points defined by `grid_bins`. The
+    result is a smoothed series of standard deviations representing the variability
+    of the density estimate across folds and groups.
+
+    Parameters
+    ----------
+    x : Union[pd.Series, pl.Series, np.ndarray]
+        The data series for which the density's standard deviation is computed.
+    by : Union[pd.Series, pl.Series, np.ndarray]
+        A series indicating the group of each observation in `x`.
+    cv_fold : Union[pd.Series, pl.Series, np.ndarray]
+        A series indicating the cross-validation fold of each observation in `x`.
+        Unique values in `cv_fold` are treated as separate folds.
+    x_min : float, optional
+        The minimum value to plot. If None, defaults to the minimum of x before
+        grouping by any variables. Used to extend the curve to the edges of the plot.
+    x_max : float, optional
+        The maximum value to plot. If None, defaults to the maximum of x before
+        grouping by any variables. Used to extend the curve to the edges of the plot.
+    grid_bins : int, optional
+        The number of points at which to evaluate the density and its standard
+        deviation. Defaults to 200.
+    time_series_validation : bool, optional
+        Indicates whether the cross-validation is based on a time series split.
+        This parameter influences how the data is split into training and testing
+        sets. Defaults to True.
+
+    Returns
+    -------
+    tuple of pd.Series
+        A tuple containing two pandas Series:
+        - The first Series contains the smoothed standard deviations of the density
+          estimates across the cross-validation folds and groups.
+        - The second Series contains the unsmoothed standard deviations.
+
+    Notes
+    -----
+    Smoothing is applied by averaging the standard deviations within a sliding
+    window of 5 points, with special handling for the first two and last two points
+    to avoid boundary effects.
+    """
+    # Convert to pandas Series
+    x = to_pd_s(x)
+    by = to_pd_s(by)
+    cv_fold = to_pd_s(cv_fold)
+
+    # Raise an error if either `x`, `by`, or `cv_fold` is empty
+    if x.shape[0] == 0:
+        raise ValueError("The input series `x` cannot be empty.")
+    if by.shape[0] == 0:
+        raise ValueError("The input series `by` cannot be empty.")
+    if cv_fold.shape[0] == 0:
+        raise ValueError("The input series `cv_fold` cannot be empty.")
+
+    xmin, xmax = graph_min_max(x, x_min, x_max)
+
+    sd = pd.DataFrame({"x": np.linspace(xmin, xmax, grid_bins)}, index=range(grid_bins))
     for f in cv_fold.drop_duplicates().sort_values():
         x_ = filter_by_cv_fold(x, f, cv_fold, time_series_validation, "test")
         by_ = filter_by_cv_fold(by, f, cv_fold, time_series_validation, "test")
