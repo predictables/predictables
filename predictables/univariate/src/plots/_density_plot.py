@@ -299,7 +299,7 @@ def density_plot_mpl(
     )
 
     # Add vertical lines at the means and medians of the densities:
-    ax0 = _annotate_mean_median(ax0, x, plot_by)
+    ax0 = _annotate_mean_median(x, plot_by, ax0)
 
     # Calculate the t-test results:
     _, p, significance_statement = _density_t_test_binary_target(
