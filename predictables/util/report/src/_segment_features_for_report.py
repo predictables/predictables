@@ -21,15 +21,15 @@ class Segment:
     n_features: Optional[int] = None
 
     def __post_init__(self) -> None:
-        if not self.features:
+        if len(self.features) == 0:
             raise ValueError(
-                "features must not be empty. At least one feature "
-                "is required to create a segment."
+                "features must be a list, and not be empty. At "
+                "least one feature is required to create a segment."
             )
         if self.max_features <= 0:
             raise ValueError(
-                "Segment.max_features must be greater than 0 "
-                "for the validation to work."
+                "Segment.max_features must be a list, and must be "
+                "greater than 0 for the validation to work."
             )
 
         if self.file_num_start > self.file_num_end:
@@ -152,10 +152,20 @@ def segment_features_for_report(
     ]
 
     """
+    if len(features) < max_per_segment:
+        return [
+            Segment(
+                file_num_start=1,
+                file_num_end=len(features),
+                features=features,
+                max_features=max_per_segment,
+            )
+        ]
+
     if max_per_segment <= 0:
         raise ValueError("max_per_segment must be greater than 0.")
 
-    if not features:
+    if (features is None) or (len(features) == 0):
         raise ValueError(
             "features must not be empty. At least one feature is required to create "
             "a segment."
