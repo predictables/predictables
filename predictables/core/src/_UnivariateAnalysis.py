@@ -1,7 +1,6 @@
 import datetime
 import os
 from typing import List, Optional, Union
-import re
 
 import pandas as pd  # type: ignore
 import polars as pl
@@ -9,7 +8,13 @@ import numpy as np
 from dotenv import load_dotenv
 
 from predictables.univariate import Univariate
-from predictables.util import DebugLogger, Report, to_pl_lf, tqdm
+from predictables.util import (
+    DebugLogger,
+    Report,
+    to_pl_lf,
+    tqdm,
+    fmt_col_name,
+)
 from predictables.util.report.src._segment_features_for_report import (
     Segment,
     segment_features_for_report,
@@ -19,75 +24,6 @@ load_dotenv()
 
 dbg = DebugLogger(working_file="_UnivariateAnalysis.py")
 current_date = datetime.datetime.now()
-
-
-def _fmt_col_name(col_name: str) -> str:
-    """
-    Formats a column name to be used as an attribute name within the
-    UnivariateAnalysis class. Removes non-alphanumeric characters, replaces
-    spaces and special characters with underscores, and ensures the resulting
-    string does not end with an underscore.
-
-    Parameters
-    ----------
-    col_name : str
-        The original column name to format.
-
-    Returns
-    -------
-    str
-        The formatted column name suitable for use as a Python attribute,
-        not ending with an underscore.
-
-    Examples
-    --------
-    >>> _fmt_col_name("Total Revenue - 2020")
-    'total_revenue_2020'
-    >>> _fmt_col_name("Cost/Unit_")
-    'cost_unit'
-    """
-    col_name = re.sub(r"\W+", "_", col_name)  # Replace all non-word characters with _
-    col_name = re.sub(
-        r"__+", "_", col_name
-    )  # Normalize multiple underscores to single _
-    col_name = col_name.lower()  # Convert to lowercase
-    if col_name.endswith("_"):
-        col_name = col_name[:-1]  # Remove trailing underscore if present
-    return col_name
-
-
-def _col_name_for_report(col_name: str) -> str:
-    """
-    Formats a column name to be used as a title in a report. Replaces underscores
-    with spaces and capitalizes the first letter of each word.
-
-    Parameters
-    ----------
-    col_name : str
-        The original column name to format.
-
-    Returns
-    -------
-    str
-        The formatted column name suitable for use as a title in a report.
-
-    Examples
-    --------
-    >>> _col_name_for_report("total_revenue_2020")
-    'Total Revenue 2020'
-    >>> _col_name_for_report("cost_unit")
-    'Cost Unit'
-    """
-    if not isinstance(col_name, str):
-        raise ValueError(
-            f"Invalid value {col_name} for column name. Expected a string, but got {type(col_name)}."
-        )
-    return (
-        re.sub(r"_+", " ", _fmt_col_name(col_name))
-        .title()
-        .replace("Log", "log")
-        .replace("1P", "1p")
-    )
 
 
 def _format_values(col: str) -> pl.Expr:
@@ -158,8 +94,6 @@ class UnivariateAnalysis:
     -------
     __init__(self, model_name, df_train, df_val, target_column_name, feature_column_names, time_series_validation, cv_column_name=None, cv_folds=None):
         Initializes the UnivariateAnalysis class with the dataset, features, and validation settings.
-    _fmt_col_name(col_name):
-        Formats a column name to be used as a Python attribute name.
     _sort_features_by_ua():
         Sorts features based on their average performance metrics.
     get_features():
@@ -194,7 +128,6 @@ class UnivariateAnalysis:
     >>> ua.build_report("Univariate Analysis Report.pdf")
     >>> # This will generate a report containing the results of the univariate analysis for the features in the dataset.
     """
-
     cv_folds: pd.Series
 
     def __init__(
@@ -266,7 +199,7 @@ class UnivariateAnalysis:
             "features",
         ):
             obj_name = (
-                _fmt_col_name(col) if not hasattr(self, _fmt_col_name(col)) else col
+                fmt_col_name(col) if not hasattr(self, fmt_col_name(col)) else col
             )
             setattr(
                 self,
@@ -303,15 +236,15 @@ class UnivariateAnalysis:
                 # version of the feature
                 print(f"Feature {col} is right-skewed: skewness = {skewness}")
                 self.df = self.df.with_columns(
-                    [pl.col(col).log1p().alias(f"log1p_{_fmt_col_name(col)}")]
+                    [pl.col(col).log1p().alias(f"log1p_{fmt_col_name(col)}")]
                 )
                 self.df_val = self.df_val.with_columns(
-                    [pl.col(col).log1p().alias(f"log1p_{_fmt_col_name(col)}")]
+                    [pl.col(col).log1p().alias(f"log1p_{fmt_col_name(col)}")]
                 )
 
                 transformed_obj_name = (
-                    f"log1p_{_fmt_col_name(col)}"
-                    if not hasattr(self, f"log1p_{_fmt_col_name(col)}")
+                    f"log1p_{fmt_col_name(col)}"
+                    if not hasattr(self, f"log1p_{fmt_col_name(col)}")
                     else f"log1p_{col}"
                 )
                 setattr(
@@ -319,18 +252,18 @@ class UnivariateAnalysis:
                     transformed_obj_name,
                     Univariate(
                         self.df.filter(
-                            pl.col(f"log1p_{_fmt_col_name(col)}").is_not_null()
-                        ).filter(pl.col(f"log1p_{_fmt_col_name(col)}").is_finite()),
+                            pl.col(f"log1p_{fmt_col_name(col)}").is_not_null()
+                        ).filter(pl.col(f"log1p_{fmt_col_name(col)}").is_finite()),
                         self.df_val.filter(
-                            pl.col(f"log1p_{_fmt_col_name(col)}").is_not_null()
-                        ).filter(pl.col(f"log1p_{_fmt_col_name(col)}").is_finite()),
+                            pl.col(f"log1p_{fmt_col_name(col)}").is_not_null()
+                        ).filter(pl.col(f"log1p_{fmt_col_name(col)}").is_finite()),
                         self.cv_column_name,
-                        f"log1p_{_fmt_col_name(col)}",
+                        f"log1p_{fmt_col_name(col)}",
                         self.target_column_name,
                         time_series_validation=self.time_series_validation,
                     ),
                 )
-                transformed_cols.append(f"log1p_{_fmt_col_name(col)}")
+                transformed_cols.append(f"log1p_{fmt_col_name(col)}")
 
         self._feature_list = feature_list + transformed_cols
         self.feature_column_names = self._feature_list
@@ -361,7 +294,7 @@ class UnivariateAnalysis:
         total_df = []
 
         for col in self.feature_column_names:
-            obj_name = _fmt_col_name(col)
+            obj_name = fmt_col_name(col)
             if hasattr(self, obj_name):
                 ua = getattr(self, obj_name)
                 try:
@@ -539,7 +472,7 @@ class UnivariateAnalysis:
         return segment_features_for_report(features, max_per_file)
 
     def _add_to_report(self, rpt: Report, feature: str) -> Report:
-        ua = getattr(self, _fmt_col_name(feature))
+        ua = getattr(self, fmt_col_name(feature))
         return ua._add_to_report(rpt)
 
     def _generate_segment_report(
@@ -614,7 +547,7 @@ class UnivariateAnalysis:
             rpt = self._rpt_title_page(filename_, margins_)
             rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
             for X in tqdm(features, self._build_desc(len(features), max_per_file)):
-                rpt = getattr(self, _fmt_col_name(X))._add_to_report(rpt)
+                rpt = getattr(self, fmt_col_name(X))._add_to_report(rpt)
                 counter += 1
 
                 if counter == max_per_file:
@@ -638,7 +571,7 @@ class UnivariateAnalysis:
                 f"Building {len(features)} univariate analysis reports",
             ):
                 try:
-                    rpt = getattr(self, _fmt_col_name(X))._add_to_report(rpt)
+                    rpt = getattr(self, fmt_col_name(X))._add_to_report(rpt)
                     # skewness = (
                     #     self.df.select(pl.col(X).skew().name.keep()).collect().get(0)  # type: ignore
                     # )

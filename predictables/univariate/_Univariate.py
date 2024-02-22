@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd  # type: ignore
 import polars as pl
-import polars.selectors as cs
 from matplotlib.axes import Axes
 from sklearn.preprocessing import MinMaxScaler, StandardScaler  # type: ignore
 
@@ -738,29 +737,8 @@ class Univariate(Model):
             # Apply an index at the end
             results.columns = pd.Index(
                 [
-                    c.replace(" ", "\n")
-                    for c in [
-                        "CV Fold",
-                        "Fitted Coef.",
-                        "Fitted p-Value",
-                        "Fitted Std. Err.",
-                        "Conf. Int. Lower",
-                        "Conf. Int. Upper",
-                        # "Train Accuracy",
-                        "Test Accuracy",
-                        # "Train AUC",
-                        "Test AUC",
-                        # "Train F1",
-                        "Test F1",
-                        # "Train Precision",
-                        "Test Precision",
-                        # "Train Recall",
-                        "Test Recall",
-                        # "Train MCC",
-                        "Test MCC",
-                        # "Train Log-Loss",
-                        # "Val Log-Loss",
-                    ]
+                    _col_name_for_report(c).replace(" ", "\n")
+                    for c in results.columns.tolist()
                 ]
             )
 
