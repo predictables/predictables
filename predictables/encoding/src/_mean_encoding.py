@@ -1,8 +1,6 @@
 from typing import List
-
 import polars as pl
-
-from predictables.util import tqdm
+from predictables.util import tqdm, to_pl_lf
 
 
 def mean_encode_df(
