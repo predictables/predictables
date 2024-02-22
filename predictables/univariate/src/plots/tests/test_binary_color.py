@@ -1,4 +1,5 @@
 import pytest
+import numpy as np
 from predictables.univariate.src.plots.util._binary_color import binary_color
 
 
@@ -66,3 +67,19 @@ def test_binary_color_invalid(invalid_value):
             assert f"Invalid value {int(invalid_value)} for binary variable." in str(
                 e.value
             )
+
+
+@pytest.mark.parametrize("x", [0, 1, -1])
+def test_numpy_ints(x):
+    x_ = np.int64(x)
+    _x = np.int32(x)
+    assert binary_color(x_) == binary_color(x), f"Failed for np.int64({x})"
+    assert binary_color(_x) == binary_color(x), f"Failed for np.int32({x})"
+
+
+@pytest.mark.parametrize("x", [0.0, 1.0, -1.0])
+def test_numpy_floats(x):
+    x_ = np.float64(x)
+    _x = np.float32(x)
+    assert binary_color(x_) == binary_color(x), f"Failed for np.float64({x})"
+    assert binary_color(_x) == binary_color(x), f"Failed for np.float32({x})"

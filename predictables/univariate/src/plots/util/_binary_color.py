@@ -1,3 +1,4 @@
+import numpy as np
 from typing import Union
 
 
@@ -15,6 +16,10 @@ def binary_color(x: Union[int, float, str, bool]) -> str:
     int
         The color for x.
     """
+    if isinstance(x, (np.int64, np.int32)):
+        x = int(x)
+    elif isinstance(x, (np.float64, np.float32)):
+        x = float(x)
 
     if isinstance(x, (str, bool)):
         x_ = x.lower() if isinstance(x, str) else str(x).lower()

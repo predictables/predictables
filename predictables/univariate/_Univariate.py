@@ -114,8 +114,6 @@ class Univariate(Model):
             feature_col_ = df.columns[1]
         if target_col_ is None:
             target_col_ = df.columns[0]
-        dbg.msg("Entering Univariate.__init__: | Ux0001a")
-        dbg.msg(f"feature_col_={feature_col_}, target_col_={target_col_} | Ux0001b")
 
         super().__init__(
             df,
@@ -126,16 +124,8 @@ class Univariate(Model):
             time_series_validation=time_series_validation,
         )
 
-        dbg.msg(
-            f"[{self.feature_col}]: Before normalization, mean of feature_col_ is: "
-            f"{df[feature_col_].mean()} | Ux0001c"
-        )
         # Normalize the column if the cross-validated fit is improved
         df[feature_col_] = self.standardize(X=df[[feature_col_]])
-        dbg.msg(
-            f"[{self.feature_col}]: After normalization, mean of feature_col_ is: "
-            f"{df[feature_col_].mean()} | Ux0001d"
-        )
         self.unique_folds = get_unique(
             self.df.select(self.fold_col).collect().to_pandas()[self.fold_col]
         )
@@ -143,7 +133,6 @@ class Univariate(Model):
 
         self.cv_dict = {}
         for fold in self.unique_folds:
-            dbg.msg(f"Creating cv_dict for fold {fold} | Ux0001e")
             self.cv_dict[fold] = Model(
                 self.df,
                 fold_n=fold,
@@ -154,7 +143,6 @@ class Univariate(Model):
                 target_col=(self.target_col if self.target_col is not None else None),
             )
 
-        dbg.msg(f"[{self.feature_col}]: Producing results dataframe | Ux0001f")
         self.agg_results = pl.from_pandas(
             pd.DataFrame({"fold": self.unique_folds_str + ["mean", "std"]})
         ).lazy()
