@@ -2,19 +2,18 @@ import datetime
 import os
 from typing import List, Optional, Union
 
+import numpy as np
 import pandas as pd  # type: ignore
 import polars as pl
-import numpy as np
 from dotenv import load_dotenv
 
 from predictables.univariate import Univariate
 from predictables.util import (
     DebugLogger,
     Report,
+    fmt_col_name,
     to_pl_lf,
     tqdm,
-    fmt_col_name,
-    col_name_for_report,
 )
 from predictables.util.report.src._segment_features_for_report import (
     Segment,
@@ -129,6 +128,7 @@ class UnivariateAnalysis:
     >>> ua.build_report("Univariate Analysis Report.pdf")
     >>> # This will generate a report containing the results of the univariate analysis for the features in the dataset.
     """
+
     cv_folds: pd.Series
 
     def __init__(
@@ -237,10 +237,20 @@ class UnivariateAnalysis:
                 # version of the feature
                 print(f"Feature {col} is right-skewed: skewness = {skewness}")
                 self.df = self.df.with_columns(
-                    [pl.col(col).log1p().alias(f"log1p_{fmt_col_name(col)}")]
+                    [
+                        pl.col(col)
+                        .log1p()
+                        .cast(pl.Float64)
+                        .alias(f"log1p_{fmt_col_name(col)}")
+                    ]
                 )
                 self.df_val = self.df_val.with_columns(
-                    [pl.col(col).log1p().alias(f"log1p_{fmt_col_name(col)}")]
+                    [
+                        pl.col(col)
+                        .log1p()
+                        .cast(pl.Float64)
+                        .alias(f"log1p_{fmt_col_name(col)}")
+                    ]
                 )
 
                 transformed_obj_name = (
@@ -270,7 +280,7 @@ class UnivariateAnalysis:
         self.feature_column_names = self._feature_list
 
     def _sort_features_by_ua(
-        self, return_pd: bool = False
+        self, return_pd: bool = False, dbg_print: bool = False
     ) -> Union[pl.LazyFrame, pd.DataFrame]:
         """
         Sorts features based on their average performance metrics in univariate analysis.
@@ -280,6 +290,8 @@ class UnivariateAnalysis:
         return_pd : bool, optional
             If True, returns a pandas DataFrame. Otherwise, returns a Polars LazyFrame.
             The default is False.
+        dbg_print : bool, optional
+            If True, prints debug information. The default is False.
 
         Returns
         -------
@@ -296,9 +308,13 @@ class UnivariateAnalysis:
 
         for col in self.feature_column_names:
             obj_name = fmt_col_name(col)
+            if dbg_print:
+                print(f"\nobj_name: {obj_name}")
             if hasattr(self, obj_name):
-                ua = getattr(self, obj_name)
                 try:
+                    ua = getattr(self, obj_name)
+                    if dbg_print:
+                        print(f"{ua.results.head().collect()}")
                     total_df.append(
                         ua.results.select(
                             [
@@ -323,12 +339,12 @@ class UnivariateAnalysis:
                         )
                     )
                 except Exception as e:
-                    dbg.msg(f"Error processing results for feature {col}: {e}")
+                    print(f"Error processing results for feature {col}: {e}")
             else:
-                dbg.msg(f"Univariate object not found for feature {col}")
+                print(f"Univariate object not found for feature {col}")
 
         if total_df:
-            df = pl.concat(total_df, parallel=True).sort("Ave.", descending=True)
+            df = pl.concat(total_df).sort("Ave.", descending=True)
             if return_pd:
                 return df.collect().to_pandas().set_index("Feature")
             else:
@@ -573,9 +589,6 @@ class UnivariateAnalysis:
             ):
                 try:
                     rpt = getattr(self, fmt_col_name(X))._add_to_report(rpt)
-                    # skewness = (
-                    #     self.df.select(pl.col(X).skew().name.keep()).collect().get(0)  # type: ignore
-                    # )
                 except np.linalg.LinAlgError as e:
                     print(f"Error processing {X}:\n    {e}")
                     continue

@@ -223,105 +223,119 @@ class Model:
         )
         results = results.with_columns(pl.lit(self.model.nobs).alias("n"))
         results = results.with_columns(pl.lit(self.model.params.shape[0]).alias("k"))
-        results = results.with_columns(pl.lit(self.sk_model.coef_).alias("sk_coef"))
+        results = results.with_columns(pl.lit(self.sk_model.coef_[0]).alias("sk_coef"))
 
         if self.is_binary:
             results = results.with_columns(
                 [
                     pl.lit(
                         metrics.accuracy_score(
-                            self.GetY("train"), self.GetYhat("train").round(0)
+                            self.GetY("train").astype(int),
+                            self.GetYhat("train").round(0).astype(int),
                         )
                     ).alias("acc_train"),
                     pl.lit(
                         metrics.accuracy_score(
-                            self.GetY("test"), self.GetYhat("test").round(0)
+                            self.GetY("test").astype(int),
+                            self.GetYhat("test").round(0).astype(int),
                         )
                     ).alias("acc_test"),
                     pl.lit(
                         metrics.f1_score(
-                            self.GetY("train"), self.GetYhat("train").round(0)
+                            self.GetY("train").astype(int),
+                            self.GetYhat("train").round(0).astype(int),
                         )
                     ).alias("f1_train"),
                     pl.lit(
                         metrics.f1_score(
-                            self.GetY("test"), self.GetYhat("test").round(0)
+                            self.GetY("test").astype(int),
+                            self.GetYhat("test").round(0).astype(int),
                         )
                     ).alias("f1_test"),
                     pl.lit(
                         metrics.recall_score(
-                            self.GetY("train"), self.GetYhat("train").round(0)
+                            self.GetY("train").astype(int),
+                            self.GetYhat("train").round(0).astype(int),
                         )
                     ).alias("recall_train"),
                     pl.lit(
                         metrics.recall_score(
-                            self.GetY("test"), self.GetYhat("test").round(0)
+                            self.GetY("test").astype(int),
+                            self.GetYhat("test").round(0).astype(int),
                         )
                     ).alias("recall_test"),
                     pl.lit(
                         metrics.log_loss(
-                            self.GetY("train"), self.GetYhat("train").round(0)
+                            self.GetY("train").astype(int),
+                            self.GetYhat("train").round(0).astype(int),
                         )
                     ).alias("logloss_train"),
                     pl.lit(
                         metrics.log_loss(
-                            self.GetY("test"), self.GetYhat("test").round(0)
+                            self.GetY("test").astype(int),
+                            self.GetYhat("test").round(0).astype(int),
                         )
                     ).alias("logloss_test"),
                     pl.lit(
                         metrics.roc_auc_score(
-                            self.GetY("train"), self.GetYhat("train").round(0)
+                            self.GetY("train").astype(int),
+                            self.GetYhat("train").round(0).astype(int),
                         )
                     ).alias("auc_train"),
                     pl.lit(
                         metrics.roc_auc_score(
-                            self.GetY("test"), self.GetYhat("test").round(0)
+                            self.GetY("test").astype(int),
+                            self.GetYhat("test").round(0).astype(int),
                         )
                     ).alias("auc_test"),
                     pl.lit(
                         metrics.precision_score(
-                            self.GetY("train"),
-                            self.GetYhat("train").round(0),
+                            self.GetY("train").astype(int),
+                            self.GetYhat("train").round(0).astype(int),
                             zero_division=0,
                         )
                     ).alias("precision_train"),
                     pl.lit(
                         metrics.precision_score(
-                            self.GetY("test"),
-                            self.GetYhat("test").round(0),
+                            self.GetY("test").astype(int),
+                            self.GetYhat("test").round(0).astype(int),
                             zero_division=0,
                         )
                     ).alias("precision_test"),
                     pl.lit(
                         metrics.matthews_corrcoef(
-                            self.GetY("train").replace(0, -1),
-                            self.GetYhat("train").round(0).replace(0, -1),
+                            self.GetY("train").replace(0, -1).astype(int),
+                            self.GetYhat("train").round(0).replace(0, -1).astype(int),
                         )
                     ).alias("mcc_train"),
                     pl.lit(
                         metrics.matthews_corrcoef(
-                            self.GetY("test").replace(0, -1),
-                            self.GetYhat("test").round(0).replace(0, -1),
+                            self.GetY("test").replace(0, -1).astype(int),
+                            self.GetYhat("test").round(0).replace(0, -1).astype(int),
                         )
                     ).alias("mcc_test"),
                     pl.lit(
                         metrics.roc_curve(
-                            self.GetY("train"), self.GetYhat("train").round(0)
+                            self.GetY("train").astype(int),
+                            self.GetYhat("train").round(0).astype(int),
                         )
                     ).alias("roc_curve_train"),
                     pl.lit(
                         metrics.roc_curve(
-                            self.GetY("test"), self.GetYhat("test").round(0)
+                            self.GetY("test").astype(int),
+                            self.GetYhat("test").round(0).astype(int),
                         )
                     ).alias("roc_curve_test"),
                     pl.lit(
                         metrics.precision_recall_curve(
-                            self.GetY("train"), self.GetYhat("train").round(0)
+                            self.GetY("train").astype(int),
+                            self.GetYhat("train").round(0).astype(int),
                         )
                     ).alias("pr_curve_train"),
                     pl.lit(
                         metrics.precision_recall_curve(
-                            self.GetY("test"), self.GetYhat("test").round(0)
+                            self.GetY("test").astype(int),
+                            self.GetYhat("test").round(0).astype(int),
                         )
                     ).alias("pr_curve_test"),
                 ]

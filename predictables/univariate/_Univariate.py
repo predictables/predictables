@@ -18,10 +18,10 @@ from predictables.univariate.src.plots import (
 from predictables.univariate.src.plots.util import plot_label
 from predictables.util import (
     DebugLogger,
+    col_name_for_report,
     get_unique,
     to_pd_df,
     to_pd_s,
-    col_name_for_report,
 )
 from predictables.util.report import Report
 
@@ -585,35 +585,85 @@ class Univariate(Model):
         def quintile():
             return self.plot_quintile_lift(data="test", figsize=self.figsize)
 
-        return (
+        rpt = (
             rpt.h2("Univariate Report")
             .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - Results")
             .spacer(0.5)
             .table(self.get_results())
             .page_break()
-            .h2("Univariate Report")
-            .h3(
-                f"{plot_label(self.feature_name, incl_bracket=False)} - "
-                "Kernel Density Plot"
+        )
+
+        try:
+            rpt = (
+                rpt.h2("Univariate Report")
+                .h3(
+                    f"{plot_label(self.feature_name, incl_bracket=False)} - Kernel Density Plot"
+                )
+                .plot(density())
+                .spacer(0.125)
+                .caption(
+                    "This plot shows the Gaussian kernel density for each level of the "
+                    "target variable, both in total and for each fold. "
+                    "The x-axis represents the feature variable, and the y-axis represents "
+                    "the density of the target variable. "
+                    "The cross-validation folds are included in slightly washed-out colors "
+                    "to help understand the variability of the data. "
+                    "There are annotations with the results of a t-test for the difference "
+                    "in means between the feature variable at each level of the target "
+                    "variable. "
+                    "The annotations corresponding to the color of the target variable "
+                    "level show the mean/median ratio to help understand differences in "
+                    "skewness between the levels of the target variable."
+                )
+               
+                # TODO: Add in a table for the t-test results (Issue #62 on GitHub)
+                .page_break()
             )
-            .plot(density)
-            .spacer(0.125)
-            .caption(
-                "This plot shows the Gaussian kernel density for each level of the "
-                "target variable, both in total and for each fold. "
-                "The x-axis represents the feature variable, and the y-axis represents "
-                "the density of the target variable. "
-                "The cross-validation folds are included in slightly washed-out colors "
-                "to help understand the variability of the data. "
-                "There are annotations with the results of a t-test for the difference "
-                "in means between the feature variable at each level of the target "
-                "variable. "
-                "The annotations corresponding to the color of the target variable "
-                "level show the mean/median ratio to help understand differences in "
-                "skewness between the levels of the target variable."
+        except np.linalg.LinAlgError as err:
+            rpt = (
+                rpt.h2("Univariate Report")
+                .h3(
+                    f"{plot_label(self.feature_name, incl_bracket=False)} - Kernel Density Plot"
+                )
+                .p(
+                    "The kernel density plot could not be created due to a "
+                    "LinAlgError. This is likely due to the feature variable "
+                    "being constant, and the kernel density plot is not "
+                    "informative.\n"
+                    "This is likely a good indication that this variable is not "
+                    "useful for predicting the target variable.\n"
+                )
+                .p(
+                   f"Error message:\n{err}" 
+                )
+                
+                .page_break()
             )
-            # TODO: Add in a table for the t-test results (Issue #62 on GitHub)
-            .page_break()
+
+        return (
+            rpt
+            # rpt.h2("Univariate Report")
+            # .h3(
+            #     f"{plot_label(self.feature_name, incl_bracket=False)} - "
+            #     "Kernel Density Plot"
+            # )
+            # .plot(density)
+            # .spacer(0.125)
+            # .caption(
+            #     "This plot shows the Gaussian kernel density for each level of the "
+            #     "target variable, both in total and for each fold. "
+            #     "The x-axis represents the feature variable, and the y-axis represents "
+            #     "the density of the target variable. "
+            #     "The cross-validation folds are included in slightly washed-out colors "
+            #     "to help understand the variability of the data. "
+            #     "There are annotations with the results of a t-test for the difference "
+            #     "in means between the feature variable at each level of the target "
+            #     "variable. "
+            #     "The annotations corresponding to the color of the target variable "
+            #     "level show the mean/median ratio to help understand differences in "
+            #     "skewness between the levels of the target variable."
+            # )
+            # .page_break()
             .h2("Univariate Report")
             .h3(
                 f"{plot_label(self.feature_name, incl_bracket=False)} "
