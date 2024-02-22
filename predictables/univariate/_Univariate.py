@@ -21,6 +21,7 @@ from predictables.util import (
     get_unique,
     to_pd_df,
     to_pd_s,
+    col_name_for_report,
 )
 from predictables.util.report import Report
 
@@ -737,7 +738,7 @@ class Univariate(Model):
             # Apply an index at the end
             results.columns = pd.Index(
                 [
-                    _col_name_for_report(c).replace(" ", "\n")
+                    col_name_for_report(c).replace(" ", "\n")
                     for c in results.columns.tolist()
                 ]
             )

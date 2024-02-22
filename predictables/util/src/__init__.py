@@ -22,3 +22,6 @@ from .logging._LogLevel import LogLevel  # noqa F401
 from ._cv_filter import cv_filter, filter_by_cv_fold, filter_df_by_cv_fold  # noqa F401
 from ._load_env import load_env  # noqa F401
 from ._graph_min_max import graph_min_max  # noqa F401
+
+from ._fmt_col_name import fmt_col_name  # noqa F401
+from ._col_name_for_report import col_name_for_report  # noqa F401
