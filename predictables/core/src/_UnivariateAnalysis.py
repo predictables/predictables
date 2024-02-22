@@ -344,7 +344,7 @@ class UnivariateAnalysis:
                 print(f"Univariate object not found for feature {col}")
 
         if total_df:
-            df = pl.concat(total_df).sort("F1", descending=True)
+            df = pl.concat(total_df).sort("AUC", descending=True)
             if return_pd:
                 return df.collect().to_pandas().set_index("Feature")
             else:
@@ -539,7 +539,7 @@ class UnivariateAnalysis:
         None
             Creates a report in the current working directory.
         """
-        # Handle the case when None is passed as the filename
+        # Handle default values for filename and margins
         filestem_ = self._get_file_stem(filename)
         features = (
             self._sort_features_by_ua()
@@ -548,88 +548,88 @@ class UnivariateAnalysis:
             .to_series()
             .to_list()
         )
-        # Handle the case when None is passed to the margins
-        margins_: List[float] = margins if margins is not None else [0.5, 0.5, 0.5, 0.5]
-        filename_: str
+        margins_ = margins if margins is not None else [0.5, 0.5, 0.5, 0.5]
+
+        # Generate segments of features for report generation
+        segments = segment_features_for_report(features, max_per_file)
+
+        for segment in segments:
+            # Setup filename and initial report pages for each segment
+            fn = self._rpt_filename(filestem_, segment.start + 1, segment.end)
+            rpt = self._rpt_title_page(fn, margins_)
+            rpt = self._rpt_overview_page(rpt, segment.start, segment.end)
+
+            # Process each feature within the current segment
+            for feature_name in segment.features:
+                rpt = getattr(self, fmt_col_name(feature_name))._add_to_report(rpt)
+
+            # Finalize the current segment's report
+            rpt.build()
+        # # Handle the case when None is passed as the filename
+        # filestem_ = self._get_file_stem(filename)
+        # features = (
+        #     self._sort_features_by_ua()
+        #     .select("Feature")
+        #     .collect()
+        #     .to_series()
+        #     .to_list()
+        # )
+        # # Handle the case when None is passed to the margins
+        # margins_: List[float] = margins if margins is not None else [0.5, 0.5, 0.5, 0.5]
+        # filename_: str
 
         # if len(features) > max_per_file:
         #     files = segment_features_for_report(features, max_per_file)
-
         #     i = 0
         #     counter = 0
-        #     start = files[i].start
-        #     end = files[i].end
-        #     fn = self._rpt_filename(filestem_, start, end)
-        #     filename_ = f"{fn}"
+        #     while i < len(files):  # Ensure we do not go beyond the list's length
+        #         start = files[i].start
+        #         end = files[i].end
+        #         fn = self._rpt_filename(filestem_, start, end)
+        #         filename_ = f"{fn}"
+        #         rpt = self._rpt_title_page(filename_, margins_)
+        #         rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
+        #         for X in tqdm(
+        #             features[start:end], self._build_desc(len(features), max_per_file)
+        #         ):
+        #             rpt = getattr(self, fmt_col_name(X))._add_to_report(rpt)
+        #             counter += 1
+
+        #             if (
+        #                 counter == max_per_file or X == features[end - 1]
+        #             ):  # Check if it's the last feature in the current segment
+        #                 rpt.build()
+        #                 i += 1  # Move to the next segment
+        #                 if i < len(
+        #                     files
+        #                 ):  # Prevent IndexError by checking if i is within bounds
+        #                     start = files[i].start
+        #                     end = files[i].end
+        #                     fn = self._rpt_filename(filestem_, start, end)
+        #                     filename_ = f"{fn}"
+        #                     rpt = self._rpt_title_page(filename_, margins_)
+        #                     rpt = self._rpt_overview_page(
+        #                         rpt, files[i].start, files[i].end
+        #                     )
+        #                     counter = 0
+        #                 break  # Break the inner loop to prevent additional rpt.build() calls
+
+        # else:
+        #     # Handle the case when no filename is passed
+        #     filename_ = f"{self._rpt_filename(filestem_)}"
         #     rpt = self._rpt_title_page(filename_, margins_)
-        #     rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
-        #     for X in tqdm(features, self._build_desc(len(features), max_per_file)):
-        #         rpt = getattr(self, fmt_col_name(X))._add_to_report(rpt)
-        #         counter += 1
+        #     rpt = self._rpt_overview_page(rpt, 0, len(features) - 1)
+        #     for X in tqdm(
+        #         self.feature_column_names,
+        #         f"Building {len(features)} univariate analysis reports",
+        #     ):
+        #         try:
+        #             rpt = getattr(self, fmt_col_name(X))._add_to_report(rpt)
+        #         except np.linalg.LinAlgError as e:
+        #             print(f"Error processing {X}:\n    {e}")
+        #             continue
 
-        #         if counter == max_per_file:
-        #             rpt.build()
-        #             i += 1
-        #             start = files[i].start  # <<<<----------- this is where it fails
-        #             end = files[i].end
-        #             fn = self._rpt_filename(filestem_, start, end)
-        #             filename_ = f"{fn}"
-        #             rpt = self._rpt_title_page(filename_, margins_)
-        #             rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
-        #             counter = 0
-
-        if len(features) > max_per_file:
-            files = segment_features_for_report(features, max_per_file)
-            i = 0
-            counter = 0
-            while i < len(files):  # Ensure we do not go beyond the list's length
-                start = files[i].start
-                end = files[i].end
-                fn = self._rpt_filename(filestem_, start, end)
-                filename_ = f"{fn}"
-                rpt = self._rpt_title_page(filename_, margins_)
-                rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
-                for X in tqdm(
-                    features[start:end], self._build_desc(len(features), max_per_file)
-                ):
-                    rpt = getattr(self, fmt_col_name(X))._add_to_report(rpt)
-                    counter += 1
-
-                    if (
-                        counter == max_per_file or X == features[end - 1]
-                    ):  # Check if it's the last feature in the current segment
-                        rpt.build()
-                        i += 1  # Move to the next segment
-                        if i < len(
-                            files
-                        ):  # Prevent IndexError by checking if i is within bounds
-                            start = files[i].start
-                            end = files[i].end
-                            fn = self._rpt_filename(filestem_, start, end)
-                            filename_ = f"{fn}"
-                            rpt = self._rpt_title_page(filename_, margins_)
-                            rpt = self._rpt_overview_page(
-                                rpt, files[i].start, files[i].end
-                            )
-                            counter = 0
-                        break  # Break the inner loop to prevent additional rpt.build() calls
-
-        else:
-            # Handle the case when no filename is passed
-            filename_ = f"{self._rpt_filename(filestem_)}"
-            rpt = self._rpt_title_page(filename_, margins_)
-            rpt = self._rpt_overview_page(rpt, 0, len(features) - 1)
-            for X in tqdm(
-                self.feature_column_names,
-                f"Building {len(features)} univariate analysis reports",
-            ):
-                try:
-                    rpt = getattr(self, fmt_col_name(X))._add_to_report(rpt)
-                except np.linalg.LinAlgError as e:
-                    print(f"Error processing {X}:\n    {e}")
-                    continue
-
-        rpt.build()
+        # rpt.build()
 
     def _rpt_overview_page(self, rpt: Report, first_idx: int, last_idx: int) -> Report:
         overview_df = self._sort_features_by_ua().slice(
