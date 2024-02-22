@@ -738,7 +738,11 @@ class Univariate(Model):
             # Apply an index at the end
             results.columns = pd.Index(
                 [
-                    col_name_for_report(c).replace(" ", "\n")
+                    (
+                        col_name_for_report(c).replace(" ", "\n")
+                        if c != "fold"
+                        else "CV\nFold"
+                    )
                     for c in results.columns.tolist()
                 ]
             )
