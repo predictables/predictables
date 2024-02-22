@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd  # type: ignore
 import polars as pl
+import polars.selectors as cs
 from matplotlib.axes import Axes
 from sklearn.preprocessing import MinMaxScaler, StandardScaler  # type: ignore
 
@@ -686,20 +687,37 @@ class Univariate(Model):
         pd.DataFrame
             The results dataframe.
         """
-        results = to_pd_df(self.agg_results)
+        results = to_pd_df(
+            self.agg_results.select(
+                [
+                    pl.col("fold"),
+                    pl.col("coef"),
+                    pl.col("pvalues"),
+                    pl.col("se"),
+                    pl.col("lower_ci"),
+                    pl.col("upper_ci"),
+                    pl.col("acc_test"),
+                    pl.col("auc_test"),
+                    pl.col("f1_test"),
+                    pl.col("precision_test"),
+                    pl.col("recall_test"),
+                    pl.col("mcc_test"),
+                ]
+            )
+        )
         if use_formatting:
             pct_cols = [
-                "acc_train",
+                # "acc_train",
                 "acc_test",
-                "auc_train",
+                # "auc_train",
                 "auc_test",
-                "f1_train",
+                # "f1_train",
                 "f1_test",
-                "precision_train",
+                # "precision_train",
                 "precision_test",
-                "recall_train",
+                # "recall_train",
                 "recall_test",
-                "mcc_train",
+                # "mcc_train",
                 "mcc_test",
             ]
 
@@ -720,27 +738,30 @@ class Univariate(Model):
             # Apply an index at the end
             results.columns = pd.Index(
                 [
-                    "CV Fold",
-                    "Fitted Coef.",
-                    "Fitted p-Value",
-                    "Fitted Std. Err.",
-                    "Conf. Int. Lower",
-                    "Conf. Int. Upper",
-                    "Train Accuracy",
-                    "Val Accuracy",
-                    "Train AUC",
-                    "Val AUC",
-                    "Train F1",
-                    "Test F1",
-                    "Train Precision",
-                    "Val Precision",
-                    "Train Recall",
-                    "Val Recall",
-                    "Train MCC",
-                    "Val MCC",
-                    "Train Log-Loss",
-                    "Val Log-Loss",
+                    c.replace(" ", "\n")
+                    for c in [
+                        "CV Fold",
+                        "Fitted Coef.",
+                        "Fitted p-Value",
+                        "Fitted Std. Err.",
+                        "Conf. Int. Lower",
+                        "Conf. Int. Upper",
+                        # "Train Accuracy",
+                        "Test Accuracy",
+                        # "Train AUC",
+                        "Test AUC",
+                        # "Train F1",
+                        "Test F1",
+                        # "Train Precision",
+                        "Test Precision",
+                        # "Train Recall",
+                        "Test Recall",
+                        # "Train MCC",
+                        "Test MCC",
+                        # "Train Log-Loss",
+                        # "Val Log-Loss",
+                    ]
                 ]
             )
 
-        return results.set_index("CV Fold")
+        return results.set_index("CV\nFold")

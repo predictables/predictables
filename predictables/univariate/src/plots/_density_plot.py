@@ -317,6 +317,9 @@ def density_plot_mpl(
     # Set the x-axis label
     ax0.set_xlabel(plot_label(x.name if x.name is not None else "Var", False))  # type: ignore
 
+    # show gridlines
+    ax0.grid(True)
+
     if call_legend:
         plt.legend(fontsize=24 * (figsize[0] / 16))
 
@@ -652,7 +655,7 @@ def density_by_mpl(
         for f in cv_fold.drop_duplicates().sort_values():  # loop over CV fold
             x_ = filter_by_cv_fold(x, f, cv_fold, time_series_validation, "test")
             by_ = filter_by_cv_fold(by, f, cv_fold, time_series_validation, "test")
-            for level, group in x_.groupby(by_):
+            for level, group in x_.groupby(by_):  # type: ignore
                 color_ = (
                     binary_color(level) if get_column_dtype(by) == "binary" else None
                 )
@@ -743,7 +746,7 @@ def calculate_density_sd(
     for f in cv_fold.drop_duplicates().sort_values():
         x_ = filter_by_cv_fold(x, f, cv_fold, time_series_validation, "test")
         by_ = filter_by_cv_fold(by, f, cv_fold, time_series_validation, "test")
-        for level, group in x_.groupby(by_):
+        for level, group in x_.groupby(by_):  # type: ignore
             density = gaussian_kde(group)
             sd[f"{f}_{level}"] = density(sd["x"])
 

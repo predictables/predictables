@@ -2,7 +2,7 @@ from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
+import pandas as pd  # type: ignore
 import polars as pl
 from matplotlib.axes import Axes
 from scipy.spatial.distance import jensenshannon as js_divergence  # type: ignore
@@ -162,6 +162,9 @@ def cdf_plot_matplotlib(
         borderaxespad=0.0,
     )
 
+    # show gridlines
+    ax0.grid(True)
+
     return ax0
 
 
@@ -270,7 +273,7 @@ def cdf_plot_matplotlib_levels_cv(
         ax_ = ax
 
     # For each level of plot_by, plot the cdf of x, conditional on plot_by
-    for level in plot_by.drop_duplicates().sort_values().values:
+    for level in plot_by.drop_duplicates().sort_values().values:  # type: ignore
         if cv_folds is not None:
             for fold in cv_folds.drop_duplicates().sort_values().values:
                 x_cdf = calculate_cdf(

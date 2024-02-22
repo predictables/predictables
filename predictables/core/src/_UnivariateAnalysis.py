@@ -56,6 +56,40 @@ def _fmt_col_name(col_name: str) -> str:
     return col_name
 
 
+def _col_name_for_report(col_name: str) -> str:
+    """
+    Formats a column name to be used as a title in a report. Replaces underscores
+    with spaces and capitalizes the first letter of each word.
+
+    Parameters
+    ----------
+    col_name : str
+        The original column name to format.
+
+    Returns
+    -------
+    str
+        The formatted column name suitable for use as a title in a report.
+
+    Examples
+    --------
+    >>> _col_name_for_report("total_revenue_2020")
+    'Total Revenue 2020'
+    >>> _col_name_for_report("cost_unit")
+    'Cost Unit'
+    """
+    if not isinstance(col_name, str):
+        raise ValueError(
+            f"Invalid value {col_name} for column name. Expected a string, but got {type(col_name)}."
+        )
+    return (
+        re.sub(r"_+", " ", _fmt_col_name(col_name))
+        .title()
+        .replace("Log", "log")
+        .replace("1P", "1p")
+    )
+
+
 def _format_values(col: str) -> pl.Expr:
     return (
         pl.when(pl.col(col) < 1)
@@ -605,9 +639,9 @@ class UnivariateAnalysis:
             ):
                 try:
                     rpt = getattr(self, _fmt_col_name(X))._add_to_report(rpt)
-                    skewness = (
-                        self.df.select(pl.col(X).skew().name.keep()).collect().get(0)  # type: ignore
-                    )
+                    # skewness = (
+                    #     self.df.select(pl.col(X).skew().name.keep()).collect().get(0)  # type: ignore
+                    # )
                 except np.linalg.LinAlgError as e:
                     print(f"Error processing {X}:\n    {e}")
                     continue
@@ -633,12 +667,6 @@ class UnivariateAnalysis:
                 if col != "Feature"
             ]
         )
-
-        # # Reformat to be a percentage with one decimal
-        # overview_df = overview_df.map(
-        #     lambda x: (f"{np.round(x, 3):.1%}" if x < 1 else f"{np.round(x, 3):.1f}")
-        # )
-        # overview_df.index = overview_df.index.map(lambda x: x.replace("_", " ").title())
 
         return (
             rpt.h1("Overview")
