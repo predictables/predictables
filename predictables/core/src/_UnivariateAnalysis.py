@@ -2,7 +2,6 @@ import datetime
 import os
 from typing import List, Optional, Union
 
-import numpy as np
 import pandas as pd  # type: ignore
 import polars as pl
 from dotenv import load_dotenv
