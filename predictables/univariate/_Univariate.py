@@ -599,7 +599,7 @@ class Univariate(Model):
                 .h3(
                     f"{plot_label(self.feature_name, incl_bracket=False)} - Kernel Density Plot"
                 )
-                .plot(density())
+                .plot(density)
                 .spacer(0.125)
                 .caption(
                     "This plot shows the Gaussian kernel density for each level of the "
@@ -615,7 +615,6 @@ class Univariate(Model):
                     "level show the mean/median ratio to help understand differences in "
                     "skewness between the levels of the target variable."
                 )
-               
                 # TODO: Add in a table for the t-test results (Issue #62 on GitHub)
                 .page_break()
             )
@@ -633,10 +632,7 @@ class Univariate(Model):
                     "This is likely a good indication that this variable is not "
                     "useful for predicting the target variable.\n"
                 )
-                .p(
-                   f"Error message:\n{err}" 
-                )
-                
+                .p(f"Error message:\n{err}")
                 .page_break()
             )
 
