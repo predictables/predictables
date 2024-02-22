@@ -14,6 +14,7 @@ from predictables.util import (
     to_pl_lf,
     tqdm,
     fmt_col_name,
+    col_name_for_report,
 )
 from predictables.util.report.src._segment_features_for_report import (
     Segment,
@@ -582,7 +583,6 @@ class UnivariateAnalysis:
         rpt.build()
 
     def _rpt_overview_page(self, rpt: Report, first_idx: int, last_idx: int) -> Report:
-        # overview_df = self._sort_features_by_ua().iloc[first_idx : last_idx + 1]
         overview_df = self._sort_features_by_ua().slice(
             first_idx, last_idx - first_idx + 1
         )
@@ -591,7 +591,14 @@ class UnivariateAnalysis:
             [
                 pl.col("Feature")
                 .str.replace("_", " ")
+                .str.replace("_", " ")
+                .str.replace("_", " ")
+                .str.replace("_", " ")
+                .str.replace("_", " ")
                 .str.to_titlecase()
+                .str.replace("Log", "log")
+                .str.replace("1P", "1p")
+                .str.replace("log 1p", "log1p")
                 .alias("Feature")
             ]
             + [
