@@ -552,31 +552,67 @@ class UnivariateAnalysis:
         margins_: List[float] = margins if margins is not None else [0.5, 0.5, 0.5, 0.5]
         filename_: str
 
+        # if len(features) > max_per_file:
+        #     files = segment_features_for_report(features, max_per_file)
+
+        #     i = 0
+        #     counter = 0
+        #     start = files[i].start
+        #     end = files[i].end
+        #     fn = self._rpt_filename(filestem_, start, end)
+        #     filename_ = f"{fn}"
+        #     rpt = self._rpt_title_page(filename_, margins_)
+        #     rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
+        #     for X in tqdm(features, self._build_desc(len(features), max_per_file)):
+        #         rpt = getattr(self, fmt_col_name(X))._add_to_report(rpt)
+        #         counter += 1
+
+        #         if counter == max_per_file:
+        #             rpt.build()
+        #             i += 1
+        #             start = files[i].start  # <<<<----------- this is where it fails
+        #             end = files[i].end
+        #             fn = self._rpt_filename(filestem_, start, end)
+        #             filename_ = f"{fn}"
+        #             rpt = self._rpt_title_page(filename_, margins_)
+        #             rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
+        #             counter = 0
+
         if len(features) > max_per_file:
             files = segment_features_for_report(features, max_per_file)
-
             i = 0
             counter = 0
-            start = files[i].start
-            end = files[i].end
-            fn = self._rpt_filename(filestem_, start, end)
-            filename_ = f"{fn}"
-            rpt = self._rpt_title_page(filename_, margins_)
-            rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
-            for X in tqdm(features, self._build_desc(len(features), max_per_file)):
-                rpt = getattr(self, fmt_col_name(X))._add_to_report(rpt)
-                counter += 1
+            while i < len(files):  # Ensure we do not go beyond the list's length
+                start = files[i].start
+                end = files[i].end
+                fn = self._rpt_filename(filestem_, start, end)
+                filename_ = f"{fn}"
+                rpt = self._rpt_title_page(filename_, margins_)
+                rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
+                for X in tqdm(
+                    features[start:end], self._build_desc(len(features), max_per_file)
+                ):
+                    rpt = getattr(self, fmt_col_name(X))._add_to_report(rpt)
+                    counter += 1
 
-                if counter == max_per_file:
-                    rpt.build()
-                    i += 1
-                    start = files[i].start
-                    end = files[i].end
-                    fn = self._rpt_filename(filestem_, start, end)
-                    filename_ = f"{fn}"
-                    rpt = self._rpt_title_page(filename_, margins_)
-                    rpt = self._rpt_overview_page(rpt, files[i].start, files[i].end)
-                    counter = 0
+                    if (
+                        counter == max_per_file or X == features[end - 1]
+                    ):  # Check if it's the last feature in the current segment
+                        rpt.build()
+                        i += 1  # Move to the next segment
+                        if i < len(
+                            files
+                        ):  # Prevent IndexError by checking if i is within bounds
+                            start = files[i].start
+                            end = files[i].end
+                            fn = self._rpt_filename(filestem_, start, end)
+                            filename_ = f"{fn}"
+                            rpt = self._rpt_title_page(filename_, margins_)
+                            rpt = self._rpt_overview_page(
+                                rpt, files[i].start, files[i].end
+                            )
+                            counter = 0
+                        break  # Break the inner loop to prevent additional rpt.build() calls
 
         else:
             # Handle the case when no filename is passed
