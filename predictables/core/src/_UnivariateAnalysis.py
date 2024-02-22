@@ -344,7 +344,7 @@ class UnivariateAnalysis:
                 print(f"Univariate object not found for feature {col}")
 
         if total_df:
-            df = pl.concat(total_df).sort("Ave.", descending=True)
+            df = pl.concat(total_df).sort("F1", descending=True)
             if return_pd:
                 return df.collect().to_pandas().set_index("Feature")
             else:

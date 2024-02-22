@@ -1022,7 +1022,7 @@ def _annotate_mean_median(
 
     # Annotate for target=0
     ax_.annotate(
-        f"{target_.name}=0\n===========\nMean / Median =\n{mean0 / median0:.2f}",
+        f"{target_.name}=0\n===========\nMean / Median =\n{mean0 / (median0 if median0 != 0 else 1):.2f}",
         xy=(mean0, 0.2),
         xycoords="data",
         xytext=(-20 if pos0 == "right" else 20, -20),
@@ -1041,7 +1041,7 @@ def _annotate_mean_median(
 
     # Annotate for target=1
     ax_.annotate(
-        f"{target_.name}=1\n===========\nMean / Median =\n{mean1 / median1:.2f}",
+        f"{target_.name}=1\n===========\nMean / Median =\n{mean1 / (median1 if median1 != 0 else 1):.2f}",
         xy=(mean1, 0.2),
         xycoords="data",
         xytext=(-20 if pos1 == "right" else 20, -20),
