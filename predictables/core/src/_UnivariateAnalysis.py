@@ -417,24 +417,10 @@ class UnivariateAnalysis:
         default: str = "Univariate Analysis Report",
     ) -> str:
         """Helper function to get the file name from a filename."""
-        dbg.msg("Start of _rpt_filename - UA0006")  # debug only
-        dbg.msg(
-            f"Parameters: | file_stem: {file_stem} | start_num: {start_num} "
-            f"| end_num: {end_num} | UA0006a"
-        )  # debug only
         if file_stem is not None and (start_num is None or end_num is None):
-            dbg.msg(
-                f"File stem ({file_stem}) is not None and either start_num "
-                f"({start_num}) or end_num ({end_num}) is None, so returning "
-                f"'{file_stem}.pdf' | UA0006b"
-            )  # debug only
             return file_stem + ".pdf"
         if start_num is not None and end_num is not None:
-            dbg.msg(
-                f"Both start_num ({start_num}) and end_num ({end_num}) are not None, "
-                f"so returning '{file_stem}_{start_num+1}_{end_num+1}.pdf' | UA0006c"
-            )
-            return f"{file_stem}_{start_num+1}_{end_num+1}.pdf"
+            return f"{file_stem}_{start_num}_{end_num+1}.pdf"
         else:
             dbg.msg(f"Returning default ({default}) | UA0006d")
             return default
@@ -553,7 +539,11 @@ class UnivariateAnalysis:
         # Generate segments of features for report generation
         segments = segment_features_for_report(features, max_per_file)
 
-        for segment in segments:
+        i = 0
+        for segment in tqdm(
+            segments,
+            desc=f"Building Segment {i+1} out of {len(segments)}. This Segment contains {segments[i].n_features} features.",
+        ):
             # Setup filename and initial report pages for each segment
             fn = self._rpt_filename(filestem_, segment.start + 1, segment.end)
             rpt = self._rpt_title_page(fn, margins_)
@@ -565,6 +555,8 @@ class UnivariateAnalysis:
 
             # Finalize the current segment's report
             rpt.build()
+
+            i += 1
         # # Handle the case when None is passed as the filename
         # filestem_ = self._get_file_stem(filename)
         # features = (
