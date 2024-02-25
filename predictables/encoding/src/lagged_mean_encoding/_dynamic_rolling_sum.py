@@ -169,7 +169,7 @@ def _get_x_name(x: str, x_name: Optional[str]) -> str:
     This function is intended for internal use within the module to ensure consistent naming
     of the newly added rolling sum column in the lazyframe.
     """
-    return f"{x}_rolling_sum" if x_name is None else x_name
+    return f"{x}_rolling_sum" if not x_name else x_name
 
 def _get_date_map(lf: pl.LazyFrame, date_col: str) -> Dict[datetime, datetime]:
     """
