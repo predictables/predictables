@@ -113,7 +113,7 @@ def dynamic_rolling_sum(
     )
 
     # Get the lazyframe with the original row order preserved
-    lf_order = _get_original_order(lf, date_col, category_cols)
+    lf_order = _get_original_order(lf, date_col, _handle_cat_input(category_cols))
 
     # Get the name of the new column to add to the lazyframe
     x_name = _get_x_name(x, x_name)
@@ -121,7 +121,14 @@ def dynamic_rolling_sum(
     # Calculate the rolling sum
     if category_cols is not None:
         sum_lf = _rolling_sum_categories(
-            lf, x, date_col, category_cols, x_name, every, period, offset
+            lf,
+            x,
+            date_col,
+            _handle_cat_input(category_cols),
+            x_name,
+            every,
+            period,
+            offset,
         )
     else:
         sum_lf = _rolling_sum_no_categories(
@@ -131,7 +138,39 @@ def dynamic_rolling_sum(
     # Resort the lazyframe to the original order
     resorted_lf = sum_lf.join(lf_order, on="index").sort("index")
 
-    return resorted_lf.select(pl.col(x_name)).to_series()
+    return resorted_lf.select(pl.col(x_name)).collect().to_series()
+
+
+def _handle_cat_input(category_cols: Optional[Union[str, List[str]]]) -> List[str]:
+    """
+    This function ensures that the category_cols parameter is correctly formatted as a list of strings.
+    If the input is a single string, it is converted to a list with one element. If the input is already
+    a list, it is returned as is. If the input is None, it is returned as None.
+
+    Parameters
+    ----------
+    category_cols : Optional[Union[str, List[str]]]
+        The name of the category column, or a list of names of category columns.
+
+    Returns
+    -------
+    Optional[List[str]]
+        The list of names of the category columns, or None if the input was None.
+
+    Examples
+    --------
+    >>> _handle_string_or_list_input('category')
+    ['category']
+
+    >>> _handle_string_or_list_input(['category1', 'category2'])
+    ['category1', 'category2']
+
+    >>> _handle_string_or_list_input(None)
+    None
+    """
+    if category_cols is None:
+        return []
+    return [category_cols] if isinstance(category_cols, str) else category_cols
 
 
 def _get_x_name(x: str, x_name: Optional[str]) -> str:
@@ -314,37 +353,37 @@ def _get_original_order(
 
 def _formatted_category_cols(category_cols: Union[str, List[str]]) -> List[pl.Expr]:
     """
-    This function ensures that category columns in a Polars LazyFrame are properly formatted for analysis. 
-    It takes a single column name or a list of column names, treating each as a category column. The function 
-    then casts each specified column to UTF8 (string) format before converting it to a Categorical type. This 
-    formatting is crucial for efficient memory usage and faster operations on category data in Polars, especially 
+    This function ensures that category columns in a Polars LazyFrame are properly formatted for analysis.
+    It takes a single column name or a list of column names, treating each as a category column. The function
+    then casts each specified column to UTF8 (string) format before converting it to a Categorical type. This
+    formatting is crucial for efficient memory usage and faster operations on category data in Polars, especially
     useful in grouping, sorting, and other operations where categorical distinctions are necessary.
-    
+
     Parameters
     ----------
     category_cols : Union[str, List[str]]
-        The name of the category column, or a list of names of category columns to be formatted. If a single 
+        The name of the category column, or a list of names of category columns to be formatted. If a single
         string is provided, it is treated as a list with one element.
-    
+
     Returns
     -------
     List[pl.Expr]
-        A list of Polars expressions for the formatted category columns. Each expression corresponds to a column 
+        A list of Polars expressions for the formatted category columns. Each expression corresponds to a column
         in the input `category_cols`, cast to UTF8 and then to Categorical type.
-    
+
     Notes
     -----
-    - Casting to UTF8 before Categorical is essential because Polars requires a string type before converting 
+    - Casting to UTF8 before Categorical is essential because Polars requires a string type before converting
       to a categorical type, ensuring compatibility and optimization for categorical operations.
-    - The use of the Categorical type can significantly improve performance in operations that rely on category 
+    - The use of the Categorical type can significantly improve performance in operations that rely on category
       distinctions, such as groupings or pivot tables, due to optimized memory usage and faster computations.
-    - This function is particularly useful in the preprocessing steps of data analysis workflows where categorical 
+    - This function is particularly useful in the preprocessing steps of data analysis workflows where categorical
       data needs to be standardized across multiple columns.
-    
+
     Example Usage
     -------------
     Assuming `lf` is a Polars LazyFrame with the columns 'category1' and 'category2' that you wish to format:
-    
+
     ```python
     # Original LazyFrame creation
     lf = pl.DataFrame({
@@ -352,15 +391,16 @@ def _formatted_category_cols(category_cols: Union[str, List[str]]) -> List[pl.Ex
         'category2': ['X', 'Y', 'X', 'Y', 'Z'],
         'value': [1, 2, 3, 4, 5]
     }).lazy()
-    
+
     # Formatting the category columns
     formatted_cols = _formatted_category_cols(['category1', 'category2'])
-    
+
     # Applying the formatted expressions to the LazyFrame
     lf = lf.with_columns(formatted_cols)
-    
-    # 'lf' now contains 'category1' and 'category2' as formatted categorical columns, 
+
+    # 'lf' now contains 'category1' and 'category2' as formatted categorical columns,
     # optimized for subsequent categorical operations.
+    ```
     """
     cat_cols = [category_cols] if isinstance(category_cols, str) else category_cols
     return [
