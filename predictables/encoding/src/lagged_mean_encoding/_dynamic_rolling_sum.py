@@ -1,3 +1,65 @@
+"""
+This module provides functionality for calculating dynamic rolling sums on time series data
+within a Polars LazyFrame. It is designed to support complex scenarios, including the handling
+of categorical variables and custom rolling window parameters. The main function, `dynamic_rolling_sum`,
+calculates the rolling sum for a specified column over a defined period, with an optional offset
+and frequency. The module also includes various helper functions to preprocess the data, ensuring
+accurate and efficient rolling sum calculations.
+
+The rolling sum calculation can be tailored to specific needs by adjusting parameters such as the
+calculation frequency (`every`), the look-back period (`period`), and the offset from the current
+date (`offset`). Furthermore, it supports grouping by one or more categorical variables, enabling
+segmented rolling sum calculations within the data.
+
+Example Usage:
+--------------
+Assuming you have a Polars LazyFrame `lf` with a date column named 'date', a numeric column named 'value',
+and optionally, a categorical column named 'category':
+
+```python
+import polars as pl
+
+# Sample data creation
+data = {
+    'date': pl.date_range(start="2020-01-01", end="2020-01-10", interval="1d"),
+    'value': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    'category': ['A', 'A', 'B', 'B', 'C', 'C', 'A', 'A', 'B', 'B']
+}
+lf = pl.DataFrame(data).lazy()
+
+# Calculating rolling sum without category columns
+rolling_sum = dynamic_rolling_sum(
+    lf=lf,
+    x='value',
+    date_col='date',
+    every="1d",
+    period="7d",
+    offset="0d"
+)
+
+# Calculating rolling sum with category columns
+rolling_sum_with_categories = dynamic_rolling_sum(
+    lf=lf,
+    x='value',
+    date_col='date',
+    category_cols='category',
+    every="1d",
+    period="7d",
+    offset="0d"
+)
+
+# To view the result, collect the LazyFrame
+print(rolling_sum.collect())
+print(rolling_sum_with_categories.collect())
+
+This script aims to provide a flexible and powerful tool for time series analysis, particularly useful for financial analysis, sales forecasting, and any scenario where understanding the cumulative effect over time is crucial.
+
+Notes:
+- The date_col should be of datetime type.
+- The category_cols parameter can be a single column name or a list of names for multiple categories.
+- The every, period, and offset parameters allow for detailed control over the rolling window’s behavior, accommodating various analytical needs.
+"""
+
 import polars as pl
 from typing import List, Optional, Dict, Union
 from datetime import datetime
@@ -174,21 +236,61 @@ def _get_original_order(
     lf: pl.LazyFrame, date_col: str, category_cols: Optional[List[str]] = None
 ) -> pl.LazyFrame:
     """
-    Returns a lazyframe with the original row order preserved.
-
+    This function preserves the original row order of a Polars LazyFrame (`lf`) after various transformations
+    or operations that may alter the row order. It achieves this by assigning a unique row index to each
+    row before any processing and using this index to restore the original order. The methodology involves
+    creating a mapping of dates to their "reversed" counterparts (`date_map`) based on the specified date column.
+    This reversed date mapping is temporarily used to sort the data, allowing for operations that depend on
+    date ordering (such as rolling calculations). After these operations, the data can be reordered back to
+    its original sequence using the initial row index.
+    
     Parameters
     ----------
     lf : pl.LazyFrame
-        The lazyframe.
+        The Polars LazyFrame on which operations altering row order might be performed.
     date_col : str
-        The name of the date column.
+        The name of the column containing date values. This column is used for generating the
+        `date_map` and indirectly influences the process of preserving the original order.
     category_cols : List[str], optional
-        The list of names of the categorical columns.
-
+        Optionally, a list of category column names that might also be used in conjunction
+        with the date column for sorting or grouping operations.
+    
     Returns
     -------
     pl.LazyFrame
-        The lazyframe with the original row order preserved.
+        A LazyFrame with an additional column named 'index' representing the original row
+        order. This allows for the restoration of the initial order after processing.
+    
+    Notes
+    -----
+    - The function utilizes a unique approach by employing a 'reversed' date column derived from
+      the `date_map`. This reversed date is not directly related to the chronological inversion
+      but is a technique to maintain consistency in data processing workflows.
+    - The restoration of the original order is particularly useful in scenarios where the sequence
+      of data points carries significance, such as time series analysis or when operations like
+      rolling sums are calculated with respect to time windows.
+    - The use of a row index to preserve order is a common technique in data processing, ensuring
+      that irrespective of the transformations applied, the original data sequence can be retrieved.
+    
+    Example Usage
+    -------------
+    Assuming `lf` is a LazyFrame with a date column 'date' and an optional category column 'category':
+    
+    ```python
+    # Original LazyFrame creation
+    lf = pl.DataFrame({
+        'date': pl.date_range(start="2022-01-01", end="2022-01-10", interval="1d"),
+        'category': ['A', 'A', 'B', 'B', 'A', 'A', 'B', 'B', 'A', 'A'],
+        'value': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    }).lazy()
+    
+    # Applying transformations that alter row order
+    transformed_lf = lf.sort('value', reverse=True)
+    
+    # Restoring original order using '_get_original_order'
+    restored_lf = _get_original_order(transformed_lf, 'date', ['category'])
+
+    # 'restored_lf' now has its rows ordered as in the original 'lf', ready for further analysis
     """
     date_map = _get_date_map(lf, date_col)
     return (
