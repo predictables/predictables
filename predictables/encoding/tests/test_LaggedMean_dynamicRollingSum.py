@@ -5,6 +5,7 @@ import datetime
 from predictables.encoding.src.lagged_mean_encoding._dynamic_rolling_sum import (
     _get_date_map,
     dynamic_rolling_sum,
+    _handle_cat_input,
 )
 
 
@@ -108,3 +109,27 @@ def test_basic_rolling_sum(create_test_frame, expected_sum):
     assert (
         result_series.to_list() == expected_sum
     ), "The calculated rolling sums do not match the expected values."
+
+
+def test_handle_cat_input_single_string():
+    category_cols = "category"
+    expected_output = ["category"]
+    assert _handle_cat_input(category_cols) == expected_output
+
+
+def test_handle_cat_input_list_of_strings():
+    category_cols = ["category1", "category2"]
+    expected_output = ["category1", "category2"]
+    assert _handle_cat_input(category_cols) == expected_output
+
+
+def test_handle_cat_input_none():
+    category_cols = None
+    expected_output = []
+    assert _handle_cat_input(category_cols) == expected_output
+
+
+def test_handle_cat_input_not_string_or_list():
+    category_cols = 123
+    with pytest.raises(TypeError):
+        _handle_cat_input(category_cols)

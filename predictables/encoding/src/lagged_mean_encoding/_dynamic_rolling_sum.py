@@ -343,10 +343,7 @@ def _get_original_order(
                 .alias(f"{date_col}_reversed")
             ]
         )
-        .sort(
-            [f"{date_col}_reversed"]
-            + (category_cols if category_cols is not None else [])
-        )
+        .sort([f"{date_col}_reversed"] + _handle_cat_input(category_cols))
         .select(pl.col("index"))
     )
 
@@ -402,9 +399,9 @@ def _formatted_category_cols(category_cols: Union[str, List[str]]) -> List[pl.Ex
     # optimized for subsequent categorical operations.
     ```
     """
-    cat_cols = [category_cols] if isinstance(category_cols, str) else category_cols
     return [
-        pl.col(col).cast(pl.Utf8).cast(pl.Categorical).name.keep() for col in cat_cols
+        pl.col(col).cast(pl.Utf8).cast(pl.Categorical).name.keep()
+        for col in _handle_cat_input(category_cols)
     ]
 
 
