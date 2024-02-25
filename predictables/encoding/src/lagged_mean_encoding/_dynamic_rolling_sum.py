@@ -314,22 +314,53 @@ def _get_original_order(
 
 def _formatted_category_cols(category_cols: Union[str, List[str]]) -> List[pl.Expr]:
     """
-    Format the category columns to ensure they are in the correct format.
-
+    This function ensures that category columns in a Polars LazyFrame are properly formatted for analysis. 
+    It takes a single column name or a list of column names, treating each as a category column. The function 
+    then casts each specified column to UTF8 (string) format before converting it to a Categorical type. This 
+    formatting is crucial for efficient memory usage and faster operations on category data in Polars, especially 
+    useful in grouping, sorting, and other operations where categorical distinctions are necessary.
+    
     Parameters
     ----------
     category_cols : Union[str, List[str]]
-        The name of the category column, or a list of names of category columns.
-
+        The name of the category column, or a list of names of category columns to be formatted. If a single 
+        string is provided, it is treated as a list with one element.
+    
     Returns
     -------
     List[pl.Expr]
-        A list of expressions for the formatted category columns.
-
+        A list of Polars expressions for the formatted category columns. Each expression corresponds to a column 
+        in the input `category_cols`, cast to UTF8 and then to Categorical type.
+    
     Notes
     -----
-    Even if only one category column is passed, it will be returned as a list
-    of expressions.
+    - Casting to UTF8 before Categorical is essential because Polars requires a string type before converting 
+      to a categorical type, ensuring compatibility and optimization for categorical operations.
+    - The use of the Categorical type can significantly improve performance in operations that rely on category 
+      distinctions, such as groupings or pivot tables, due to optimized memory usage and faster computations.
+    - This function is particularly useful in the preprocessing steps of data analysis workflows where categorical 
+      data needs to be standardized across multiple columns.
+    
+    Example Usage
+    -------------
+    Assuming `lf` is a Polars LazyFrame with the columns 'category1' and 'category2' that you wish to format:
+    
+    ```python
+    # Original LazyFrame creation
+    lf = pl.DataFrame({
+        'category1': ['A', 'B', 'C', 'A', 'B'],
+        'category2': ['X', 'Y', 'X', 'Y', 'Z'],
+        'value': [1, 2, 3, 4, 5]
+    }).lazy()
+    
+    # Formatting the category columns
+    formatted_cols = _formatted_category_cols(['category1', 'category2'])
+    
+    # Applying the formatted expressions to the LazyFrame
+    lf = lf.with_columns(formatted_cols)
+    
+    # 'lf' now contains 'category1' and 'category2' as formatted categorical columns, 
+    # optimized for subsequent categorical operations.
     """
     cat_cols = [category_cols] if isinstance(category_cols, str) else category_cols
     return [
