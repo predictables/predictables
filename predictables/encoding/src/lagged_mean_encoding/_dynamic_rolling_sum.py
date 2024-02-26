@@ -107,6 +107,14 @@ def _handle_cat_input(category_cols: Optional[Union[str, List[str]]]) -> List[st
     >>> _handle_string_or_list_input(None)
     None
     """
+    # Ensure that category_cols is a list of strings
+    if (
+        (category_cols is not None)
+        & (not isinstance(category_cols, list))
+        & (not isinstance(category_cols, str))
+    ):
+        raise TypeError("category_cols must be a string or a list of strings")
+
     if category_cols is None:
         return []
     return [category_cols] if isinstance(category_cols, str) else category_cols
@@ -147,6 +155,15 @@ def _get_x_name(x: str, x_name: Optional[str]) -> str:
     This function is intended for internal use within the module to ensure consistent naming
     of the newly added rolling sum column in the lazyframe.
     """
+    if not isinstance(x, str):
+        raise TypeError("x must be a string")
+
+    if x in ["", " ", "  ", "   ", "    ", "\n", "\t", "\r", "\r\n"]:
+        raise ValueError("x cannot be an empty string or a space")
+
+    if not isinstance(x_name, (str, type(None))):
+        raise TypeError("x_name must be a string or None")
+
     return f"{x}_rolling_sum" if not x_name else x_name
 
 
@@ -393,7 +410,7 @@ def _group_by_no_categories(
     every: str = "1d",
     period: str = "1y",
     offset: str = "-1mo",
-) -> pl.LazyFrame:
+) -> pl.LazyFrame:  # type: ignore
     """
     Group the lazyframe by the reversed date column. This function is used when there
     are no category columns to group by.
@@ -420,7 +437,7 @@ def _group_by_no_categories(
     pl.LazyFrame
         The grouped lazyframe.
     """
-    return lf.sort(reversed_date_expr).group_by_dynamic(
+    return lf.sort(reversed_date_expr).group_by_dynamic(  # type: ignore
         reversed_date_expr,
         every=every,
         period=period,
@@ -439,7 +456,7 @@ def _group_by_categories(
     every: str = "1d",
     period: str = "1y",
     offset: str = "-1mo",
-) -> pl.LazyFrame:
+) -> pl.LazyFrame:  # type: ignore
     """
     Group the lazyframe by the reversed date column and the category columns.
     This function is used when there are category columns to group by.
@@ -468,8 +485,8 @@ def _group_by_categories(
     pl.LazyFrame
         The grouped lazyframe.
     """
-    return (
-        lf.with_columns(_formatted_category_cols(category_cols))
+    return (  # type: ignore
+        lf.with_columns(_formatted_category_cols(category_cols))  # type: ignore
         .sort(reversed_date_expr, *category_cols)
         .group_by_dynamic(
             reversed_date_expr,
@@ -480,7 +497,7 @@ def _group_by_categories(
             start_by="datapoint",
             check_sorted=False,
         )
-    )
+    )  # type: ignore
 
 
 def _rolling_sum_no_categories(
@@ -529,7 +546,7 @@ def _rolling_sum_no_categories(
     )
 
     # Calculate the rolling sum
-    return lfgby.agg(pl.sum(x).name.keep())
+    return lfgby.agg(pl.sum(x).name.keep())  # type: ignore
 
 
 def _rolling_sum_categories(
@@ -581,7 +598,7 @@ def _rolling_sum_categories(
     )
 
     # Calculate the rolling sum
-    return lfgby.agg(pl.sum(x).name.keep())
+    return lfgby.agg(pl.sum(x).name.keep())  # type: ignore
 
 
 # this is the module docstring:
