@@ -1,68 +1,7 @@
-"""
-This module provides functionality for calculating dynamic rolling sums on time series data
-within a Polars LazyFrame. It is designed to support complex scenarios, including the handling
-of categorical variables and custom rolling window parameters. The main function, `dynamic_rolling_sum`,
-calculates the rolling sum for a specified column over a defined period, with an optional offset
-and frequency. The module also includes various helper functions to preprocess the data, ensuring
-accurate and efficient rolling sum calculations.
-
-The rolling sum calculation can be tailored to specific needs by adjusting parameters such as the
-calculation frequency (`every`), the look-back period (`period`), and the offset from the current
-date (`offset`). Furthermore, it supports grouping by one or more categorical variables, enabling
-segmented rolling sum calculations within the data.
-
-Example Usage:
---------------
-Assuming you have a Polars LazyFrame `lf` with a date column named 'date', a numeric column named 'value',
-and optionally, a categorical column named 'category':
-
-```python
-import polars as pl
-
-# Sample data creation
-data = {
-    'date': pl.date_range(start="2020-01-01", end="2020-01-10", interval="1d"),
-    'value': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    'category': ['A', 'A', 'B', 'B', 'C', 'C', 'A', 'A', 'B', 'B']
-}
-lf = pl.DataFrame(data).lazy()
-
-# Calculating rolling sum without category columns
-rolling_sum = dynamic_rolling_sum(
-    lf=lf,
-    x='value',
-    date_col='date',
-    every="1d",
-    period="7d",
-    offset="0d"
-)
-
-# Calculating rolling sum with category columns
-rolling_sum_with_categories = dynamic_rolling_sum(
-    lf=lf,
-    x='value',
-    date_col='date',
-    category_cols='category',
-    every="1d",
-    period="7d",
-    offset="0d"
-)
-
-# To view the result, collect the LazyFrame
-print(rolling_sum.collect())
-print(rolling_sum_with_categories.collect())
-
-This script aims to provide a flexible and powerful tool for time series analysis, particularly useful for financial analysis, sales forecasting, and any scenario where understanding the cumulative effect over time is crucial.
-
-Notes:
-- The date_col should be of datetime type.
-- The category_cols parameter can be a single column name or a list of names for multiple categories.
-- The every, period, and offset parameters allow for detailed control over the rolling window’s behavior, accommodating various analytical needs.
-"""
-
-import polars as pl
-from typing import List, Optional, Dict, Union
 from datetime import datetime
+from typing import Dict, List, Optional, Union
+
+import polars as pl
 
 
 def dynamic_rolling_sum(
@@ -202,13 +141,14 @@ def _get_x_name(x: str, x_name: Optional[str]) -> str:
 
     >>> _get_x_name('sales', 'monthly_sales_sum')
     'monthly_sales_sum'
-    
+
     Note
     ----
     This function is intended for internal use within the module to ensure consistent naming
     of the newly added rolling sum column in the lazyframe.
     """
     return f"{x}_rolling_sum" if not x_name else x_name
+
 
 def _get_date_map(lf: pl.LazyFrame, date_col: str) -> Dict[datetime, datetime]:
     """
@@ -242,7 +182,7 @@ def _get_date_map(lf: pl.LazyFrame, date_col: str) -> Dict[datetime, datetime]:
     --------
     Assuming `lf` contains a date column 'date_col' with dates ranging from 2021-01-01 to
     2021-01-05, the function might return a mapping like:
-    
+
     {
         datetime(2021, 1, 1): datetime(2021, 1, 5),
         datetime(2021, 1, 2): datetime(2021, 1, 4),
@@ -282,7 +222,7 @@ def _get_original_order(
     This reversed date mapping is temporarily used to sort the data, allowing for operations that depend on
     date ordering (such as rolling calculations). After these operations, the data can be reordered back to
     its original sequence using the initial row index.
-    
+
     Parameters
     ----------
     lf : pl.LazyFrame
@@ -293,13 +233,13 @@ def _get_original_order(
     category_cols : List[str], optional
         Optionally, a list of category column names that might also be used in conjunction
         with the date column for sorting or grouping operations.
-    
+
     Returns
     -------
     pl.LazyFrame
         A LazyFrame with an additional column named 'index' representing the original row
         order. This allows for the restoration of the initial order after processing.
-    
+
     Notes
     -----
     - The function utilizes a unique approach by employing a 'reversed' date column derived from
@@ -310,11 +250,11 @@ def _get_original_order(
       rolling sums are calculated with respect to time windows.
     - The use of a row index to preserve order is a common technique in data processing, ensuring
       that irrespective of the transformations applied, the original data sequence can be retrieved.
-    
+
     Example Usage
     -------------
     Assuming `lf` is a LazyFrame with a date column 'date' and an optional category column 'category':
-    
+
     ```python
     # Original LazyFrame creation
     lf = pl.DataFrame({
@@ -322,10 +262,10 @@ def _get_original_order(
         'category': ['A', 'A', 'B', 'B', 'A', 'A', 'B', 'B', 'A', 'A'],
         'value': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     }).lazy()
-    
+
     # Applying transformations that alter row order
     transformed_lf = lf.sort('value', reverse=True)
-    
+
     # Restoring original order using '_get_original_order'
     restored_lf = _get_original_order(transformed_lf, 'date', ['category'])
 
@@ -453,7 +393,7 @@ def _group_by_no_categories(
     every: str = "1d",
     period: str = "1y",
     offset: str = "-1mo",
-) -> pl.LazyFrame.group_by.LazyGroupBy:
+) -> pl.LazyFrame:
     """
     Group the lazyframe by the reversed date column. This function is used when there
     are no category columns to group by.
@@ -477,7 +417,7 @@ def _group_by_no_categories(
 
     Returns
     -------
-    pl.LazyFrame.group_by.LazyGroupBy
+    pl.LazyFrame
         The grouped lazyframe.
     """
     return lf.sort(reversed_date_expr).group_by_dynamic(
@@ -499,7 +439,7 @@ def _group_by_categories(
     every: str = "1d",
     period: str = "1y",
     offset: str = "-1mo",
-) -> pl.LazyFrame.group_by.LazyGroupBy:
+) -> pl.LazyFrame:
     """
     Group the lazyframe by the reversed date column and the category columns.
     This function is used when there are category columns to group by.
@@ -525,7 +465,7 @@ def _group_by_categories(
 
     Returns
     -------
-    pl.LazyFrame.group_by.LazyGroupBy
+    pl.LazyFrame
         The grouped lazyframe.
     """
     return (
@@ -642,3 +582,67 @@ def _rolling_sum_categories(
 
     # Calculate the rolling sum
     return lfgby.agg(pl.sum(x).name.keep())
+
+
+# this is the module docstring:
+# """
+# This module provides functionality for calculating dynamic rolling sums on time series data
+# within a Polars LazyFrame. It is designed to support complex scenarios, including the handling
+# of categorical variables and custom rolling window parameters. The main function, `dynamic_rolling_sum`,
+# calculates the rolling sum for a specified column over a defined period, with an optional offset
+# and frequency. The module also includes various helper functions to preprocess the data, ensuring
+# accurate and efficient rolling sum calculations.
+
+# The rolling sum calculation can be tailored to specific needs by adjusting parameters such as the
+# calculation frequency (`every`), the look-back period (`period`), and the offset from the current
+# date (`offset`). Furthermore, it supports grouping by one or more categorical variables, enabling
+# segmented rolling sum calculations within the data.
+
+# Example Usage:
+# --------------
+# Assuming you have a Polars LazyFrame `lf` with a date column named 'date', a numeric column named 'value',
+# and optionally, a categorical column named 'category':
+
+# ```python
+# import polars as pl
+
+# # Sample data creation
+# data = {
+#     'date': pl.date_range(start="2020-01-01", end="2020-01-10", interval="1d"),
+#     'value': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+#     'category': ['A', 'A', 'B', 'B', 'C', 'C', 'A', 'A', 'B', 'B']
+# }
+# lf = pl.DataFrame(data).lazy()
+
+# # Calculating rolling sum without category columns
+# rolling_sum = dynamic_rolling_sum(
+#     lf=lf,
+#     x='value',
+#     date_col='date',
+#     every="1d",
+#     period="7d",
+#     offset="0d"
+# )
+
+# # Calculating rolling sum with category columns
+# rolling_sum_with_categories = dynamic_rolling_sum(
+#     lf=lf,
+#     x='value',
+#     date_col='date',
+#     category_cols='category',
+#     every="1d",
+#     period="7d",
+#     offset="0d"
+# )
+
+# # To view the result, collect the LazyFrame
+# print(rolling_sum.collect())
+# print(rolling_sum_with_categories.collect())
+
+# This script aims to provide a flexible and powerful tool for time series analysis, particularly useful for financial analysis, sales forecasting, and any scenario where understanding the cumulative effect over time is crucial.
+
+# Notes:
+# - The date_col should be of datetime type.
+# - The category_cols parameter can be a single column name or a list of names for multiple categories.
+# - The every, period, and offset parameters allow for detailed control over the rolling window’s behavior, accommodating various analytical needs.
+# """

@@ -1,11 +1,13 @@
 # test_dynamic_rolling_sum.py
-import pytest
-import polars as pl
 import datetime
+
+import polars as pl
+import pytest
+
 from predictables.encoding.src.lagged_mean_encoding._dynamic_rolling_sum import (
     _get_date_map,
-    dynamic_rolling_sum,
     _handle_cat_input,
+    dynamic_rolling_sum,
 )
 
 
@@ -28,7 +30,7 @@ def rolling_sum_test_frame():
     Creates a test LazyFrame with dates and corresponding values for testing the dynamic_rolling_sum function.
     """
     # Define the start date for the data
-    start_date = datetime(2020, 1, 1)
+    start_date = datetime.datetime(2020, 1, 1)
 
     # Generate a date range and corresponding values
     dates = [
