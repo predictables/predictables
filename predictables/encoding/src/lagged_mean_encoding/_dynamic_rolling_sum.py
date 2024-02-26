@@ -212,6 +212,9 @@ def _get_date_map(lf: pl.LazyFrame, date_col: str) -> Dict[datetime, datetime]:
     in the specified column and today's date. It is designed for internal use to support
     specific time-based calculations within the module.
     """
+    if isinstance(lf, pl.DataFrame):
+        lf = lf.lazy()
+
     min_date = lf.select(pl.col(date_col).min()).collect().to_series()[0]
     max_date = datetime.today()
     date_range = pl.datetime_range(start=min_date, end=max_date).cast(pl.Date)
