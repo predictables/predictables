@@ -13,6 +13,7 @@ from predictables.util import (
     fmt_col_name,
     to_pl_lf,
     tqdm,
+    get_column_dtype,
 )
 from predictables.util.report.src._segment_features_for_report import (
     Segment,
@@ -201,22 +202,61 @@ class UnivariateAnalysis:
             obj_name = (
                 fmt_col_name(col) if not hasattr(self, fmt_col_name(col)) else col
             )
-            setattr(
-                self,
-                obj_name,
-                Univariate(
-                    self.df.filter(pl.col(col).is_not_null()).filter(
-                        pl.col(col).is_finite()
-                    ),
-                    self.df_val.filter(pl.col(col).is_not_null()).filter(
-                        pl.col(col).is_finite()
-                    ),
-                    self.cv_column_name,
-                    col,
-                    self.target_column_name,
-                    time_series_validation=self.time_series_validation,
-                ),
+            _column = (
+                self.df.select(pl.col(col)).collect().to_series()
+                if isinstance(self.df, pl.LazyFrame)
+                else self.df[col]
             )
+            col_type = get_column_dtype(_column)
+            if col_type == "continuous":
+                setattr(
+                    self,
+                    obj_name,
+                    Univariate(
+                        self.df.filter(pl.col(col).is_not_null()).filter(
+                            pl.col(col).is_finite()
+                        ),
+                        self.df_val.filter(pl.col(col).is_not_null()).filter(
+                            pl.col(col).is_finite()
+                        ),
+                        self.cv_column_name,
+                        col,
+                        self.target_column_name,
+                        time_series_validation=self.time_series_validation,
+                    ),
+                )
+            elif col_type == "categorical":
+                setattr(
+                    self,
+                    obj_name,
+                    Univariate(
+                        self.df.filter(pl.col(col).is_not_null()),
+                        self.df_val.filter(pl.col(col).is_not_null()),
+                        self.cv_column_name,
+                        col,
+                        self.target_column_name,
+                        time_series_validation=self.time_series_validation,
+                    ),
+                )
+            elif col_type == "binary":
+                setattr(
+                    self,
+                    obj_name,
+                    Univariate(
+                        self.df.filter(pl.col(col).is_not_null()),
+                        self.df_val.filter(pl.col(col).is_not_null()),
+                        self.cv_column_name,
+                        col,
+                        self.target_column_name,
+                        time_series_validation=self.time_series_validation,
+                    ),
+                )
+            elif col_type in ["datetime", "date", "temporal"]:
+                pass
+            else:
+                raise ValueError(
+                    f"Column type {col_type} is not supported for univariate analysis"
+                )
             feature_list.append(obj_name)
             try:
                 dbg.msg(

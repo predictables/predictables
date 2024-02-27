@@ -7,7 +7,6 @@ default_folder = "/sas/data/project/EG/ActShared/SmallBusiness/aw/bert/bert-case
 
 
 class Bert:
-
     def __init__(
         self,
         bert_folder: str = default_folder,

@@ -64,6 +64,7 @@ class Model:
         feature_col: Optional[str] = None,
         target_col: Optional[str] = None,
         time_series_validation: bool = False,
+        categorical_encoding: str = "onehot",
     ) -> None:
         dbg.msg(f"__init__ called on {self.__class__.__name__} with df and df_val.")
         dbg.msg(f"feature_col: {feature_col}, target_col: {target_col}")
@@ -82,6 +83,8 @@ class Model:
         self.df_val = remove_missing_rows(
             self.df_val, self.feature_col, self.target_col
         )
+
+        self.categorical_encoding = categorical_encoding
 
         # Initialize results lazyframe
         results = pl.DataFrame(
@@ -128,9 +131,69 @@ class Model:
                 "test",
                 "pl",
             )
-        self.X_train = train.select([self.feature_col])
+
+        feature_col_type = get_column_dtype(
+            train.select([self.feature_col]).collect().to_series()
+        )
+        if feature_col_type in ["categorical", "binary"]:
+            if self.categorical_encoding == "onehot":
+                if isinstance(train, pl.LazyFrame):
+                    self.X_train = (
+                        train.select([pl.col(self.feature_col)])
+                        .collect()
+                        .to_dummies(drop_first=True)
+                        .lazy()
+                    )
+                elif isinstance(train, pl.DataFrame):
+                    self.X_train = (
+                        train.select([self.feature_col])
+                        .to_dummies(drop_first=True)
+                        .lazy()
+                    )
+                else:
+                    raise ValueError(
+                        f"train must be a polars lazyframe or dataframe, not {type(train)}"
+                    )
+
+                if isinstance(test, pl.LazyFrame):
+                    self.X_test = (
+                        test.select([pl.col(self.feature_col)])
+                        .collect()
+                        .to_dummies(drop_first=True)
+                        .lazy()
+                    )
+                elif isinstance(test, pl.DataFrame):
+                    self.X_test = (
+                        test.select([pl.col(self.feature_col)])
+                        .to_dummies(drop_first=True)
+                        .lazy()
+                    )
+                else:
+                    raise ValueError(
+                        f"test must be a polars lazyframe or dataframe, not {type(test)}"
+                    )
+            elif self.categorical_encoding == "mean":
+                raise NotImplementedError(
+                    "categorical_encoding='mean' is not yet implemented."
+                )
+            elif self.categorical_encoding == "embedding":
+                raise NotImplementedError(
+                    "categorical_encoding='embedding' is not yet implemented."
+                )
+            else:
+                raise ValueError(
+                    f"categorical_encoding must be 'onehot', 'mean', or 'embedding'. "
+                    f"Got {self.categorical_encoding}."
+                )
+        elif feature_col_type in ["continuous"]:
+            self.X_train = train.select([self.feature_col])
+            self.X_test = test.select([self.feature_col])
+        else:
+            raise ValueError(
+                f"feature_col must be 'continuous' or 'categorical'/'binary'. Got {feature_col_type}."
+            )
+
         self.y_train = train.select([self.target_col])
-        self.X_test = test.select([self.feature_col])
         self.y_test = test.select([self.target_col])
 
         self.scaler: Optional[StandardScaler] = None
@@ -385,6 +448,10 @@ class Model:
         X : Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]
             The data to standardize.
         """
+        col_dtype = get_column_dtype(X)
+        if col_dtype not in ["continuous"]:
+            exit(f"X must be a continuous variable. Got {col_dtype} instead.")
+
         if isinstance(X, pl.Series):
             X = to_pd_s(X)
         elif isinstance(X, (pl.DataFrame, pl.LazyFrame)):
@@ -419,6 +486,13 @@ class Model:
         ):
             raise ValueError(
                 f"X must be a pandas or polars Series or DataFrame, not {type(X)}"
+            )
+
+        # Only for continuous variables
+        col_dtype = get_column_dtype(X)
+        if col_dtype not in ["continuous"]:
+            raise ValueError(
+                f"X must be a continuous variable. Got {col_dtype} instead."
             )
 
         # Convert to pandas data types from polars if necessary
@@ -471,8 +545,10 @@ class Model:
         pd.Series
             The predicted target variable.
         """
-        # Normalize the input data
-        X = self.standardize(X)
+        # Normalize the input data if X is continuous
+        col_dtype = get_column_dtype(X)
+        if col_dtype in ["continuous"]:
+            X = self.standardize(X)
 
         # Convert X to pandas DataFrame if necessary
         if not isinstance(X, (pd.DataFrame, pl.DataFrame, pl.LazyFrame)):

@@ -167,9 +167,8 @@ def test_edge_cases(feature, target):
     with pytest.raises(ValueError) as err:
         _annotate_mean_median(feature, target, ax)
         plt.close("all")
-    assert (
-        "The feature and target series should not contain NaN or missing values"
-        in str(err.value)
+    assert "The feature and target series should not contain NaN or missing values" in str(
+        err.value
     ), (
         "The function should raise a ValueError when the feature or target series "
         f"contain NaN values, but raised {err.value}"

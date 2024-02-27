@@ -1,7 +1,7 @@
 from typing import Union
 
 import numpy as np
-import pandas as pd
+import pandas as pd  # type: ignore
 import polars as pl
 
 from predictables.util.src._to_pd import to_pd_s

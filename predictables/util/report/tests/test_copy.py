@@ -71,9 +71,9 @@ def test_report_deep_copy():
     ), f"Expected 'test_report-COPY.pdf', got {deep_copied_report.filename}"
 
     # For deep copies, changes to mutable elements in the copy do not affect the original
-    deep_copied_report.elements[0].text = (
-        "this is a new element, distinct from the original"
-    )
+    deep_copied_report.elements[
+        0
+    ].text = "this is a new element, distinct from the original"
     assert (
         original_report.elements[0].text != deep_copied_report.elements[0].text
     ), f"Expected {original_report.elements[0].text} to not be {deep_copied_report.elements[0].text}"
