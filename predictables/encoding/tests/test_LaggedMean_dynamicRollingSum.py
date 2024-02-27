@@ -7,11 +7,10 @@ from predictables.encoding.src.lagged_mean_encoding._dynamic_rolling_sum import 
     _get_date_map,
     _handle_cat_input,
     _get_x_name,
-    dynamic_rolling_sum,
     _get_original_order,
     _formatted_category_cols,
     _reversed_date_col,
-    _group_by_no_categories,
+    _rolling_sum_no_categories,
 )
 
 
@@ -39,6 +38,15 @@ def csv():
             .alias("cur_date"),
             pl.col("cat1").cast(pl.Utf8).cast(pl.Categorical).name.keep(),
             pl.col("cat2").cast(pl.Utf8).cast(pl.Categorical).name.keep(),
+            pl.col("30_days_prior")
+            .str.to_date(format=date_fmt_str)
+            .cast(pl.Date)
+            .name.keep(),
+            pl.col("390_days_prior")
+            .str.to_date(format=date_fmt_str)
+            .cast(pl.Date)
+            .name.keep(),
+            pl.col("sum2").cast(pl.Float64).name.keep(),
         ]
     )
 
@@ -323,22 +331,18 @@ def test_formatted_category_cols_type_errors(category_cols):
 #     ), "Calculated rolling sums do not match expected values."
 
 
-def test_group_by_no_categories():
+def test_sum_not_none():
     # Create a sample LazyFrame with dates and values
     data = {"date": ["2023-01-01", "2023-02-01", "2023-03-01"], "value": [10, 20, 30]}
     lf = pl.DataFrame(data).lazy()
     lf = lf.with_columns([pl.col("date").str.strptime(pl.Date).name.keep()])
 
-    # Simulate reversed_date_expr for testing purposes
-    reversed_date_expr = _reversed_date_col(lf, "date")
-
     # Apply the _group_by_no_categories function with mocked parameters
-    grouped_lf = _group_by_no_categories(
+    grouped_lf = _rolling_sum_no_categories(
         lf=lf,
-        reversed_date_expr=reversed_date_expr,
+        date_col="date",
         x="value",
         x_name="grouped_value",
-        every="1mo",
         period="2mo",
         offset="0mo",
     )
@@ -346,86 +350,52 @@ def test_group_by_no_categories():
     assert grouped_lf is not None, "Expected a non-None result from grouping operation"
 
 
-def test_group_by_no_categories_with_aggregations():
+def test_rolling_sum_no_categories(csv):
     # Create a sample LazyFrame with dates and values
-    data = {
-        "date": ["2023-01-01", "2023-01-15", "2023-02-01", "2023-03-01"],
-        "value": [10, 15, 20, 30],
-    }
-    lf = pl.DataFrame(data).lazy()
-    lf = lf.with_columns(pl.col("date").str.strptime(pl.Date))
+    data = csv.collect()
 
-    # Define reversed_date_expr as the date column itself for simplicity
-    reversed_date_expr = _reversed_date_col(lf, "date")
+    pl.Config.set_verbose(True)
+    # Convert the data to a LazyFrame and format the date column
+    lf = pl.DataFrame(data).lazy().drop
+    # lf = lf.with_columns(pl.col("date").str.strptime(pl.Date))
 
-    # Define a wrapper around _group_by_no_categories to include aggregations
-    def apply_group_with_aggregations(
-        lf, reversed_date_expr, x, x_name, every, period, offset
-    ):
-        # Group using the provided function
-        grouped_lf = _group_by_no_categories(
-            lf=lf,
-            reversed_date_expr=reversed_date_expr,
-            x=x,
-            x_name=x_name,
-            every=every,
-            period=period,
-            offset=offset,
-        )
-
-        # Apply aggregations
-        return grouped_lf.agg(
-            [
-                pl.col("date"),
-                pl.sum("value").alias("sum"),
-                pl.min("value").alias("min"),
-                pl.max("value").alias("max"),
-                pl.count("value").alias("count"),
-                pl.mean("value").alias("mean"),
-            ]
-        )
+    # Retain the original date order for comparison
+    original_order = _get_original_order(lf, "date", None)
 
     # Apply the grouping and aggregation
-    result_lf = apply_group_with_aggregations(
+    result_lf = _rolling_sum_no_categories(
         lf=lf,
-        reversed_date_expr=reversed_date_expr,
-        x="value",
+        date_col="date",
+        x="incr_value",
         x_name="aggregated_value",
-        every="1mo",
-        period="2mo",
-        offset="0mo",
-    ).collect()
+        period="360d",
+        offset="-30d",
+    )
+    result_lf = result_lf.join(original_order, on="date").collect().lazy()
+    result_lf = result_lf.collect().lazy()
+    # .filter(
+    #     pl.col("date").is_in(
+    #         [
+    #             datetime.date(2023, 1, 1),
+    #             datetime.date(2023, 1, 15),
+    #             datetime.date(2023, 2, 1),
+    #             datetime.date(2023, 3, 1),
+    #         ]
+    #     )
+    # )
 
     # Expected results based on the data and aggregation definitions
-    expected_data = [
-        {
-            "date": "2023-01-01",
-            "sum": 25,
-            "min": 10,
-            "max": 15,
-            "count": 2,
-            "mean": 12.5,
-        },
-        {
-            "date": "2023-02-01",
-            "sum": 20,
-            "min": 20,
-            "max": 20,
-            "count": 1,
-            "mean": 20.0,
-        },
-        {
-            "date": "2023-03-01",
-            "sum": 30,
-            "min": 30,
-            "max": 30,
-            "count": 1,
-            "mean": 30.0,
-        },
-    ]
-    expected_df = pl.DataFrame(expected_data)
+    result = (
+        result_lf.sort("index")
+        .select("aggregated_value")
+        .collect()
+        .to_series()
+        .to_list()
+    )
 
     # Compare the result to the expected DataFrame
-    assert result_lf.frame_equal(
-        expected_df, null_equal=True
-    ), "Aggregated results do not match expected values."
+    for i in range(len(csv.collect())):
+        expected = csv.select("sum2").collect().to_series()[i]
+        assert (
+            result[i] == expected
+        ), f"Expected {expected} does not match the result {result[i]} at index {i}."
