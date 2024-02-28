@@ -5,10 +5,7 @@ from ._harmonic_mean import harmonic_mean  # noqa F401
 from ._is_all_none import is_all_none  # noqa F401
 from ._model_name_map import model_name_map  # noqa F401
 
-# trunk-ignore(flake8/F401)
-from ._model_object_to_model_name import (
-    model_object_to_model_name,  # noqa F401
-)
+from ._model_object_to_model_name import model_object_to_model_name  # noqa F401
 from ._monitor_resources import monitor_resources  # noqa F401
 from ._performance_testing import time_fn  # noqa F401
 from ._profiler import profiler  # noqa F401
@@ -25,3 +22,5 @@ from ._graph_min_max import graph_min_max  # noqa F401
 
 from ._fmt_col_name import fmt_col_name  # noqa F401
 from ._col_name_for_report import col_name_for_report  # noqa F401
+
+from ._validate_lf import validate_lf  # noqa F401

@@ -1,18 +1,28 @@
 import datetime
 import polars as pl
-from predictables.encoding.src.lagged_mean_encoding._validation import validate
-from typing import List, Optional, Dict
+from typing import Dict
+
+from predictables.util import validate_lf
 
 
-@validate
+@validate_lf
 def dynamic_rolling_sum(
     lf: pl.LazyFrame,
     x_col: str,
     date_col: str,
-    categorical_cols: Optional[List[str]] = None,
+    index_col: str = "index",
     offset: int = 30,
     window: int = 360,
-) -> pl.Series:
+) -> pl.LazyFrame:
+
+    # Check to ensure there is an index column:
+    if index_col not in lf.columns:
+        raise ValueError(
+            f"Index column {index_col} not found in LazyFrame. Please provide a valid index column."
+        )
+    # Data frame with the row index as a column, to resort the data
+    # to the original order after the rolling sum
+    lf_order = lf.select([pl.col(index_col).alias("index")])
 
     # Format columns in input LazyFrame
     lf_ = _format_date_col(lf, date_col)
@@ -21,25 +31,22 @@ def dynamic_rolling_sum(
     # Create a list column with the dates to be used for the
     # rolling sum, optionally grouping by categorical columns
     # if they are provided
-    lf_ = _get_date_list_col(lf_, date_col, categorical_cols, offset, window)
-
-    # Get the mapping from dates to values - this is
-    # how we turn the list of dates into a rolling sum
-    value_map = _get_value_map(lf_, date_col, x_col)
+    lf_ = _get_date_list_col(lf_, date_col, offset, window)
 
     # Map the list of dates to a list of values, censoring
     # any dates that are not in the original LazyFrame to 0
-    lf_ = lf_.with_columns([_date_list_eval(value_map).alias("rolling_x")])
-
-    # Optionally, group by the categorical columns if they are provided
-    if categorical_cols is not None:
-        print("Grouping by categorical columns")
+    lf_ = _handle_date_list(lf_, x_col, date_col)
 
     # The rolling sum is then the sum of that censored list
-    return lf_.select(pl.col("rolling_x").sum().alias(x_col)).collect().to_series()
+    lf_final = lf_.with_row_index().select(
+        [pl.col("index"), pl.col(f"rolling_{x_col}").sum().alias(f"{x_col}_rolling")]
+    )
+
+    # Resort the data to the original order
+    return lf_order.join(lf_final, on="index", how="left")
 
 
-@validate
+@validate_lf
 def _format_date_col(lf: pl.LazyFrame, date_col: str) -> pl.LazyFrame:
     """
     Takes a LazyFrame and the name of the date column, and returns a LazyFrame
@@ -48,7 +55,7 @@ def _format_date_col(lf: pl.LazyFrame, date_col: str) -> pl.LazyFrame:
     return lf.with_columns([pl.col(date_col).cast(pl.Date).name.keep()])
 
 
-@validate
+@validate_lf
 def _format_value_col(lf: pl.LazyFrame, value_col: str) -> pl.LazyFrame:
     """
     Takes a LazyFrame and the name of the value column, and returns a LazyFrame
@@ -57,11 +64,10 @@ def _format_value_col(lf: pl.LazyFrame, value_col: str) -> pl.LazyFrame:
     return lf.with_columns([pl.col(value_col).cast(pl.Float64).name.keep()])
 
 
-@validate
+@validate_lf
 def _get_date_list_col(
     lf: pl.LazyFrame,
     date_col: str,
-    categorical_cols: Optional[List[str]] = None,
     offset: int = 30,
     window: int = 360,
 ) -> pl.LazyFrame:
@@ -73,10 +79,8 @@ def _get_date_list_col(
 
     1.  The list of dates is used to filter the original LazyFrame to only
         include the rows that are within the window.
-    2.  Optionally, the filtered LazyFrame is grouped by the categorical
-        column names provided.
-    3.  The the incremental sum of the value column is calculated on that
-        filtered (and possibly grouped) LazyFrame.
+    2.  The the incremental sum of the value column is calculated on that
+        filtered LazyFrame.
 
     Parameters
     ----------
@@ -84,8 +88,6 @@ def _get_date_list_col(
         The input LazyFrame.
     date_col : str
         The name of the date column.
-    categorical_cols : Optional[List[str]], default None
-        The names of the categorical columns.
     offset : int, default 30
         The number of days to offset the rolling sum by.
     window : int, default 360
@@ -95,64 +97,28 @@ def _get_date_list_col(
     -------
     pl.LazyFrame
         A LazyFrame with a new column containing a struct with keys
-        for a list of dates, and the categorical columns if they are
-        provided.
-
-    Notes
-    -----
-    Each string passed to the categorical_cols parameter must be the name
-    of a column in the input LazyFrame. The keys of the struct will be
-    derived from the names of the columns in the input LazyFrame.
-
-    The list of dates is used to calculate the rolling sum. The rolling sum
-    is the sum of the value column for the dates in the list, offset by the
-    number of days specified in the offset parameter, including the
-    number of days specified in the window parameter, optionally grouped
-    by the categorical columns if they are provided.
+        for a list of dates.
     """
-    # Get the list of dates (for each row) to be used for the rolling sum
-    date_list = [
-        pl.date_ranges(
-            start=pl.col(date_col)
-            - datetime.timedelta(days=offset)
-            - datetime.timedelta(days=window)
-            + datetime.timedelta(days=1),
-            end=pl.col(date_col) - datetime.timedelta(days=offset),
-            interval="1d",
-        ).alias("date_list")
-    ]
-
-    # Turn into a dictionary that will become the output struct
-    expr_dict = {f"{date_col}": date_list}
-
-    # Optionally group by the categorical columns
-    if categorical_cols is not None:
-        for col in categorical_cols:
-            # Filter the LazyFrame to only include the rows whose dates
-            # correspond to the dates in the list of dates for each row
-            def filter_dt(dt):
-                return lf.filter([pl.col(date_col) == dt])
-
-            # Add a new key-value pair to the dictionary for each
-            # categorical column, by finding the unique values for
-            # that column for each date in the list of dates
-            expr_dict[col] = [
-                # Select the unique values for the categorical column
-                filter_dt(dt).select(pl.col(col).unique()).collect().to_list()
-                # For each date in the date_list for that row
-                for dt in date_list
-            ]
-
-    # Create a new column with the struct
-    return lf.with_columns([pl.struct(expr_dict).alias("groupby")])
+    # Return a list of dates for each row
+    return lf.with_columns(
+        [
+            pl.date_ranges(
+                start=pl.col(date_col)
+                - datetime.timedelta(days=offset)
+                - datetime.timedelta(days=window)
+                + datetime.timedelta(days=1),
+                end=pl.col(date_col) - datetime.timedelta(days=offset),
+                interval="1d",
+            ).alias("date_list")
+        ]
+    )
 
 
-@validate
+@validate_lf
 def _get_value_map(
     lf: pl.LazyFrame,
     date_col: str,
     x_col: str,
-    categorical_cols: Optional[List[str]] = None,
 ) -> Dict[datetime.date, float]:
     """
     Produces a dictionary mapping dates to values. This is used to map the
@@ -177,33 +143,42 @@ def _get_value_map(
     }
 
 
+@validate_lf
+def _handle_date_list(lf: pl.LazyFrame, x_col: str, date_col: str) -> pl.LazyFrame:
+    return (
+        lf
+        # Melt the elements of each list in the date_list column to create
+        # a new row for each date in each list. Note also this will duplicate
+        # the values in the other columns, including the row index and the
+        # date column
+        .explode("date_list")
+        # Create a new column with the value for each date in the list
+        .with_columns(_date_list_eval(_get_value_map(lf, date_col, x_col)))
+        # Drop the date list column -- at this point we have substituted
+        # each date in the list with the sum value for that date
+        .drop("date_list")
+        # Sum up the values by index (representing the original row order)
+        # and date
+        .group_by(["index", date_col]).agg(
+            pl.sum("value_list").alias(f"rolling_{x_col}")
+        )
+        # Resort the data to the original order
+        .sort("index")
+    )
+
+
 def _date_list_eval(value_map: dict) -> pl.Expr:
     """
     Takes a dictionary mapping dates to values and returns a function that
     can be used to map a list of dates to a list of values.
     """
     return (
-        pl.col("groupby")
-        .struct.field("date_list")
-        .list.eval(  # Take the list of dates
-            # For each date in the list, check if it's in the dictionary
-            pl.when(pl.element().is_in(list(value_map.keys())))
-            # If it is, map to the value for that date
-            .then(value_map[pl.element()])
-            # If it's not, map to 0
-            .otherwise(pl.lit(0))
+        pl.when(pl.col("date_list").is_in(list(value_map.keys())))
+        .then(
+            pl.col("date_list").replace(
+                old=pl.Series(value_map.keys()), new=pl.Series(value_map.values())
+            )
         )
+        .otherwise(pl.lit(0))
+        .alias("value_list")
     )
-
-
-# def _cat_list_eval(col: str) -> pl.Expr:
-#     """
-#     Takes the list of lists corresponding to a categorical column and returns an expression
-#     of the same length, but with a 1 if the row's category is in the list, and a 0 if it's not.
-#     """
-
-#     def eval_list(list_):
-#         return [1 if cat in list_ else 0 for cat in list_]
-
-#     struct = pl.col("groupby").struct.field(col)
-#     return struct.list.eval()
