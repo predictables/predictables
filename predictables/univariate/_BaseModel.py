@@ -491,9 +491,7 @@ class Model:
         # Only for continuous variables
         col_dtype = get_column_dtype(X)
         if col_dtype not in ["continuous"]:
-            raise ValueError(
-                f"X must be a continuous variable. Got {col_dtype} instead."
-            )
+            return X
 
         # Convert to pandas data types from polars if necessary
         if isinstance(X, pl.Series):

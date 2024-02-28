@@ -118,7 +118,7 @@ def test_get_file_stem(ua, filename, default, expected):
     "file_stem,file_num_start_num,end_num,default,expected",
     [
         ("analysis", None, None, "Univariate Analysis Report", "analysis.pdf"),
-        ("report", 1, 2, "Univariate Analysis Report", "report_2_3.pdf"),
+        ("report", 1, 2, "Univariate Analysis Report", "report_1_3.pdf"),
         (None, None, None, "Univariate Analysis Report", "Univariate Analysis Report"),
         ("only_stem", 1, None, "Univariate Analysis Report", "only_stem.pdf"),
         ("only_stem", None, 2, "Univariate Analysis Report", "only_stem.pdf"),

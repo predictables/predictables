@@ -6,6 +6,10 @@
 # from typing import List, Any, Union
 
 
+def dynamic_rolling_sum_with_categories():
+    print("h1")
+
+
 # @validate_lf
 # def dynamic_rolling_sum_with_categories(
 #     lf: pl.LazyFrame,

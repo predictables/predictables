@@ -201,25 +201,32 @@ def is_datetime(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool
             return False
 
     # Handle Pandas Series
-    if isinstance(to_pd_s(s).dtype, pd.DatetimeTZDtype) | isinstance(
-        to_pd_s(s).dtype, np.dtypes.DateTime64DType
-    ):
-        return True
+    try:
+        if isinstance(to_pd_s(s).dtype, pd.DatetimeTZDtype) | isinstance(
+            to_pd_s(s).dtype, np.dtypes.DateTime64DType
+        ):
+            return True
+    except TypeError:
+        pass
 
     # Check if the series is numeric or integer, and so is not a datetime
     if is_numeric(s) or is_integer(s):
         return False
 
     # Check if the series is string or categorical and can be parsed as dates
-    if to_pd_s(s).dtype == "object" or isinstance(
-        to_pd_s(s).dtype, pd.CategoricalDtype
-    ):
-        try:
-            # Attempt to parse the first element to check if it's a date format
-            pd.to_datetime(to_pd_s(s)[0])
-            return True
-        except (ValueError, TypeError):
-            return False
+    try:
+        _ = to_pd_s(s)
+        if to_pd_s(s).dtype == "object" or isinstance(
+            to_pd_s(s).dtype, pd.CategoricalDtype
+        ):
+            try:
+                # Attempt to parse the first element to check if it's a date format
+                pd.to_datetime(to_pd_s(s)[0])
+                return True
+            except (ValueError, TypeError):
+                return False
+    except TypeError:
+        pass
 
     return False
 
@@ -251,8 +258,15 @@ def is_binary(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
         elif isinstance(s, list) or isinstance(s, tuple):
             return len(set(s)) == 2
         else:
-            return to_pd_s(s).drop_duplicates().shape[0] == 2
+            try:
+                try:
+                    out = to_pd_s(s).nunique() == 2
+                except Exception:
+                    out = pd.Series(s).nunique() == 2
 
+            except Exception:
+                out = False
+            return out
 
 def is_categorical(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
     """
@@ -279,7 +293,14 @@ def is_categorical(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> b
     if is_numeric(s):
         return is_categorical_integer(s)
     else:
-        return to_pd_s(s).drop_duplicates().shape[0] > 2
+        try:
+            try:
+                out = to_pd_s(s).nunique() > 2
+            except Exception:
+                out = pd.Series(s).nunique() > 2
+        except Exception:
+            out = False
+        return out
 
 
 def is_text(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
