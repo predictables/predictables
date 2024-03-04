@@ -23,6 +23,18 @@ class DynamicRollingMean(DynamicRollingSum):
             "Use `numerator_col` and `denominator_col` instead."
         )
 
+    def x_name(*args, **kwargs):
+        """
+        Warning
+        -------
+        This method is not implemented for `DynamicRollingMean`. Use
+        `numerator_col` and `denominator_col` instead.
+        """
+        raise NotImplementedError(
+            "This method is not implemented for `DynamicRollingMean`. "
+            "Use `numerator_col` and `denominator_col` instead."
+        )
+
     def numerator_col(self, numerator_col: str) -> "DynamicRollingMean":
         """
         Set the column to use as the numerator in the rolling mean calculation.
@@ -75,6 +87,81 @@ class DynamicRollingMean(DynamicRollingSum):
         self._denominator_col = denominator_col
         return self
 
+    def build_numerator_col(self, lf: pl.LazyFrame) -> None:
+        """
+        Build the numerator column for the rolling mean calculation, and return
+        the `LazyFrame` with the numerator column built.
+
+        Parameters
+        ----------
+        lf : pl.LazyFrame
+            The `LazyFrame` to use to build the numerator column.
+
+        Returns
+        -------
+        None
+            No return value, but the _lf attribute is updated with the
+            numerator column built.
+
+        """
+        num_lf = (
+            DynamicRollingSum()
+            .lf(self._lf)
+            .date_col(self._date_col)
+            .x_col(self._numerator_col)
+            .x_name("num")
+            .offset(self._offset)
+            .window(self._window)
+            .category_cols(self._category_cols)
+            .index_col(self._index_col)
+            .run()
+        )
+
+        # Update the _lf attribute
+        self._lf = (
+            self._lf.join(num_lf, on=self._index_col, how="left")
+            .drop("date_right")
+            .with_columns([pl.col("rolling_value_list").alias("num")])
+            .drop("rolling_value_list")
+        )
+
+    def build_denominator_col(self, lf: pl.LazyFrame) -> None:
+        """
+        Build the denominator column for the rolling mean calculation, and
+        update the `LazyFrame` with the denominator column built.
+
+        Parameters
+        ----------
+        lf : pl.LazyFrame
+            The `LazyFrame` to use to build the denominator column.
+
+        Returns
+        -------
+        None
+            No return value, but the _lf attribute is updated with the
+            denominator column built.
+        """
+        den_lf = (
+            DynamicRollingSum()
+            .lf(self._lf)
+            .date_col(self._date_col)
+            .x_col(self._denominator_col)
+            .x_name("den")
+            .offset(self._offset)
+            .window(self._window)
+            .category_cols(self._category_cols)
+            .index_col(self._index_col)
+            .run()
+        )
+
+        # Update the _lf attribute
+        self._lf = (
+            self._lf.join(den_lf, on=self._index_col, how="left")
+            .drop("date_right")
+            .with_columns([pl.col("rolling_value_list").alias("den")])
+            .drop("rolling_value_list")
+        )
+
     def run(self) -> pl.LazyFrame:
         """
         Run the rolling mean calculation on the `LazyFrame` and return the
@@ -85,91 +172,31 @@ class DynamicRollingMean(DynamicRollingSum):
         pl.LazyFrame
             The `LazyFrame` with the rolling mean calculation applied.
         """
-        num = (
-            DynamicRollingSum()
-            .lf(self._lf)
-            .date_col(self._date_col)
-            .x_col(self._numerator_col)
-            .x_name(f"{self._x_name}_{self._numerator_col}")
-            .offset(self._offset)
-            .window(self._window)
-            .category_cols(self._category_cols)
-            .index_col(self._index_col)
-            .run()
-        )
-        den = (
-            DynamicRollingSum()
-            .lf(self._lf)
-            .date_col(self._date_col)
-            .x_col(self._denominator_col)
-            .x_name(f"{self._x_name}_{self._denominator_col}")
-            .offset(self._offset)
-            .window(self._window)
-            .category_cols(self._category_cols)
-            .index_col(self._index_col)
-            .run()
-        )
-        print(f"lf columns: {self._lf.columns}")
+        # Build the numerator and denominator columns, and join them to the
+        # original LazyFrame
+        self._lf.collect()
+        print(self._lf.head().collect())
+        self.build_numerator_col(self._lf)
+        self._lf.collect()
+        print(self._lf.head().collect())
+        self.build_denominator_col(self._lf)
+        self._lf.collect()
+        print(self._lf.head().collect())
 
-        # join the numerator and denominator columns to the original LazyFrame
-        if self._category_cols is not None:
-            for c in self._category_cols:
-                num_name = f"{self._x_name}_{self._numerator_col}"
-                den_name = f"{self._x_name}_{self._denominator_col}"
-                self._lf = (
-                    pl.concat(
-                        [
-                            self._lf,
-                            num.select(pl.col(self._numerator_col))
-                            .collect()
-                            .to_series()
-                            .alias(num_name),
-                            den.select(pl.col(self._denominator_col))
-                            .collect()
-                            .to_series()
-                            .alias(den_name),
-                        ],
-                        how="horizontal",
-                    )
-                    .with_columns(
-                        [
-                            pl.when(pl.col(den_name) == 0)
-                            .then(pl.lit(0))
-                            .otherwise(pl.col(num_name).truediv(pl.col(den_name)))
-                            .alias(f"{self._x_name}_by_{c}")
-                        ]
-                    )
-                    .drop([num_name, den_name])
+        # Calculate the rolling mean
+        # mean_col = f"{self._x_name}_mean"
+        self._lf = self._lf.with_columns(
+            [
+                pl.when(pl.col("den") == 0)
+                .then(pl.lit(0))
+                .otherwise(
+                    pl.col("num")
+                    .cast(pl.Float64)
+                    .truediv(pl.col("den").cast(pl.Float64))
+                    .cast(pl.Float64)
                 )
-        else:
-            num_name = f"{self._x_name}_{self._numerator_col}"
-            den_name = f"{self._x_name}_{self._denominator_col}"
-            print(f"lf columns: {self._lf.columns}")
-            self._lf = (
-                pl.concat(
-                    [
-                        self._lf.collect(),
-                        num.select(pl.col(self._numerator_col))
-                        .collect()
-                        .to_series()
-                        .alias(num_name),
-                        den.select(pl.col(self._denominator_col))
-                        .collect()
-                        .to_series()
-                        .alias(den_name),
-                    ],
-                    how="horizontal",
-                )
-                .with_columns(
-                    [
-                        pl.when(pl.col(den_name) == 0)
-                        .then(pl.lit(0))
-                        .otherwise(pl.col(num_name).truediv(pl.col(den_name)))
-                        .alias(f"{self._x_name}")
-                    ]
-                )
-                .drop([num_name, den_name])
-            )
-            print(f"lf columns: {self._lf.columns}")
+                .alias("mean")
+            ]
+        ).drop(["num", "den"])
 
         return self._lf

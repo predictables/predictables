@@ -317,7 +317,17 @@ class DynamicRollingSum:
                 if "date_right" in self._lf.columns:
                     self._lf = self._lf.drop(["date_right"])
 
-            return self._lf
+            return self._lf.select(
+                [
+                    pl.col(self._index_col).name.keep(),
+                    pl.col(self._date_col).name.keep(),
+                ]
+                + [
+                    pl.col(c).cast(pl.Utf8).cast(pl.Categorical).name.keep()
+                    for c in self._category_cols
+                ]
+                + [pl.col(f"rolling_{c}").name.keep() for c in self._category_cols]
+            )
         else:
             # Run the dynamic rolling sum if all parameters are set
             return dynamic_rolling_sum(
