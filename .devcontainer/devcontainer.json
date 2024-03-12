@@ -27,5 +27,6 @@
       "editor.formatOnPaste": true,
       "editor.defaultFormatter": "charliermarsh.ruff"
     }
-  }
+  },
+  "postAttachCommand": "mv /home/user/.prettierrc /app/.prettierrc && mv /home/user/.ruff.toml /app/.ruff.toml"
 }
