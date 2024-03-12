@@ -1,6 +1,31 @@
 {
-  "name": "pt-dev",
-  "dockerFile": "./Dockerfile-dev",
-  "forwardPorts": [80],
-  "postCreateCommand": "echo 'Container is ready!'"
+  "privileged": true,
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "py",
+  "workspaceFolder": "/app",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "tamasfe.even-better-toml",
+        "esbenp.prettier-vscode",
+        "vscode-icons-team.vscode-icons",
+        "usernamehw.errorlens",
+        "charliermarsh.ruff",
+        "ms-python.mypy-type-checker",
+        "ms-python.flake8"
+      ]
+    },
+    "settings": {
+      "terminal.integrated.shell.linux": "/bin/bash",
+      "workbench.panel.defaultLocation": "bottom",
+      "workbench.colorTheme": "GitHub Dark High Contrast",
+      "editor.fontFamily": "Ubuntu Mono derivative Powerline",
+      "editor.formatOnSave": true,
+      "editor.formatOnType": true,
+      "editor.formatOnPaste": true,
+      "editor.defaultFormatter": "charliermarsh.ruff"
+    }
+  }
 }
