@@ -1,7 +1,7 @@
 from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
-import pandas as pd  # type: ignore
+import pandas as pd
 import plotly.graph_objs as go  # type: ignore
 import polars as pl
 from matplotlib.axes import Axes
@@ -169,7 +169,6 @@ def quintile_lift_plot_matplotlib(
         ),
     )
 
-    # plt.tight_layout()
     ax.set_title("Qunitile Lift Plot")
     ax = rotate_x_lab(ax)
 

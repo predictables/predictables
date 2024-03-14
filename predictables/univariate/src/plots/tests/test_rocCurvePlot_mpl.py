@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd  # type: ignore
+import pandas as pd
 import pytest
 
 from predictables.univariate.src.plots._roc_curve_plot import roc_curve_plot_mpl

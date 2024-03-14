@@ -266,32 +266,3 @@ def pldf_bincol():
 @pytest.fixture
 def pllf_bincol(pldf_bincol):
     return pldf_bincol.lazy()
-
-
-# def test_select_binary_columns_pandas(pddf_bincol):
-#     expected = ["a"]
-#     result = _select_binary_columns(pddf_bincol)
-#     assert result == expected
-
-
-# def test_select_binary_columns_polars(pldf_bincol):
-#     expected = ["a"]
-#     result = _select_binary_columns(pldf_bincol)
-#     assert result == expected
-
-
-# def test_select_binary_columns_lazy(pllf_bincol):
-#     expected = ["a"]
-#     result = _select_binary_columns(pllf_bincol)
-#     assert result == expected
-
-
-# def test_select_binary_columns_missing_col(pddf_bincol):
-#     expected = ["a", "b"]
-#     result = _select_binary_columns(pddf_bincol, missing_col="2")
-#     assert result == expected
-
-
-# def test_select_binary_columns_unsupported_type():
-#     with pytest.raises(ValueError):
-# _select_binary_columns(123)

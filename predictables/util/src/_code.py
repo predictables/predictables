@@ -81,21 +81,6 @@ def get_functions_from_file(filepath: str) -> list:
     ]
 
 
-# def get_function_code(function_name: str, filepath: str) -> str:
-#     code = read_file_code(filepath)
-
-#     # Regular expression to capture function code
-#     # Assumes that the file uses consistent indentation (spaces or tabs)
-#     pattern = rf"def {function_name}\(.*?\):((?:\n(?:    |\t).*)*)"
-
-#     match = re.search(pattern, code, re.DOTALL)
-#     if not match:
-#         raise ValueError(f"Function {function_name} not found in file.")
-
-#     function_code = match.group(1).strip()
-#     return function_code
-
-
 def get_function_docstring(function_name: str, filepath: str) -> str:
     """
     Takes a function name and file path and returns the docstring as a string.
@@ -164,7 +149,6 @@ def get_function_docstring(function_name: str, filepath: str) -> str:
     # Regular expression to capture the content inside any style
     # of docstring quotes
     pattern = r'(?s)(?:"""(.*?)"""|\'\'\'(.*?)\'\'\')'
-    # trunk-ignore(sourcery/use-named-expression)
     match = re.search(pattern, function_start, re.DOTALL)
 
     # Return the docstring if found, else return an empty string

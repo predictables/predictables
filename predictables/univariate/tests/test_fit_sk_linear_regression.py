@@ -95,9 +95,6 @@ def test_fit_sk_linear_regression_coef(X, y):
 
 
 # input validation tests
-# X: Union[np.ndarray, pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-# y: Union[np.ndarray, pd.Series, pl.Series],
-# fit_intercept: bool = False,
 def test_input_validation_sk_linear_regression_coef():
     pd_df_X1, pd_series_y1 = pd_df_X(), pd_series_y()
     with pytest.raises(TypeError) as e:

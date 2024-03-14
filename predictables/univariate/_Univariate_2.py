@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from typing import Any, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd  # type: ignore
+import pandas as pd
 import polars as pl
 from matplotlib.axes import Axes
 from sklearn.preprocessing import MinMaxScaler, StandardScaler  # type: ignore
@@ -88,11 +90,8 @@ class Univariate(Model):
     fold_name: str
     folds: Optional[pd.Series]
 
-    # df_all: pd.DataFrame
-
     normalization_obj: Optional[Union[MinMaxScaler, StandardScaler]]
 
-    # trunk-ignore-all(sourcery)
     def __init__(
         self,
         df_: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
@@ -737,13 +736,5 @@ class Univariate(Model):
                     "Val Log-Loss",
                 ]
             )
-
-            # results.index = pd.Index(
-            #     [f"Fold-{i}" for i in self.unique_folds]
-            #     + [
-            #         "Agg. Mean",
-            #         "Agg. SD",
-            #     ]
-            # )
 
         return results.set_index("CV Fold").T

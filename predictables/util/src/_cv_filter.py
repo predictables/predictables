@@ -1,7 +1,7 @@
 from typing import Union
 
 import numpy as np
-import pandas as pd  # type: ignore
+import pandas as pd
 import polars as pl
 
 from predictables.util.src._to_pd import to_pd_df, to_pd_s
@@ -114,7 +114,6 @@ def filter_by_cv_fold(
         s_ = to_pd_s(s).reset_index(drop=True)
         # filter based on cross-validation fold
         idx = cv_filter(f, folds_, time_series_validation, train_test)
-        # print(f"\n\nidx.shape: {idx.shape}")
         return s_[idx]
 
     elif return_type in ["pl", "polars", "pl.Series"]:

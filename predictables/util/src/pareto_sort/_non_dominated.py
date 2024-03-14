@@ -21,7 +21,3 @@ def non_dominated(variables: List[np.ndarray]) -> List[np.ndarray]:
         A list of variables that are non-dominated.
     """
     return [a for a in variables if not any(is_dominated(a, b) for b in variables)]
-    # for i, a in enumerate(variables):
-    #     if not any(is_dominated(a, b) for j, b in enumerate(variables) if i != j):
-    #         non_dominated.append(a)
-    # return non_dominated

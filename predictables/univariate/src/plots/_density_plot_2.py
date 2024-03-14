@@ -2,7 +2,7 @@ from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd  # type: ignore
+import pandas as pd
 import polars as pl
 from matplotlib.axes import Axes
 from scipy.stats import gaussian_kde, ttest_ind  # type: ignore
@@ -440,7 +440,6 @@ def _plot_density_mpl(
     return ax
 
 
-# trunk-ignore(sourcery/low-code-quality)
 def density_by_mpl(
     x: pd.Series,
     by: pd.Series,

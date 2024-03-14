@@ -30,8 +30,3 @@ def test_validate_input_with_invalid_dataset():
 def test_validate_input_with_invalid_model():
     result, message = validate_input(X_valid, y_valid, model_invalid)
     assert not result, f"Should have failed for invalid model {model_invalid} (Test 3)."
-
-
-# def test_validate_input_with_invalid_target():
-#     result, message = validate_input(X_valid, y_invalid, model_valid)
-#     assert not result, f"Should have failed for invalid target {y_invalid} (Test 4)."

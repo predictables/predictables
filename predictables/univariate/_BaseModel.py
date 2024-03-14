@@ -1,7 +1,7 @@
 from typing import Any, Optional, Union
 
 import numpy as np
-import pandas as pd  # type: ignore
+import pandas as pd
 import polars as pl
 from sklearn import metrics  # type: ignore
 from sklearn.preprocessing import StandardScaler  # type: ignore
@@ -54,7 +54,6 @@ class Model:
     yhat_train: pd.Series
     yhat_test: pd.Series
 
-    # trunk-ignore(sourcery/low-code-quality)
     def __init__(
         self,
         df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],

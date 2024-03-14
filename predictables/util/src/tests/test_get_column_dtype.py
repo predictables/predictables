@@ -1,8 +1,8 @@
-from datetime import datetime  # type: ignore
+from datetime import datetime
 
-import pandas as pd  # type: ignore
-import polars as pl  # type: ignore
-import pytest  # type: ignore
+import pandas as pd
+import polars as pl
+import pytest
 
 from predictables.util.src._get_column_dtype import (
     get_column_dtype,
@@ -16,7 +16,8 @@ from predictables.util.src._get_column_dtype import (
 
 @pytest.fixture
 def numeric_pd_series():
-    """
+    """Treat this as float.
+
     This is numeric, but not integer or categorical.
     """
     return pd.Series([1.3, 2.2, 4.1, 8.4, 16.5])
@@ -24,7 +25,8 @@ def numeric_pd_series():
 
 @pytest.fixture
 def integer_pd_series():
-    """
+    """Treat this as an integer, not categorical.
+
     This is numeric, integer, but not categorical.
     """
     return pd.Series([1, 2, 4, 8, 16])
@@ -32,15 +34,14 @@ def integer_pd_series():
 
 @pytest.fixture
 def non_numeric_pd_series():
-    """
-    This is not numeric and should be treated as categorical.
-    """
+    """Treat this as categorical, since it is not numeric."""
     return pd.Series(["a", "b", "c", "d", "e"])
 
 
 @pytest.fixture
 def numeric_pandas_series():
-    """
+    """Treat this as float.
+
     This is numeric, but not integer or categorical.
     """
     return pd.Series([1.3, 2.2, 4.1, 8.4, 16.5])
@@ -48,7 +49,8 @@ def numeric_pandas_series():
 
 @pytest.fixture
 def integer_pandas_series():
-    """
+    """Treat this as an integer, not categorical.
+
     This is numeric, integer, but not categorical because the difference between
     unique values is not 1.
     """
@@ -57,23 +59,23 @@ def integer_pandas_series():
 
 @pytest.fixture
 def non_numeric_pandas_series():
-    """
-    This is not numeric and should be treated as categorical.
-    """
+    """Treat this as categorical, since it is not numeric."""
     return pd.Series(["a", "b", "c", "d", "e"])
 
 
 @pytest.fixture
 def numeric_polars_series():
-    """
-    This is numeric, but not integer or categorical.
+    """Treat this as float.
+
+    It is numeric, but not integer or categorical.
     """
     return pl.Series("numeric", [1.3, 2.2, 4.1, 8.4, 16.5])
 
 
 @pytest.fixture
 def integer_polars_series():
-    """
+    """Treat this as an integer, not categorical.
+
     This is numeric, integer, but not categorical because the difference between
     unique values is not 1.
     """
@@ -82,17 +84,13 @@ def integer_polars_series():
 
 @pytest.fixture
 def non_numeric_polars_series():
-    """
-    This is not numeric and should be treated as categorical.
-    """
+    """Treat this as categorical, since it is not numeric."""
     return pl.Series("non_numeric", ["a", "b", "c", "d", "e"])
 
 
 @pytest.fixture
 def date_pd_series():
-    """
-    This is not numeric and should be treated as a date.
-    """
+    """Treat this as a date series."""
     return pd.Series(
         [
             datetime(2021, 1, 1),
@@ -106,9 +104,7 @@ def date_pd_series():
 
 @pytest.fixture
 def date_pandas_series():
-    """
-    This is a date.
-    """
+    """Treat this as a date series."""
     return pd.Series(
         [
             datetime(2021, 1, 1),
@@ -122,9 +118,7 @@ def date_pandas_series():
 
 @pytest.fixture
 def date_polars_series():
-    """
-    This is a date.
-    """
+    """Treat this as a date series."""
     return pl.Series(
         "date",
         [
@@ -139,9 +133,7 @@ def date_polars_series():
 
 @pytest.fixture
 def date_numpy_array():
-    """
-    This is a date.
-    """
+    """Treat this as a date series."""
     return pd.Series(
         [
             datetime(2021, 1, 1),
@@ -155,9 +147,7 @@ def date_numpy_array():
 
 @pytest.fixture
 def date_tuple():
-    """
-    This is a date.
-    """
+    """Treat this as a date series."""
     return pd.Series(
         [
             datetime(2021, 1, 1),
@@ -171,7 +161,8 @@ def date_tuple():
 
 @pytest.fixture
 def date_as_string_pandas_series():
-    """
+    """Treat a series of dates encoded as strings as a date, not categorical.
+
     This is a date encoded as a string. Should be able to be parsed as a date.
     """
     return pd.Series(
@@ -181,7 +172,8 @@ def date_as_string_pandas_series():
 
 @pytest.fixture
 def date_as_string_polars_series():
-    """
+    """Treat a series of dates encoded as strings as a date, not categorical.
+
     This is a date encoded as a string. Should be able to be parsed as a date.
     """
     return pl.Series(
@@ -191,7 +183,8 @@ def date_as_string_polars_series():
 
 @pytest.fixture
 def date_as_string_numpy_array():
-    """
+    """Treat a numpy array of dates as a date, not categorical.
+
     This is a date encoded as a string. Should be able to be parsed as a date.
     """
     return pd.Series(
@@ -201,7 +194,8 @@ def date_as_string_numpy_array():
 
 @pytest.fixture
 def date_as_categorical_pandas_series():
-    """
+    """Treating a series of categorical dates as a date, not categorical.
+
     This is a date encoded as a categorical. Should be able to be parsed as a date.
     """
     return pd.Series(
@@ -211,7 +205,8 @@ def date_as_categorical_pandas_series():
 
 @pytest.fixture
 def date_as_categorical_polars_series():
-    """
+    """Treat a series of categorical dates as a date, not categorical.
+
     This is a date encoded as a categorical. Should be able to be parsed as a date.
     """
     return pl.Series(
@@ -221,7 +216,8 @@ def date_as_categorical_polars_series():
 
 @pytest.fixture
 def binary_pd_series_ints():
-    """
+    """Treat a pd.Series of 1's and 0's as binary.
+
     This is a pd_series of integers, whose maximum difference between unique values is 1, but
     there are only two unique values. This means that it is binary.
     """
@@ -230,7 +226,8 @@ def binary_pd_series_ints():
 
 @pytest.fixture
 def binary_pd_series_strings():
-    """
+    """Treating a pd.Series of 1's and 0's as binary.
+
     This is a pd_series of strings, whose maximum difference between unique values is 1, but
     there are only two unique values. This means that it is binary.
     """
@@ -239,7 +236,8 @@ def binary_pd_series_strings():
 
 @pytest.fixture
 def binary_pd_series_categorical():
-    """
+    """Treat a pd.Series of categorical 1's and 0's as binary.
+
     This is a pandas series of categoricals, whose maximum difference between unique values is 1, but
     there are only two unique values. This means that it is binary.
     """
@@ -248,7 +246,8 @@ def binary_pd_series_categorical():
 
 @pytest.fixture
 def binary_pd_series_booleans():
-    """
+    """Treat a pd.Series of booleans as binary.
+
     This is a pd_series of booleans. This means that it is binary.
     """
     return pd.Series([False, True, False, True, False])
@@ -256,7 +255,8 @@ def binary_pd_series_booleans():
 
 @pytest.fixture
 def binary_pd_series_floats():
-    """
+    """Treat a pd.Series of 1.0 and 0.0 as binary.
+
     This is a pd_series of floats, whose maximum difference between unique values is 1, but
     there are only two unique values. This means that it is binary.
     """
@@ -265,7 +265,8 @@ def binary_pd_series_floats():
 
 @pytest.fixture
 def binary_pd_series_not_0_or_1():
-    """
+    """Treat pd.Series of exactly two unique values as binary.
+
     This is a pd_series of floats, whose maximum difference between unique values is 1, but
     there are only two unique values. This means that it is binary.
     """
@@ -274,70 +275,26 @@ def binary_pd_series_not_0_or_1():
 
 @pytest.fixture
 def categorical_pandas_series():
-    """
-    This is not numeric and should be treated as categorical.
-    """
+    """Treat this as categorical, since it is not numeric."""
     return pd.Series(["a", "b", "c", "d", "e"]).astype("category")
 
 
 @pytest.fixture
 def categorical_polars_series():
-    """
-    This is not numeric and should be treated as categorical.
-    """
+    """Treat this as categorical, since it is not numeric."""
     return pl.Series("categorical", ["a", "b", "c", "d", "e"]).cast(pl.Categorical)
 
 
 @pytest.fixture
 def text_pandas_series():
-    """
-    This is not numeric and should be treated as categorical.
-    """
+    """Treat this as categorical, since it is not numeric."""
     return pd.Series(["a", "b", "c", "d", "e"])
 
 
 @pytest.fixture
 def text_polars_series():
-    """
-    This is not numeric and should be treated as categorical.
-    """
+    """Treat this as categorical, since it is not numeric."""
     return pl.Series("text", ["a", "b", "c", "d", "e"]).cast(pl.Utf8)
-
-
-# @pytest.fixture
-# def object_polars_series():
-#     """
-#     This is not numeric and should be treated as categorical.
-#     """
-#     return pl.Series("object", ["a", "b", "c", "d", "e"]).cast(pl.Object)
-
-# @pytest.mark.parametrize(
-#     "series_name, expected",
-#     [
-#         ("numeric_pd_series", True),
-#         ("integer_pd_series", True),
-#         ("non_numeric_pd_series", False),
-#         ("numeric_pandas_series", True),
-#         ("integer_pandas_series", True),
-#         ("non_numeric_pandas_series", False),
-#         ("numeric_polars_series", True),
-#         ("integer_polars_series", True),
-#         ("non_numeric_polars_series", False),
-#         ("date_pd_series", False),
-#         ("date_pandas_series", False),
-#         ("date_polars_series", False),
-#         ("date_numpy_array", False),
-#         ("date_tuple", False),
-#         ("date_as_string_pandas_series", False),
-#         ("date_as_string_polars_series", False),
-#         ("date_as_string_numpy_array", False),
-#         ("date_as_categorical_pandas_series", False),
-#         ("object_polars_series", False),
-#     ]
-# )
-# def test_get_column_dtype(expected, object_polars_series):
-#     # Use the object_polars_series fixture to perform tests on the series
-#     assert get_column_dtype(object_polars_series) == expected
 
 
 @pytest.mark.parametrize(
@@ -372,10 +329,9 @@ def text_polars_series():
         ("categorical_polars_series", False),
         ("text_pandas_series", False),
         ("text_polars_series", False),
-        # ("object_polars_series", False),
     ],
 )
-def test_is_numeric(request, series_name, expected):
+def test_is_numeric(request: pytest.FixtureRequest, series_name: str, expected: bool):
     s = request.getfixturevalue(series_name)
 
     if expected:
@@ -388,7 +344,7 @@ def test_is_numeric(request, series_name, expected):
         ), f"Expected is_numeric([{series_name}]) to return {expected}"
 
 
-## Test for is_integer
+# Test for is_integer
 @pytest.mark.parametrize(
     "series_name, expected",
     [
@@ -424,10 +380,9 @@ def test_is_numeric(request, series_name, expected):
         ("categorical_polars_series", False),
         ("text_pandas_series", False),
         ("text_polars_series", False),
-        # ("object_polars_series", False),
     ],
 )
-def test_is_integer(request, series_name, expected):
+def test_is_integer(request: pytest.FixtureRequest, series_name: str, expected: bool):
     s = request.getfixturevalue(series_name)
 
     if expected:
@@ -440,7 +395,7 @@ def test_is_integer(request, series_name, expected):
         ), f"Expected is_integer([{series_name}]) to return {expected}"
 
 
-## Test for is_binary
+# Test for is_binary
 @pytest.mark.parametrize(
     "series_name, expected",
     [
@@ -476,10 +431,9 @@ def test_is_integer(request, series_name, expected):
         ("categorical_polars_series", False),
         ("text_pandas_series", False),
         ("text_polars_series", False),
-        # ("object_polars_series", False),
     ],
 )
-def test_is_binary(request, series_name, expected):
+def test_is_binary(request: pytest.FixtureRequest, series_name: str, expected: bool):
     s = request.getfixturevalue(series_name)
 
     if expected:
@@ -490,7 +444,7 @@ def test_is_binary(request, series_name, expected):
         ), f"Expected is_binary([{series_name}]) to return {expected}"
 
 
-## Test for is_datetime
+# Test for is_datetime
 @pytest.mark.parametrize(
     "series_name, expected",
     [
@@ -522,10 +476,9 @@ def test_is_binary(request, series_name, expected):
         ("categorical_polars_series", False),
         ("text_pandas_series", False),
         ("text_polars_series", False),
-        # ("object_polars_series", False),
     ],
 )
-def test_is_datetime(request, series_name, expected):
+def test_is_datetime(request: pytest.FixtureRequest, series_name: str, expected: bool):
     s = request.getfixturevalue(series_name)
 
     if expected:
@@ -538,7 +491,7 @@ def test_is_datetime(request, series_name, expected):
         ), f"Expected is_datetime([{series_name}]) to return {expected}"
 
 
-## Test for is_categorical
+# Test for is_categorical
 @pytest.mark.parametrize(
     "series_name, expected",
     [
@@ -570,10 +523,11 @@ def test_is_datetime(request, series_name, expected):
         ("categorical_polars_series", True),
         ("text_pandas_series", True),
         ("text_polars_series", True),
-        # ("object_polars_series", True),
     ],
 )
-def test_is_categorical(request, series_name, expected):
+def test_is_categorical(
+    request: pytest.FixtureRequest, series_name: str, expected: bool
+):
     s = request.getfixturevalue(series_name)
 
     if expected:
@@ -586,7 +540,7 @@ def test_is_categorical(request, series_name, expected):
         ), f"Expected is_categorical([{series_name}]) to return {expected}"
 
 
-## FINALLY, test the function
+# FINALLY, test the function
 @pytest.mark.parametrize(
     "series_name, expected",
     [
@@ -618,10 +572,11 @@ def test_is_categorical(request, series_name, expected):
         ("categorical_polars_series", "categorical"),
         ("text_pandas_series", "categorical"),
         ("text_polars_series", "categorical"),
-        # ("object_polars_series", True),
     ],
 )
-def test_get_column_dtype2(request, series_name, expected):
+def test_get_column_dtype2(
+    request: pytest.FixtureRequest, series_name: str, expected: str
+):
     s = request.getfixturevalue(series_name)
 
     assert (

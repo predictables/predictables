@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd  # type: ignore
+import pandas as pd
 import pytest
 
 from predictables.univariate.src.plots._density_plot import _annotate_mean_median
@@ -151,9 +151,3 @@ def test_edge_cases(feature, target):
         "The function should raise a ValueError when the feature or target series "
         f"contain NaN values, but raised {err.value}"
     )
-
-
-# def test_invalid_inputs():
-#     fig, ax = plt.subplots()
-#     with pytest.raises(TypeError):
-#         _annotate_mean_median("not an ax", "not a series", "also not a series")

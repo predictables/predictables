@@ -2,10 +2,10 @@ from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd  # type: ignore
+import pandas as pd
 import polars as pl
 from matplotlib.axes import Axes
-from scipy.spatial.distance import jensenshannon as js_divergence  # type: ignore
+from scipy.spatial.distance import jensenshannon as js_divergence
 
 from predictables.univariate.src.plots.util import binary_color, plot_label
 from predictables.util import filter_by_cv_fold, get_column_dtype, to_pd_s
@@ -109,7 +109,7 @@ def cdf_plot_matplotlib(
     ax0 = cdf_plot_matplotlib_levels(
         x=x,
         plot_by=plot_by,
-        x_label=(plot_label(x_label) if x_label is not None else plot_label(_name)),  # type: ignore
+        x_label=(plot_label(x_label) if x_label is not None else plot_label(_name)),
         y_label=(
             y_label
             if y_label is not None
@@ -124,7 +124,7 @@ def cdf_plot_matplotlib(
         x=x,
         plot_by=plot_by,
         cv_folds=cv_folds,
-        x_label=(plot_label(x_label) if x_label is not None else plot_label(_name)),  # type: ignore
+        x_label=(plot_label(x_label) if x_label is not None else plot_label(_name)),
         y_label=(
             y_label
             if y_label is not None
@@ -139,21 +139,17 @@ def cdf_plot_matplotlib(
     if x_label is not None:
         ax0.set_xlabel(plot_label(x_label))
     else:
-        ax0.set_xlabel(plot_label(_name))  # type: ignore
+        ax0.set_xlabel(plot_label(_name))
     if y_label is not None:
         ax0.set_ylabel(y_label)
     else:
         ax0.set_ylabel("Empirical Cumulative Distribution Function")
 
-    # js_divergence_test = jenson_shannon_divergence()
-
-    # js_divergence_annotation = js_divergence_annotation()
-
     # Add horizontal line at 0 and 1
     ax0.axhline(0, color="black", linestyle="--", linewidth=1, label="_nolegend_")
     ax0.axhline(1, color="black", linestyle="--", linewidth=1, label="_nolegend_")
 
-    title = create_title(_name, plot_by.name if plot_by.name is not None else "plot_by")  # type: ignore
+    title = create_title(_name, plot_by.name if plot_by.name is not None else "plot_by")
     ax0.set_title(title)
 
     plt.legend(
@@ -210,10 +206,10 @@ def cdf_plot_matplotlib_levels(
 
     # For each level of plot_by, plot the cdf of x, conditional on plot_by
     for level in plot_by.drop_duplicates().sort_values().values:
-        label = plot_label(_plotby_name)  # type: ignore
+        label = plot_label(_plotby_name)
         label += f" = {level}"
         x_cdf = calculate_cdf(x[plot_by == level])
-        ax_ = x_cdf.plot.line(ax=ax_, label=label, color=binary_color(level), **kwargs)  # type: ignore
+        ax_ = x_cdf.plot.line(ax=ax_, label=label, color=binary_color(level), **kwargs)
 
     if x_label is not None:
         ax_.set_xlabel(x_label)
@@ -271,7 +267,7 @@ def cdf_plot_matplotlib_levels_cv(
         ax_ = ax
 
     # For each level of plot_by, plot the cdf of x, conditional on plot_by
-    for level in plot_by.drop_duplicates().sort_values().values:  # type: ignore
+    for level in plot_by.drop_duplicates().sort_values().values:
         if cv_folds is not None:
             for fold in cv_folds.drop_duplicates().sort_values().values:
                 x_cdf = calculate_cdf(
@@ -288,7 +284,7 @@ def cdf_plot_matplotlib_levels_cv(
     (
         ax_.set_xlabel(x_label)
         if x_label is not None
-        else ax_.set_xlabel(x.name if x.name is not None else "x")  # type: ignore
+        else ax_.set_xlabel(x.name if x.name is not None else "x")
     )
     (
         ax_.set_ylabel(y_label)
@@ -377,10 +373,10 @@ def calculate_cdf(x: Union[pl.Series, pd.Series, np.ndarray]) -> pd.Series:
         raise ValueError("The array must not contain NaNs.")
     # Can't contain infs:
     if get_column_dtype(x) == "continuous":
-        if np.isinf(x.values).any():  # type: ignore
+        if np.isinf(x.values).any():
             raise ValueError("The array must not contain infs.")
     # Can't contain non-numeric values:
-    if not np.issubdtype(x, np.number):  # type: ignore
+    if not np.issubdtype(x, np.number):
         raise ValueError("The array must not contain non-numeric values.")
     # Calculate the CDF
     x = x.sort_values()

@@ -2,7 +2,7 @@ import datetime
 from typing import Dict, List, Optional, Union
 
 import numpy as np
-import pandas as pd  # type: ignore
+import pandas as pd
 import polars as pl
 
 from predictables.util import validate_lf

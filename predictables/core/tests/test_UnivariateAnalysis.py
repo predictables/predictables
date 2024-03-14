@@ -1,4 +1,4 @@
-import pandas as pd  # type: ignore
+import pandas as pd
 import pytest
 
 from predictables.core.src._UnivariateAnalysis import UnivariateAnalysis

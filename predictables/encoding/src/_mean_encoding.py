@@ -117,7 +117,6 @@ def mean_encoding_with_ratio_lazy(
     n_cats = df.select(pl.col(cat_col)).n_unique()
 
     # Laplace label for new column name - only when laplace_alpha > 0 and
-    # keep_cat_col = True
     laplace_label = f"(laplace_alpha={laplace_alpha})" if laplace_alpha > 0 else ""
 
     # polars>=0.20.5 requires .len() instead of .count()

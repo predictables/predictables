@@ -149,11 +149,3 @@ def test_segment_features_boundary_conditions(
     assert (
         [seg.n_features for seg in segments] == expected_segment_sizes
     ), f"Incorrect segment sizes for boundary conditions: expected {expected_segment_sizes} but got {[seg.n_features for seg in segments]}"
-
-
-# def test_segment_features_uniqueness(sample_features):
-#     duplicate_features = (
-#         sample_features[:10] + sample_features[:10]
-#     )  # Intentionally creating duplicates
-#     with pytest.raises(ValueError):
-#         segment_features_for_report(duplicate_features, max_per_segment=5)

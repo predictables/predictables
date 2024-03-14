@@ -41,30 +41,6 @@ mock_file_contents = {
 }
 
 
-# # Testing read_file_code function
-# @pytest.mark.parametrize(
-#     "file_name, expected_output",
-#     [
-#         ("valid_python.py", mock_file_contents["valid_python.py"]),
-#         (
-#             "valid_python_2_docstrings.py",
-#             mock_file_contents["valid_python_2_docstrings.py"],
-#         ),
-# (
-#     "valid_python_3_func_2_docstrings.py",
-#     mock_file_contents["valid_python_3_func_2_docstrings.py"],
-# ),
-# ("empty_file.py", mock_file_contents["empty_file.py"]),
-# ("non_python.txt", mock_file_contents["non_python.txt"]),
-#     ],
-# )
-# def test_read_file_code(file_name, expected_output):
-#     with patch("builtins.open", mock_open(read_data=mock_file_contents[file_name])):
-#         assert (
-#             read_file_code(file_name) == expected_output
-#         ), f"Expected output: {expected_output}, Actual output: {read_file_code(file_name)}"
-
-
 @pytest.mark.parametrize(
     "file_name", [("non_existent_file.py"), ("incorrect/path/to/file.py")]
 )
@@ -79,69 +55,13 @@ def test_read_file_code_invalid(file_name):
 
 # Testing get_functions_from_file function
 @pytest.mark.parametrize(
-    "file_name, expected_output",
-    [
-        # ("valid_python.py", ["example_function", "another_function"]),
-        # ("valid_python_2_docstrings.py", ["example_function", "another_function"]),
-        # (
-        #     "valid_python_3_func_2_docstrings.py",
-        #     ["example_function", "a_second_function_no_ds", "a_third_function_with_ds"],
-        # ),
-        ("empty_file.py", []),
-        ("no_functions.py", []),
-    ],
+    "file_name, expected_output", [("empty_file.py", []), ("no_functions.py", [])]
 )
 def test_get_functions_from_file(file_name, expected_output):
     with patch("builtins.open", mock_open(read_data=mock_file_contents[file_name])):
         assert (
             get_functions_from_file(file_name) == expected_output
         ), f"Expected output: {expected_output}, Actual output: {get_functions_from_file(file_name)}"
-
-
-# Testing get_function_docstring function
-# @pytest.mark.parametrize(
-#     "file_name, function_name, expected_output",
-#     [
-#         ("valid_python.py", "example_function", "Example function docstring."),
-#         ("valid_python.py", "non_existent_function", ""),
-# (
-#     "valid_python_2_docstrings.py",
-#     "example_function",
-#     "Example function docstring.",
-# ),
-# (
-#     "valid_python_2_docstrings.py",
-#     "another_function",
-#     "Example function docstring 2.",
-# ),
-# (
-#     "valid_python_3_func_2_docstrings.py",
-#     "example_function",
-#     "Example function docstring.",
-# ),
-# (
-#     "valid_python_3_func_2_docstrings.py",
-#     "a_second_function_no_ds",
-#     "",
-# ),
-# (
-#     "valid_python_3_func_2_docstrings.py",
-#     "a_third_function_with_ds",
-#     "Example function docstring 2.",
-# ),
-#         ("empty_file.py", "example_function", ""),
-#         ("no_functions.py", "example_function", ""),
-#     ],
-# )
-# def test_get_function_docstring(file_name, function_name, expected_output):
-#     """
-#     Test get_function_docstring function. Ensure correct docstring is returned for
-#     valid function, and IndexError is raised for invalid function.
-#     """
-#     with patch("builtins.open", mock_open(read_data=mock_file_contents[file_name])):
-#         assert (
-#             get_function_docstring(function_name, file_name) == expected_output
-#         ), f"Expected output: {expected_output}, Actual output: {get_function_docstring(function_name, file_name)}"
 
 
 # Testing get_files_from_folder function

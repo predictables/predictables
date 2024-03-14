@@ -25,7 +25,6 @@ from predictables.univariate.src.plots.util._binary_color import binary_color
         ("N", "blue"),
         ("NO", "blue"),
         ("nO", "blue"),
-        # Oranges: always +1
         (1, "orange"),
         (1.0, "orange"),
         ("1", "orange"),

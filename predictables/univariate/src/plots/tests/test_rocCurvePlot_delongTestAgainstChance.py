@@ -3,7 +3,7 @@ import os
 from typing import Tuple
 
 import numpy as np
-import pandas as pd  # type: ignore
+import pandas as pd
 import pytest
 from dotenv import load_dotenv
 from sklearn.metrics import roc_auc_score  # type: ignore

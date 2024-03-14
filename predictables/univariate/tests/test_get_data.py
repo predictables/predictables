@@ -1,5 +1,4 @@
-import pandas as pd  # type: ignore
-import pandas.testing as pdt  # type: ignore
+import pandas.testing as pdt
 import pytest
 
 from predictables.univariate.src._get_data import (
@@ -13,10 +12,9 @@ from predictables.univariate.src._get_data import (
 @pytest.fixture
 def sample_dataframe():
     # Create a sample dataframe for testing
-    df = pd.DataFrame(
+    return pd.DataFrame(
         {"fold_col": [1, 2, 3, 3, 4, 5], "data": ["A", "B", "C", "c1", "D", "E"]}
     )
-    return df
 
 
 @pytest.fixture
@@ -81,7 +79,6 @@ def test_filter_df_for_cv_test_valid_input(sample_dataframe):
 def test_filter_df_for_cv_valid_input(sample_dataframe, data, fold_col, values):
     # Test with valid input
     fold = 3
-    # fold_col = "fold_col"
     expected_output = pd.DataFrame(
         {"fold_col": [int(x) for x in fold_col.split()], "data": values.split()}
     )

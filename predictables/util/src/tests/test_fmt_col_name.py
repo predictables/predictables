@@ -10,7 +10,7 @@ from predictables.core.src._UnivariateAnalysis import fmt_col_name
         ("Net-Profit (After Tax)", "net_profit_after_tax"),
     ],
 )
-def test_fmt_col_name(input, output):
+def test_fmt_col_name(input: str, output: str):
     result = fmt_col_name(input)
 
     assert result == output, f"Expected: {output} but got {result}"

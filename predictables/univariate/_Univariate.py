@@ -2,7 +2,7 @@ from typing import Any, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd  # type: ignore
+import pandas as pd
 import polars as pl
 from matplotlib.axes import Axes
 from sklearn.preprocessing import MinMaxScaler, StandardScaler  # type: ignore
@@ -94,11 +94,8 @@ class Univariate(Model):
     fold_name: str
     folds: Optional[pd.Series]
 
-    # df_all: pd.DataFrame
-
     normalization_obj: Optional[Union[MinMaxScaler, StandardScaler]]
 
-    # trunk-ignore-all(sourcery)
     def __init__(
         self,
         df_: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
@@ -631,30 +628,7 @@ class Univariate(Model):
             )
 
         return (
-            rpt
-            # rpt.h2("Univariate Report")
-            # .h3(
-            #     f"{plot_label(self.feature_name, incl_bracket=False)} - "
-            #     "Kernel Density Plot"
-            # )
-            # .plot(density)
-            # .spacer(0.125)
-            # .caption(
-            #     "This plot shows the Gaussian kernel density for each level of the "
-            #     "target variable, both in total and for each fold. "
-            #     "The x-axis represents the feature variable, and the y-axis represents "
-            #     "the density of the target variable. "
-            #     "The cross-validation folds are included in slightly washed-out colors "
-            #     "to help understand the variability of the data. "
-            #     "There are annotations with the results of a t-test for the difference "
-            #     "in means between the feature variable at each level of the target "
-            #     "variable. "
-            #     "The annotations corresponding to the color of the target variable "
-            #     "level show the mean/median ratio to help understand differences in "
-            #     "skewness between the levels of the target variable."
-            # )
-            # .page_break()
-            .h2("Univariate Report")
+            rpt.h2("Univariate Report")
             .h3(
                 f"{plot_label(self.feature_name, incl_bracket=False)} "
                 "- Empirical CDF Plot"

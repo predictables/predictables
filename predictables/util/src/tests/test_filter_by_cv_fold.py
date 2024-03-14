@@ -1,4 +1,4 @@
-import pandas as pd  # type: ignore
+import pandas as pd
 import polars as pl
 import polars.testing as pltest
 import pytest
@@ -43,21 +43,28 @@ def pd_series():
 @pytest.mark.parametrize("dtype2", ["pandas", "polars", "numpy"])
 @pytest.mark.parametrize("output_type", ["pandas", "polars"])
 def test_filter_by_cv_fold_ts(
-    pd_cv_fold_data_ts, pd_series, f, train_test, expected, dtype, dtype2, output_type
+    pd_cv_fold_data_ts: pd.Series,
+    pd_series: pd.Series,
+    f: int,
+    train_test: str,
+    expected: pd.Series,
+    dtype: str,
+    dtype2: str,
+    output_type: str,
 ):
     if dtype == "pandas":
         s = pd_series
     elif dtype == "polars":
-        s = pl.from_pandas(pd_series)
+        s = pd_series.to_pandas()
     elif dtype == "numpy":
-        s = pd_series.values
+        s = pd_series.to_numpy()  # type: ignore[assignment]
 
     if dtype2 == "pandas":
         folds = pd_cv_fold_data_ts
     elif dtype2 == "polars":
-        folds = pl.from_pandas(pd_cv_fold_data_ts)
+        folds = pl.from_pandas(pd_cv_fold_data_ts)  # type: ignore[assignment]
     elif dtype2 == "numpy":
-        folds = pd_cv_fold_data_ts.values
+        folds = pd_cv_fold_data_ts.to_numpy()  # type: ignore[assignment]
 
     result = cvf.filter_by_cv_fold(
         s,
@@ -68,7 +75,7 @@ def test_filter_by_cv_fold_ts(
         return_type=output_type,
     )
     if output_type == "pandas":
-        result = result.reset_index(drop=True)
+        result = result.reset_index(drop=True)  # type: ignore[assignment]
         result.name = None
     expected_output_type = pd.Series if output_type == "pandas" else pl.Series
     assert isinstance(
@@ -77,11 +84,12 @@ def test_filter_by_cv_fold_ts(
 
     if output_type == "pandas":
         pd.testing.assert_series_equal(
-            result.reset_index(drop=True), expected.reset_index(drop=True)
+            result.reset_index(drop=True),  # type: ignore[call-overload]
+            expected.reset_index(drop=True),  # type: ignore[call-overload]
         )
     else:
         expected_pl = to_pl_s(expected)
-        pltest.assert_series_equal(result, expected_pl)
+        pltest.assert_series_equal(result, expected_pl)  # type: ignore[call-overload]
 
 
 @pytest.mark.parametrize(
@@ -107,28 +115,28 @@ def test_filter_by_cv_fold_ts(
 @pytest.mark.parametrize("dtype2", ["pandas", "polars", "numpy"])
 @pytest.mark.parametrize("output_type", ["pandas", "polars"])
 def test_filter_by_cv_fold_no_ts(
-    pd_cv_fold_data_no_ts,
-    pd_series,
-    f,
-    train_test,
-    expected,
-    dtype,
-    dtype2,
-    output_type,
+    pd_cv_fold_data_no_ts: pd.Series,
+    pd_series: pd.Series,
+    f: int,
+    train_test: str,
+    expected: pd.Series,
+    dtype: str,
+    dtype2: str,
+    output_type: str,
 ):
     if dtype == "pandas":
         s = pd_series
     elif dtype == "polars":
         s = pl.from_pandas(pd_series)
     elif dtype == "numpy":
-        s = pd_series.values
+        s = pd_series.to_numpy()
 
     if dtype2 == "pandas":
         folds = pd_cv_fold_data_no_ts
     elif dtype2 == "polars":
         folds = pl.from_pandas(pd_cv_fold_data_no_ts)
     elif dtype2 == "numpy":
-        folds = pd_cv_fold_data_no_ts.values
+        folds = pd_cv_fold_data_no_ts.to_numpy()
 
     result = cvf.filter_by_cv_fold(
         s,

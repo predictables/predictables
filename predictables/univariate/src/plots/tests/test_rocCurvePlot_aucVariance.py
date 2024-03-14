@@ -2,7 +2,7 @@ import logging
 from typing import Tuple
 
 import numpy as np
-import pandas as pd  # type: ignore
+import pandas as pd
 import pytest
 from sklearn.metrics import roc_auc_score  # type: ignore
 
@@ -86,25 +86,6 @@ def test_empirical_auc_variance_correct_calculation(
     assert (
         np.abs(np.round(var_auc, 2) - np.round(expected_variance, 2)) <= 0.01
     ), f"Expected variance: {expected_variance}, actual variance: {var_auc}"
-
-
-# # Test handling of single-class predictions within folds
-# def test_single_class_in_fold():
-#     """Test that the function raises an error when a fold contains only one class."""
-#     y = pd.Series([1] * 50 + [0] * 50)
-#     yhat_proba = pd.Series(np.linspace(0, 1, 100))
-#     fold = pd.Series([1] * 25 + [2] * 75)  # First fold has only one class
-#     with pytest.raises(ValueError) as excinfo:
-#         _empirical_auc_variance(y, yhat_proba, fold, False)
-#     assert "only one class" in str(
-#         excinfo.value
-#     ), f"Error message: {excinfo.value}, expected to contain 'only one class'"
-#     fold = pd.Series([1] * 75 + [2] * 25)  # Second fold has only one class
-#     with pytest.raises(ValueError) as excinfo:
-#         _empirical_auc_variance(y, yhat_proba, fold, False)
-#     assert "only one class" in str(
-#         excinfo.value
-#     ), f"Error message: {excinfo.value}, expected to contain 'only one class'"
 
 
 @pytest.mark.parametrize(

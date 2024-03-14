@@ -1,7 +1,7 @@
 from typing import List
 
 import numpy as np
-import pandas as pd  # type: ignore
+import pandas as pd
 import polars as pl
 import pytest
 
@@ -75,7 +75,6 @@ def test_segment_features_non_list():
     ],
 )
 @pytest.mark.parametrize("max_per_segment", [1, 3, 4, 7])
-# @pytest.mark.parametrize('start,end', [(0, 3), (3, 6), (6, 9), (9, 12)])
 def test_segment_features_for_report(features, max_per_segment):
     segments = segment_features_for_report(features, max_per_segment)
     assert isinstance(segments, list), f"segments is not a list: {segments}"
@@ -84,8 +83,6 @@ def test_segment_features_for_report(features, max_per_segment):
         assert (
             segment.n_features <= max_per_segment
         ), f"segment has more features than expected: {segment.n_features} > {max_per_segment}"
-        # assert segment.start == start, f"segment start is not as expected: {segment.start} != {start}"
-        # assert segment.end == end, f"segment end is not as expected: {segment.end} != {end}"
     assert (
         sum([segment.n_features for segment in segments]) == len(features)
     ), f"sum of segment features is not equal to total features: {sum([segment.n_features for segment in segments])} != {len(features)}"

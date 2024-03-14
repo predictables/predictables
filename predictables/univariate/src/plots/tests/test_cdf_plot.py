@@ -67,10 +67,6 @@ def test_calculate_cdf(x, expected):
             np.array(["a", "b", "c", "d"]),
             "The array must not contain non-numeric values.",
         ),
-        # (
-        #     np.array([None, None, None, None, None, None]),
-        #     "The array must not contain non-numeric values.",
-        # ),
         (
             np.array(["1", "2", "3", "4", "5", ""]),
             "The array must not contain non-numeric values.",
@@ -79,10 +75,6 @@ def test_calculate_cdf(x, expected):
             np.array(["1", "2", "3", "4", "5", " "]),
             "The array must not contain non-numeric values.",
         ),
-        # (
-        #     np.array(["1", "2", "3", "4", "5", "nan"]),
-        #     "The array must not contain non-numeric values.",
-        # ),
         (
             np.array(["1", "2", "3", "4", "5", "6.0"]),
             "The array must not contain non-numeric values.",

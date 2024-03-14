@@ -4,7 +4,7 @@ from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd  # type: ignore
+import pandas as pd
 import plotly.graph_objects as go  # type: ignore
 from matplotlib.axes import Axes
 from scipy.stats import norm  # type: ignore
@@ -85,18 +85,6 @@ def roc_curve_plot(
         )
     elif backend == "plotly":
         raise NotImplementedError("Plotly backend not implemented yet.")
-        # return roc_curve_plot_plotly(
-        #     y=y,
-        #     yhat_proba=yhat_proba,
-        #     fold=fold,
-        #     figsize=figsize,
-        #     n_bins=n_bins,
-        #     cv_alpha=cv_alpha,
-        #     ax=ax,
-        #     coef=coef,
-        #     se=se,
-        #     pvalue=pvalue,
-        # )
     else:
         raise ValueError(
             f"Invalid backend (expecting either 'matplotlib' or 'plotly'): {backend}"

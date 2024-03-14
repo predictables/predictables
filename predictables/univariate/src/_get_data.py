@@ -1,6 +1,6 @@
 from typing import List, Optional, Union
 
-import pandas as pd  # type: ignore
+import pandas as pd
 import polars as pl
 
 from predictables.util import filter_df_by_cv_fold, get_unique, to_pd_df

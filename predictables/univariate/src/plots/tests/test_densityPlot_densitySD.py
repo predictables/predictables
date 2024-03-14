@@ -1,5 +1,5 @@
 import numpy as np
-import pandas as pd  # type: ignore
+import pandas as pd
 import polars as pl
 import pytest
 from scipy.stats import gaussian_kde  # type: ignore
@@ -132,11 +132,3 @@ def test_calculate_single_density_sd_basic(
         "Expected at least 90% of the smoothed SD to be within 2 SD, but got "
         f"{(sd_smooth <= sd_smooth_2).mean()}"
     )
-
-
-# def test_calculate_density_sd_cv_fold_none():
-#     x = pd.Series(np.random.randn(10))
-#     by = pd.Series(np.random.choice(["A", "B"], size=10))
-
-#     with pytest.raises(ValueError):
-#         calculate_density_sd

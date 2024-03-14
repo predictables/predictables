@@ -6,26 +6,23 @@ import uuid
 import warnings
 from typing import List, Optional, Union
 
-import matplotlib.pyplot as plt  # type: ignore
-import pandas as pd  # type: ignore
-import polars as pl  # type: ignore
-import pygments  # type: ignore
-from reportlab.lib.colors import black, lightgrey, white  # type: ignore
-from reportlab.lib.enums import TA_CENTER  # type: ignore
-from reportlab.lib.pagesizes import inch, letter  # type: ignore
-from reportlab.lib.styles import (
-    ParagraphStyle,  # type: ignore
-    getSampleStyleSheet,  # type: ignore
-)
+import matplotlib.pyplot as plt
+import pandas as pd
+import polars as pl
+import pygments
+from reportlab.lib.colors import black, lightgrey, white
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.pagesizes import inch, letter
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.platypus import (
-    Flowable,  # type: ignore
-    Image,  # type: ignore
-    PageBreak,  # type: ignore
-    Paragraph,  # type: ignore
-    SimpleDocTemplate,  # type: ignore
-    Spacer,  # type: ignore
-    Table,  # type: ignore
-    TableStyle,  # type: ignore
+    Flowable,
+    Image,
+    PageBreak,
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
 )
 
 from predictables.util.src._to_pd import to_pd_df

@@ -176,16 +176,12 @@ class DynamicRollingMean(DynamicRollingSum):
         # Build the numerator and denominator columns, and join them to the
         # original LazyFrame
         self._lf.collect()
-        print(self._lf.head().collect())
         self.build_numerator_col(self._lf)
         self._lf.collect()
-        print(self._lf.head().collect())
         self.build_denominator_col(self._lf)
         self._lf.collect()
-        print(self._lf.head().collect())
 
         # Calculate the rolling mean
-        # mean_col = f"{self._x_name}_mean"
         self._lf = self._lf.with_columns(
             [
                 pl.when(pl.col("den") == 0)

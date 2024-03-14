@@ -1,5 +1,5 @@
 import numpy as np
-import pandas as pd  # type: ignore
+import pandas as pd
 import polars as pl
 import pytest
 
@@ -8,32 +8,39 @@ from predictables.util.src._graph_min_max import graph_min_max
 
 @pytest.fixture
 def x_pd():
-    np.random.seed(42)
-    return pd.Series(np.random.randn(100))
+    rg = np.random.Generator(np.random.PCG64(42))
+    return pd.Series(np.sort(rg.normal(size=1000)))
 
 
 @pytest.fixture
-def x_np(x_pd):
-    return x_pd.values
+def x_np(x_pd: pd.Series):
+    return x_pd.to_numpy()
 
 
 @pytest.fixture
-def x_pl(x_pd):
+def x_pl(x_pd: pd.Series):
     return pl.from_pandas(x_pd)
 
 
 @pytest.mark.parametrize("x_type", ["pd", "np", "pl"])
 @pytest.mark.parametrize("x_min", [None, 0, -1, -23])
 @pytest.mark.parametrize("x_max", [None, 5])
-def test_calculate_single_density_sd_basic(x_pd, x_np, x_pl, x_max, x_min, x_type):
+def test_calculate_single_density_sd_basic(
+    x_pd: pd.Series,
+    x_np: np.ndarray,
+    x_pl: pl.Series,
+    x_max: float,
+    x_min: float,
+    x_type: str,
+):
     """Test that default min and max are correctly identified from the data."""
     # Set x to the correct type
     if x_type == "pd":
         x = x_pd
     elif x_type == "np":
-        x = x_np
+        x = x_np  # type: ignore[assignment]
     elif x_type == "pl":
-        x = x_pl
+        x = x_pl  # type: ignore[assignment]
 
     # Get the min and max
     min_, max_ = graph_min_max(x, x_min, x_max)
@@ -60,8 +67,6 @@ def test_calculate_single_density_sd_basic(x_pd, x_np, x_pl, x_max, x_min, x_typ
     assert isinstance(
         max_, (int, float)
     ), f"max_ ({max_}) should be a float or an integer, not {type(max_)}"
-    assert min_ == min_, f"min_ ({min_}) should not be NaN"
-    assert max_ == max_, f"max_ ({max_}) should not be NaN"
 
     assert isinstance(graph_min_max(x, x_min, x_max), tuple), (
         "The function should return a tuple, "
@@ -81,7 +86,7 @@ def test_calculate_single_density_sd_basic(x_pd, x_np, x_pl, x_max, x_min, x_typ
     )
 
 
-def test_min_gt_max(x_pd):
+def test_min_gt_max(x_pd: pd.Series):
     x = x_pd
     with pytest.raises(ValueError) as error:
         graph_min_max(x, 1, 0)

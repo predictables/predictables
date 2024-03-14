@@ -55,7 +55,8 @@ ignore = [
     "ANN002",
     "ANN003",
     "PT011",
-    "RET505"
+    "RET505",
+    "S501"
 ]
 
 # On top of the default `select` (`E`, `F`), enable:
@@ -174,7 +175,8 @@ unfixable = ["F401"] # Disable fix for unused imports (`F401`).
 
 [lint.per-file-ignores]
 "__init__.py" = ["E402", "I001", "D104"]
-"**/{tests,docs,tools}/*" = ["E402","I001","D100", "D103", "ANN201"]
+"**/{tests,docs,tools}/*" = ["E402","I001","D100", "D103", "ANN201", "PLR2004"]
+"*.ipynb" = ["T201", "PLR2004"]
 
 [lint.extend-per-file-ignores]
 # Ignore `E402` and `F401` in all `__init__.py` files.
