@@ -1,14 +1,14 @@
-from typing import Union
+from __future__ import annotations
 
 import numpy as np
 import pandas as pd
 import polars as pl
 
 
-def to_pl_df(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]) -> pl.DataFrame:
-    """
-    Convert to a polars dataframe.
-    """
+def to_pl_df(
+    df: pd.DataFrame | pl.DataFrame | pl.LazyFrame | pd.Series | pl.Series | np.ndarray,
+) -> pl.DataFrame:
+    """Convert to a polars dataframe."""
     if isinstance(df, pd.DataFrame):
         return pl.from_pandas(df)
     elif isinstance(df, pl.DataFrame):
@@ -25,10 +25,10 @@ def to_pl_df(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]) -> pl.DataFram
         raise TypeError(f"df must be a pandas or polars dataframe. Got {type(df)}.")
 
 
-def to_pl_lf(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]) -> pl.LazyFrame:
-    """
-    Convert to a polars lazy frame.
-    """
+def to_pl_lf(
+    df: pd.DataFrame | pl.DataFrame | pl.LazyFrame | pd.Series | pl.Series | np.ndarray,
+) -> pl.LazyFrame:
+    """Convert to a polars lazy frame."""
     if isinstance(df, pd.DataFrame):
         return pl.from_pandas(df).lazy()
     elif isinstance(df, pl.DataFrame):
@@ -45,10 +45,8 @@ def to_pl_lf(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]) -> pl.LazyFram
         raise TypeError("df must be a pandas or polars dataframe.")
 
 
-def to_pl_s(s: Union[pd.Series, pl.Series]) -> pl.Series:
-    """
-    Convert to a polars series.
-    """
+def to_pl_s(s: pd.Series | pl.Series) -> pl.Series:
+    """Convert to a polars series."""
     if isinstance(s, pd.Series):
         if s.dtype.name == "category":
             df = pl.from_pandas(s.to_frame()).lazy()

@@ -23,4 +23,4 @@ from ._graph_min_max import graph_min_max  # F401
 from ._fmt_col_name import fmt_col_name  # F401
 from ._col_name_for_report import col_name_for_report  # F401
 
-from .validation import *  # noqa F401
+from .validation import *  # F401

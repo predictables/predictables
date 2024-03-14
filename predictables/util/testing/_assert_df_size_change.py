@@ -1,9 +1,13 @@
+from __future__ import annotations
+
 import typing
 
 import pandas as pd
 import polars as pl
 
 from predictables.util.src._to_pl import to_pl_df
+
+COLLAPSE_COLUMNS_THRESHOLD: int = 10
 
 
 def assert_df(func: typing.Callable, row: int = 0, col: int = 0) -> typing.Callable:
@@ -47,9 +51,13 @@ def assert_df(func: typing.Callable, row: int = 0, col: int = 0) -> typing.Calla
     2   3  6
     """
 
-    def wrapper(*args, **kwargs) -> pd.DataFrame | pl.DataFrame | pl.LazyFrame:
-        df = to_pl_df(args[0])
-        result = func(*args, **kwargs)
+    def wrapper(
+        df: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
+        df1: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
+    ) -> pd.DataFrame | pl.DataFrame | pl.LazyFrame:
+        df = to_pl_df(df)
+        df1 = to_pl_df(df1)
+        result = func(df, df1, row, col)
         assert_df_size_change(df, to_pl_df(result), row, col)
         return result
 
@@ -61,8 +69,9 @@ def assert_df_size_change(
     df1: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
     row: int = 0,
     col: int = 0,
-):
-    """
+) -> bool:
+    """Assert that the number of rows and columns in a dataframe have changed by the expected amount.
+
     This is a testing function that asserts that the number of rows and columns in
     a dataframe have changed by the expected amount. It is used to ensure that a
     unction that is supposed to add or remove rows and columns is working as expected,
@@ -120,10 +129,10 @@ def assert_df_size_change(
         )
 
         if col > 0:
-            if col > 10:
-                print(f"Added {col} columns.")
+            if col > COLLAPSE_COLUMNS_THRESHOLD:
+                print(f"Added {col} columns.")  # noqa: T201
             else:
-                print(f"Added columns:\n\n{set(df1.columns) - set(df.columns)}")
+                print(f"Added columns:\n\n{set(df1.columns) - set(df.columns)}")  # noqa: T201
 
         return True
     except AssertionError as e:
@@ -147,3 +156,4 @@ def assert_df_size_change(
             f"actual column change: {df1.shape[1] - df.shape[1]}\n\n"
             f"Likely due to: {due_to}\n\n{e}"
         )
+        return False

@@ -1,4 +1,4 @@
-from typing import Union
+from __future__ import annotations
 
 import numpy as np
 import pandas as pd
@@ -8,12 +8,12 @@ from predictables.util import to_pd_s
 
 
 def kl_divergence(
-    observed: Union[pd.Series, pl.Series, list, np.ndarray],
-    modeled: Union[pd.Series, pl.Series, list, np.ndarray],
+    observed: pd.Series | pl.Series | list | np.ndarray,
+    modeled: pd.Series | pl.Series | list | np.ndarray,
 ) -> float:
-    """
-    Calculate the KL divergence between two distributions. This function is
-    a wrapper for scipy.stats.entropy.
+    """Calculate the KL divergence between two distributions.
+
+    This function is a wrapper for scipy.stats.entropy.
 
     Parameters
     ----------
@@ -27,7 +27,7 @@ def kl_divergence(
     float
         KL divergence between the two distributions
     """
-    from scipy.stats import entropy  # type: ignore
+    from scipy.stats import entropy  # type: ignore[import-untyped]
 
     # Convert to pandas Series
     observed_ = to_pd_s(observed)

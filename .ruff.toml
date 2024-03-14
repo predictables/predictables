@@ -35,9 +35,9 @@ indent-width = 4
 
 # Assume Python 3.8
 target-version = "py38"
-fixable = ["ALL"]
 fix = true
 extend-include = ["*.ipynb"]
+
 
 [format]
 docstring-code-format = true     # Enable reformatting of code snippets in docstrings.
@@ -46,6 +46,17 @@ skip-magic-trailing-comma = true
 
 [lint]
 dummy-variable-rgx = "^_$" # Only ignore variables named "_"
+fixable = ["ALL"]
+ignore = [
+    "PT017",
+    "S101",
+    "PD901",
+    "F403",
+    "ANN002",
+    "ANN003",
+    "PT011",
+    "RET505"
+]
 
 # On top of the default `select` (`E`, `F`), enable:
 # flake8-bugbear (`B`)
@@ -119,7 +130,6 @@ extend-select = [
     "FLY",
     "NPY",
     "PERF",
-    "FURB",
     "RUF",
 ]
 extend-fixable = [
@@ -157,21 +167,19 @@ extend-fixable = [
     "FLY",
     "NPY",
     "PERF",
-    "FURB",
     "RUF",
 ]
-fixable = ["ALL"]
 unfixable = ["F401"] # Disable fix for unused imports (`F401`).
 
 
 [lint.per-file-ignores]
-"__init__.py" = ["E402"]
-"**/{tests,docs,tools}/*" = ["E402"]
+"__init__.py" = ["E402", "I001"]
+"**/{tests,docs,tools}/*" = ["E402","I001","D100", "D103"]
 
 [lint.extend-per-file-ignores]
 # Ignore `E402` and `F401` in all `__init__.py` files.
-"__init__.py" = ["E402", "F401"]
-"**/{tests,docs,tools}/*" = ["E402", "F401"]
+"__init__.py" = ["E402", "F401","I001"]
+"**/{tests,docs,tools}/*" = ["E402", "F401","I001"]
 
 [lint.flake8-import-conventions]
 # Declare the banned `from` imports. These may be imported using `import`, but not `from`.
@@ -209,3 +217,6 @@ convention = "numpy"
 [lint.pylint]
 # Maximum number of arguments for functions and methods
 max-args = 10 
+
+[lint.isort]
+split-on-trailing-comma=false
