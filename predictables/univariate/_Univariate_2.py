@@ -379,7 +379,7 @@ class Univariate(Model):
         else:
             ax1 = ax
 
-        ax1 = cdf_plot(
+        return cdf_plot(
             X,
             y,
             cv,
@@ -388,14 +388,12 @@ class Univariate(Model):
             figsize=self.figsize if figsize is None else figsize,
             **kwargs,
         )
-        return ax1
 
     def plot_roc_curve(
         self,
         y: Optional[Union[pd.Series, pl.Series]] = None,
         yhat: Optional[Union[pd.Series, pl.Series]] = None,
         cv: Optional[Union[pd.Series, pl.Series]] = None,
-        time_series_validation: bool = True,
         coef: Optional[float] = None,
         se: Optional[float] = None,
         pvalues: Optional[float] = None,
@@ -445,7 +443,6 @@ class Univariate(Model):
     def plot_density(
         self,
         data: str = "train",
-        feature_name: Optional[str] = None,
         ax: Optional[Axes] = None,
         figsize: Optional[Tuple[float, float]] = None,
         **kwargs,

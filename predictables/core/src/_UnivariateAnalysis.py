@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import os
 from typing import List, Optional, Union
@@ -147,11 +149,11 @@ class UnivariateAnalysis:
         time_series_validation: bool,
         cv_column_name: Optional[str] = None,
         cv_folds: Optional[pl.Series] = None,
-        right_skewness_threshold: float = 0.5,
-        left_skewness_threshold: float = -0.5,
     ):
-        """
-        Initializes the UnivariateAnalysis class with the dataset, features, and validation settings.
+        """Initialize the UnivariateAnalysis class.
+
+        Initializes the UnivariateAnalysis class with the dataset, features,
+        and validation settings.
 
         Parameters
         ----------

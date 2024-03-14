@@ -81,14 +81,14 @@ class DynamicRollingMean(DynamicRollingSum):
 
         # Define an inside function to use the validate_column decorator
         # @validate_column(self._lf, x_col)
-        def _set_denominator_col(self, denominator_col: str) -> "DynamicRollingSum":
+        def _set_denominator_col(self, denominator_col: str) -> "DynamicRollingSum":  # noqa: ANN001
             self.denominator_col = denominator_col
             return self
 
         self._denominator_col = denominator_col
         return self
 
-    def build_numerator_col(self, lf: pl.LazyFrame) -> None:
+    def build_numerator_col(self) -> None:
         """
         Build the numerator column for the rolling mean calculation, and return
         the `LazyFrame` with the numerator column built.
@@ -126,8 +126,9 @@ class DynamicRollingMean(DynamicRollingSum):
             .drop("rolling_value_list")
         )
 
-    def build_denominator_col(self, lf: pl.LazyFrame) -> None:
-        """
+    def build_denominator_col(self) -> None:
+        """Calculate the denominator column for the rolling mean calculation.
+
         Build the denominator column for the rolling mean calculation, and
         update the `LazyFrame` with the denominator column built.
 

@@ -1,4 +1,4 @@
-from typing import Union
+from __future__ import annotations
 
 import numpy as np
 import pandas as pd
@@ -7,11 +7,11 @@ import polars as pl
 from predictables.util.src._to_pd import to_pd_s
 
 
-def get_column_dtype(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> str:
-    """
-    Returns the dtype of the series as a string. The dtype is determined by
-    checking the series against a set of rules. The rules are applied in the
-    following order:
+def get_column_dtype(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> str:
+    """Return the dtype of a series as a string.
+
+    The dtype is determined by checking the series against a set of rules.
+    The rules are applied in the following order:
 
     1. If the series is numeric, check if it is binary, categorical,
        integer, or float.
@@ -52,9 +52,8 @@ def get_column_dtype(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) ->
         raise TypeError("Unknown dtype")
 
 
-def is_numeric(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
-    """
-    Returns True if the series is numeric, False otherwise.
+def is_numeric(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool:
+    """Return True if the series is numeric, False otherwise.
 
     Parameters
     ----------
@@ -73,9 +72,8 @@ def is_numeric(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
         return False
 
 
-def is_integer(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
-    """
-    Returns True if the series is integer, False otherwise.
+def is_integer(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool:
+    """Return True if the series is integer, False otherwise.
 
     Parameters
     ----------
@@ -96,10 +94,11 @@ def is_integer(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
         return False
 
 
-def is_binary_integer(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
-    """
-    Returns True if the series is an integer with only two unique values,
-    False otherwise. Having two unique values is assumed to be a sufficient
+def is_binary_integer(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool:
+    """Return True if the series is binary integer, False otherwise.
+
+    A series with integer values is considered to be binary if it has exactly two
+    unique values. Having two unique values is assumed to be a sufficient
     condition for a binary integer series.
 
     Parameters
@@ -122,19 +121,21 @@ def is_binary_integer(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -
             .drop_duplicates()
             .sort_values()
         )
-        return s.shape[0] == 2
+        return s.shape[0] == 2  # noqa: PLR2004
     else:
         return False
 
 
 def is_categorical_integer(
-    s: Union[pl.Series, pd.Series, np.ndarray, list, tuple],
+    s: pl.Series | pd.Series | np.ndarray | list | tuple,
 ) -> bool:
-    """
-    Returns True if the series is an integer with more than two unique values, but
-    where the difference between consecutive values is always 1, False otherwise. When
-    the difference between consecutive values is always 1, it is assumed that the
-    integers are used to encode categories.
+    """Return True if the series is an integer, False otherwise.
+
+    A series is considered to be a categorical integer, if it has more than
+    two unique numerical (integer) values, but where the difference between
+    consecutive values is always exactly 1. When the difference between
+    consecutive values is always 1, it is assumed that the integers are used
+    to encode categories.
 
     Parameters
     ----------
@@ -162,9 +163,8 @@ def is_categorical_integer(
         return False
 
 
-def is_datetime(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
-    """
-    Returns True if the series is a datetime, False otherwise.
+def is_datetime(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool:
+    """Return True if the series is a datetime, False otherwise.
 
     Parameters
     ----------
@@ -231,10 +231,10 @@ def is_datetime(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool
     return False
 
 
-def is_binary(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
-    """
-    Returns True if the series is binary, False otherwise. A series is
-    considered binary if it has only two unique values.
+def is_binary(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool:
+    """Return True if the series is binary, False otherwise.
+
+    A series is considered binary if it has only two unique values.
 
     Parameters
     ----------
@@ -249,29 +249,30 @@ def is_binary(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
     if is_numeric(s):
         return is_binary_integer(s)
     elif isinstance(s, pl.Series):
-        return s.n_unique() == 2
+        return s.n_unique() == 2  # noqa: PLR2004
     elif isinstance(s, pd.Series):
-        return s.nunique() == 2
+        return s.nunique() == 2  # noqa: PLR2004
     elif isinstance(s, np.ndarray):
-        return np.unique(s).shape[0] == 2
+        return np.unique(s).shape[0] == 2  # noqa: PLR2004
     elif isinstance(s, (list, tuple)):
-        return len(set(s)) == 2
+        return len(set(s)) == 2  # noqa: PLR2004
     else:
         try:
             try:
-                out = to_pd_s(s).nunique() == 2
+                out = to_pd_s(s).nunique() == 2  # noqa: PLR2004
             except Exception:
-                out = pd.Series(s).nunique() == 2
+                out = pd.Series(s).nunique() == 2  # noqa: PLR2004
 
         except Exception:
             out = False
         return out
 
 
-def is_categorical(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
-    """
-    Returns True if the series is categorical, False otherwise. A series is
-    considered categorical if it has more than two unique values.
+def is_categorical(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool:
+    """Return True if the series is categorical, False otherwise.
+
+    A series is considered categorical if it has more than two
+    unique values.
 
     Parameters
     ----------
@@ -297,17 +298,17 @@ def is_categorical(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> b
             try:
                 out = to_pd_s(s).nunique() > 2
             except Exception:
-                out = pd.Series(s).nunique() > 2
+                out = pd.Series(s).nunique() > 2  # noqa: PLR2004
         except Exception:
             out = False
         return out
 
 
-def is_text(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
-    """
-    Returns True if the series is text, False otherwise. A series is
-    considered text if it has more than two unique values and is not
-    categorical.
+def is_text(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool:
+    """Return True if the series is text, False otherwise.
+
+    A series is considered text if it has more than two unique values
+    and is not categorical.
 
     Parameters
     ----------
@@ -322,11 +323,11 @@ def is_text(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
     return (not is_categorical(s)) and (not is_binary(s)) and (not is_numeric(s))
 
 
-def is_boolean(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
-    """
-    Returns True if the series is boolean, False otherwise. A series is
-    considered boolean if it has two unique values and is not binary or
-    categorical.
+def is_boolean(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool:
+    """Return True if the series is boolean, False otherwise.
+
+    A series is considered boolean if it has two unique values and is not
+    binary or categorical.
 
     Parameters
     ----------
@@ -346,10 +347,10 @@ def is_boolean(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
     )
 
 
-def is_null(s: Union[pl.Series, pd.Series, np.ndarray, list, tuple]) -> bool:
-    """
-    Returns True if the series is null, False otherwise. A series is
-    considered null if it has only one unique value.
+def is_null(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool:
+    """Return True if the series is null, False otherwise.
+
+    A series is considered null if it has only one unique value.
 
     Parameters
     ----------

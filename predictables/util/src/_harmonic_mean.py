@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Union
 
 import numpy as np
@@ -6,9 +8,10 @@ import polars as pl
 
 
 def harmonic_mean(*args) -> float:
-    """
-    Returns the harmonic mean of the given, numbers, list, numpy array,
-    pandas series, or polars series.
+    """Return the harmonic mean of the values.
+
+    Given numbers in a list, numpy array, pandas series, or
+    polars series.
 
     Parameters
     ----------
@@ -37,8 +40,7 @@ def harmonic_mean(*args) -> float:
 
 
 def _harmonic_mean_args(*args) -> float:
-    """
-    Returns the harmonic mean of the given numbers or numpy array.
+    """Return the harmonic mean of the given numbers or numpy array.
 
     Parameters
     ----------
@@ -77,9 +79,8 @@ def _harmonic_mean_args(*args) -> float:
     return len(args_) / denom if denom != 0 else 0
 
 
-def _harmonic_from_list(input_list):
-    """
-    Calculates the harmonic mean of a list or numpy array of inputs.
+def _harmonic_from_list(input_list: list | np.ndarray) -> float:
+    """Calculate the harmonic mean of a list or numpy array of inputs.
 
     Parameters
     ----------
@@ -105,9 +106,8 @@ def _harmonic_from_list(input_list):
     return len(input_list) / denom if denom != 0 else 0
 
 
-def _harmonic_from_series(s: Union[pd.Series, pl.Series, np.ndarray]):
-    """
-    Calculates the harmonic mean of a pandas, polars, or numpy series of inputs.
+def _harmonic_from_series(s: Union[pd.Series, pl.Series, np.ndarray]) -> float:
+    """Calculate the harmonic mean of a pandas, polars, or numpy series of inputs.
 
     Parameters
     ----------

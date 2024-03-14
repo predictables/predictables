@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import typing
 from functools import wraps
 
 import numpy as np
 import pandas as pd
 import polars as pl
 import pytest
-import typing
 
 from predictables.util.src._to_pd import to_pd_df
 from predictables.util.src._to_pl import to_pl_df, to_pl_lf

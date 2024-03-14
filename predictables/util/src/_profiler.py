@@ -3,6 +3,7 @@ import datetime
 import io
 import os
 import pstats
+from pathlib import Path
 from typing import Callable
 
 from dotenv import load_dotenv
@@ -13,14 +14,17 @@ load_dotenv()
 
 
 def profiler(func: Callable) -> Callable:
-    """Decorator to CPU and memory profile a Python function."""
+    """Profile CPU performance of a function.
+
+    Decorator to CPU and memory profile a Python function.
+    """
     # Only profile if the LOGGING_LEVEL environment variable is set to debug
     if os.getenv("LOGGING_LEVEL", "info").lower() == "debug":
         function_name = func.__name__
-        current_file = os.path.basename(__file__)
+        current_file = Path.name(__file__)
         dbg = DebugLogger(filename="performance.log", working_file=current_file)
 
-        def wrapper(*args, **kwargs):
+        def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
             profiler = cProfile.Profile()
             profiler.enable()
 

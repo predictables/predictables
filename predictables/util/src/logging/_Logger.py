@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import datetime
 import json
-import os
 import uuid
+from pathlib import Path
 from typing import Optional
 
 from predictables.util.src.logging._Log import Log
@@ -9,8 +11,7 @@ from predictables.util.src.logging._Log import Log
 
 class Logger:
     def __init__(self, name: str = "log", file_name: Optional[str] = None):
-        """
-        Create a logger that logs _Log
+        """Create a logger that logs _Log.
 
         Parameters
         ----------
@@ -34,11 +35,11 @@ class Logger:
         self.session_id = str(uuid.uuid4())
 
         # Create the log file if it doesn't exist (will be json)
-        if not os.path.exists(self.file_name):
-            with open(self.file_name, "w") as f:
+        if not Path.exists(self.file_name):
+            with Path.open(self.file_name, "w") as f:
                 f.write("[]")
 
-    def add(self, msg, level, *args, **kwargs):
+    def add(self, msg: str) -> None:
         """
         Add a json log message to the logger.
 
@@ -59,7 +60,7 @@ class Logger:
         log.log["session_ts"] = self.session_ts
 
         # Open the log file and append the log message
-        with open(self.file_name, "rb") as f:
+        with Path.open(self.file_name, "rb") as f:
             logs = json.loads(f)
 
         # Extract the log from the string
@@ -73,10 +74,10 @@ class Logger:
 
         logs.append(log)
 
-        with open(self.file_name, "w") as f:
+        with Path.open(self.file_name, "w") as f:
             json.dump(logs, f)
 
-    def info(self, msg, *args, **kwargs):
+    def info(self, msg: str) -> None:
         """
         Add an info log message to the logger.
 
@@ -91,7 +92,7 @@ class Logger:
         """
         self.add(Log().info(msg).json(), "INFO")
 
-    def debug(self, msg, *args, **kwargs):
+    def debug(self, msg: str) -> None:
         """
         Add a debug log message to the logger.
 
@@ -106,7 +107,7 @@ class Logger:
         """
         self.add(Log().debug(msg).json(), "DEBUG")
 
-    def warning(self, msg, *args, **kwargs):
+    def warning(self, msg: str) -> None:
         """
         Add a warning log message to the logger.
 
@@ -121,7 +122,7 @@ class Logger:
         """
         self.add(Log().warning(msg).json(), "WARNING")
 
-    def error(self, msg, *args, **kwargs):
+    def error(self, msg: str) -> None:
         """
         Add an error log message to the logger.
 
@@ -136,7 +137,7 @@ class Logger:
         """
         self.add(Log().error(msg).json(), "ERROR")
 
-    def critical(self, msg, *args, **kwargs):
+    def critical(self, msg: str) -> None:
         """
         Add a critical log message to the logger.
 

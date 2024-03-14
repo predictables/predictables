@@ -8,6 +8,8 @@ _correlation_matrix_plot : Plots the correlation matrix.
 _correlation_matrix_elimination : Eliminates the features with high correlation.
 """
 
+from __future__ import annotations
+
 from typing import Union
 
 import matplotlib.pyplot as plt

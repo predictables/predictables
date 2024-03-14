@@ -8,10 +8,8 @@ from xgboost import XGBClassifier, XGBRegressor
 from ._model_name_map import model_name_map
 
 
-def model_object_to_model_name(model):
-    """
-    Takes a model object. Returns the name of the model as a string.
-    """
+def model_object_to_model_name(model: object) -> str:
+    """Take a model object and return the name of the model as a string."""
     if isinstance(model, (CatBoostClassifier, CatBoostRegressor)):
         out = "catboost"
     elif isinstance(model, (RandomForestClassifier, RandomForestRegressor)):

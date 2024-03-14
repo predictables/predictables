@@ -86,23 +86,23 @@ from predictables.util.enums._ProgrammingLanguage import ProgrammingLanguage as 
         ("python3", Lang.PYTHON),
     ]
 )
-def valid_input(request):
+def valid_input(request: tuple):
     return request.param
 
 
 @pytest.fixture(params=["not a language", "123", "", " ", None])
-def invalid_input_returns_python(request):
+def invalid_input_returns_python(request: str):
     return request.param
 
 
-def test_from_string_valid_input(valid_input):
+def test_from_string_valid_input(valid_input: tuple):
     string, expected = valid_input
     assert (
         Lang.from_string(string) == expected
     ), f"Expected Lang.from_string('{string}') to be: {expected}, got {Lang.from_string(string)}."
 
 
-def test_from_string_invalid_input(invalid_input_returns_python):
+def test_from_string_invalid_input(invalid_input_returns_python: str):
     assert (
         Lang.from_string(invalid_input_returns_python) == Lang.PYTHON
     ), f"Failed on {invalid_input_returns_python}. Expected Lang.from_string('{invalid_input_returns_python}') (or any other invalid string) to be python: {Lang.PYTHON}."

@@ -11,6 +11,8 @@ is defined as:
 log(y), if lambda == 0
 """
 
+from __future__ import annotations
+
 from typing import Tuple, Union
 
 import pandas as pd

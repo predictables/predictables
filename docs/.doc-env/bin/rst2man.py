@@ -1,7 +1,7 @@
 #!/home/aweaver/work/predictables/docs/.doc-env/bin/python
 
 # Author:
-# Contact: grubert@users.sf.net
+# Contact: grubert@users.sf.net # noqa: ERA001
 # Copyright: This module has been placed in the public domain.
 """
 man.py

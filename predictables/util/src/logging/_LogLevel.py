@@ -51,7 +51,7 @@ class LogLevel(Enum):
     CRITICAL = "critical"
 
     @classmethod
-    def from_str(cls, level: str):
+    def from_str(cls, level: str) -> "LogLevel":
         mapping = {
             "I": "INFO",
             "INFO": "INFO",
@@ -73,12 +73,13 @@ class LogLevel(Enum):
         return cls[mapping[level.upper()]]
 
     @classmethod
-    def _str(cls, level: str):
+    def _str(cls, level: str) -> "LogLevel":
         return cls.from_str(level)
 
     @classmethod
-    def from_int(cls, level: int):
-        if level > 5:
+    def from_int(cls, level: int) -> "LogLevel":
+        threshold = 5
+        if level > threshold:
             return cls.from_str("CRITICAL")
         elif level < 1:
             return cls.from_str("INFO")
@@ -86,25 +87,25 @@ class LogLevel(Enum):
             return cls(list(cls)[level - 1])
 
     @classmethod
-    def _int(cls, level: int):
+    def _int(cls, level: int) -> "LogLevel":
         return cls.from_int(level)
 
-    def get_str(self):
+    def get_str(self) -> str:
         return self.name
 
-    def str_(self):
+    def str_(self) -> str:
         return self.get_str()
 
-    def get_int(self, level):
+    def get_int(self, level: "LogLevel") -> int:
         return level.value
 
-    def int_(self, level):
+    def int_(self, level: "LogLevel") -> int:
         return self.get_int(level)
 
     @staticmethod
-    def convert_str(level: str):
+    def convert_str(level: str) -> str:
         return LogLevel.from_str(level).get_str()
 
     @staticmethod
-    def convert_int(level: int):
+    def convert_int(level: int) -> str:
         return LogLevel.from_int(level).get_str()

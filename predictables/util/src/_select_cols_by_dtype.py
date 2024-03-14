@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Union
 
 import pandas as pd
@@ -10,7 +12,8 @@ from predictables.util.src._to_pd import to_pd_df
 def select_cols_by_dtype(
     df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], dtype: str
 ) -> pd.DataFrame:
-    """
+    """Select all columns of a specified dtype from a data frame.
+
     Returns a data frame containing only the columns of the specified dtype. Uses the
     set of data types defined in
     PredicTables.util.src.get_column_dtype.get_column_dtype():

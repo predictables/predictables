@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 import datetime
+import inspect
 import json
-import os
 import sys
 import uuid
+from pathlib import Path
 from typing import Union
 
 from predictables.util.src.logging._LogLevel import LogLevel
@@ -15,18 +18,20 @@ class Log:
             "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "date": datetime.datetime.now().strftime("%Y-%m-%d"),
             "time": datetime.datetime.now().strftime("%H:%M:%S"),
-            "cwd": os.getcwd(),
+            "cwd": Path.cwd(),
             "source_file": sys.argv[0],
             "line_number": self._get_line_number(),
             "message": "",
             "level": LogLevel.INFO.value,
         }
 
-    def _get_line_number(self):
-        """Returns the line number the logger was called from."""
-        return sys._getframe(2).f_lineno
+    def _get_line_number(self) -> int:
+        """Return the line number the logger was called from."""
+        return inspect.currentframe().f_back.f_lineno
 
-    def _msg(self, message: str, level: Union[str, int, LogLevel] = LogLevel.INFO):
+    def _msg(
+        self, message: str, level: Union[str, int, LogLevel] = LogLevel.INFO
+    ) -> Log:
         if isinstance(level, str):
             level = LogLevel.from_str(level)
         elif isinstance(level, int):

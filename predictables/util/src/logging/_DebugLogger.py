@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import logging as _logging
 import os
@@ -12,7 +14,8 @@ load_dotenv()
 
 
 class DebugLogger(_logging.Logger):
-    """
+    """Log debug messages.
+
     A class to log debug messages with a unique identifier to identify the debug
     session.
     """
@@ -26,9 +29,7 @@ class DebugLogger(_logging.Logger):
         working_file: Optional[str] = None,
         message_prefix: Optional[Callable] = None,
     ):
-        """
-        Initializes the DebugLogger class.
-        """
+        """Initialize the DebugLogger class."""
         self.uuid = _uuid.uuid1()
 
         # Load the .env file to get the logging level - if we are not at the debug
@@ -40,7 +41,7 @@ class DebugLogger(_logging.Logger):
         if self.turned_on:
             self.filename = filename
             self._init_log()
-            self.level = LogLevel.DEBUG  # type: ignore
+            self.level = LogLevel.DEBUG
 
         super().__init__(str(self.uuid))
         self.working_file = working_file
@@ -54,15 +55,12 @@ class DebugLogger(_logging.Logger):
         return f"{datetime.datetime.now()} - {self.uuid} - {self.working_file}"
 
     def _init_log(self):
-        """
-        Initializes the logging module.
-        """
+        """Initialize the logging module."""
         _logging.basicConfig(filename=self.filename, level=_logging.DEBUG)
         _logging.debug(f"Debugging UUID: {self.uuid}")
 
-    def debug_(self, message: str):
-        """
-        Logs a debug message with the unique identifier.
+    def debug_(self, message: str) -> None:
+        """Log a debug message with the unique identifier.
 
         Parameters
         ----------
@@ -72,22 +70,16 @@ class DebugLogger(_logging.Logger):
         if self.turned_on:
             _logging.debug(f"{self._default_message_prefix()} - {message}")
 
-    def msg(self, message: str):
-        """
-        Alias for the debug method.
-        """
+    def msg(self, message: str) -> None:
+        """Alias for the debug method."""
         self.debug_(message)
 
-    def turn_on(self):
-        """
-        Turns on the debug logger.
-        """
+    def turn_on(self) -> None:
+        """Turn on the debug logger."""
         self.turned_on = True
         self._init_log()
 
-    def turn_off(self):
-        """
-        Turns off the debug logger.
-        """
+    def turn_off(self) -> None:
+        """Turn off the debug logger."""
         self.turned_on = False
         _logging.shutdown()

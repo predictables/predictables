@@ -3,8 +3,7 @@ from typing import Any, Callable
 
 
 def time_fn(fn: Callable[..., Any], *args: tuple, **kwargs: dict) -> float:
-    """
-    Times the execution of a function. Returns the time in seconds.
+    """Time the execution of a function. Return the time in seconds.
 
     Parameters
     ----------

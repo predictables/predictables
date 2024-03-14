@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import os
 from typing import Any, Iterable, Optional
 
 from dotenv import load_dotenv
-from tqdm import tqdm as _tqdm  # type: ignore
-from tqdm.notebook import tqdm as _tqdm_notebook  # type: ignore
+from tqdm import tqdm as _tqdm
+from tqdm.notebook import tqdm as _tqdm_notebook
 
 
 def identidy_function(x: Any) -> Any:
@@ -18,7 +20,8 @@ def tqdm(
     notebook: Optional[bool] = None,
     nb: Optional[bool] = None,
 ) -> Iterable:
-    """
+    """Wrap tqdm around an iterable, with support for environment variables.
+
     Wrapper for tqdm that can be enabled or disabled by setting the
     TQDM_ENABLE environment variable to "true" or "false". If the
     environment variable is not set, the default is to enable

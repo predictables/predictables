@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
@@ -393,7 +395,6 @@ class Univariate(Model):
         y: Optional[Union[pd.Series, pl.Series]] = None,
         yhat: Optional[Union[pd.Series, pl.Series]] = None,
         cv: Optional[Union[pd.Series, pl.Series]] = None,
-        time_series_validation: bool = True,
         coef: Optional[float] = None,
         se: Optional[float] = None,
         pvalues: Optional[float] = None,
@@ -443,7 +444,6 @@ class Univariate(Model):
     def plot_density(
         self,
         data: str = "train",
-        feature_name: Optional[str] = None,
         ax: Optional[Axes] = None,
         figsize: Optional[Tuple[float, float]] = None,
         **kwargs,

@@ -1,6 +1,6 @@
-"""
-Utility functions for PredicTables
-"""
+"""Utility functions for PredicTables"""
+
+from __future__ import annotations
 
 from typing import Union
 

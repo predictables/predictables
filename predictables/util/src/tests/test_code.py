@@ -2,7 +2,7 @@ from unittest.mock import mock_open, patch
 
 import pytest
 
-from predictables.util.src._code import (  # get_function_docstring,
+from predictables.util.src._code import (
     get_files_from_folder,
     get_functions_from_file,
     read_file_code,
@@ -44,7 +44,7 @@ mock_file_contents = {
 @pytest.mark.parametrize(
     "file_name", [("non_existent_file.py"), ("incorrect/path/to/file.py")]
 )
-def test_read_file_code_invalid(file_name):
+def test_read_file_code_invalid(file_name: str):
     with patch(
         "builtins.open", mock_open(read_data=mock_file_contents.get(file_name, ""))
     ):
@@ -57,7 +57,7 @@ def test_read_file_code_invalid(file_name):
 @pytest.mark.parametrize(
     "file_name, expected_output", [("empty_file.py", []), ("no_functions.py", [])]
 )
-def test_get_functions_from_file(file_name, expected_output):
+def test_get_functions_from_file(file_name: str, expected_output: list):
     with patch("builtins.open", mock_open(read_data=mock_file_contents[file_name])):
         assert (
             get_functions_from_file(file_name) == expected_output
@@ -122,7 +122,9 @@ def test_get_functions_from_file(file_name, expected_output):
         ),
     ],
 )
-def test_get_files_from_folder(folder_contents, file_type, expected_output):
+def test_get_files_from_folder(
+    folder_contents: list, file_type: str, expected_output: list
+):
     with patch("os.listdir", return_value=folder_contents):
         assert (
             sorted(get_files_from_folder("some_folder", file_type))

@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union
+from __future__ import annotations
 
 import numpy as np
 import pandas as pd
@@ -8,12 +8,9 @@ from predictables.util.src._to_pd import to_pd_s
 
 
 def graph_min_max(
-    x: Union[pd.Series, pl.Series, np.ndarray],
-    min_: Optional[float],
-    max_: Optional[float],
-) -> Tuple[float, float]:
-    """
-    This function is used to calculate the minimum and maximum values to plot on the x-axis of the density plot.
+    x: pd.Series | pl.Series | np.ndarray, min_: float, max_: float
+) -> tuple[float, float]:
+    """Calculate the minimum and maximum values to plot on the x-axis of the density plot.
 
     Parameters
     ----------

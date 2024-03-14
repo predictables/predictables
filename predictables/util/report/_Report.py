@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import copy
 import datetime
 import itertools
@@ -200,7 +202,8 @@ class Report:
         return self
 
     def style(self, tag, **kwargs):
-        """
+        """Apply styles to the pdf document.
+
         Styles the pdf document by updating the stylesheet with the keyword
         arguments passed in. This is used to change the font family, font
         size, etc. of the document.
@@ -218,13 +221,14 @@ class Report:
 
         return self
 
-    def footer(self, *args):
+    def footer(self) -> "Report":
+        """Set the footer of the pdf document.
+
+        Every page except for the first page will have this footer,
+        which takes the passed args and formats them left to right
+        in the footer.
         """
-        Sets the footer of the pdf document. Every page except for the
-        first page will have this footer, which takes the passed args and
-        formats them left to right in the footer.
-        """
-        # TODO: Implement footer
+        # TODO @<aaweaver-actuary>(https://github.com/predictables/predictables/issues/70): Implement footer
         return self
 
     def heading(
@@ -704,7 +708,7 @@ class Report:
             self.elements.append(Paragraph(f"{bullet_char} {t}", self.styles["Normal"]))
         return self
 
-    def _number_style(self, n: int, style: str):
+    def _number_style(self, style: str):
         """
         Returns an iterator of numbers in the given style.
 

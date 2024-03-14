@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from typing import List
 
 import numpy as np
 
-from predictables.util.pareto_sort._is_dominated import is_dominated  # type: ignore
+from predictables.util.pareto_sort._is_dominated import is_dominated
 
 
 def non_dominated(variables: List[np.ndarray]) -> List[np.ndarray]:

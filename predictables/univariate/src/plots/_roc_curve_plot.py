@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import warnings as warning
 from typing import Optional, Tuple, Union
@@ -8,7 +10,11 @@ import pandas as pd
 import plotly.graph_objects as go  # type: ignore
 from matplotlib.axes import Axes
 from scipy.stats import norm  # type: ignore
-from sklearn.metrics import RocCurveDisplay, roc_auc_score, roc_curve  # type: ignore
+from sklearn.metrics import (
+    RocCurveDisplay,
+    roc_auc_score,  # type: ignore
+    roc_curve,
+)
 
 from predictables.util import DebugLogger, filter_by_cv_fold, get_column_dtype, to_pd_s
 
