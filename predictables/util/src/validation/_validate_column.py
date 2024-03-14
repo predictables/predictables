@@ -1,7 +1,8 @@
 from functools import wraps
+from typing import Callable, List, Optional, Union
+
 import pandas as pd  # type: ignore
 import polars as pl
-from typing import Callable, Union, Optional, List
 
 from predictables.util.src._to_pl import to_pl_lf
 
@@ -74,9 +75,7 @@ def _handle_df_types(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]):
 def _get_df_columns(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]):
     if isinstance(df, pd.DataFrame):
         return df.columns.tolist()
-    elif isinstance(df, pl.DataFrame):
-        return df.columns
-    elif isinstance(df, pl.LazyFrame):
+    elif isinstance(df, (pl.DataFrame, pl.LazyFrame)):
         return df.columns
     else:
         raise ValueError(f"Expected a DataFrame or LazyFrame, got {type(df)} instead.")

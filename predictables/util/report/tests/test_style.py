@@ -1,4 +1,5 @@
 import pytest
+
 from predictables.util.report._Report import Report
 
 
@@ -22,8 +23,8 @@ def report():
 def test_style_updates_valid_attributes(report, tag, style):
     report = report.style(tag, **style)
     assert (
-        getattr(report.styles.get(tag), "fontSize") == style["fontSize"]
-    ), f"Expected {tag} to have fontSize {style['fontSize']}, got {getattr(report.styles.get(tag), 'fontSize')}"
+        report.styles.get(tag).fontSize == style["fontSize"]
+    ), f"Expected {tag} to have fontSize {style['fontSize']}, got {report.styles.get(tag).fontSize}"
 
 
 def test_style_invalid_attributes(report):

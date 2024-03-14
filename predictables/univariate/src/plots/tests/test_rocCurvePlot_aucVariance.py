@@ -1,13 +1,12 @@
 import logging
 from typing import Tuple
 
-from predictables.univariate.src.plots._roc_curve_plot import (
-    _empirical_auc_variance,
-)
 import numpy as np
 import pandas as pd  # type: ignore
 import pytest
 from sklearn.metrics import roc_auc_score  # type: ignore
+
+from predictables.univariate.src.plots._roc_curve_plot import _empirical_auc_variance
 from predictables.util import get_unique
 
 
@@ -35,9 +34,7 @@ def sample_variance(sample_data: Tuple[pd.Series, pd.Series, pd.Series]) -> floa
 
 
 @pytest.fixture
-def sample_variance_bootstrap(
-    sample_data: Tuple[pd.Series, pd.Series, pd.Series],
-):
+def sample_variance_bootstrap(sample_data: Tuple[pd.Series, pd.Series, pd.Series]):
     y, yhat_proba, _ = sample_data
     idx = np.array(
         [np.random.choice(len(y), len(y), replace=True) for _ in range(2500)]
@@ -114,18 +111,10 @@ def test_empirical_auc_variance_correct_calculation(
     "y, yhat_proba, fold",
     [
         (pd.Series([]), pd.Series([]), pd.Series([])),  # Empty inputs
-        (
-            pd.Series([1, 0]),
-            pd.Series([0.5]),
-            pd.Series([1]),
-        ),  # Mismatched lengths
+        (pd.Series([1, 0]), pd.Series([0.5]), pd.Series([1])),  # Mismatched lengths
     ],
 )
-def test_invalid_inputs(
-    y: pd.Series,
-    yhat_proba: pd.Series,
-    fold: pd.Series,
-):
+def test_invalid_inputs(y: pd.Series, yhat_proba: pd.Series, fold: pd.Series):
     """Test that the function raises an error when inputs are invalid."""
     with pytest.raises(ValueError) as excinfo:
         _empirical_auc_variance(y, yhat_proba, fold, False)
@@ -161,8 +150,9 @@ def test_empirical_auc_variance_with_bootstrapping(
     var_auc_with_bootstrap = _empirical_auc_variance(y, yhat_proba, fold, False)
     # Check that the variance is within 2 standard deviations of the empirical variance
     var_auc = _empirical_auc_variance(y, yhat_proba, fold, False)
-    assert (var_auc_with_bootstrap > var_auc - 2 * s) & (
-        var_auc_with_bootstrap < var_auc + 2 * s
+    assert (
+        (var_auc_with_bootstrap > var_auc - 2 * s)
+        & (var_auc_with_bootstrap < var_auc + 2 * s)
     ), f"Variance: {var_auc_with_bootstrap}, empirical variance: {var_auc}, standard deviation: {s}"
 
 
@@ -218,9 +208,7 @@ def test_large_data_performance(
     ],
 )
 def test_handling_non_numeric_missing_values(
-    y_mod: pd.Series,
-    yhat_proba_mod: pd.Series,
-    fold_mod: pd.Series,
+    y_mod: pd.Series, yhat_proba_mod: pd.Series, fold_mod: pd.Series
 ):
     """Test the function's handling of non-numeric and missing values."""
     with pytest.raises(ValueError):
@@ -246,13 +234,9 @@ def test_skewed_probability_distributions(
     ), "Expected variance to be a float for skewed distributions."
 
 
-@pytest.mark.parametrize(
-    "perfect_separation",
-    [(True,), (False,)],
-)
+@pytest.mark.parametrize("perfect_separation", [(True,), (False,)])
 def test_perfect_separation(
-    sample_data: Tuple[pd.Series, pd.Series, pd.Series],
-    perfect_separation: bool,
+    sample_data: Tuple[pd.Series, pd.Series, pd.Series], perfect_separation: bool
 ):
     """Test variance calculation with perfect or near-perfect separation."""
     y, yhat_proba, fold = sample_data

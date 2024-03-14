@@ -27,9 +27,7 @@ def harmonic_mean(*args) -> float:
         return _harmonic_from_list(args[0])
     elif isinstance(args[0], np.ndarray):
         return _harmonic_from_series(*args)
-    elif isinstance(args[0], pd.Series):
-        return _harmonic_from_series(args[0])
-    elif isinstance(args[0], pl.Series):
+    elif isinstance(args[0], (pd.Series, pl.Series)):
         return _harmonic_from_series(args[0])
     else:
         raise TypeError(

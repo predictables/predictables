@@ -3,7 +3,7 @@ from typing import List, Optional, Union
 import pandas as pd  # type: ignore
 import polars as pl
 
-from predictables.util import get_unique, to_pd_df, filter_df_by_cv_fold
+from predictables.util import filter_df_by_cv_fold, get_unique, to_pd_df
 
 
 def _get_data(

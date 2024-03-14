@@ -30,7 +30,9 @@ class PredicTables:
         self.has_time_series_structure = has_time_series_structure
 
         self.feature_column_names = [
-            col for col in self.df_train if col not in ["cv", self.target_column_name]  # type: ignore
+            col
+            for col in self.df_train
+            if col not in ["cv", self.target_column_name]  # type: ignore
         ]
 
         self.ua = UnivariateAnalysis(

@@ -1,16 +1,17 @@
-import pandas as pd  # type: ignore
-import numpy as np
-from typing import Tuple
 import logging
+import os
+from typing import Tuple
+
+import numpy as np
+import pandas as pd  # type: ignore
 import pytest
+from dotenv import load_dotenv
 from sklearn.metrics import roc_auc_score  # type: ignore
 
 from predictables.univariate.src.plots._roc_curve_plot import (
     _delong_test_against_chance,
 )
 from predictables.util import get_unique
-import os
-from dotenv import load_dotenv
 
 load_dotenv()
 log_level = os.getenv("LOGGING_LEVEL")
@@ -46,9 +47,7 @@ def sample_variance(sample_data: Tuple[pd.Series, pd.Series, pd.Series]) -> floa
 
 
 @pytest.fixture
-def sample_variance_bootstrap(
-    sample_data: Tuple[pd.Series, pd.Series, pd.Series],
-):
+def sample_variance_bootstrap(sample_data: Tuple[pd.Series, pd.Series, pd.Series]):
     y, yhat_proba, _ = sample_data
     idx = np.array(
         [np.random.choice(len(y), len(y), replace=True) for _ in range(2500)]
@@ -82,15 +81,15 @@ def test_delong_test_against_chance_basic(sample_data):
     """Test basic functionality of the DeLong test."""
     y, yhat_proba, fold = sample_data
     z_stat, p_value = _delong_test_against_chance(y, yhat_proba, fold, False)
-    assert isinstance(z_stat, float) and isinstance(
-        p_value, float
+    assert (
+        isinstance(z_stat, float) and isinstance(p_value, float)
     ), f"Z-statistic {z_stat} and p-value {p_value} should be floats, not {type(z_stat)} and {type(p_value)}."
 
 
 def test_delong_test_against_chance_known_values(cancer):
     """Test the DeLong test against a the decomposed cancer dataset."""
-    from sklearn.linear_model import LogisticRegression  # type: ignore
     from scipy.stats import norm  # type: ignore
+    from sklearn.linear_model import LogisticRegression  # type: ignore
 
     # Load the breast cancer data
     df = cancer

@@ -1,5 +1,6 @@
-import polars as pl
 from typing import List
+
+import polars as pl
 
 
 def lagged_mean_encoding(

@@ -1,4 +1,5 @@
 import pytest
+
 from predictables.core.src._UnivariateAnalysis import fmt_col_name
 
 

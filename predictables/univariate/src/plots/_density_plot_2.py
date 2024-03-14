@@ -79,7 +79,6 @@ def density_plot(
         The axes the plot was drawn on.
 
     """
-
     if backend == "matplotlib":
         return density_plot_mpl(
             x,
@@ -426,12 +425,7 @@ def _plot_density_mpl(
             ls=line_style,
             alpha=alpha,
         )  # don't label the plot if we're filling under
-        ax.fill_between(
-            x_grid,
-            density(x_grid),
-            alpha=fill_alpha,
-            label=label,
-        )
+        ax.fill_between(x_grid, density(x_grid), alpha=fill_alpha, label=label)
     else:
         ax.plot(
             x_grid,
@@ -698,7 +692,6 @@ def _plot_single_density_pm_standard_deviation(
     matplotlib.axes.Axes
         The axes the plot was drawn on.
     """
-
     if ax is None:
         _, ax = plt.subplots(figsize=figsize)
 
@@ -739,22 +732,19 @@ def _annotate_mean_median(
     to curving up for the mean and curving down for the median. The arrows are
     annotated with the Mean/Median ratios for each target class.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     ax (matplotlib.axes.Axes): The axis to add the annotations to.
     feature (pandas.Series): The feature variable data.
     target (pandas.Series): The target variable data.
 
-    Returns:
-    --------
+    Returns
+    -------
     ax (matplotlib.axes.Axes): The axis with the annotations added.
     """
     # Calculate means and medians
     mean0, mean1 = feature[target == 0].mean(), feature[target == 1].mean()
-    median0, median1 = (
-        feature[target == 0].median(),
-        feature[target == 1].median(),
-    )
+    median0, median1 = (feature[target == 0].median(), feature[target == 1].median())
 
     # Add vertical lines
     ax.axvline(mean0, color="blue", linestyle="--", linewidth=1)
@@ -781,10 +771,7 @@ def _annotate_mean_median(
         va="bottom",
         fontsize=24 * (figsize[0] / 16),
         bbox=dict(
-            boxstyle="round,pad=0.3",
-            edgecolor="black",
-            facecolor="blue",
-            alpha=0.2,
+            boxstyle="round,pad=0.3", edgecolor="black", facecolor="blue", alpha=0.2
         ),
         arrowprops=arrowprops0,
     )
@@ -800,10 +787,7 @@ def _annotate_mean_median(
         va="bottom",
         fontsize=24 * (figsize[0] / 16),
         bbox=dict(
-            boxstyle="round,pad=0.3",
-            edgecolor="black",
-            facecolor="orange",
-            alpha=0.2,
+            boxstyle="round,pad=0.3", edgecolor="black", facecolor="orange", alpha=0.2
         ),
         arrowprops=arrowprops1,
     )

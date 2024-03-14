@@ -55,14 +55,7 @@ def pl_(feature_pl, target_pl):
 @pytest.mark.parametrize("lib_f", ["pd", "np", "pl"])
 @pytest.mark.parametrize("lib_t", ["pd", "np", "pl"])
 def test_basic_functionality_ax_incl(
-    feature_pd,
-    feature_np,
-    feature_pl,
-    target_pd,
-    target_np,
-    target_pl,
-    lib_t,
-    lib_f,
+    feature_pd, feature_np, feature_pl, target_pd, target_np, target_pl, lib_t, lib_f
 ):
     if lib_f == "pd":
         feature = feature_pd
@@ -80,11 +73,7 @@ def test_basic_functionality_ax_incl(
 
     # Execute the function
     _, ax = plt.subplots()
-    ax = _annotate_mean_median(
-        feature,
-        target,
-        ax,
-    )
+    ax = _annotate_mean_median(feature, target, ax)
 
     # Check if the function returns a matplotlib.axes.Axes object
     assert isinstance(ax, plt.Axes), (
@@ -99,14 +88,7 @@ def test_basic_functionality_ax_incl(
 @pytest.mark.parametrize("lib_f", ["pd", "np", "pl"])
 @pytest.mark.parametrize("lib_t", ["pd", "np", "pl"])
 def test_basic_functionality_ax_not_incl(
-    feature_pd,
-    feature_np,
-    feature_pl,
-    target_pd,
-    target_np,
-    target_pl,
-    lib_t,
-    lib_f,
+    feature_pd, feature_np, feature_pl, target_pd, target_np, target_pl, lib_t, lib_f
 ):
     if lib_f == "pd":
         feature = feature_pd
@@ -123,10 +105,7 @@ def test_basic_functionality_ax_not_incl(
         target = target_pl
 
     # Execute the function
-    ax = _annotate_mean_median(
-        feature,
-        target,
-    )
+    ax = _annotate_mean_median(feature, target)
 
     # Check if the function returns a matplotlib.axes.Axes object
     assert isinstance(ax, plt.Axes), (
@@ -142,9 +121,7 @@ def test_different_lengths():
     fig, ax = plt.subplots()
     with pytest.raises(ValueError) as err:
         _annotate_mean_median(
-            pd.Series([1, 2, 3, 4, 5, 6]),
-            pd.Series([0, 0, 1, 1, 0]),
-            ax,
+            pd.Series([1, 2, 3, 4, 5, 6]), pd.Series([0, 0, 1, 1, 0]), ax
         )
         plt.close("all")
     assert "The feature and target variables must be the same length" in str(
@@ -167,8 +144,9 @@ def test_edge_cases(feature, target):
     with pytest.raises(ValueError) as err:
         _annotate_mean_median(feature, target, ax)
         plt.close("all")
-    assert "The feature and target series should not contain NaN or missing values" in str(
-        err.value
+    assert (
+        "The feature and target series should not contain NaN or missing values"
+        in str(err.value)
     ), (
         "The function should raise a ValueError when the feature or target series "
         f"contain NaN values, but raised {err.value}"

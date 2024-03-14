@@ -3,7 +3,7 @@ from typing import Any, Optional, Union
 import numpy as np
 import pandas as pd  # type: ignore
 import polars as pl
-import sklearn.metrics as metrics  # type: ignore
+from sklearn import metrics  # type: ignore
 from sklearn.preprocessing import StandardScaler  # type: ignore
 
 from predictables.univariate.src import (
@@ -437,8 +437,7 @@ class Model:
         return self.results.select(attr).collect().item(0, 0)
 
     def _fit_standardization(
-        self,
-        X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+        self, X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]
     ) -> None:
         """
         Fits a StandardScaler to the input data.
@@ -465,8 +464,7 @@ class Model:
         self.scaler.fit(X.values)
 
     def standardize(
-        self,
-        X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+        self, X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]
     ) -> Union[pd.Series, pd.DataFrame]:
         """
         Standardizes the input data.

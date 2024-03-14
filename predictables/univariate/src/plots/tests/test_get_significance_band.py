@@ -1,4 +1,5 @@
 import pytest
+
 from predictables.univariate.src.plots.util._get_significance_band import (
     get_significance_band,
 )

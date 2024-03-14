@@ -1,8 +1,6 @@
 import pytest
 
-from predictables.util.enums._ProgrammingLanguage import (
-    ProgrammingLanguage as Lang,
-)
+from predictables.util.enums._ProgrammingLanguage import ProgrammingLanguage as Lang
 
 
 @pytest.fixture(
@@ -92,15 +90,7 @@ def valid_input(request):
     return request.param
 
 
-@pytest.fixture(
-    params=[
-        "not a language",
-        "123",
-        "",
-        " ",
-        None,
-    ]
-)
+@pytest.fixture(params=["not a language", "123", "", " ", None])
 def invalid_input_returns_python(request):
     return request.param
 

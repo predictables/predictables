@@ -157,9 +157,7 @@ def cdf_plot_matplotlib(
     ax0.set_title(title)
 
     plt.legend(
-        loc="lower right",
-        bbox_to_anchor=(1 - 0.01, 0 + 0.0575),
-        borderaxespad=0.0,
+        loc="lower right", bbox_to_anchor=(1 - 0.01, 0 + 0.0575), borderaxespad=0.0
     )
 
     # show gridlines
@@ -354,9 +352,7 @@ def js_divergence_annotation(jsd: float) -> str:
         return "The distributions are extremely different"
 
 
-def calculate_cdf(
-    x: Union[pl.Series, pd.Series, np.ndarray],
-) -> pd.Series:
+def calculate_cdf(x: Union[pl.Series, pd.Series, np.ndarray]) -> pd.Series:
     """
     Calculates the empirical CDF from the given data.
 

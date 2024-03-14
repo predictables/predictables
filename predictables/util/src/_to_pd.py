@@ -6,9 +6,7 @@ import polars as pl
 
 
 def to_pd_df(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]) -> pd.DataFrame:
-    """
-    Convert a dataframe to a pandas dataframe.
-    """
+    """Convert a dataframe to a pandas dataframe."""
     if isinstance(df, pd.DataFrame):
         return df
     elif isinstance(df, pl.DataFrame):
@@ -26,9 +24,7 @@ def to_pd_df(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]) -> pd.DataFram
 
 
 def to_pd_s(s: Union[pd.Series, pl.Series, list, np.ndarray]) -> pd.Series:
-    """
-    Convert to a pandas series.
-    """
+    """Convert to a pandas series."""
     if isinstance(s, pd.Series):
         return s
     elif isinstance(s, pl.Series):

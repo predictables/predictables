@@ -1,4 +1,5 @@
 import pytest
+
 from predictables.util.src._col_name_for_report import col_name_for_report
 
 

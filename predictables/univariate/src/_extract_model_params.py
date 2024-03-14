@@ -10,23 +10,10 @@ dbg = DebugLogger(working_file="_extract_model_params.py")
 
 StatsmodelsModelParams = namedtuple(
     "StatsmodelsModelParams",
-    [
-        "coef",
-        "intercept",
-        "pvalues",
-        "aic",
-        "se",
-        "lower_ci",
-        "upper_ci",
-        "n",
-        "k",
-    ],
+    ["coef", "intercept", "pvalues", "aic", "se", "lower_ci", "upper_ci", "n", "k"],
 )
 
-SKLearnModelParams = namedtuple(
-    "SKLearnModelParams",
-    ["coef", "k"],
-)
+SKLearnModelParams = namedtuple("SKLearnModelParams", ["coef", "k"])
 
 
 def extract_model_params(
@@ -169,10 +156,7 @@ def extract_model_params_sk_LogisticRegression(
 
     """
     dbg.msg("Entering extract_model_params_sk function")
-    return SKLearnModelParams(
-        model.coef_,
-        model.coef_.shape[0],
-    )
+    return SKLearnModelParams(model.coef_, model.coef_.shape[0])
 
 
 def extract_model_params_sk_LinearRegression(
@@ -193,7 +177,4 @@ def extract_model_params_sk_LinearRegression(
 
     """
     dbg.msg("Entering extract_model_params_sk function")
-    return SKLearnModelParams(
-        model.coef_,
-        model.coef_.shape[0],
-    )
+    return SKLearnModelParams(model.coef_, model.coef_.shape[0])

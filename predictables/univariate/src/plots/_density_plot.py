@@ -1,5 +1,5 @@
 from functools import wraps
-from typing import Optional, Tuple, Union, Callable
+from typing import Callable, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,10 +10,10 @@ from scipy.stats import gaussian_kde, ttest_ind  # type: ignore
 
 from predictables.univariate.src.plots.util import binary_color, plot_label
 from predictables.util import (
-    get_column_dtype,
-    to_pd_s,
     filter_by_cv_fold,
+    get_column_dtype,
     graph_min_max,
+    to_pd_s,
 )
 
 
@@ -85,7 +85,6 @@ def density_plot(
         The axes the plot was drawn on.
 
     """
-
     if backend == "matplotlib":
         return density_plot_mpl(
             x,
@@ -530,12 +529,7 @@ def _plot_density_mpl(
             ls=line_style,
             alpha=alpha,
         )  # don't label the plot if we're filling under
-        ax.fill_between(
-            x_grid,
-            density(x_grid),
-            alpha=fill_alpha,
-            label=label,
-        )
+        ax.fill_between(x_grid, density(x_grid), alpha=fill_alpha, label=label)
     else:
         ax.plot(
             x_grid,
@@ -897,7 +891,6 @@ def _plot_single_density_pm_standard_deviation(
     matplotlib.axes.Axes
         The axes the plot was drawn on.
     """
-
     if ax is None:
         _, ax_ = plt.subplots(figsize=figsize)
     else:
@@ -966,28 +959,26 @@ def _annotate_mean_median(
         )
 
     # Raise an error if either the feature or target contain NaNs
-    if isinstance(feature, pd.Series) and feature.isnull().any():
-        raise ValueError(
-            "The feature and target series should not contain NaN or missing values"
-        )
-    elif isinstance(feature, pl.Series) and feature.is_null().any():
-        raise ValueError(
-            "The feature and target series should not contain NaN or missing values"
-        )
-    elif isinstance(feature, np.ndarray) and np.isnan(feature).any():
+    if (
+        isinstance(feature, pd.Series)
+        and feature.isnull().any()
+        or isinstance(feature, pl.Series)
+        and feature.is_null().any()
+        or isinstance(feature, np.ndarray)
+        and np.isnan(feature).any()
+    ):
         raise ValueError(
             "The feature and target series should not contain NaN or missing values"
         )
 
-    if isinstance(target, pd.Series) and target.isnull().any():
-        raise ValueError(
-            "The feature and target series should not contain NaN or missing values"
-        )
-    elif isinstance(target, pl.Series) and target.is_null().any():
-        raise ValueError(
-            "The feature and target series should not contain NaN or missing values"
-        )
-    elif isinstance(target, np.ndarray) and np.isnan(target).any():
+    if (
+        isinstance(target, pd.Series)
+        and target.isnull().any()
+        or isinstance(target, pl.Series)
+        and target.is_null().any()
+        or isinstance(target, np.ndarray)
+        and np.isnan(target).any()
+    ):
         raise ValueError(
             "The feature and target series should not contain NaN or missing values"
         )
@@ -1031,10 +1022,7 @@ def _annotate_mean_median(
         va="bottom",
         fontsize=24 * (figsize[0] / 16),
         bbox=dict(
-            boxstyle="round,pad=0.3",
-            edgecolor="black",
-            facecolor="blue",
-            alpha=0.2,
+            boxstyle="round,pad=0.3", edgecolor="black", facecolor="blue", alpha=0.2
         ),
         arrowprops=arrowprops0,
     )
@@ -1050,10 +1038,7 @@ def _annotate_mean_median(
         va="bottom",
         fontsize=24 * (figsize[0] / 16),
         bbox=dict(
-            boxstyle="round,pad=0.3",
-            edgecolor="black",
-            facecolor="orange",
-            alpha=0.2,
+            boxstyle="round,pad=0.3", edgecolor="black", facecolor="orange", alpha=0.2
         ),
         arrowprops=arrowprops1,
     )

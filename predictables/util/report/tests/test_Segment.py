@@ -1,8 +1,10 @@
-import pytest
-import pandas as pd  # type: ignore
-import numpy as np
-import polars as pl
 from typing import List
+
+import numpy as np
+import pandas as pd  # type: ignore
+import polars as pl
+import pytest
+
 from predictables.util.report.src._segment_features_for_report import (
     Segment,
     segment_features_for_report,
@@ -84,9 +86,10 @@ def test_segment_features_for_report(features, max_per_segment):
         ), f"segment has more features than expected: {segment.n_features} > {max_per_segment}"
         # assert segment.start == start, f"segment start is not as expected: {segment.start} != {start}"
         # assert segment.end == end, f"segment end is not as expected: {segment.end} != {end}"
-    assert sum([segment.n_features for segment in segments]) == len(
-        features
+    assert (
+        sum([segment.n_features for segment in segments]) == len(features)
     ), f"sum of segment features is not equal to total features: {sum([segment.n_features for segment in segments])} != {len(features)}"
-    assert len(segments) == len(features) // max_per_segment + (
-        len(features) % max_per_segment > 0
+    assert (
+        len(segments)
+        == len(features) // max_per_segment + (len(features) % max_per_segment > 0)
     ), f"number of segments is not as expected: {len(segments)} != {len(features) // max_per_segment + (len(features) % max_per_segment > 0)}"

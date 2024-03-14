@@ -1,8 +1,9 @@
 import datetime
+from typing import Dict, List, Optional, Union
+
 import numpy as np
 import pandas as pd  # type: ignore
 import polars as pl
-from typing import Dict, Union, Optional, List
 
 from predictables.util import validate_lf
 
@@ -349,7 +350,6 @@ def dynamic_rolling_sum(
     offset: int = 30,
     window: int = 360,
 ) -> pl.LazyFrame:
-
     # Check to ensure there is an index column:
     if index_col not in lf.columns:
         raise ValueError(
@@ -369,16 +369,7 @@ def dynamic_rolling_sum(
     # if they are provided
     lf_ = _get_date_list_col(lf_, date_col, offset, window)
 
-    dateval = (
-        lf_.select(
-            [
-                pl.col(date_col),
-                pl.col(x_col),
-            ]
-        )
-        .unique()
-        .sort(date_col)
-    )
+    dateval = lf_.select([pl.col(date_col), pl.col(x_col)]).unique().sort(date_col)
 
     lf_ = (
         lf_.with_columns(
@@ -419,13 +410,7 @@ def dynamic_rolling_sum(
             ]
         )
         .collect()
-        .select(
-            [
-                pl.col(index_col),
-                pl.col(date_col),
-                pl.col("value_list"),
-            ]
-        )
+        .select([pl.col(index_col), pl.col(date_col), pl.col("value_list")])
         .lazy()
         .with_columns(
             [pl.col("value_list").sum().over(index_col).name.prefix("rolling_")]
@@ -464,10 +449,7 @@ def _format_value_col(lf: pl.LazyFrame, value_col: str) -> pl.LazyFrame:
 
 
 def _get_date_list_col(
-    lf: pl.LazyFrame,
-    date_col: str,
-    offset: int = 30,
-    window: int = 360,
+    lf: pl.LazyFrame, date_col: str, offset: int = 30, window: int = 360
 ) -> pl.LazyFrame:
     """
     Takes a LazyFrame and the name of the date column, and optionally an
@@ -513,9 +495,7 @@ def _get_date_list_col(
 
 
 def _get_value_map(
-    lf: pl.LazyFrame,
-    date_col: str,
-    x_col: str,
+    lf: pl.LazyFrame, date_col: str, x_col: str
 ) -> Dict[datetime.date, float]:
     """
     Produces a dictionary mapping dates to values. This is used to map the
@@ -557,7 +537,8 @@ def _handle_date_list(
         .drop("date_list")
         # Sum up the values by index (representing the original row order)
         # and date
-        .group_by(index_col).agg(pl.sum("value_list").alias(f"rolling_{x_col}"))
+        .group_by(index_col)
+        .agg(pl.sum("value_list").alias(f"rolling_{x_col}"))
         # Resort the data to the original order
         .sort(index_col)
     )

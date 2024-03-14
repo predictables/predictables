@@ -2,7 +2,9 @@ import pandas as pd  # type: ignore
 import polars as pl
 import polars.testing as pltest
 import pytest
-from predictables.util.src import _cv_filter as cvf, _to_pl
+
+from predictables.util.src import _cv_filter as cvf
+from predictables.util.src import _to_pl
 
 to_pl_s = _to_pl.to_pl_s
 

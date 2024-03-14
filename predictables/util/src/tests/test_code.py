@@ -66,16 +66,11 @@ mock_file_contents = {
 
 
 @pytest.mark.parametrize(
-    "file_name",
-    [
-        ("non_existent_file.py"),
-        ("incorrect/path/to/file.py"),
-    ],
+    "file_name", [("non_existent_file.py"), ("incorrect/path/to/file.py")]
 )
 def test_read_file_code_invalid(file_name):
     with patch(
-        "builtins.open",
-        mock_open(read_data=mock_file_contents.get(file_name, "")),
+        "builtins.open", mock_open(read_data=mock_file_contents.get(file_name, ""))
     ):
         assert (
             read_file_code(file_name) == "PYTEST_FILE_NOT_FOUND"
@@ -209,6 +204,7 @@ def test_get_functions_from_file(file_name, expected_output):
 )
 def test_get_files_from_folder(folder_contents, file_type, expected_output):
     with patch("os.listdir", return_value=folder_contents):
-        assert sorted(get_files_from_folder("some_folder", file_type)) == sorted(
-            expected_output
+        assert (
+            sorted(get_files_from_folder("some_folder", file_type))
+            == sorted(expected_output)
         ), f"Expected output: {expected_output}, Actual output: {get_files_from_folder('some_folder', file_type)}"

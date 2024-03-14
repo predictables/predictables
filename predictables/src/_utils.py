@@ -26,14 +26,8 @@ output_map = {
 
 def _to_numpy(
     data: Union[
-        pd.DataFrame,
-        pd.Series,
-        pl.DataFrame,
-        pl.Series,
-        pl.LazyFrame,
-        np.ndarray,
-        list,
-    ]
+        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list
+    ],
 ) -> np.ndarray:
     """
     Converts the data to a numpy array. Handles both pandas and polars dataframes and
@@ -50,13 +44,7 @@ def _to_numpy(
         The converted data.
     """
     # Check each input type step by step
-    if isinstance(data, pd.DataFrame):
-        return data.to_numpy()
-    elif isinstance(data, pd.Series):
-        return data.to_numpy()
-    elif isinstance(data, pl.DataFrame):
-        return data.to_numpy()
-    elif isinstance(data, pl.Series):
+    if isinstance(data, (pd.DataFrame, pd.Series, pl.DataFrame, pl.Series)):
         return data.to_numpy()
     elif isinstance(data, pl.LazyFrame):
         return data.collect().to_numpy()
@@ -80,13 +68,7 @@ Please use one of the following types: \n\
 
 def _to_polars(
     data: Union[
-        pd.DataFrame,
-        pd.Series,
-        pl.DataFrame,
-        pl.Series,
-        pl.LazyFrame,
-        np.ndarray,
-        list,
+        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list
     ],
     to: str = "dataframe",
 ) -> Union[pl.DataFrame, pl.Series, pl.LazyFrame]:
@@ -195,13 +177,7 @@ Please use one of the following types: \n\
 
 def _to_pandas(
     data: Union[
-        pd.DataFrame,
-        pd.Series,
-        pl.DataFrame,
-        pl.Series,
-        pl.LazyFrame,
-        np.ndarray,
-        list,
+        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list
     ],
     to: str = "dataframe",
 ) -> Union[pd.DataFrame, pd.Series]:
@@ -292,19 +268,7 @@ There is no such thing as a lazy pandas frame."
             raise ValueError(
                 f"Output type {to} not supported for input type {type(data)}."
             )
-    elif isinstance(data, np.ndarray):
-        if to == "dataframe":
-            return pd.DataFrame(data)
-        elif to == "lazyframe":
-            raise ValueError(
-                "Cannot convert to pandas lazy frame. \
-There is no such thing as a lazy pandas frame."
-            )
-        else:
-            raise ValueError(
-                f"Output type {to} not supported for input type {type(data)}."
-            )
-    elif isinstance(data, list):
+    elif isinstance(data, (list, np.ndarray)):
         if to == "dataframe":
             return pd.DataFrame(data)
         elif to == "lazyframe":
@@ -331,8 +295,7 @@ Please use one of the following types: \n\
 
 
 def _select_binary_columns(
-    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-    missing_col: str = "999",
+    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], missing_col: str = "999"
 ) -> list:
     """
     Returns the binary-coded columns from the data.

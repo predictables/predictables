@@ -1,5 +1,6 @@
-import numpy as np
 from typing import Union
+
+import numpy as np
 
 
 def binary_color(x: Union[int, float, str, bool]) -> str:
@@ -24,14 +25,7 @@ def binary_color(x: Union[int, float, str, bool]) -> str:
     if isinstance(x, (str, bool)):
         x_ = x.lower() if isinstance(x, str) else str(x).lower()
         x_ = x_.strip().replace("+", "")
-        if x_ in [
-            "0",
-            "-1",
-            "false",
-            "f",
-            "no",
-            "n",
-        ]:
+        if x_ in ["0", "-1", "false", "f", "no", "n"]:
             return "blue"
         elif x_ in ["1", "true", "t", "yes", "y"]:
             return "orange"

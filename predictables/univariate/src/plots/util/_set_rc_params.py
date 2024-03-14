@@ -10,13 +10,13 @@ def set_rc_params(rcParams) -> dict:
     figure size, and figure DPI. The parameters are obtained from the `get_rc_params`
     function.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     rcParams : dict
         A dictionary of Matplotlib RC parameters to be updated.
 
-    Returns:
-    --------
+    Returns
+    -------
     dict
         A dictionary of Matplotlib RC parameters with the updated values.
     """

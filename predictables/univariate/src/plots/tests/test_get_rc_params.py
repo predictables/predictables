@@ -1,4 +1,5 @@
 import pytest
+
 from predictables.univariate.src.plots.util._get_rc_params import get_rc_params
 
 

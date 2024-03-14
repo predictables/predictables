@@ -92,8 +92,8 @@ def quintile_lift_plot_matplotlib(
     also calculates the KL divergence and Gini coefficient between the observed
     and modeled targets, and adds them as annotations to the plot.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     feature : Union[pd.Series, pl.Series],
         A Pandas Series containing the feature data.
     observed_target : Union[pd.Series, pl.Series],
@@ -114,8 +114,8 @@ def quintile_lift_plot_matplotlib(
     figsize : Tuple[int, int], optional
         The figure size. Default is (7, 7).
 
-    Returns:
-    --------
+    Returns
+    -------
     matplotlib.axes.Axes
         The Matplotlib axis object with the quintile lift plot.
     """
@@ -165,10 +165,7 @@ def quintile_lift_plot_matplotlib(
         fontsize=20 * font_scale_fct,
         ha="center",
         bbox=dict(
-            boxstyle="round,pad=0.25",
-            edgecolor="black",
-            facecolor="white",
-            alpha=0.85,
+            boxstyle="round,pad=0.25", edgecolor="black", facecolor="white", alpha=0.85
         ),
     )
 
@@ -302,13 +299,13 @@ def _make_quintiles(modeled_target: Union[pd.Series, pl.Series]) -> pd.Series:
     values, don't bin quintiles -- instead, bin into n bins based on the modeled
     target.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     modeled_target : Union[pd.Series, pl.Series],
         A Pandas Series containing the modeled target data.
 
-    Returns:
-    --------
+    Returns
+    -------
     pd.Series
         A Pandas Series containing the quintile bins.
     """

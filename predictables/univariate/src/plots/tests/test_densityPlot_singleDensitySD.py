@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd  # type: ignore
 import polars as pl
 import pytest
+
 from predictables.univariate.src.plots._density_plot import _calculate_single_density_sd
 
 
@@ -52,7 +53,6 @@ def test_calculate_single_density_sd_basic(
     grid_bins,
     time_series_validation,
 ):
-
     if x_type == "pd":
         x = x_pd
     elif x_type == "np":

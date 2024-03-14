@@ -11,9 +11,9 @@ from predictables.util import (
     DebugLogger,
     Report,
     fmt_col_name,
+    get_column_dtype,
     to_pl_lf,
     tqdm,
-    get_column_dtype,
 )
 from predictables.util.report.src._segment_features_for_report import (
     Segment,
@@ -116,9 +116,15 @@ class UnivariateAnalysis:
 
     Examples
     --------
-    >>> df_train = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6], 'target': [0, 1, 1]})
-    >>> df_val = pd.DataFrame({'A': [2, 3, 4], 'B': [5, 6, 7], 'target': [1, 0, 1]})
-    >>> ua = UnivariateAnalysis("MyModel", df_train, df_val, "target", ["A", "B"], False)
+    >>> df_train = pd.DataFrame(
+    ...     {"A": [1, 2, 3], "B": [4, 5, 6], "target": [0, 1, 1]}
+    ... )
+    >>> df_val = pd.DataFrame(
+    ...     {"A": [2, 3, 4], "B": [5, 6, 7], "target": [1, 0, 1]}
+    ... )
+    >>> ua = UnivariateAnalysis(
+    ...     "MyModel", df_train, df_val, "target", ["A", "B"], False
+    ... )
     >>> ua.A.results.head()
     [1] feature  |  acc_test  |  precision_test  |  recall_test  |  auc_test  |  f1_test  |  mcc_test
     [2] A
@@ -175,9 +181,15 @@ class UnivariateAnalysis:
 
         Examples
         --------
-        >>> df_train = pl.from_pandas(pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6], 'target': [0, 1, 1]})).lazy()
-        >>> df_val = pl.from_pandas(pd.DataFrame({'A': [2, 3, 4], 'B': [5, 6, 7], 'target': [1, 0, 1]})).lazy()
-        >>> ua = UnivariateAnalysis("MyModel", df_train, df_val, "target", ["A", "B"], False)
+        >>> df_train = pl.from_pandas(
+        ...     pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6], "target": [0, 1, 1]})
+        ... ).lazy()
+        >>> df_val = pl.from_pandas(
+        ...     pd.DataFrame({"A": [2, 3, 4], "B": [5, 6, 7], "target": [1, 0, 1]})
+        ... ).lazy()
+        >>> ua = UnivariateAnalysis(
+        ...     "MyModel", df_train, df_val, "target", ["A", "B"], False
+        ... )
         """
         self.model_name = model_name
         self.df = to_pl_lf(df_train)
@@ -225,20 +237,7 @@ class UnivariateAnalysis:
                         time_series_validation=self.time_series_validation,
                     ),
                 )
-            elif col_type == "categorical":
-                setattr(
-                    self,
-                    obj_name,
-                    Univariate(
-                        self.df.filter(pl.col(col).is_not_null()),
-                        self.df_val.filter(pl.col(col).is_not_null()),
-                        self.cv_column_name,
-                        col,
-                        self.target_column_name,
-                        time_series_validation=self.time_series_validation,
-                    ),
-                )
-            elif col_type == "binary":
+            elif col_type == "categorical" or col_type == "binary":
                 setattr(
                     self,
                     obj_name,

@@ -1,8 +1,10 @@
-import pandas as pd  # type: ignore
-import numpy as np
-import polars as pl
 from functools import wraps
 from typing import Callable
+
+import numpy as np
+import pandas as pd  # type: ignore
+import polars as pl
+
 from predictables.util.src._to_pl import to_pl_lf
 
 

@@ -1,5 +1,6 @@
-from reportlab.lib.pagesizes import letter, inch  # type: ignore
+from reportlab.lib.pagesizes import inch, letter  # type: ignore
 from reportlab.platypus import Paragraph  # type: ignore
+
 from predictables.util.report._Report import Report
 
 

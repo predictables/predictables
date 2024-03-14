@@ -207,18 +207,14 @@ def plot_individual_roc_curves(
     if (backend == "matplotlib") and (ax is not None):
         figax = ax
         if isinstance(figax, Axes):
-            RocCurveDisplay(
-                fpr=fpr,
-                tpr=tpr,
-            ).plot(ax=figax, alpha=alpha, label=curve_name)
+            RocCurveDisplay(fpr=fpr, tpr=tpr).plot(
+                ax=figax, alpha=alpha, label=curve_name
+            )
 
             return figax
         elif figax is None:
             _, ax = plt.subplots(figsize=figsize)
-            RocCurveDisplay(
-                fpr=fpr,
-                tpr=tpr,
-            ).plot(ax=ax, alpha=alpha, label=curve_name)
+            RocCurveDisplay(fpr=fpr, tpr=tpr).plot(ax=ax, alpha=alpha, label=curve_name)
 
             return ax
         else:
@@ -376,11 +372,7 @@ def calc_auc_curve_data_from_folds(
         y_ = filter_by_cv_fold(y, f, fold, time_series_validation, "test")
         yhat_ = filter_by_cv_fold(yhat_proba, f, fold, time_series_validation, "test")
         if f > 0:
-            fpr, tpr = create_auc_data(
-                y_,
-                yhat_,
-                n_bins,
-            )
+            fpr, tpr = create_auc_data(y_, yhat_, n_bins)
             fprs[f"fold_{f}"] = fpr
             tprs[f"fold_{f}"] = tpr
 
@@ -479,7 +471,6 @@ def plot_roc_auc_curves_and_confidence_bands(
     NotImplementedError
         If using the plotly backend, which is not yet implemented.
     """
-
     if backend == "plotly":
         raise NotImplementedError("Plotly backend not implemented yet.")
     elif ax is not None:
@@ -501,11 +492,7 @@ def plot_roc_auc_curves_and_confidence_bands(
     if isinstance(figax, Axes):
 
         def params(col):
-            d = dict(
-                alpha=cv_alpha,
-                label="_" + col.replace("_", " ").title(),
-                lw=0.5,
-            )
+            d = dict(alpha=cv_alpha, label="_" + col.replace("_", " ").title(), lw=0.5)
             if col == "mean":
                 d["alpha"] = 1
                 d["label"] = col.replace("_", " ").title()
@@ -532,12 +519,7 @@ def plot_roc_auc_curves_and_confidence_bands(
         )
 
         figax.plot(
-            [0, 1],
-            [0, 1],
-            alpha=0.5,
-            ls="--",
-            color="grey",
-            label="Random Guess",
+            [0, 1], [0, 1], alpha=0.5, ls="--", color="grey", label="Random Guess"
         )
 
     if call_legend:
@@ -835,11 +817,7 @@ def roc_curve_plot_mpl(
     ax : matplotlib.Axes.Axes
         The configured Axes object.
     """
-    if isinstance(ax, go.Figure):
-        raise TypeError(
-            "The ax parameter should be a matplotlib.axes.Axes object when using the matplotlib backend"
-        )
-    elif (not isinstance(ax, Axes)) and (ax is not None):
+    if isinstance(ax, go.Figure) or (not isinstance(ax, Axes)) and (ax is not None):
         raise TypeError(
             "The ax parameter should be a matplotlib.axes.Axes object when using the matplotlib backend"
         )
@@ -1045,10 +1023,7 @@ def _empirical_auc_variance(
                 continue
 
             # Calculate AUC score for the current fold
-            auc_score = roc_auc_score(
-                _y_,
-                _yhat_proba_,
-            )
+            auc_score = roc_auc_score(_y_, _yhat_proba_)
             auc_scores.append(auc_score)
             counter += 1
         except ValueError as e:
@@ -1062,10 +1037,7 @@ def _empirical_auc_variance(
 
 
 def _delong_test_against_chance(
-    y: pd.Series,
-    yhat_proba: pd.Series,
-    fold: pd.Series,
-    time_series_validation: bool,
+    y: pd.Series, yhat_proba: pd.Series, fold: pd.Series, time_series_validation: bool
 ) -> Tuple[float, float]:
     """
     Implement the DeLong test to compare the ROC AUC against the 45-degree

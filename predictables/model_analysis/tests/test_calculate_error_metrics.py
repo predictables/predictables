@@ -46,8 +46,7 @@ def test_with_perfect_prediction(create_perfect_model):
         metrics["f1_score"] == 1
     ), f"F1 score should be 1 for a perfect model, but is {metrics['f1_score']}"
     assert np.array_equal(
-        metrics["confusion_matrix"],
-        confusion_matrix(y, model.predict(X)).tolist(),
+        metrics["confusion_matrix"], confusion_matrix(y, model.predict(X)).tolist()
     ), f"Confusion matrix should be {confusion_matrix(y, model.predict(X)).tolist()} for a perfect model, but is {metrics['confusion_matrix']}"
 
 
@@ -76,11 +75,11 @@ def test_roc_auc_and_log_loss(create_perfect_model):
     metrics = calculate_error_metrics(X, y, model)
 
     if "roc_auc" in metrics:
-        assert metrics["roc_auc"] == roc_auc_score(
-            y, model.predict_proba(X)[:, 1]
+        assert (
+            metrics["roc_auc"] == roc_auc_score(y, model.predict_proba(X)[:, 1])
         ), f"ROC-AUC should be {roc_auc_score(y, model.predict_proba(X)[:, 1])} for a binary classification model, but is {metrics['roc_auc']}"
 
     if "log_loss" in metrics:
-        assert metrics["log_loss"] == log_loss(
-            y, model.predict_proba(X)[:, 1]
+        assert (
+            metrics["log_loss"] == log_loss(y, model.predict_proba(X)[:, 1])
         ), f"Log Loss should be {log_loss(y, model.predict_proba(X)[:, 1])} for a binary classification model, but is {metrics['log_loss']}"

@@ -1,10 +1,12 @@
-import pytest
-import polars as pl
-import numpy as np
 from functools import wraps
-from predictables.util.src._validate_lf import validate_lf
-from predictables.util.src._to_pl import to_pl_df
+
+import numpy as np
+import polars as pl
+import pytest
+
 from predictables.util.src._to_pd import to_pd_df
+from predictables.util.src._to_pl import to_pl_df
+from predictables.util.src._validate_lf import validate_lf
 
 
 @pytest.fixture

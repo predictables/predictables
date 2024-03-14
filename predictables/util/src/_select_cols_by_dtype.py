@@ -41,13 +41,7 @@ def select_cols_by_dtype(
     """
     # Ensure dtype is valid
     dtype = dtype.lower()
-    if dtype not in [
-        "continuous",
-        "categorical",
-        "datetime",
-        "integer",
-        "binary",
-    ]:
+    if dtype not in ["continuous", "categorical", "datetime", "integer", "binary"]:
         raise ValueError(
             "dtype must be one of the following: 'continuous', "
             f"'categorical', 'datetime', 'integer', 'binary', but got {dtype}"

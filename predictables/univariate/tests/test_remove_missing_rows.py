@@ -1,8 +1,7 @@
 import polars as pl
 from polars.testing import assert_frame_equal
-from predictables.univariate.src._remove_missing_rows import (
-    remove_missing_rows,
-)
+
+from predictables.univariate.src._remove_missing_rows import remove_missing_rows
 
 
 def test_remove_missing_rows():
@@ -17,10 +16,7 @@ def test_remove_missing_rows():
     # Check the result
     expected = pl.DataFrame({"feature": [2, 4], "target": [7, 9]}).lazy()
 
-    (
-        assert_frame_equal(result, expected),
-        f"Expected:\n{expected}\n\nGot:\n{result}",
-    )
+    (assert_frame_equal(result, expected), f"Expected:\n{expected}\n\nGot:\n{result}")
 
 
 def test_remove_missing_rows_no_missing_values():

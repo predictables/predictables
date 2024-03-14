@@ -1,4 +1,5 @@
 import pytest  # type: ignore
+
 from predictables.util.src._model_name_map import model_name_map  # type: ignore
 
 

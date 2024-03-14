@@ -1,5 +1,6 @@
-import pytest
 import numpy as np
+import pytest
+
 from predictables.univariate.src.plots.util._binary_color import binary_color
 
 

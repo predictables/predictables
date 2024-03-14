@@ -21,4 +21,4 @@ def get_unique(x: Union[pd.Series, pl.Series]) -> List:
     List
         A sorted list of the unique elements from the series `x`.
     """
-    return list(sorted(set(to_pd_s(x))))
+    return sorted(set(to_pd_s(x)))

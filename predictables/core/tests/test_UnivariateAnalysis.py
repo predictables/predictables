@@ -1,5 +1,6 @@
-import pytest
 import pandas as pd  # type: ignore
+import pytest
+
 from predictables.core.src._UnivariateAnalysis import UnivariateAnalysis
 from predictables.univariate import Univariate
 from predictables.util import to_pd_df, to_pd_s
@@ -33,13 +34,7 @@ def univariate(df_train, df_val):
 @pytest.fixture
 def ua(df_train, df_val):
     return UnivariateAnalysis(
-        "Cancer Model",
-        df_train,
-        df_val,
-        "y",
-        ["worst_area", "pc1"],
-        False,
-        "fold",
+        "Cancer Model", df_train, df_val, "y", ["worst_area", "pc1"], False, "fold"
     )
 
 

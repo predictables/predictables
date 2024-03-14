@@ -11,8 +11,7 @@ dbg = DebugLogger(working_file="_fit_sm_logistic_regression.py")
 
 
 def fit_sm_logistic_regression(
-    X: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-    y: Union[pd.Series, pl.Series],
+    X: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], y: Union[pd.Series, pl.Series]
 ) -> sm.GLM:
     """
     Fit a logistic regression model using the statsmodels library. Used in the
@@ -54,10 +53,7 @@ def fit_sm_logistic_regression(
         if w:
             for warning in w:
                 log_warning(
-                    warning.message,
-                    warning.category,
-                    warning.filename,
-                    warning.lineno,
+                    warning.message, warning.category, warning.filename, warning.lineno
                 )
 
     return sm_model

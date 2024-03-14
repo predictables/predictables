@@ -9,8 +9,7 @@ from predictables.src._correlation_matrix import _correlation_matrix
 
 
 def _eigenvalues(
-    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame, np.ndarray],
-    round_to: int = 4,
+    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame, np.ndarray], round_to: int = 4
 ) -> pd.DataFrame:
     """
     Calculate the eigenvalues of the correlation matrix of the given data, then
@@ -49,9 +48,7 @@ def _eigenvalues(
     # Get the feature names from the original data
     if isinstance(data, pd.DataFrame):
         feature_names = data.columns.tolist()
-    elif isinstance(data, pl.DataFrame):
-        feature_names = data.columns
-    elif isinstance(data, pl.LazyFrame):
+    elif isinstance(data, (pl.DataFrame, pl.LazyFrame)):
         feature_names = data.columns
     else:
         feature_names = [f"x{i}" for i in range(data.shape[1])]

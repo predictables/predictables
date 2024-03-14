@@ -1,9 +1,8 @@
-import pytest
 import matplotlib.pyplot as plt
+import pytest
 from matplotlib.transforms import Bbox
-from predictables.univariate.src.plots.util._rotate_x_labels_if_overlap import (
-    _get_bbox,
-)
+
+from predictables.univariate.src.plots.util._rotate_x_labels_if_overlap import _get_bbox
 
 
 def test_get_bbox_with_valid_label():

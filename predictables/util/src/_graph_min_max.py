@@ -1,7 +1,9 @@
 from typing import Optional, Tuple, Union
+
+import numpy as np
 import pandas as pd  # type: ignore
 import polars as pl
-import numpy as np
+
 from predictables.util.src._to_pd import to_pd_s
 
 

@@ -253,9 +253,7 @@ def _cv_filter_ts(
 
 
 def _cv_filter_ts_pd(
-    fold: int,
-    fold_col: Union[pd.Series, pl.Series, np.ndarray],
-    train_test: str,
+    fold: int, fold_col: Union[pd.Series, pl.Series, np.ndarray], train_test: str
 ) -> pd.Series:
     """
     Fiter data based on cross-validation fold. This is a helper function for
@@ -296,9 +294,7 @@ def _cv_filter_ts_pd(
 
 
 def _cv_filter_ts_pl(
-    fold: int,
-    fold_col: Union[pd.Series, pl.Series, np.ndarray],
-    train_test: str,
+    fold: int, fold_col: Union[pd.Series, pl.Series, np.ndarray], train_test: str
 ) -> pl.Series:
     """
     Fiter data based on cross-validation fold. This is a helper function for

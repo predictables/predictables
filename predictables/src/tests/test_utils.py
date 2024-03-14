@@ -252,22 +252,14 @@ def test_to_pandas(pddf, pds, pldf, plser, pllf, arr, lst):
 @pytest.fixture
 def pddf_bincol():
     return pd.DataFrame(
-        {
-            "a": ["0", "1", "999"],
-            "b": ["0", "1", "2"],
-            "c": ["0", "1", "2", "3"],
-        }
+        {"a": ["0", "1", "999"], "b": ["0", "1", "2"], "c": ["0", "1", "2", "3"]}
     )
 
 
 @pytest.fixture
 def pldf_bincol():
     return pl.DataFrame(
-        {
-            "a": ["0", "1", "999"],
-            "b": ["0", "1", "2"],
-            "c": ["0", "1", "2", "3"],
-        }
+        {"a": ["0", "1", "999"], "b": ["0", "1", "2"], "c": ["0", "1", "2", "3"]}
     )
 
 

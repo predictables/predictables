@@ -1,4 +1,4 @@
-from dotenv import load_dotenv, dotenv_values
+from dotenv import dotenv_values, load_dotenv
 
 
 def load_env() -> dict:

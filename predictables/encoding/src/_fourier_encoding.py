@@ -18,12 +18,7 @@ def _days_in_year(x: pd.Series) -> pd.Series:
 
 def _days_in_quarter(x: pd.Series) -> pd.Series:
     qtr = x.dt.quarter
-    qtr_days = {
-        1: 31 + 28 + 31,
-        2: 30 + 31 + 30,
-        3: 31 + 31 + 30,
-        4: 31 + 30 + 31,
-    }
+    qtr_days = {1: 31 + 28 + 31, 2: 30 + 31 + 30, 3: 31 + 31 + 30, 4: 31 + 30 + 31}
 
     if x.dt.is_leap_year:
         qtr_days[1] += 1

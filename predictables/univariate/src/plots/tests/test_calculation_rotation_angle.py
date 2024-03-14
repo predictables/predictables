@@ -1,21 +1,22 @@
-import pytest
+import os
+
 import matplotlib.pyplot as plt
+import pytest
+
 from predictables.univariate.src.plots.util._rotate_x_labels_if_overlap import (
     _calculate_rotation_angle,
 )
-import os
-
 from predictables.util import DebugLogger
 
 
 def save(d):
     id = d.uuid
-    d.msg(f"saving figure to ./tmp_img/{str(id)}.png")
+    d.msg(f"saving figure to ./tmp_img/{id!s}.png")
     if os.path.exists("./tmp_img"):
-        plt.savefig(f"./tmp_img/{str(id)}.png")
+        plt.savefig(f"./tmp_img/{id!s}.png")
     else:
         os.mkdir("./tmp_img")
-        plt.savefig(f"./tmp_img/{str(id)}.png")
+        plt.savefig(f"./tmp_img/{id!s}.png")
 
 
 @pytest.fixture(params=[(6, 6), (6, 7), (7, 6), (7, 7), (8, 8)])

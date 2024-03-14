@@ -1,6 +1,7 @@
 import pytest
-from predictables.util.report._Report import Report
 from reportlab.lib.pagesizes import letter  # type: ignore
+
+from predictables.util.report._Report import Report
 
 
 @pytest.fixture

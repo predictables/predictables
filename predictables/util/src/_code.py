@@ -26,7 +26,7 @@ def read_file_code(filepath: str) -> str:
     Examples
     --------
     >>> # Will use the print function for prettier output
-    >>> print(read_file_code("predictables/util/src/_code.py")) # doctest: skip
+    >>> print(read_file_code("predictables/util/src/_code.py"))  # doctest: skip
     # Path: predictables/util/src/_code.py
     import os
     from typing import Optional
@@ -202,8 +202,6 @@ def get_files_from_folder(folder_path: str, file_type: Optional[str] = None) -> 
     """
     files = []
     for file in os.listdir(folder_path):
-        if file_type is None:
-            files.append(file)
-        elif file.endswith(f".{file_type}"):
+        if file_type is None or file.endswith(f".{file_type}"):
             files.append(file)
     return files

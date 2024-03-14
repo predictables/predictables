@@ -13,16 +13,20 @@ import pygments  # type: ignore
 from reportlab.lib.colors import black, lightgrey, white  # type: ignore
 from reportlab.lib.enums import TA_CENTER  # type: ignore
 from reportlab.lib.pagesizes import inch, letter  # type: ignore
-from reportlab.lib.styles import ParagraphStyle  # type: ignore
-from reportlab.lib.styles import getSampleStyleSheet  # type: ignore
-from reportlab.platypus import Flowable  # type: ignore
-from reportlab.platypus import Image  # type: ignore
-from reportlab.platypus import PageBreak  # type: ignore
-from reportlab.platypus import Paragraph  # type: ignore
-from reportlab.platypus import SimpleDocTemplate  # type: ignore
-from reportlab.platypus import Spacer  # type: ignore
-from reportlab.platypus import Table  # type: ignore
-from reportlab.platypus import TableStyle  # type: ignore
+from reportlab.lib.styles import (
+    ParagraphStyle,  # type: ignore
+    getSampleStyleSheet,  # type: ignore
+)
+from reportlab.platypus import (
+    Flowable,  # type: ignore
+    Image,  # type: ignore
+    PageBreak,  # type: ignore
+    Paragraph,  # type: ignore
+    SimpleDocTemplate,  # type: ignore
+    Spacer,  # type: ignore
+    Table,  # type: ignore
+    TableStyle,  # type: ignore
+)
 
 from predictables.util.src._to_pd import to_pd_df
 
@@ -169,9 +173,7 @@ class Report:
     def copy(self) -> "Report":
         return self.__copy__()
 
-    def __deepcopy__(
-        self,
-    ) -> "Report":
+    def __deepcopy__(self) -> "Report":
         new_report = self.__class__(
             filename=f"{self.filename.replace('.pdf', '')}-COPY.pdf"
         )
@@ -204,7 +206,8 @@ class Report:
         """
         Styles the pdf document by updating the stylesheet with the keyword
         arguments passed in. This is used to change the font family, font
-        size, etc. of the document."""
+        size, etc. of the document.
+        """
         for k, v in kwargs.items():
             if hasattr(self.styles.get(tag), k):
                 setattr(self.styles.get(tag), k, v)
@@ -279,19 +282,19 @@ class Report:
         --------
         >>> from predictables.util import Report
         >>> (
-        ...    Report("test.pdf")
+        ...     Report("test.pdf")
         ...     .h1("This is a heading.")
         ...     .h1("This is another heading.")
         ...     .build()
-        ... ) # Will create a pdf called test.pdf with two headings.
+        ... )  # Will create a pdf called test.pdf with two headings.
 
         >>> (
-        ...    Report("test_with_bookmark.pdf")
+        ...     Report("test_with_bookmark.pdf")
         ...     .h1("This is a heading.", element_id="test")
         ...     .h1("This is another heading.")
         ...     .inner_link("Go to the first heading", "test")
         ...     .build()
-        ... ) # Will create a pdf called test_with_bookmark.pdf with two
+        ... )  # Will create a pdf called test_with_bookmark.pdf with two
               # headings and a link at the end pointing to the first
               # heading.
         """
@@ -328,7 +331,7 @@ class Report:
         -------
         >>> from predictables.util import Report
         >>> (
-        ...    Report("test.pdf")
+        ...     Report("test.pdf")
         ...     .h1("Top-level heading.")
         ...     .h2("Second-level heading.")
         ...     .h3("Third-level heading.")
@@ -336,7 +339,7 @@ class Report:
         ...     .h5("Fifth-level heading.")
         ...     .h6("Sixth-level heading.")
         ...     .build()
-        ... ) # Will create a pdf called test.pdf with six headings.
+        ... )  # Will create a pdf called test.pdf with six headings.
         """
         # Add element to chain
         self.heading(2, text, return_self=False)
@@ -371,7 +374,7 @@ class Report:
         -------
         >>> from predictables.util import Report
         >>> (
-        ...    Report("test.pdf")
+        ...     Report("test.pdf")
         ...     .h1("Top-level heading.")
         ...     .h2("Second-level heading.")
         ...     .h3("Third-level heading.")
@@ -379,7 +382,7 @@ class Report:
         ...     .h5("Fifth-level heading.")
         ...     .h6("Sixth-level heading.")
         ...     .build()
-        ... ) # Will create a pdf called test.pdf with six headings.
+        ... )  # Will create a pdf called test.pdf with six headings.
         """
         # Add element to chain
         self.heading(3, text, return_self=False)
@@ -414,7 +417,7 @@ class Report:
         -------
         >>> from predictables.util import Report
         >>> (
-        ...    Report("test.pdf")
+        ...     Report("test.pdf")
         ...     .h1("Top-level heading.")
         ...     .h2("Second-level heading.")
         ...     .h3("Third-level heading.")
@@ -422,7 +425,7 @@ class Report:
         ...     .h5("Fifth-level heading.")
         ...     .h6("Sixth-level heading.")
         ...     .build()
-        ... ) # Will create a pdf called test.pdf with six headings.
+        ... )  # Will create a pdf called test.pdf with six headings.
         """
         # Add element to chain
         self.heading(4, text, return_self=False)
@@ -457,7 +460,7 @@ class Report:
         -------
         >>> from predictables.util import Report
         >>> (
-        ...    Report("test.pdf")
+        ...     Report("test.pdf")
         ...     .h1("Top-level heading.")
         ...     .h2("Second-level heading.")
         ...     .h3("Third-level heading.")
@@ -465,7 +468,7 @@ class Report:
         ...     .h5("Fifth-level heading.")
         ...     .h6("Sixth-level heading.")
         ...     .build()
-        ... ) # Will create a pdf called test.pdf with six headings.
+        ... )  # Will create a pdf called test.pdf with six headings.
         """
         # Add element to chain
         self.heading(5, text, return_self=False)
@@ -500,7 +503,7 @@ class Report:
         -------
         >>> from predictables.util import Report
         >>> (
-        ...    Report("test.pdf")
+        ...     Report("test.pdf")
         ...     .h1("Top-level heading.")
         ...     .h2("Second-level heading.")
         ...     .h3("Third-level heading.")
@@ -508,7 +511,7 @@ class Report:
         ...     .h5("Fifth-level heading.")
         ...     .h6("Sixth-level heading.")
         ...     .build()
-        ... ) # Will create a pdf called test.pdf with six headings.
+        ... )  # Will create a pdf called test.pdf with six headings.
         """
         # Add element to chain
         self.heading(6, text, return_self=False)
@@ -541,13 +544,13 @@ class Report:
         -------
         >>> from predictables.util import Report
         >>> (
-        ...    Report("test.pdf")
+        ...     Report("test.pdf")
         ...     .p("This is a paragraph.")
         ...     .p("This is another paragraph.")
         ...     .text("This is a third paragraph with a different method.")
         ...     .paragraph("This is a fourth paragraph with a different method.")
         ...     .build()
-        ... ) # Will create a pdf called test.pdf with four paragraphs that are
+        ... )  # Will create a pdf called test.pdf with four paragraphs that are
               # all the same, even though they were created with different methods.
         """
         # Add element to chain
@@ -579,13 +582,13 @@ class Report:
         -------
         >>> from predictables.util import Report
         >>> (
-        ...    Report("test.pdf")
+        ...     Report("test.pdf")
         ...     .p("This is a paragraph.")
         ...     .p("This is another paragraph.")
         ...     .text("This is a third paragraph with a different method.")
         ...     .paragraph("This is a fourth paragraph with a different method.")
         ...     .build()
-        ... ) # Will create a pdf called test.pdf with four paragraphs that are
+        ... )  # Will create a pdf called test.pdf with four paragraphs that are
               # all the same, even though they were created with different methods.
         """
         return self.p(text)
@@ -615,13 +618,13 @@ class Report:
         -------
         >>> from predictables.util import Report
         >>> (
-        ...    Report("test.pdf")
+        ...     Report("test.pdf")
         ...     .p("This is a paragraph.")
         ...     .p("This is another paragraph.")
         ...     .text("This is a third paragraph with a different method.")
         ...     .paragraph("This is a fourth paragraph with a different method.")
         ...     .build()
-        ... ) # Will create a pdf called test.pdf with four paragraphs that are
+        ... )  # Will create a pdf called test.pdf with four paragraphs that are
               # all the same, even though they were created with different methods.
         """
         return self.p(text)
@@ -696,10 +699,8 @@ class Report:
         -------
         >>> from predictables.util import Report
         >>> (
-        ...    Report("test.pdf")
-        ...     .ul(["Item 1", "Item 2", "Item 3"])
-        ...     .build()
-        ... ) # Will create a pdf called test.pdf with an unordered
+        ...     Report("test.pdf").ul(["Item 1", "Item 2", "Item 3"]).build()
+        ... )  # Will create a pdf called test.pdf with an unordered
               # list with three items.
         """
         for t in text:
@@ -806,10 +807,8 @@ class Report:
         -------
         >>> from predictables.util import Report
         >>> (
-        ...    Report("test.pdf")
-        ...     .ol(["Item 1", "Item 2", "Item 3"])
-        ...     .build()
-        ... ) # Will create a pdf called test.pdf with an ordered list with three items.
+        ...     Report("test.pdf").ol(["Item 1", "Item 2", "Item 3"]).build()
+        ... )  # Will create a pdf called test.pdf with an ordered list with three items.
         """
         styled_numbers = self._number_style(len(text), number_style)
         for t in text:
@@ -850,17 +849,15 @@ class Report:
         -------
         >>> from predictables.util import Report
         >>> (
-        ...    Report("test.pdf")
-        ...     .code("print('Hello, world!')")
-        ...     .build()
-        ... ) # Will create a pdf called test.pdf with a plaintext code block that
+        ...     Report("test.pdf").code("print('Hello, world!')").build()
+        ... )  # Will create a pdf called test.pdf with a plaintext code block that
               # says print('Hello, world!')
 
         >>> (
-        ...    Report("test-python.pdf")
+        ...     Report("test-python.pdf")
         ...     .code("print('Hello, world!')", language="py")
         ...     .build()
-        ... ) # Will create a pdf called test-python.pdf with a python code block
+        ... )  # Will create a pdf called test-python.pdf with a python code block
               # that says print('Hello, world!'), and will be syntax highlighted
               # as python code.
         """
@@ -1001,7 +998,6 @@ class Report:
         >>> report = Report("test.pdf")
         >>> report.caption("This is a caption.").build()
         """
-
         # Calculate the left and right margins to center the caption under the plot
         page_width = self.pagesize[0] / inch  # Convert page width to inches
         total_margin = page_width - width

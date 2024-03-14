@@ -1,4 +1,5 @@
 import pytest
+
 from predictables.util.report._Report import Report
 
 
@@ -27,11 +28,11 @@ def test_heading_valid_attributes(report, heading, style, text, level):
     rpt2 = rpt2.style(heading, **style)
 
     assert (
-        getattr(rpt1.styles.get(heading), "fontSize") == style["fontSize"]
-    ), f"Expected {heading} to have fontSize {style['fontSize']}, got {getattr(rpt1.styles.get(heading), 'fontSize')}"
+        rpt1.styles.get(heading).fontSize == style["fontSize"]
+    ), f"Expected {heading} to have fontSize {style['fontSize']}, got {rpt1.styles.get(heading).fontSize}"
     assert (
-        getattr(rpt2.styles.get(heading), "fontSize") == style["fontSize"]
-    ), f"Expected {heading} to have fontSize {style['fontSize']}, got {getattr(rpt2.styles.get(heading), 'fontSize')}"
+        rpt2.styles.get(heading).fontSize == style["fontSize"]
+    ), f"Expected {heading} to have fontSize {style['fontSize']}, got {rpt2.styles.get(heading).fontSize}"
     assert isinstance(
         rpt1, Report
     ), f"Expected set method to return self (or at least a Report object), but got {rpt1}, a {type(rpt1)} object"

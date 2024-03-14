@@ -8,11 +8,7 @@ from predictables.util.src.logging._Log import Log
 
 
 class Logger:
-    def __init__(
-        self,
-        name: str = "log",
-        file_name: Optional[str] = None,
-    ):
+    def __init__(self, name: str = "log", file_name: Optional[str] = None):
         """
         Create a logger that logs _Log
 

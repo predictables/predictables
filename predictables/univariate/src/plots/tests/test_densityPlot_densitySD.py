@@ -3,6 +3,7 @@ import pandas as pd  # type: ignore
 import polars as pl
 import pytest
 from scipy.stats import gaussian_kde  # type: ignore
+
 from predictables.univariate.src.plots._density_plot import calculate_density_sd
 from predictables.util import filter_by_cv_fold
 
@@ -100,13 +101,7 @@ def test_calculate_single_density_sd_basic(
         cv_fold = cv_pl
 
     sd_smooth, sd = calculate_density_sd(
-        x,
-        by,
-        cv_fold,
-        x_min,
-        x_max,
-        grid_bins,
-        time_series_validation,
+        x, by, cv_fold, x_min, x_max, grid_bins, time_series_validation
     )
 
     # Basic checks

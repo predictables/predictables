@@ -1,5 +1,6 @@
 import pytest
-from reportlab.lib.pagesizes import letter, inch  # type: ignore
+from reportlab.lib.pagesizes import inch, letter  # type: ignore
+
 from predictables.util.report._Report import Report
 
 
@@ -28,10 +29,7 @@ def test_report_init_default():
 # Test initialization with custom margins
 @pytest.mark.parametrize(
     "margins, expected",
-    [
-        ([1, 1, 1, 1], [1, 1, 1, 1]),
-        ([0.25, 0.5, 0.75, 1], [0.25, 0.5, 0.75, 1]),
-    ],
+    [([1, 1, 1, 1], [1, 1, 1, 1]), ([0.25, 0.5, 0.75, 1], [0.25, 0.5, 0.75, 1])],
 )
 def test_report_init_custom_margins(margins, expected):
     report = Report(filename="test_report.pdf", margins=margins)
@@ -50,13 +48,7 @@ def test_report_init_custom_margins(margins, expected):
 
 
 # Test initialization with custom DPI
-@pytest.mark.parametrize(
-    "dpi, expected",
-    [
-        (100, 100),
-        (300, 300),
-    ],
-)
+@pytest.mark.parametrize("dpi, expected", [(100, 100), (300, 300)])
 def test_report_init_custom_dpi(dpi, expected):
     custom_dpi = dpi
     report = Report(filename="test_report.pdf", dpi=custom_dpi)

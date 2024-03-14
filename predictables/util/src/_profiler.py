@@ -8,7 +8,6 @@ from typing import Callable
 from dotenv import load_dotenv
 
 # from memory_profiler import memory_usage  # type: ignore
-
 from predictables.util.src.logging._DebugLogger import DebugLogger
 
 load_dotenv()
@@ -16,7 +15,6 @@ load_dotenv()
 
 def profiler(func: Callable) -> Callable:
     """Decorator to CPU and memory profile a Python function."""
-
     # Only profile if the LOGGING_LEVEL environment variable is set to debug
     if os.getenv("LOGGING_LEVEL", "info").lower() == "debug":
         function_name = func.__name__

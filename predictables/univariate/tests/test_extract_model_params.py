@@ -1,7 +1,7 @@
 import numpy as np
-from scipy.stats import norm  # type: ignore
 import polars as pl
 import pytest
+from scipy.stats import norm  # type: ignore
 
 
 @pytest.fixture
@@ -32,27 +32,18 @@ def df(noise, logistic_coef, linear_coef):
             ]
         )
         # Create linear relationship (easy to predict)
-        .with_columns(
-            [
-                pl.col("X").mul(linear_coef).alias("y_linear"),
-            ]
-        )
+        .with_columns([pl.col("X").mul(linear_coef).alias("y_linear")])
         # Create logistic relationship (harder to predict)
         .with_columns(
             [
                 # Logits
-                pl.col("X")
-                .mul(logistic_coef)
-                .alias("logit")
+                pl.col("X").mul(logistic_coef).alias("logit")
             ]
         )
         .with_columns(
             [
                 # Probability
-                pl.col("logit")
-                .exp()
-                .truediv(1 + pl.col("logit").exp())
-                .alias("prob"),
+                pl.col("logit").exp().truediv(1 + pl.col("logit").exp()).alias("prob")
             ]
         )
         .with_columns(
@@ -61,7 +52,7 @@ def df(noise, logistic_coef, linear_coef):
                 pl.when(pl.col("prob") > pl.col("prob").median())
                 .then(1)
                 .otherwise(0)
-                .alias("y_logistic"),
+                .alias("y_logistic")
             ]
         )
     )
@@ -75,8 +66,7 @@ def sm_logistic_model(df):
     from predictables.util import to_pd_df, to_pd_s
 
     return fit_sm_logistic_regression(
-        to_pd_df(df.select("X")),
-        to_pd_s(df.select("y_logistic")["y_logistic"]),
+        to_pd_df(df.select("X")), to_pd_s(df.select("y_logistic")["y_logistic"])
     )
 
 
@@ -100,8 +90,7 @@ def sk_logistic_model(df):
     from predictables.util import to_pd_df, to_pd_s
 
     return fit_sk_logistic_regression(
-        to_pd_df(df.select("X")),
-        to_pd_s(df.select("y_logistic")["y_logistic"]),
+        to_pd_df(df.select("X")), to_pd_s(df.select("y_logistic")["y_logistic"])
     )
 
 

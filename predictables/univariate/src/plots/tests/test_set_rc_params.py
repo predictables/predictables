@@ -1,6 +1,7 @@
 import pytest
-from predictables.univariate.src.plots.util._set_rc_params import set_rc_params
+
 from predictables.univariate.src.plots.util._get_rc_params import get_rc_params
+from predictables.univariate.src.plots.util._set_rc_params import set_rc_params
 
 
 @pytest.mark.parametrize(

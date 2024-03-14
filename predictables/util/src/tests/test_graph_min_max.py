@@ -1,8 +1,9 @@
-from predictables.util.src._graph_min_max import graph_min_max
 import numpy as np
 import pandas as pd  # type: ignore
 import polars as pl
 import pytest
+
+from predictables.util.src._graph_min_max import graph_min_max
 
 
 @pytest.fixture
@@ -24,16 +25,8 @@ def x_pl(x_pd):
 @pytest.mark.parametrize("x_type", ["pd", "np", "pl"])
 @pytest.mark.parametrize("x_min", [None, 0, -1, -23])
 @pytest.mark.parametrize("x_max", [None, 5])
-def test_calculate_single_density_sd_basic(
-    x_pd,
-    x_np,
-    x_pl,
-    x_max,
-    x_min,
-    x_type,
-):
+def test_calculate_single_density_sd_basic(x_pd, x_np, x_pl, x_max, x_min, x_type):
     """Test that default min and max are correctly identified from the data."""
-
     # Set x to the correct type
     if x_type == "pd":
         x = x_pd

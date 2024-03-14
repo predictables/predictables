@@ -1,6 +1,8 @@
 from typing import List
+
 import polars as pl
-from predictables.util import tqdm, to_pl_lf
+
+from predictables.util import to_pl_lf, tqdm
 
 
 def mean_encode_df(
@@ -111,7 +113,6 @@ def mean_encoding_with_ratio_lazy(
     functions. Calculate running sums of `col1` and `col2` up to but not including
     the date in each row.
     """
-
     # Get the number of unique features in the categorical column
     n_cats = df.select(pl.col(cat_col)).n_unique()
 
@@ -170,13 +171,11 @@ def mean_encoding_with_ratio_lazy(
                 .then(
                     (
                         # numerator gets 1 * alpha
-                        pl.col("sum_col1")
-                        + laplace_alpha
+                        pl.col("sum_col1") + laplace_alpha
                     )
                     / (
                         # denominator gets n_cats * alpha
-                        pl.col("sum_col2")
-                        + (n_cats * laplace_alpha)
+                        pl.col("sum_col2") + (n_cats * laplace_alpha)
                     )
                 )
                 .otherwise(pl.col("mean_ratio"))
@@ -189,13 +188,11 @@ def mean_encoding_with_ratio_lazy(
                 .then(
                     (
                         # numerator gets 1 * alpha
-                        pl.col("sum_col1")
-                        + laplace_alpha
+                        pl.col("sum_col1") + laplace_alpha
                     )
                     / (
                         # denominator gets n_cats * alpha
-                        pl.col("sum_col2")
-                        + (n_cats * laplace_alpha)
+                        pl.col("sum_col2") + (n_cats * laplace_alpha)
                     )
                 )
                 .otherwise(pl.col("mean_ratio"))

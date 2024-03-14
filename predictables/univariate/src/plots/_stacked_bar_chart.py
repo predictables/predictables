@@ -55,11 +55,7 @@ def plot_stacked_bar_chart(
         _, ax = plt.subplots(figsize=figsize)
 
     # Assume fitted is a DataFrame containing the feature and target
-    ct = pd.crosstab(
-        feature,
-        target,
-        normalize="index",
-    ).sort_values(0)
+    ct = pd.crosstab(feature, target, normalize="index").sort_values(0)
 
     n = len(ct.index)
     bar_width = bar_width
@@ -152,11 +148,7 @@ def plotly_stacked_bar_chart(
     facecolor: str = "white",
 ):
     # Assume fitted is a DataFrame containing the feature and target
-    ct = pd.crosstab(
-        feature,
-        target,
-        normalize="index",
-    ).sort_values(by=0)
+    ct = pd.crosstab(feature, target, normalize="index").sort_values(by=0)
 
     # Create an empty figure
     fig = go.Figure()

@@ -3,8 +3,9 @@ from typing import Union
 import numpy as np
 import pandas as pd
 import polars as pl  # type: ignore
-from statsmodels.stats.outliers_influence import variance_inflation_factor  # type: ignore
-
+from statsmodels.stats.outliers_influence import (
+    variance_inflation_factor,  # type: ignore
+)
 
 from predictables.util import to_pd_df, tqdm
 

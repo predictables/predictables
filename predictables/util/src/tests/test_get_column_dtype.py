@@ -185,8 +185,7 @@ def date_as_string_polars_series():
     This is a date encoded as a string. Should be able to be parsed as a date.
     """
     return pl.Series(
-        "date",
-        ["2021-01-01", "2021-01-02", "2021-01-03", "2021-01-04", "2021-01-05"],
+        "date", ["2021-01-01", "2021-01-02", "2021-01-03", "2021-01-04", "2021-01-05"]
     )
 
 
@@ -216,8 +215,7 @@ def date_as_categorical_polars_series():
     This is a date encoded as a categorical. Should be able to be parsed as a date.
     """
     return pl.Series(
-        "date",
-        ["2021-01-01", "2021-01-02", "2021-01-03", "2021-01-04", "2021-01-05"],
+        "date", ["2021-01-01", "2021-01-02", "2021-01-03", "2021-01-04", "2021-01-05"]
     ).cast(pl.Categorical)
 
 
@@ -362,14 +360,8 @@ def text_polars_series():
         ("date_as_string_pandas_series", False),
         ("date_as_string_polars_series", False),
         ("date_as_string_numpy_array", False),
-        (
-            "date_as_categorical_pandas_series",
-            False,
-        ),
-        (
-            "date_as_categorical_polars_series",
-            False,
-        ),
+        ("date_as_categorical_pandas_series", False),
+        ("date_as_categorical_polars_series", False),
         ("binary_pd_series_ints", True),
         ("binary_pd_series_strings", True),
         ("binary_pd_series_categorical", True),
@@ -417,14 +409,8 @@ def test_is_numeric(request, series_name, expected):
         ("date_as_string_pandas_series", False),
         ("date_as_string_polars_series", False),
         ("date_as_string_numpy_array", False),
-        (
-            "date_as_categorical_pandas_series",
-            False,
-        ),
-        (
-            "date_as_categorical_polars_series",
-            False,
-        ),
+        ("date_as_categorical_pandas_series", False),
+        ("date_as_categorical_polars_series", False),
         ("binary_pd_series_ints", True),
         ("binary_pd_series_strings", True),
         ("binary_pd_series_categorical", True),
@@ -475,14 +461,8 @@ def test_is_integer(request, series_name, expected):
         ("date_as_string_pandas_series", False),
         ("date_as_string_polars_series", False),
         ("date_as_string_numpy_array", False),
-        (
-            "date_as_categorical_pandas_series",
-            False,
-        ),
-        (
-            "date_as_categorical_polars_series",
-            False,
-        ),
+        ("date_as_categorical_pandas_series", False),
+        ("date_as_categorical_polars_series", False),
         ("binary_pd_series_ints", True),
         ("binary_pd_series_strings", True),
         ("binary_pd_series_categorical", True),
@@ -527,14 +507,8 @@ def test_is_binary(request, series_name, expected):
         ("date_polars_series", True),
         ("date_as_string_pandas_series", True),
         ("date_as_string_polars_series", True),
-        (
-            "date_as_categorical_pandas_series",
-            True,
-        ),
-        (
-            "date_as_categorical_polars_series",
-            True,
-        ),
+        ("date_as_categorical_pandas_series", True),
+        ("date_as_categorical_polars_series", True),
         ("binary_pd_series_ints", False),
         ("binary_pd_series_strings", False),
         ("binary_pd_series_categorical", False),
@@ -581,14 +555,8 @@ def test_is_datetime(request, series_name, expected):
         ("date_polars_series", False),
         ("date_as_string_pandas_series", False),
         ("date_as_string_polars_series", False),
-        (
-            "date_as_categorical_pandas_series",
-            False,
-        ),
-        (
-            "date_as_categorical_polars_series",
-            False,
-        ),
+        ("date_as_categorical_pandas_series", False),
+        ("date_as_categorical_polars_series", False),
         ("binary_pd_series_ints", False),
         ("binary_pd_series_strings", False),
         ("binary_pd_series_categorical", False),
@@ -635,14 +603,8 @@ def test_is_categorical(request, series_name, expected):
         ("date_polars_series", "datetime"),
         ("date_as_string_pandas_series", "datetime"),
         ("date_as_string_polars_series", "datetime"),
-        (
-            "date_as_categorical_pandas_series",
-            "datetime",
-        ),
-        (
-            "date_as_categorical_polars_series",
-            "datetime",
-        ),
+        ("date_as_categorical_pandas_series", "datetime"),
+        ("date_as_categorical_polars_series", "datetime"),
         ("binary_pd_series_ints", "binary"),
         ("binary_pd_series_strings", "binary"),
         ("binary_pd_series_categorical", "binary"),

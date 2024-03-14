@@ -19,8 +19,7 @@ from predictables.src._utils import _to_numpy, _to_pandas
 
 
 def _pearson_correlation_matrix(
-    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-    method: str = "pearson",
+    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], method: str = "pearson"
 ) -> pd.DataFrame:
     """
     Calculates the correlation matrix for the data.
@@ -87,8 +86,7 @@ Please use 'pearson'. I don't know why this is even an option."
 
 
 def _correlation_matrix(
-    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-    method: str = "pearson",
+    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], method: str = "pearson"
 ) -> pd.DataFrame:
     """
     Calculates the correlation matrix for the data.
@@ -386,13 +384,7 @@ def _correlation_matrix(
 
 def _correlation_matrix_plot(
     data: Union[
-        pd.DataFrame,
-        pd.Series,
-        pl.DataFrame,
-        pl.Series,
-        pl.LazyFrame,
-        np.ndarray,
-        list,
+        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list
     ],
     method: str = "pearson",
     ax: plt.Axes = None,
@@ -437,13 +429,7 @@ def _correlation_matrix_plot(
 
 def _highly_correlated_variables(
     data: Union[
-        pd.DataFrame,
-        pd.Series,
-        pl.DataFrame,
-        pl.Series,
-        pl.LazyFrame,
-        np.ndarray,
-        list,
+        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list
     ],
     method: str = "pearson",
     threshold: float = 0.9,

@@ -81,9 +81,7 @@ def _box_cox_transform(
     # Get the column from the DataFrame
     if isinstance(data, pd.DataFrame):
         df = pl.from_pandas(data)
-    elif isinstance(data, pl.DataFrame):
-        df = data
-    elif isinstance(data, pl.LazyFrame):
+    elif isinstance(data, (pl.DataFrame, pl.LazyFrame)):
         df = data
     else:
         raise TypeError("data must be a DataFrame or LazyFrame")

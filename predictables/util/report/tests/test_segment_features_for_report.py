@@ -1,4 +1,5 @@
 import pytest
+
 from predictables.util.report.src._segment_features_for_report import (
     Segment,
     segment_features_for_report,
@@ -14,19 +15,10 @@ def sample_features():
 
 @pytest.mark.parametrize(
     "max_per_segment,expected_num_segments,expected_last_segment_size",
-    [
-        (5, 4, 5),
-        (10, 2, 10),
-        (20, 1, 20),
-        (25, 1, 20),
-        (1, 20, 1),
-    ],
+    [(5, 4, 5), (10, 2, 10), (20, 1, 20), (25, 1, 20), (1, 20, 1)],
 )
 def test_segment_features_for_report(
-    sample_features,
-    max_per_segment,
-    expected_num_segments,
-    expected_last_segment_size,
+    sample_features, max_per_segment, expected_num_segments, expected_last_segment_size
 ):
     segments = segment_features_for_report(sample_features, max_per_segment)
     assert len(segments) == expected_num_segments, "Incorrect number of segments"
@@ -44,11 +36,7 @@ def test_segment_features_for_report(
 
 
 @pytest.mark.parametrize(
-    "features,max_per_segment",
-    [
-        (["feature_1"], 0),
-        (["feature_1"], -1),
-    ],
+    "features,max_per_segment", [(["feature_1"], 0), (["feature_1"], -1)]
 )
 def test_segment_features_for_report_edge_cases(features, max_per_segment):
     if max_per_segment <= 0:
@@ -113,10 +101,10 @@ def test_segment_repr_and_str(file_num_start, file_num_end, n_features, expected
     )
     assert (
         repr(segment) == expected_repr
-    ), f"Incorrect __repr__ implementation for {segment}: expected {expected_repr} but got {repr(segment)}"
+    ), f"Incorrect __repr__ implementation for {segment}: expected {expected_repr} but got {segment!r}"
     assert (
         str(segment) == expected_repr
-    ), f"Incorrect __str__ implementation for {segment}: expected {expected_repr} but got {str(segment)}"
+    ), f"Incorrect __str__ implementation for {segment}: expected {expected_repr} but got {segment!s}"
 
 
 @pytest.mark.parametrize(
@@ -152,18 +140,15 @@ def test_segment_initialization_type_error(
     ],
 )
 def test_segment_features_boundary_conditions(
-    sample_features,
-    max_per_segment,
-    expected_num_segments,
-    expected_segment_sizes,
+    sample_features, max_per_segment, expected_num_segments, expected_segment_sizes
 ):
     segments = segment_features_for_report(sample_features, max_per_segment)
     assert (
         len(segments) == expected_num_segments
     ), f"Incorrect number of segments for boundary conditions: expected {expected_num_segments} but got {len(segments)}"
-    assert [
-        seg.n_features for seg in segments
-    ] == expected_segment_sizes, f"Incorrect segment sizes for boundary conditions: expected {expected_segment_sizes} but got {[seg.n_features for seg in segments]}"
+    assert (
+        [seg.n_features for seg in segments] == expected_segment_sizes
+    ), f"Incorrect segment sizes for boundary conditions: expected {expected_segment_sizes} but got {[seg.n_features for seg in segments]}"
 
 
 # def test_segment_features_uniqueness(sample_features):

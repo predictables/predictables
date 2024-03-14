@@ -9,8 +9,8 @@ def get_rc_params() -> Dict[str, Any]:
     customize the style of Matplotlib plots. The parameters include font sizes, tick
     label sizes, legend font size, figure size, and figure DPI.
 
-    Returns:
-    --------
+    Returns
+    -------
     dict
         A dictionary of Matplotlib RC parameters.
     """

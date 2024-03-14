@@ -250,7 +250,6 @@ class Univariate(Model):
         Helper method that returns an ordered list of the unique elements of
         self.df.cv. Used for reference only.
         """
-
         return get_unique(
             to_pd_s(self.cv)
             if isinstance(self.cv, (pl.Series, pd.Series))
@@ -258,10 +257,7 @@ class Univariate(Model):
         )
 
     def get_data(
-        self,
-        element: str = "x",
-        data: str = "train",
-        fold_n: Optional[int] = None,
+        self, element: str = "x", data: str = "train", fold_n: Optional[int] = None
     ) -> List[Union[int, float, str]]:
         """
         Helper function to get the requested data element.
@@ -562,9 +558,7 @@ class Univariate(Model):
 
         def density():
             return self.plot_density(
-                data="train",
-                feature_name=self.feature_name,
-                figsize=self.figsize,
+                data="train", feature_name=self.feature_name, figsize=self.figsize
             )
 
         def cdf():

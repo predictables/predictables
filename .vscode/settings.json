@@ -1,6 +1,10 @@
 {
   "search.useIgnoreFiles": false,
-  "esbonio.sphinx.confDir": "",
-  "python.linting.enabled": true,
-  "python.analysis.autoImportCompletions": true
+  "python.analysis.autoImportCompletions": true,
+  "[python]": {
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.formatOnType": true,
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.wordBasedSuggestions": "off"
+  }
 }

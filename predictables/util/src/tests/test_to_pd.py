@@ -19,14 +19,7 @@ def series_input(request):
 
 
 @pytest.fixture(
-    params=[
-        pd.DataFrame,
-        pl.DataFrame,
-        pl.LazyFrame,
-        pd.Series,
-        pl.Series,
-        np.ndarray,
-    ]
+    params=[pd.DataFrame, pl.DataFrame, pl.LazyFrame, pd.Series, pl.Series, np.ndarray]
 )
 def df_input(request):
     if request.param == pd.DataFrame:
