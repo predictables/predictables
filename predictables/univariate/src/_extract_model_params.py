@@ -4,8 +4,10 @@ from collections import namedtuple
 from typing import Tuple
 
 import statsmodels.api as sm  # type: ignore
-from sklearn.linear_model import LinearRegression  # type: ignore
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import (
+    LinearRegression,  # type: ignore
+    LogisticRegression,
+)
 
 from predictables.util import DebugLogger
 
