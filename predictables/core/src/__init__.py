@@ -1,1 +1,1 @@
-from ._UnivariateAnalysis import UnivariateAnalysis  # noqa F401
+from ._UnivariateAnalysis import UnivariateAnalysis  # F401

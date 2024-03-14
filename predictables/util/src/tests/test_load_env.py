@@ -7,7 +7,7 @@ from predictables.util.src._load_env import load_env
 
 @patch("predictables.util.src._load_env.load_dotenv")
 @patch("predictables.util.src._load_env.dotenv_values")
-def test_load_env(mock_dotenv_values, mock_load_dotenv):
+def test_load_env(mock_dotenv_values, mock_load_dotenv):  # noqa: ANN001
     # Test when .env file is loaded successfully
     mock_load_dotenv.return_value = True
     mock_dotenv_values.return_value = {"VAR1": "value1", "VAR2": "value2"}
@@ -24,7 +24,7 @@ def test_load_env(mock_dotenv_values, mock_load_dotenv):
 
 @patch("predictables.util.src._load_env.load_dotenv")
 @patch("predictables.util.src._load_env.dotenv_values")
-def test_load_env_empty_file(mock_dotenv_values, mock_load_dotenv):
+def test_load_env_empty_file(mock_dotenv_values, mock_load_dotenv):  # noqa: ANN001
     mock_load_dotenv.return_value = True
     mock_dotenv_values.return_value = {}
     assert load_env() == {}, "Expected: {}, Actual: {}".format({}, load_env())
@@ -32,7 +32,7 @@ def test_load_env_empty_file(mock_dotenv_values, mock_load_dotenv):
 
 @patch("predictables.util.src._load_env.load_dotenv")
 @patch("predictables.util.src._load_env.dotenv_values")
-def test_load_env_invalid_format(mock_dotenv_values, mock_load_dotenv):
+def test_load_env_invalid_format(mock_dotenv_values, mock_load_dotenv):  # noqa: ANN001
     mock_load_dotenv.return_value = True
     mock_dotenv_values.return_value = {"INVALID_FORMAT": ""}
     with pytest.raises(ValueError):
@@ -41,7 +41,7 @@ def test_load_env_invalid_format(mock_dotenv_values, mock_load_dotenv):
 
 @patch("predictables.util.src._load_env.load_dotenv")
 @patch("predictables.util.src._load_env.dotenv_values")
-def test_load_env_special_characters(mock_dotenv_values, mock_load_dotenv):
+def test_load_env_special_characters(mock_dotenv_values, mock_load_dotenv):  # noqa: ANN001
     mock_load_dotenv.return_value = True
     mock_dotenv_values.return_value = {"VAR": "val$ue#1"}
     assert load_env() == {"VAR": "val$ue#1"}, "Expected: {}, Actual: {}".format(
@@ -51,7 +51,7 @@ def test_load_env_special_characters(mock_dotenv_values, mock_load_dotenv):
 
 @patch("predictables.util.src._load_env.load_dotenv")
 @patch("predictables.util.src._load_env.dotenv_values")
-def test_load_env_large_values(mock_dotenv_values, mock_load_dotenv):
+def test_load_env_large_values(mock_dotenv_values, mock_load_dotenv):  # noqa: ANN001
     mock_load_dotenv.return_value = True
     large_value = "a" * 10000  # a string with 10,000 characters
     mock_dotenv_values.return_value = {"VAR": large_value}
@@ -62,7 +62,10 @@ def test_load_env_large_values(mock_dotenv_values, mock_load_dotenv):
 
 @patch("predictables.util.src._load_env.load_dotenv")
 @patch("predictables.util.src._load_env.dotenv_values")
-def test_load_env_large_number_of_variables(mock_dotenv_values, mock_load_dotenv):
+def test_load_env_large_number_of_variables(
+    mock_dotenv_values,  # noqa: ANN001
+    mock_load_dotenv,  # noqa: ANN001
+):
     mock_load_dotenv.return_value = True
     large_number_of_variables = {
         f"VAR{i}": f"value{i}" for i in range(10000)
@@ -75,7 +78,7 @@ def test_load_env_large_number_of_variables(mock_dotenv_values, mock_load_dotenv
 
 @patch("predictables.util.src._load_env.load_dotenv")
 @patch("predictables.util.src._load_env.dotenv_values")
-def test_load_env_non_string_keys_values(mock_dotenv_values, mock_load_dotenv):
+def test_load_env_non_string_keys_values(mock_dotenv_values, mock_load_dotenv):  # noqa: ANN001
     mock_load_dotenv.return_value = True
     non_string_keys_values = {
         123: 456,

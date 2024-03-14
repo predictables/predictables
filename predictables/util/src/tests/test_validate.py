@@ -144,8 +144,7 @@ def simple_decorator(func: typing.Callable) -> typing.Callable:
     return wrapper
 
 
-@pytest.mark.parametrize("dtype", ["pd_df", "pl_df", "pl_lf", "np"])
-def test_stacked_decorators(test_mapping: dict[str, pl.LazyFrame], dtype: str) -> None:
+def test_stacked_decorators() -> None:
     @simple_decorator
     @validate_lf
     def test_func() -> str:

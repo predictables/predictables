@@ -1,4 +1,4 @@
-from ._fit_sk_linear_regression import fit_sk_linear_regression  # noqa F401
+from ._fit_sk_linear_regression import fit_sk_linear_regression  # F401
 
 # trunk-ignore(flake8/F401)
 from ._fit_sk_logistic_regression import (

@@ -1,4 +1,4 @@
-from . import _code  # noqa F401
+from . import _code  # F401
 from ._get_column_dtype import get_column_dtype  # F401
 from ._get_unique import get_unique  # F401
 from ._harmonic_mean import harmonic_mean  # F401

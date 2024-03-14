@@ -104,7 +104,7 @@ def test_to_pl_df(df_input: pd.DataFrame | pl.DataFrame | pl.LazyFrame | str) ->
 
     if isinstance(df_input, str):
         with pytest.raises(TypeError):
-            to_pl_df(df_input) # type: ignore[arg-type]
+            to_pl_df(df_input)  # type: ignore[arg-type]
     else:
         result = to_pl_df(df_input)
         assert isinstance(
@@ -120,10 +120,11 @@ def test_to_pl_df(df_input: pd.DataFrame | pl.DataFrame | pl.LazyFrame | str) ->
             ), f"DataFrame should have {expected_columns} columns for non-Series input, but has {result.shape[1]}"
 
 
-def test_to_pl_lf(lf_input):
+def test_to_pl_lf(lf_input: pd.DataFrame | pl.DataFrame | pl.LazyFrame | str) -> None:
+    expected_columns = 3
     if isinstance(lf_input, str):
         with pytest.raises(TypeError):
-            to_pl_lf(lf_input)
+            to_pl_lf(lf_input)  # type: ignore[arg-type]
     else:
         result = to_pl_lf(lf_input)
         assert isinstance(
@@ -135,7 +136,7 @@ def test_to_pl_lf(lf_input):
             ), f"LazyFrame should have only one column for Series input, but has {result.collect().shape[1]}"
         else:
             assert (
-                result.collect().shape[1] == 3
+                result.collect().shape[1] == expected_columns
             ), f"LazyFrame should have three columns for non-Series input, but has {result.collect().shape[1]}"
 
 

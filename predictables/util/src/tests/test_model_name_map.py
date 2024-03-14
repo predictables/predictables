@@ -1,6 +1,6 @@
-import pytest  # type: ignore
+import pytest
 
-from predictables.util.src._model_name_map import model_name_map  # type: ignore
+from predictables.util.src._model_name_map import model_name_map
 
 
 @pytest.fixture(
@@ -58,11 +58,11 @@ from predictables.util.src._model_name_map import model_name_map  # type: ignore
         "xg",
     ]
 )
-def model_name(request):
+def model_name(request: pytest.FixtureRequest) -> str:
     return request.param
 
 
-def test_model_name_map(model_name):
+def test_model_name_map(model_name: str) -> None:
     expected_map = {
         "catboost": "catboost",
         "cb": "catboost",
@@ -119,6 +119,6 @@ def test_model_name_map(model_name):
     assert model_name_map(model_name) == expected_map[model_name]
 
 
-def test_model_name_map_invalid():
+def test_model_name_map_invalid() -> None:
     with pytest.raises(ValueError):
         model_name_map("invalid_model_name")

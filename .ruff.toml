@@ -173,8 +173,8 @@ unfixable = ["F401"] # Disable fix for unused imports (`F401`).
 
 
 [lint.per-file-ignores]
-"__init__.py" = ["E402", "I001"]
-"**/{tests,docs,tools}/*" = ["E402","I001","D100", "D103"]
+"__init__.py" = ["E402", "I001", "D104"]
+"**/{tests,docs,tools}/*" = ["E402","I001","D100", "D103", "ANN201"]
 
 [lint.extend-per-file-ignores]
 # Ignore `E402` and `F401` in all `__init__.py` files.
