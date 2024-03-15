@@ -1,10 +1,7 @@
 from . import _code  # F401
 from ._col_name_for_report import col_name_for_report  # F401
-from ._cv_filter import (
-    cv_filter,
-    filter_by_cv_fold,  # F401
-    filter_df_by_cv_fold,
-)
+from ._cv_filter import filter_by_cv_fold  # F401
+from ._cv_filter import cv_filter, filter_df_by_cv_fold
 from ._fmt_col_name import fmt_col_name  # F401
 from ._get_column_dtype import get_column_dtype  # F401
 from ._get_unique import get_unique  # F401

@@ -40,20 +40,20 @@ class Log:
         self.log["level"] = level.value
         return self
 
-    def info(self, msg):
+    def info(self, msg: str) -> Log:
         return self._msg(msg, LogLevel.INFO)
 
-    def debug(self, msg):
+    def debug(self, msg: str) -> Log:
         return self._msg(msg, LogLevel.DEBUG)
 
-    def warning(self, msg):
+    def warning(self, msg: str) -> Log:
         return self._msg(msg, LogLevel.WARNING)
 
-    def error(self, msg):
+    def error(self, msg: str) -> Log:
         return self._msg(msg, LogLevel.ERROR)
 
-    def critical(self, msg):
+    def critical(self, msg: str) -> Log:
         return self._msg(msg, LogLevel.CRITICAL)
 
-    def json(self):
+    def json(self) -> str:
         return json.dumps(self.log)

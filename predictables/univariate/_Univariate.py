@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import Any, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -30,8 +29,9 @@ from predictables.util.report import Report
 dbg = DebugLogger(working_file="_Univariate.py")
 
 
-def get_col(self, col: str) -> List[Union[int, float, str]]:
-    """
+def get_col(self: Univariate, col: str) -> list[int | float | str]:
+    """Get the requested column from the data.
+
     Helper function to get the requested column from the data.
 
     Parameters
@@ -79,22 +79,22 @@ def get_col(self, col: str) -> List[Union[int, float, str]]:
     attributes = [getattr(self.cv_dict[fold], col) for fold in self.unique_folds]
     sd = pd.Series(attributes).std()
 
-    return attributes + [getattr(self, col)] + [sd]
+    return [*attributes, getattr(self, col), sd]
 
 
 class Univariate(Model):
     target_name: str
-    target: Optional[pd.Series]
-    y: Optional[pd.Series]
-    Y: Optional[pd.Series]
+    target: pd.Series | None
+    y: pd.Series | None
+    Y: pd.Series | None
 
     feature_name: str
-    feature: Optional[pd.Series]
-    X: Optional[pd.Series]
-    x: Optional[pd.Series]
+    feature: pd.Series | None
+    X: pd.Series | None
+    x: pd.Series | None
 
     fold_name: str
-    folds: Optional[pd.Series]
+    folds: pd.Series | None
 
     normalization_obj: Optional[Union[MinMaxScaler, StandardScaler]]
 
@@ -106,6 +106,7 @@ class Univariate(Model):
         feature_col_: Optional[str] = None,
         target_col_: Optional[str] = None,
         time_series_validation: bool = True,
+        skewness_threshold: float = 0.5,
         **kwargs,
     ) -> None:
         df: pd.DataFrame = to_pd_df(df_)
@@ -123,6 +124,8 @@ class Univariate(Model):
             target_col=target_col_,
             time_series_validation=time_series_validation,
         )
+
+        self.skewness_threshold = skewness_threshold
 
         # Normalize the column if the cross-validated fit is improved
         df[feature_col_] = self.standardize(X=df[[feature_col_]])
@@ -196,26 +199,26 @@ class Univariate(Model):
         self.target_name: str = (
             self.target_col if isinstance(self.target_col, str) else dfpd.columns[0]
         )
-        self.target: Optional[pd.Series] = (
+        self.target: pd.Series | None = (
             dfpd.loc[:, self.target_name] if dfpd is not None else None
         )
-        self.y: Optional[pd.Series] = (
+        self.y: pd.Series | None = (
             dfpd.loc[:, self.target_name] if dfpd is not None else None
         )
-        self.Y: Optional[pd.Series] = (
+        self.Y: pd.Series | None = (
             dfpd.loc[:, self.target_name] if dfpd is not None else None
         )
 
         self.feature_name = (
             self.feature_col if isinstance(self.feature_col, str) else dfpd.columns[1]
         )
-        self.feature: Optional[pd.Series] = (
+        self.feature: pd.Series | None = (
             dfpd.loc[:, self.feature_name] if dfpd is not None else None
         )
-        self.X: Optional[pd.Series] = (
+        self.X: pd.Series | None = (
             dfpd.loc[:, self.feature_name] if dfpd is not None else None
         )
-        self.x: Optional[pd.Series] = (
+        self.x: pd.Series | None = (
             dfpd.loc[:, self.feature_name] if dfpd is not None else None
         )
 
@@ -224,28 +227,29 @@ class Univariate(Model):
             if (hasattr(self, "fold_col") and isinstance(self.fold_col, str))
             else dfpd.columns[2]
         )
-        self.folds: Optional[pd.Series[Any]] = (
+        self.folds: pd.Series | None = (
             dfpd.loc[:, self.fold_name] if dfpd is not None else None
         )
-        self.cv: Optional[pd.Series[Any]] = (
+        self.cv: pd.Series | None = (
             dfpd.loc[:, self.fold_name] if dfpd is not None else None
         )
-        self.fold: Optional[pd.Series[Any]] = (
+        self.fold: pd.Series | None = (
             dfpd.loc[:, self.fold_name] if dfpd is not None else None
         )
 
-        self.figsize = (7, 7) if "figsize" not in kwargs else kwargs["figsize"]
+        self.figsize = kwargs.get("figsize", (7, 7))
 
         self.skewness = (
             self.df.select(pl.col(self.feature_name).skew().name.keep())
             .collect()
             .item()
         )
-        self.is_right_skewed = self.skewness > 0.5
-        self.is_left_skewed = self.skewness < -0.5
+        self.is_right_skewed = self.skewness > self.skewness_threshold
+        self.is_left_skewed = self.skewness < -self.skewness_threshold
 
-    def _get_folds(self) -> List[Union[int, float, str]]:
-        """
+    def _get_folds(self) -> list[int | float | str]:
+        """Get an ordered list of the unique elements of self.df.cv.
+
         Helper method that returns an ordered list of the unique elements of
         self.df.cv. Used for reference only.
         """
@@ -256,10 +260,11 @@ class Univariate(Model):
         )
 
     def get_data(
-        self, element: str = "x", data: str = "train", fold_n: Optional[int] = None
-    ) -> List[Union[int, float, str]]:
-        """
-        Helper function to get the requested data element.
+        self, element: str = "x", data: str = "train", fold_n: int | None = None
+    ) -> list[int | float | str]:
+        """Get the requested data element.
+
+        This is a helper function to get the requested data element.
 
         Parameters
         ----------
@@ -277,7 +282,7 @@ class Univariate(Model):
 
         Returns
         -------
-        List[Union[int, float, str]]
+        list[int | float | str]
             The values for the requested column.
         """
         return _get_data(
@@ -291,9 +296,10 @@ class Univariate(Model):
             "cv",
         )
 
-    def _plot_data(self, data: str = "train"):
-        """
-        Helper function to get the data for plotting.
+    def _plot_data(self, data: str = "train") -> tuple[pd.Series, pd.Series, pd.Series]:
+        """Get the data for the plot.
+
+        This is a helper function to get the data for plotting.
 
         Parameters
         ----------
@@ -303,7 +309,7 @@ class Univariate(Model):
 
         Returns
         -------
-        Tuple[pd.Series, pd.Series, pd.Series]
+        tuple[pd.Series, pd.Series, pd.Series]
             The X, y, and cv data.
         """
         if data not in ["train", "test", "all"]:
@@ -338,7 +344,7 @@ class Univariate(Model):
             )
             cv = df["cv"]
 
-        X = (
+        X = (  # noqa: N806 (X is traditional for features in ML)
             df.loc[:, self.feature_name]
             if df is not None
             else self.df.select(self.feature_name)
@@ -354,13 +360,14 @@ class Univariate(Model):
     def plot_cdf(
         self,
         data: str = "train",
-        ax: Optional[Axes] = None,
-        figsize: Optional[Tuple[float, float]] = None,
+        ax: plt.Axes | None = None,
+        figsize: tuple[float, float] | None = None,
         **kwargs,
-    ):
-        """
-        Plots the empirical cumulative distribution function for the target variable
-        in total and for each fold.
+    ) -> plt.Axes:
+        """Plot the empirical cumulative distribution function.
+
+        Plots the empirical CDF for the target variable in total and for
+        each fold.
 
         Parameters
         ----------
@@ -379,7 +386,7 @@ class Univariate(Model):
         else:
             ax1 = ax
 
-        ax1 = cdf_plot(
+        return cdf_plot(
             X,
             y,
             cv,
@@ -388,7 +395,6 @@ class Univariate(Model):
             figsize=self.figsize if figsize is None else figsize,
             **kwargs,
         )
-        return ax1
 
     def plot_roc_curve(
         self,
@@ -402,9 +408,7 @@ class Univariate(Model):
         figsize: Optional[Tuple[float, float]] = None,
         **kwargs,
     ) -> Axes:
-        """
-        Plots the ROC curve for the target variable in total and for each fold.
-        """
+        """Plot the ROC curve for the target variable in total and for each fold."""
         if ax is None:
             _, ax0 = plt.subplots(figsize=self.figsize if figsize is None else figsize)
         else:

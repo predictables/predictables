@@ -41,7 +41,7 @@ class DebugLogger(_logging.Logger):
         if self.turned_on:
             self.filename = filename
             self._init_log()
-            self.level = LogLevel.DEBUG
+            self.level = 2
 
         super().__init__(str(self.uuid))
         self.working_file = working_file
@@ -54,10 +54,10 @@ class DebugLogger(_logging.Logger):
     def _default_message_prefix(self) -> str:
         return f"{datetime.datetime.now()} - {self.uuid} - {self.working_file}"
 
-    def _init_log(self):
+    def _init_log(self) -> None:
         """Initialize the logging module."""
         _logging.basicConfig(filename=self.filename, level=_logging.DEBUG)
-        _logging.debug(f"Debugging UUID: {self.uuid}")
+        _logging.debug(f"Debugging UUID: {self.uuid}")  # noqa: G004
 
     def debug_(self, message: str) -> None:
         """Log a debug message with the unique identifier.
@@ -68,7 +68,7 @@ class DebugLogger(_logging.Logger):
             The debug message to log.
         """
         if self.turned_on:
-            _logging.debug(f"{self._default_message_prefix()} - {message}")
+            _logging.debug(f"{self._default_message_prefix()} - {message}")  # noqa: G004
 
     def msg(self, message: str) -> None:
         """Alias for the debug method."""

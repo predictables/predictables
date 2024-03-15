@@ -4,19 +4,22 @@ import copy
 import datetime
 import itertools
 import os
+import typing
 import uuid
 import warnings
-from typing import List, Optional, Union
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import polars as pl
 import pygments
-from reportlab.lib.colors import black, lightgrey, white
-from reportlab.lib.enums import TA_CENTER
-from reportlab.lib.pagesizes import inch, letter
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-from reportlab.platypus import (
+from reportlab.lib.colors import black, lightgrey, white  # type: ignore[import-untyped]
+from reportlab.lib.enums import TA_CENTER  # type: ignore[import-untyped]
+from reportlab.lib.pagesizes import inch, letter  # type: ignore[import-untyped]
+from reportlab.lib.styles import (  # type: ignore[import-untyped]
+    ParagraphStyle,
+    getSampleStyleSheet,
+)
+from reportlab.platypus import (  # type: ignore[import-untyped]
     Flowable,
     Image,
     PageBreak,
@@ -31,7 +34,8 @@ from predictables.util.src._to_pd import to_pd_df
 
 
 class Report:
-    """
+    """Create an html-styled pdf document.
+
     A predictables Report object is used to create a pdf document. It is a
     wrapper around the reportlab library. It defines standard styles for
     headings, paragraphs, code blocks, and math blocks. It also defines a
@@ -43,14 +47,14 @@ class Report:
     ----------
     filename : str
         The name of the pdf file to create.
-    margins : Optional[List[float]]
+    margins : list[float]
         The margins of the pdf document. Defaults to [0.5, 0.5, 0.5, 0.5]
         if not specified. The order is [left, right, top, bottom], and
         the units are inches.
     doc : SimpleDocTemplate
         The reportlab SimpleDocTemplate object that is used to create
         the pdf.
-    elements : List[Flowable]
+    elements : list[Flowable]
         The list of elements that will be added to the pdf document. Starts
         blank, and elements are added to it as the Report object is built.
     styles : SampleStyleSheet
@@ -120,18 +124,17 @@ class Report:
     def __init__(
         self,
         filename: str,
-        margins: Optional[List[float]] = None,
-        pagesize=letter,
+        margins: list[float] | None = None,
+        pagesize: tuple = letter,
         dpi: int = 200,
     ):
-        """
-        Creates a Report object that can be used to create a pdf document.
+        """Create a Report object that can be used to create a pdf document.
 
         Parameters
         ----------
         filename : str
             The name of the pdf file to create.
-        margins : Optional[List[float]], optional
+        margins : list[float], optional
             The margins of the pdf document. Defaults to [0.5, 0.5, 0.5, 0.5]
             if not specified. The order is [left, right, top, bottom], and
             the units are inches.
@@ -154,7 +157,7 @@ class Report:
         if margins is None:
             margins = [0.5, 0.5, 0.5, 0.5]
         self.doc = SimpleDocTemplate(filename, pagesize=pagesize)
-        self.elements: List[Flowable] = []
+        self.elements: list[Flowable] = []
         self.styles = getSampleStyleSheet()
         self.doc.leftMargin = margins[0] * inch
         self.doc.rightMargin = margins[1] * inch
@@ -162,6 +165,7 @@ class Report:
         self.doc.bottomMargin = margins[3] * inch
 
     def __copy__(self) -> "Report":
+        """Create a shallow copy of the Report object."""
         new_report = self.__class__(
             filename=f"{self.filename.replace('.pdf', '')}-COPY.pdf"
         )
@@ -170,9 +174,11 @@ class Report:
         return new_report
 
     def copy(self) -> "Report":
+        """Create a shallow copy of the Report object."""
         return self.__copy__()
 
-    def __deepcopy__(self) -> "Report":
+    def __deepcopy__(self, memo: dict) -> "Report":
+        """Create a deep copy of the Report object."""
         new_report = self.__class__(
             filename=f"{self.filename.replace('.pdf', '')}-COPY.pdf"
         )
@@ -181,12 +187,13 @@ class Report:
         return new_report
 
     def deepcopy(self) -> "Report":
-        return self.__deepcopy__()
+        """Create a deep copy of the Report object."""
+        return self.__deepcopy__({})
 
-    def set(self, **kwargs):
-        """
-        Sets the document properties of the pdf document. Does not by
-        itself make any visible changes to the document.
+    def set(self, **kwargs) -> "Report":
+        """Set the document properties of the pdf document.
+
+        Does not by itself make any visible changes to the document.
         """
         for k, v in kwargs.items():
             if hasattr(self.doc, k):
@@ -201,7 +208,7 @@ class Report:
 
         return self
 
-    def style(self, tag, **kwargs):
+    def style(self, tag: str, **kwargs) -> "Report":
         """Apply styles to the pdf document.
 
         Styles the pdf document by updating the stylesheet with the keyword
@@ -228,15 +235,16 @@ class Report:
         which takes the passed args and formats them left to right
         in the footer.
         """
-        # TODO @<aaweaver-actuary>(https://github.com/predictables/predictables/issues/70): Implement footer
+        # TODO(@<aaweaver-actuary>):  Implement footer method
+        # https://github.com/predictables/predictables/issues/70
         return self
 
     def heading(
         self, level: int, text: str, return_self: bool = True
-    ) -> Optional["Report"]:
-        """
-        Adds a heading to the document that says, `text`. The heading is
-        styled according to the level passed in.
+    ) -> "Report" | None:
+        """Add a heading to the document that says, `text`.
+
+        The heading is styled according to the level passed in.
 
         Parameters
         ----------
@@ -258,10 +266,11 @@ class Report:
         self.elements.append(Paragraph(text, self.styles[f"Heading{level}"]))
         return self if return_self else None
 
-    def h1(self, text: str, element_id: Optional[str] = None) -> "Report":
-        """
-        Adds a h1-style heading to the document that says, `text`. If an `element_id`
-        is passed, creates a bookmark location to return to with an inner link.
+    def h1(self, text: str, element_id: str | None = None) -> "Report":
+        """Add a h1-style heading to the document that says, `text`.
+
+        If an `element_id` is passed, creates a bookmark location to return to
+        with an inner link.
 
         Parameters
         ----------
@@ -307,10 +316,11 @@ class Report:
             self.elements[-1].addBookmark(element_id, relative=1, level=0)
         return self
 
-    def h2(self, text: str, element_id: Optional[str] = None) -> "Report":
-        """
-        Adds a h2-style heading to the document that says, `text`. If an `element_id`
-        is passed, creates a bookmark location to return to with an inner link.
+    def h2(self, text: str, element_id: str | None = None) -> "Report":
+        """Add a h2-style heading to the document that says, `text`.
+
+        If an `element_id` is passed, creates a bookmark location to return to
+        with an inner link.
 
         Parameters
         ----------
@@ -350,10 +360,11 @@ class Report:
             self.elements[-1].addBookmark(element_id, relative=1, level=0)
         return self
 
-    def h3(self, text: str, element_id: Optional[str] = None) -> "Report":
-        """
-        Adds a h3-style heading to the document that says, `text`. If an `element_id`
-        is passed, creates a bookmark location to return to with an inner link.
+    def h3(self, text: str, element_id: str | None = None) -> "Report":
+        """Add a h3-style heading to the document that says, `text`.
+
+        If an `element_id` is passed, creates a bookmark location to return to with
+        an inner link.
 
         Parameters
         ----------
@@ -393,10 +404,10 @@ class Report:
             self.elements[-1].addBookmark(element_id, relative=1, level=0)
         return self
 
-    def h4(self, text: str, element_id: Optional[str] = None) -> "Report":
-        """
-        Adds a h4-style heading to the document that says, `text`. If an `element_id`
-        is passed, creates a bookmark location to return to with an inner link.
+    def h4(self, text: str, element_id: str | None = None) -> "Report":
+        """Add a h4-style heading to the document that says, `text`.
+
+        If an `element_id` is passed, creates a bookmark location to return to with an inner link.
 
         Parameters
         ----------
@@ -436,10 +447,9 @@ class Report:
             self.elements[-1].addBookmark(element_id, relative=1, level=0)
         return self
 
-    def h5(self, text: str, element_id: Optional[str] = None) -> "Report":
-        """
-        Adds a h5-style heading to the document that says, `text`. If an `element_id`
-        is passed, creates a bookmark location to return to with an inner link.
+    def h5(self, text: str, element_id: str | None = None) -> "Report":
+        """Add a h5-style heading to the document that says, `text`.
+        If an `element_id` is passed, creates a bookmark location to return to with an inner link.
 
         Parameters
         ----------
@@ -479,10 +489,11 @@ class Report:
             self.elements[-1].addBookmark(element_id, relative=1, level=0)
         return self
 
-    def h6(self, text: str, element_id: Optional[str] = None) -> "Report":
-        """
-        Adds a h6-style heading to the document that says, `text`. If an `element_id`
-        is passed, creates a bookmark location to return to with an inner link.
+    def h6(self, text: str, element_id: str | None = None) -> "Report":
+        """Add a h6-style heading to the document that says, `text`.
+
+        If an `element_id` is passed, creates a bookmark location to
+        return to with an inner link.
 
         Parameters
         ----------
@@ -523,8 +534,7 @@ class Report:
         return self
 
     def p(self, text: str) -> "Report":
-        """
-        Adds a paragraph to the document that says, `text`.
+        """Add a paragraph to the document that says, `text`.
 
         Parameters
         ----------
@@ -559,8 +569,9 @@ class Report:
         return self
 
     def text(self, text: str) -> "Report":
-        """
-        Alias for `p`. Adds a paragraph to the document that says, `text`.
+        """Define an alias for `p`.
+
+        Adds a paragraph to the document that says, `text`.
 
         Parameters
         ----------
@@ -595,8 +606,9 @@ class Report:
         return self.p(text)
 
     def paragraph(self, text: str) -> "Report":
-        """
-        Alias for `p`. Adds a paragraph to the document that says, `text`.
+        """Define an alias for `p`.
+
+        Adds a paragraph to the document that says, `text`.
 
         Parameters
         ----------
@@ -630,10 +642,10 @@ class Report:
         """
         return self.p(text)
 
-    def inner_link(self, text: str, inner_link: str):
-        """
-        Creates a link to a defined inner location in the document. The link will say
-        `text` and link to the inner location `inner_link`.
+    def inner_link(self, text: str, inner_link: str) -> "Report":
+        """Create a link to a defined inner location in the document.
+
+        The link will say `text` and link to the inner location `inner_link`.
 
         Parameters
         ----------
@@ -671,16 +683,16 @@ class Report:
         )
         return self
 
-    def ul(self, text: List[str], bullet_char: str = "\u2022") -> "Report":
-        """
-        Adds an unordered list to the document. For each item in `text`, a
-        bullet point is added to the list. If a different bullet point
-        character is desired, it can be passed in as `bullet_char`. Will
-        default to the unicode bullet point character.
+    def ul(self, text: list[str], bullet_char: str = "\u2022") -> "Report":
+        """Add an unordered list to the document.
+
+        For each item in `text`, a bullet point is added to the list. If
+        a different bullet point character is desired, it can be passed in
+        as `bullet_char`. Will default to the unicode bullet point character.
 
         Parameters
         ----------
-        text : List[str]
+        text : list[str]
             The items to add to the list.
         bullet_char : str, optional
             The character to use for the bullet point, by default "\u2022"
@@ -708,9 +720,54 @@ class Report:
             self.elements.append(Paragraph(f"{bullet_char} {t}", self.styles["Normal"]))
         return self
 
-    def _number_style(self, style: str):
-        """
-        Returns an iterator of numbers in the given style.
+    @staticmethod
+    def decimal_to_roman(number: int, is_upper: bool = True) -> str:
+        roman_symbols = [
+            (1000, "M"),
+            (900, "CM"),
+            (500, "D"),
+            (400, "CD"),
+            (100, "C"),
+            (90, "XC"),
+            (50, "L"),
+            (40, "XL"),
+            (10, "X"),
+            (9, "IX"),
+            (5, "V"),
+            (4, "IV"),
+            (1, "I"),
+        ]
+
+        result = ""
+        for value, symbol in roman_symbols:
+            while number >= value:
+                result += symbol if is_upper else symbol.lower()
+                number -= value
+
+        return result
+
+    @staticmethod
+    def decimal_to_abc(number: int, is_upper: bool = True) -> str:
+        """Convert a number to an alphabetic representation."""
+        alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+        result = ""
+        while number > 0:
+            number -= 1
+            result += (
+                alphabet[number % 26] if is_upper else alphabet[number % 26].lower()
+            )
+            number //= 26
+
+        return result[::-1]
+
+    def _number_style(self, style: str) -> typing.Iterator[str]:
+        """Create an iterator of numbers in the given style.
+
+        This function relies on the itertools.count function to create an
+        iterator of numbers in the given style. The style must be one of
+        "decimal", "lower-roman", "upper-roman", "lower-alpha", or
+        "upper-alpha".
 
         Parameters
         ----------
@@ -725,70 +782,31 @@ class Report:
         Iterator[str]
             An iterator of numbers in the given style.
         """
-
-        def decimal_to_roman(number, is_upper=True):
-            roman_symbols = [
-                (1000, "M"),
-                (900, "CM"),
-                (500, "D"),
-                (400, "CD"),
-                (100, "C"),
-                (90, "XC"),
-                (50, "L"),
-                (40, "XL"),
-                (10, "X"),
-                (9, "IX"),
-                (5, "V"),
-                (4, "IV"),
-                (1, "I"),
-            ]
-
-            result = ""
-            for value, symbol in roman_symbols:
-                while number >= value:
-                    result += symbol if is_upper else symbol.lower()
-                    number -= value
-
-            return result
-
-        def decimal_to_abc(number, is_upper=True):
-            alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-            result = ""
-            while number > 0:
-                number -= 1
-                result += (
-                    alphabet[number % 26] if is_upper else alphabet[number % 26].lower()
-                )
-                number //= 26
-
-            return result[::-1]
-
         decimal_numb = itertools.count(1)
 
         if style == "decimal":
-            return decimal_numb
+            return map(str, decimal_numb)
         elif style == "lower-roman":
-            return map(lambda x: decimal_to_roman(x, False), decimal_numb)
+            return (Report.decimal_to_roman(x, False) for x in decimal_numb)
         elif style == "upper-roman":
-            return map(lambda x: decimal_to_roman(x, True), decimal_numb)
+            return (Report.decimal_to_roman(x, True) for x in decimal_numb)
         elif style == "lower-alpha":
-            return map(lambda x: decimal_to_abc(x, False), decimal_numb)
+            return (Report.decimal_to_abc(x, False) for x in decimal_numb)
         elif style == "upper-alpha":
-            return map(lambda x: decimal_to_abc(x, True), decimal_numb)
+            return (Report.decimal_to_abc(x, True) for x in decimal_numb)
         else:
             raise ValueError(f"Style {style} is not a valid number style.")
 
-    def ol(self, text: List[str], number_style: str = "decimal") -> "Report":
-        """
-        Adds an ordered list to the document. For each item in `text`, an item
-        number is added to the list. If a different number style is desired, it
-        can be passed in as `number_style`. Will default to the decimal number
-        style.
+    def ol(self, text: list[str], number_style: str = "decimal") -> "Report":
+        """Add an ordered list to the document.
+
+        For each item in `text`, an item number is added to the list.
+        If a different number style is desired, it can be passed in as
+        `number_style`. Will default to the decimal number style.
 
         Parameters
         ----------
-        text : List[str]
+        text : list[str]
             The items to add to the list.
         number_style : str, optional
             The style to use for the item numbers, by default "decimal", but also
@@ -818,9 +836,10 @@ class Report:
             )
         return self
 
-    def code(self, text: str, language: Optional[str] = None) -> "Report":
-        """
-        Adds a code block to the document. Used for displaying code snippets.
+    def code(self, text: str, language: str | None = None) -> "Report":
+        """Add a code block to the document.
+
+        Used for displaying code snippets.
 
         Parameters
         ----------
@@ -875,15 +894,15 @@ class Report:
             )
         return self
 
-    def math(self, mathjax: str):
-        """Adds a math block to the document. Used for displaying math equations."""
+    def math(self, mathjax: str) -> "Report":
+        """Add a math block to the document. Used for displaying math equations."""
         self.elements.append(Paragraph(mathjax, self.styles["Math"]))
         return self
 
-    def spacer(self, height: float):
-        """
-        Adds a spacer to the document. Used for adding vertical space between
-        elements. Height is in inches.
+    def spacer(self, height: float) -> "Report":
+        """Add a spacer to the document.
+
+        Used for adding vertical space between elements. Height is in inches.
 
         Parameters
         ----------
@@ -898,10 +917,11 @@ class Report:
         self.elements.append(Spacer(1, height * inch))
         return self
 
-    def image(self, filename: str, width: float = 7, height: float = 7):
-        """
-        Adds an image to the document. Used to add a saved image to the
-        document. Width and height are in inches.
+    def image(self, filename: str, width: float = 7, height: float = 7) -> "Report":
+        """Add an image to the document.
+
+        Used to add a saved image to the document. Width and
+        height are in inches.
 
         Parameters
         ----------
@@ -925,11 +945,12 @@ class Report:
         self.elements.append(Image(filename, width * inch, height * inch))
         return self
 
-    def plot(self, func, width: float = 7, height: float = 7):
-        """
-        Adds a plot to the document. The plot is generated by the provided
-        callable `func`. The plot is saved as a temporary image file and then
-        added to the PDF document.
+    def plot(self, func, width: float = 7, height: float = 7) -> "Report":
+        """Add a plot to the document.
+
+        The plot is generated by the provided callable `func`. The plot
+        is saved as a temporary image file and then added to the PDF
+        document.
 
         Parameters
         ----------
@@ -964,21 +985,20 @@ class Report:
         plt.close(fig)
 
         # Add the plot image to the report
-        self = self.image(temp_filename, width, height)
+        return self.image(temp_filename, width, height)
 
-        return self
+    def page_break(self) -> "Report":
+        """Add a page break to the document.
 
-    def page_break(self):
-        """
-        Adds a page break to the document. Used to end a page.
+        This method is used to end a page.
         """
         self.elements.append(PageBreak())
         return self
 
-    def caption(self, text: str, width: float = 7):
-        """
-        Adds a caption to the document. The caption is centered and has no top
-        margin or padding.
+    def caption(self, text: str, width: float = 7) -> "Report":
+        """Add a caption to the document.
+
+        The caption is centered and has no top margin or padding.
 
         Parameters
         ----------

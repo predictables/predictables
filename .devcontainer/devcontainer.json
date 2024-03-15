@@ -30,5 +30,5 @@
       "editor.defaultFormatter": "charliermarsh.ruff"
     }
   },
-  "postAttachCommand": "install_dotfiles /app .ruff.toml .prettierrc .mypy.ini && exit"
+  "postAttachCommand": "install_dotfiles /app .ruff.toml .prettierrc .mypy.ini .isort.toml .flake8"
 }

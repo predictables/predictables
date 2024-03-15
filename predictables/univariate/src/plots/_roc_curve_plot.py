@@ -10,11 +10,8 @@ import pandas as pd
 import plotly.graph_objects as go  # type: ignore
 from matplotlib.axes import Axes
 from scipy.stats import norm  # type: ignore
-from sklearn.metrics import (
-    RocCurveDisplay,
-    roc_auc_score,  # type: ignore
-    roc_curve,
-)
+from sklearn.metrics import roc_auc_score  # type: ignore
+from sklearn.metrics import RocCurveDisplay, roc_curve
 
 from predictables.util import DebugLogger, filter_by_cv_fold, get_column_dtype, to_pd_s
 

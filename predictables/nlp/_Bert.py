@@ -3,11 +3,8 @@ from __future__ import annotations
 import os
 from typing import Optional, Union
 
-from transformers import (
-    BertModel,
-    BertTokenizer,  # type: ignore
-    BertTokenizerFast,
-)
+from transformers import BertTokenizer  # type: ignore
+from transformers import BertModel, BertTokenizerFast
 
 default_folder = "/sas/data/project/EG/ActShared/SmallBusiness/aw/bert/bert-cased"
 

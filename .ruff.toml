@@ -48,27 +48,26 @@ skip-magic-trailing-comma = true
 dummy-variable-rgx = "^_$" # Only ignore variables named "_"
 fixable = ["ALL"]
 ignore = [
-    "PT017",
-    "S101",
-    "PD901",
-    "F403",
     "ANN002",
     "ANN003",
     "ANN101",
     "ANN102",
     "ANN204",
+    "F403",
+    "FIX002",
+    "N999",
+    "PD901",
     "PT011",
+    "PT017",
     "RET505",
-    "S501",
-    "N999"
-    
+    "S101",
+    "S501"
 ]
 
 # On top of the default `select` (`E`, `F`), enable:
 # flake8-bugbear (`B`)
 # flake8-quotes (`Q`)
 # mccabe (`C90`)
-# isort (`I`)
 # pep-8-naming (`N`)
 # pydocstyle (`D`)
 # flake-8-bandit (`S`)
@@ -105,7 +104,6 @@ extend-select = [
     "B",
     "Q",
     "C90",
-    "I",
     "N",
     "D",
     "S",
@@ -142,7 +140,6 @@ extend-fixable = [
     "B",
     "Q",
     "C90",
-    "I",
     "N",
     "D",
     "S",
@@ -224,6 +221,3 @@ convention = "numpy"
 [lint.pylint]
 # Maximum number of arguments for functions and methods
 max-args = 10 
-
-[lint.isort]
-split-on-trailing-comma=false

@@ -401,9 +401,7 @@ class Univariate(Model):
         figsize: Optional[Tuple[float, float]] = None,
         **kwargs,
     ) -> Axes:
-        """
-        Plots the ROC curve for the target variable in total and for each fold.
-        """
+        """Plot the ROC curve for the target variable in total and for each fold."""
         if ax is None:
             _, ax0 = plt.subplots(figsize=self.figsize if figsize is None else figsize)
         else:

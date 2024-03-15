@@ -133,15 +133,13 @@ def filter_by_cv_fold(
 
 
 def cv_filter(
-    fold,
+    fold: int,
     fold_col: Union[pd.Series, pl.Series, np.ndarray],
     time_series_validation: bool = True,
     train_test: str = "train",
     return_type: str = "pd",
 ) -> Union[pd.Series, pl.Series]:
-    """
-    Filter data based on cross-validation fold.
-    """
+    """Filter data based on cross-validation fold."""
     return (
         _cv_filter_ts(fold, fold_col, train_test, return_type)
         if time_series_validation
