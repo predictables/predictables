@@ -1,3 +1,7 @@
+# type: ignore
+
+from __future__ import annotations
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -9,16 +13,16 @@ from predictables.univariate.src.plots._roc_curve_plot import roc_curve_plot_mpl
 # Fixture for mock data
 @pytest.fixture
 def mock_data():
-    np.random.seed(0)
+    gen = np.random.Generator(np.random.PCG64(0))
     size = 100
-    y = pd.Series(np.random.randint(0, 2, size))
-    yhat_proba = pd.Series(np.random.rand(size))
-    fold = pd.Series(np.random.randint(1, 5, size))
+    y = pd.Series(gen.integers(0, 2, size))
+    yhat_proba = pd.Series(gen.random(size))
+    fold = pd.Series(gen.integers(1, 5, size))
     return y, yhat_proba, fold
 
 
 # Test for successful plot creation
-def test_successful_plot_creation(mock_data):
+def test_successful_plot_creation(mock_data: tuple[pd.Series, pd.Series, pd.Series]):
     y, yhat_proba, fold = mock_data
     ax = roc_curve_plot_mpl(y, yhat_proba, fold, False, 0.1, 0.01, 0.05)
     assert isinstance(ax, plt.Axes), (
@@ -29,11 +33,11 @@ def test_successful_plot_creation(mock_data):
 
 
 # Test for invalid ax parameter type
-def test_invalid_ax_parameter_type(mock_data):
+def test_invalid_ax_parameter_type(mock_data: tuple[pd.Series, pd.Series, pd.Series]):
     y, yhat_proba, fold = mock_data
     with pytest.raises(TypeError) as err:
         roc_curve_plot_mpl(y, yhat_proba, fold, False, 0.1, 0.01, 0.05, ax="invalid")
-        plt.close("all")
+    plt.close("all")
     assert "The ax parameter should be a matplotlib.axes.Axes object" in str(
         err.value
     ), (
@@ -75,19 +79,19 @@ def test_with_without_ax_parameter(mock_data):
 @pytest.mark.parametrize("cv_alpha", [0.1, 1.0, None])
 @pytest.mark.parametrize("ax", [None, plt.subplots()[1]])
 def test_parameterized_inputs(
-    y,
-    yhat_proba,
-    fold,
-    time_series_validation,
-    coef,
-    se,
-    pvalue,
-    figsize,
-    n_bins,
+    y: pd.Series,
+    yhat_proba: pd.Series,
+    fold: pd.Series,
+    time_series_validation: bool,
+    coef: float,
+    se: float,
+    pvalue: float,
+    figsize: tuple[float, float],
+    n_bins: int,
     cv_alpha,
     ax,
 ):
-    def plot_generator():
+    def plot_generator() -> plt.Axes:
         yield roc_curve_plot_mpl(
             y,
             yhat_proba,

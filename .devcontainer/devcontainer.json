@@ -20,7 +20,7 @@
       ]
     },
     "settings": {
-      "terminal.integrated.shell.linux": "/bin/bash",
+      "terminal.integrated.shell.linux": "/bin/zsh",
       "workbench.panel.defaultLocation": "bottom",
       "workbench.colorTheme": "GitHub Dark High Contrast",
       "editor.fontFamily": "Ubuntu Mono derivative Powerline",
@@ -30,5 +30,5 @@
       "editor.defaultFormatter": "charliermarsh.ruff"
     }
   },
-  "postAttachCommand": "install_dotfiles /app .ruff.toml .prettierrc .mypy.ini .isort.toml .flake8"
+  "postAttachCommand": "install_dotfiles $HOME .zshrc .zsh_aliases && exec zsh && install_dotfiles /app .ruff.toml .prettierrc .mypy.ini .isort.toml .flake8"
 }

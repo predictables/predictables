@@ -5,8 +5,7 @@ import polars as pl
 
 
 class DataType(Enum):
-    """
-    DataType enum
+    """Define an enumeration of the various data types.
 
     This enum is used to represent the data type of a column in a table, and
     to ensure consistency across the different projects that comprise PredicTables.
@@ -79,13 +78,13 @@ class DataType(Enum):
     DATE = "date"
     OTHER = "other"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.name
 
-    def __eq__(self, other):
+    def __eq__(self, other: str | DataType) -> bool:
         if isinstance(other, str):
             return self.name == other
         elif isinstance(other, DataType):
@@ -93,28 +92,28 @@ class DataType(Enum):
         else:
             return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         return not self.__eq__(other)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.name)
 
-    def is_continuous(self):
+    def is_continuous(self) -> bool:
         return self == DataType.CONTINUOUS
 
-    def is_categorical(self):
+    def is_categorical(self) -> bool:
         return self in [DataType.CATEGORICAL, DataType.BINARY]
 
-    def is_binary(self):
+    def is_binary(self) -> bool:
         return self == DataType.BINARY
 
-    def is_date(self):
+    def is_date(self) -> bool:
         return self == DataType.DATE
 
-    def is_other(self):
+    def is_other(self) -> bool:
         return self == DataType.OTHER
 
-    def get_polars(self):
+    def get_polars(self) -> pl.Type:
         if self == DataType.CONTINUOUS:
             return pl.Float64
         elif self == DataType.CATEGORICAL:
@@ -128,9 +127,9 @@ class DataType(Enum):
         else:
             raise ValueError(f"Unknown data type: {self}")
 
-    def get_pandas(self):
+    def get_pandas(self) -> pd.api.types.Dtype:
         if self == DataType.CONTINUOUS:
-            return pd.Float64
+            return pd.Float64Dtype()
         elif self == DataType.CATEGORICAL:
             return pd.StringDtype()
         elif self == DataType.BINARY:
@@ -242,20 +241,19 @@ class DataType(Enum):
         ]
 
         max_diff_eq_1 = False
-        if n_unique > 1:
-            if dtype in numeric_dtypes:
-                max_diff = unique.diff().drop_nans().max()
-                max_diff_eq_1 = max_diff == 1
+        if n_unique > 1 and dtype in numeric_dtypes:
+            max_diff = unique.diff().drop_nans().max()
+            max_diff_eq_1 = max_diff == 1
 
         if dtype in numeric_dtypes:
-            if n_unique <= 2:
+            if n_unique <= 2:  # noqa: PLR2004 - 2 is not magic -- it's the number of unique values in a binary column
                 return DataType.BINARY
             elif max_diff_eq_1:
                 return DataType.CATEGORICAL
             else:
                 return DataType.CONTINUOUS
         elif dtype in categorical_dtypes:
-            return DataType.BINARY if n_unique <= 2 else DataType.CATEGORICAL
+            return DataType.BINARY if n_unique <= 2 else DataType.CATEGORICAL  # noqa: PLR2004 - 2 is not magic -- it's the number of unique values in a binary column
         elif dtype in date_dtypes:
             return DataType.DATE
         else:

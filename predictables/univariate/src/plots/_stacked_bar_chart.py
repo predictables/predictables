@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Tuple, Union
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -12,17 +10,17 @@ from .util import plot_label, rotate_x_lab
 
 
 def stacked_bar_chart(
-    feature: Union[pl.Series, pd.Series],
-    target: Union[pl.Series, pd.Series],
+    feature: [pl.Series, pd.Series],
+    target: [pl.Series, pd.Series],
     backend: str = "matplotlib",
     y_offset: float = 0.035,
     ax=None,
-    figsize: Tuple[float, float] = (7, 7),
+    figsize: tuple[float, float] = (7, 7),
     alpha: float = 0.8,
     bar_width: float = 0.8,
     fontsize: int = 16,
     facecolor: str = "white",
-):
+) -> plt.Axes | go.Figure:
     params = dict(
         feature=feature,
         target=target,
@@ -43,16 +41,16 @@ def stacked_bar_chart(
 
 
 def plot_stacked_bar_chart(
-    feature: Union[pl.Series, pd.Series],
-    target: Union[pl.Series, pd.Series],
+    feature: [pl.Series, pd.Series],
+    target: [pl.Series, pd.Series],
     y_offset: float = 0.035,
     ax=None,
-    figsize: Tuple[float, float] = (7, 7),
+    figsize: tuple[float, float] = (7, 7),
     alpha: float = 0.8,
     bar_width: float = 0.8,
     fontsize: int = 16,
     facecolor: str = "white",
-):
+) -> plt.Axes | go.Figure:
     if ax is None:
         _, ax = plt.subplots(figsize=figsize)
 
@@ -142,13 +140,12 @@ def plot_stacked_bar_chart(
 
 
 def plotly_stacked_bar_chart(
-    feature: Union[pl.Series, pd.Series],
-    target: Union[pl.Series, pd.Series],
-    y_offset: float = 0.035,
+    feature: pl.Series | pd.Series,
+    target: pl.Series | pd.Series,
     bar_width: float = 0.8,
     fontsize: int = 16,
     facecolor: str = "white",
-):
+) -> go.Figure:
     # Assume fitted is a DataFrame containing the feature and target
     ct = pd.crosstab(feature, target, normalize="index").sort_values(by=0)
 

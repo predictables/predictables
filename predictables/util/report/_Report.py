@@ -1042,12 +1042,12 @@ class Report:
         return self
 
     def table(
-        self,
-        df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-        style: TableStyle = None,
-    ):
-        def create_table_style(font: str = "Helvetica", fontsize: int = 10):
-            style = TableStyle(
+        self, df: pd.DataFrame | pl.DataFrame | pl.LazyFrame, style: TableStyle = None
+    ) -> "Report":
+        def create_table_style(
+            font: str = "Helvetica", fontsize: int = 10
+        ) -> TableStyle:
+            return TableStyle(
                 [
                     # Background color of the first row
                     ("BACKGROUND", (0, 0), (-1, 0), lightgrey),
@@ -1089,7 +1089,6 @@ class Report:
                     ("BOX", (0, 0), (-1, -1), 2, black),
                 ]
             )
-            return style
 
         if style is None:
             style = create_table_style()
@@ -1105,7 +1104,7 @@ class Report:
         self.elements.append(t)
         return self
 
-    def build(self):
+    def build(self) -> None:
         """
         Builds the pdf document and saves it to the filename specified in
         the constructor. This is the final command that must be called to
@@ -1128,7 +1127,7 @@ class Report:
             if file.startswith("temp_plot_"):
                 os.remove(file)
 
-    def title(self, text: str):
+    def title(self, text: str) -> "Report":
         """
         Sets the title metadata attribute of the pdf document.
         Does not by itself make any visible changes to the document.
@@ -1146,7 +1145,7 @@ class Report:
         self.doc.title = text
         return self
 
-    def author(self, text: str):
+    def author(self, text: str) -> "Report":
         """
         Sets the author metadata attribute of the pdf document.
         Does not by itself make any visible changes to the document.
@@ -1164,7 +1163,7 @@ class Report:
         self.doc.author = text
         return self
 
-    def subject(self, text: str):
+    def subject(self, text: str) -> "Report":
         """
         Sets the subject metadata attribute of the pdf document.
         Does not by itself make any visible changes to the document.
@@ -1182,7 +1181,7 @@ class Report:
         self.doc.subject = text
         return self
 
-    def date(self, date: Optional[datetime.date] = None):
+    def date(self, date: datetime.date | None = None) -> None:
         """
         Sets the date metadata attribute of the pdf document.
         Does not by itself make any visible changes to the document.
@@ -1203,7 +1202,7 @@ class Report:
 
         self.doc.date = date.strftime("%Y-%m-%d")
 
-    def date_(self, date: Optional[datetime.date] = None) -> str:
+    def date_(self, date: datetime.date | None = None) -> str:
         """
         Alias for `date`, it returns the date added to the document metadata.
         This allows you to ensure they are the same.
@@ -1222,10 +1221,10 @@ class Report:
         self.date(date)
         return self.doc.date
 
-    def keywords(self, text: str):
-        """
-        Sets the keywords metadata attribute of the pdf document. Does not by itself
-        make any visible changes to the document.
+    def keywords(self, text: str) -> "Report":
+        """Set the keywords metadata attribute of the pdf document.
+
+        Does not by itself make any visible changes to the document.
 
         Parameters
         ----------

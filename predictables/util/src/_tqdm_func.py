@@ -5,10 +5,15 @@ from typing import Any, Iterable, Optional
 
 from dotenv import load_dotenv
 from tqdm import tqdm as _tqdm
-from tqdm.notebook import tqdm as _tqdm_notebook
+from tqdm.notebook import tqdm as _tqdm_notebook  # type: ignore[import-untyped]
 
 
-def identidy_function(x: Any) -> Any:
+def identidy_function(x: Any) -> Any:  # noqa: ANN401
+    """Return the input unchanged.
+
+    This is used as when tqdm is disabled, the input iterable is
+    returned unchanged.
+    """
     return x
 
 
@@ -54,9 +59,6 @@ def tqdm(
     """
     load_dotenv()
 
-    # Handle description (if provided)
-    desc_dict = {"desc": desc} if desc is not None else {}
-
     # Handle enable, disable, notebook, and nb (if any)
     if enable is not None:
         tqdm_enable = (
@@ -88,6 +90,14 @@ def tqdm(
 
     # Return the appropriate function
     if tqdm_nb:
-        return _tqdm_notebook(x, **desc_dict) if tqdm_enable else identidy_function(x)
+        return (
+            _tqdm_notebook(x, desc="Iterating..." if desc is None else desc)
+            if tqdm_enable
+            else identidy_function(x)
+        )
     else:
-        return _tqdm(x, **desc_dict) if tqdm_enable else identidy_function(x)
+        return (
+            _tqdm(x, desc="Iterating..." if desc is None else desc)
+            if tqdm_enable
+            else identidy_function(x)
+        )

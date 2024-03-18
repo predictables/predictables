@@ -1,11 +1,13 @@
-import psutil
+import psutil  # type: ignore[import-untyped]
 
 
-def monitor_resources():
+def monitor_resources() -> None:
     """
-    Monitor CPU and memory usage. Prints a message to the console
-    informing the user of the current CPU and memory usage.
+    Monitor CPU and memory usage.
+
+    Prints a message to the console informing the user of the
+    current CPU and memory usage.
     """
     cpu_usage = psutil.cpu_percent(interval=1)
     memory_usage = psutil.virtual_memory().percent
-    print(f"CPU Usage: {cpu_usage}%, Memory Usage: {memory_usage}%")
+    print(f"CPU Usage: {cpu_usage}%, Memory Usage: {memory_usage}%")  # noqa: T201

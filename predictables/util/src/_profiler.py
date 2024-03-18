@@ -21,10 +21,10 @@ def profiler(func: Callable) -> Callable:
     # Only profile if the LOGGING_LEVEL environment variable is set to debug
     if os.getenv("LOGGING_LEVEL", "info").lower() == "debug":
         function_name = func.__name__
-        current_file = Path.name(__file__)
+        current_file = Path(__file__).name
         dbg = DebugLogger(filename="performance.log", working_file=current_file)
 
-        def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
+        def wrapper(*args, **kwargs) -> Callable:
             profiler = cProfile.Profile()
             profiler.enable()
 
@@ -54,7 +54,7 @@ def profiler(func: Callable) -> Callable:
 
     else:
 
-        def wrapper(*args, **kwargs):
+        def wrapper(*args, **kwargs) -> Callable:
             return func(*args, **kwargs)
 
     return wrapper
