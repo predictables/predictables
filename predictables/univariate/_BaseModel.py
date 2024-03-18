@@ -280,7 +280,7 @@ class Model:
         results = results.with_columns(pl.lit(self.model.aic).alias("aic"))
         results = results.with_columns(pl.lit(self.model.bse.iloc[0]).alias("se"))
         results = results.with_columns(
-            pl.lit(self.model.conf_int()[0].values[0]).alias("lower_ci")
+            pl.lit(self.model.conf_int()[0].to_numpy()[0]).alias("lower_ci")
         )
         results = results.with_columns(
             pl.lit(self.model.conf_int()[1]).alias("upper_ci")
@@ -458,11 +458,11 @@ class Model:
             X = to_pd_df(X)
 
         if isinstance(X, pd.Series):
-            X = X.values.reshape(-1, 1) if X.shape[1] == 1 else X  # type: ignore
+            X = X.to_numpy().reshape(-1, 1) if X.shape[1] == 1 else X  # type: ignore
 
         # fit normalized data
         self.scaler = StandardScaler()
-        self.scaler.fit(X.values)
+        self.scaler.fit(X.to_numpy())
 
     def standardize(
         self, X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]
@@ -510,7 +510,7 @@ class Model:
         if isinstance(self.scaler, StandardScaler):
             return pd.DataFrame(
                 self.scaler.transform(
-                    np.array(X.values).reshape(-1, 1) if X.shape[1] == 1 else X
+                    np.array(X.to_numpy()).reshape(-1, 1) if X.shape[1] == 1 else X
                 ),  # type: ignore
                 index=X.index,
                 columns=X.columns,

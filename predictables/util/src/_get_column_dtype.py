@@ -181,16 +181,11 @@ def is_datetime(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool:
         if is_numeric(s) or is_integer(s):
             return False
         elif (
-            (s.dtype == pl.datatypes.Datetime)
-            or (s.dtype == pl.datatypes.Date)
-            or (s.dtype == pl.datatypes.Time)
-            or (s.dtype == pl.datatypes.Duration)
+            s.dtype in (pl.datatypes.Datetime, pl.datatypes.Date, pl.datatypes.Time, pl.datatypes.Duration)
         ):
             return True
         elif (
-            (s.dtype == pl.datatypes.Object)
-            or (s.dtype == pl.datatypes.Utf8)
-            or (s.dtype == pl.datatypes.Categorical)
+            s.dtype in (pl.datatypes.Object, pl.datatypes.Utf8, pl.datatypes.Categorical)
         ):
             try:
                 pd.to_datetime(to_pd_s(s)[0])
@@ -287,9 +282,8 @@ def is_categorical(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool
     # Common sources of false positives: dates, binary integers
     if is_datetime(s):
         return False
-    elif is_numeric(s):
-        if is_binary_integer(s):
-            return False
+    elif is_numeric(s) and is_binary_integer(s):
+        return False
 
     if is_numeric(s):
         return is_categorical_integer(s)

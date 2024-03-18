@@ -50,12 +50,11 @@ Please use one of the following types: \n\
         )
 
     # Check that if either a numpy array or list, that it is 2D
-    elif isinstance(data, np.ndarray):
+    if isinstance(data, np.ndarray):
         if len(data.shape) != 2:
             raise ValueError(f"Input data must be 2D, but is {len(data.shape)}D.")
-    elif isinstance(data, list):
-        if len(data) != 2:
-            raise ValueError(f"Input data must be 2D, but is {len(data)}D.")
+    elif isinstance(data, list) and len(data) != 2:
+        raise ValueError(f"Input data must be 2D, but is {len(data)}D.")
 
     # If data is a DataFrame, grab the column names
     if isinstance(data, pd.DataFrame):

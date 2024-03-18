@@ -374,9 +374,8 @@ def calculate_cdf(x: Union[pl.Series, pd.Series, np.ndarray]) -> pd.Series:
     if x.isna().any():
         raise ValueError("The array must not contain NaNs.")
     # Can't contain infs:
-    if get_column_dtype(x) == "continuous":
-        if np.isinf(x.to_numpy()).any():
-            raise ValueError("The array must not contain infs.")
+    if get_column_dtype(x) == "continuous" and np.isinf(x.to_numpy()).any():
+        raise ValueError("The array must not contain infs.")
     # Can't contain non-numeric values:
     if not np.issubdtype(x, np.number):
         raise ValueError("The array must not contain non-numeric values.")

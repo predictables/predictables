@@ -11,7 +11,7 @@ def evaluate_best_feature_to_add(
     )  # Assuming we are using MSE which should be minimized
 
     for feature in remaining_features:
-        features_to_test = selected_features + [feature]
+        features_to_test = [*selected_features, feature]
         model = LinearRegression()
 
         # Assuming sample_X and sample_y are LazyFrames, we collect them here.

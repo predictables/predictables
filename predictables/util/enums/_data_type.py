@@ -184,10 +184,9 @@ class DataType(Enum):
         ]
 
         max_diff_eq_1 = False
-        if n_unique > 1:
-            if dtype in numeric_dtypes:
-                max_diff = unique.diff().dropna().max()
-                max_diff_eq_1 = max_diff == 1
+        if n_unique > 1 and dtype in numeric_dtypes:
+            max_diff = unique.diff().dropna().max()
+            max_diff_eq_1 = max_diff == 1
 
         if dtype in numeric_dtypes:
             if n_unique <= 2:

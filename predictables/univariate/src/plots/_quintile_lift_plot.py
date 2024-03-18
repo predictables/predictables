@@ -166,7 +166,10 @@ def quintile_lift_plot_matplotlib(
         fontsize=20 * font_scale_fct,
         ha="center",
         bbox={
-            "boxstyle": "round,pad=0.25", "edgecolor": "black", "facecolor": "white", "alpha": 0.85
+            "boxstyle": "round,pad=0.25",
+            "edgecolor": "black",
+            "facecolor": "white",
+            "alpha": 0.85,
         },
     )
 

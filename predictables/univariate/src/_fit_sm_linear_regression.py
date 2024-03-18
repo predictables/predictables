@@ -32,5 +32,5 @@ def fit_sm_linear_regression(
 
     """
     X = to_pd_df(X).reset_index(drop=True)
-    y = to_pd_s(y).reset_index(drop=True).values.ravel()
+    y = to_pd_s(y).reset_index(drop=True).to_numpy().ravel()
     return sm.OLS(y, X).fit()

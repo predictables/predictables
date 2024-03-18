@@ -1,9 +1,9 @@
 def model_name_map(name: str) -> str:
-    """
-    Map a model name to a canonical name. This is useful for users who may
-    refer to the same model by different names. The name is standardized,
-    lowercased, and stripped of whitespace. If the name is not recognized,
-    an error is raised.
+    """Map a model name to a canonical name.
+
+    This is useful for users who may refer to the same model by different names.
+    The name is standardized, lowercased, and stripped of whitespace. If the name
+    is not recognized, an error is raised.
     """
     map = {
         "catboost": "catboost",

@@ -1094,7 +1094,7 @@ class Report:
             style = create_table_style()
 
         df = to_pd_df(df)
-        data = [[""] + df.columns.tolist()] + [
+        data = [["", *df.columns.tolist()]] + [
             [df.index.tolist()[i]] + df.to_numpy().tolist()[i]
             for i, _ in enumerate(df.to_numpy().tolist())
         ]
@@ -1105,10 +1105,9 @@ class Report:
         return self
 
     def build(self) -> None:
-        """
-        Builds the pdf document and saves it to the filename specified in
-        the constructor. This is the final command that must be called to
-        generate the pdf document.
+        """Build the pdf document and saves it to the filename specified in the constructor.
+
+        This is the final command that must be called to generate the pdf document.
 
         Parameters
         ----------

@@ -131,7 +131,7 @@ class Bert:
         if isinstance(text, list):
             self.text = text if self.text is None else self.text
         elif isinstance(text, str):
-            self.text = [text] if self.text is None else [self.text] + [text]
+            self.text = [text] if self.text is None else [self.text, text]
         else:
             raise ValueError(
                 "`text` must be a string or a list of strings. Please try again."

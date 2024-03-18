@@ -147,7 +147,7 @@ class Univariate(Model):
             )
 
         self.agg_results = pl.from_pandas(
-            pd.DataFrame({"fold": self.unique_folds_str + ["mean", "std"]})
+            pd.DataFrame({"fold": [*self.unique_folds_str, "mean", "std"]})
         ).lazy()
         for attribute in [
             "coef",
@@ -429,12 +429,12 @@ class Univariate(Model):
             cv,
             self.time_series_validation,
             (
-                to_pd_df(self.agg_results).loc["Ave.", "coef"].values  # type: ignore
+                to_pd_df(self.agg_results).loc["Ave.", "coef"].to_numpy()  # type: ignore
                 if coef is None
                 else coef
             ),
             (
-                to_pd_df(self.agg_results).loc["Ave.", "coef"].values  # type: ignore
+                to_pd_df(self.agg_results).loc["Ave.", "coef"].to_numpy()  # type: ignore
                 if se is None
                 else se
             ),

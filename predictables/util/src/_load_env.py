@@ -24,7 +24,7 @@ def load_env() -> dict:
         env_vars = dotenv_values()
 
         # Check that all keys are valid
-        for key in env_vars.keys():
+        for key in env_vars:
             if not isinstance(key, str):
                 raise ValueError(
                     f"Invalid environment variable key: {key}. Key must be a string."

@@ -72,25 +72,25 @@ def extract_model_params_sm_GLM(model: sm.GLM) -> StatsmodelsModelParams:
     dbg.msg("Entering extract_model_params_sm_GLM function")
     return (
         StatsmodelsModelParams(
-            model.params.values[1:],
-            model.params.values[0],
+            model.params.to_numpy()[1:],
+            model.params.to_numpy()[0],
             model.pvalues,
             model.aic,
             model.bse,
-            model.conf_int().values.ravel()[0],
-            model.conf_int().values.ravel()[1],
+            model.conf_int().to_numpy().ravel()[0],
+            model.conf_int().to_numpy().ravel()[1],
             model.nobs,
             model.df_model,
         )
         if len(model.params) > 1
         else StatsmodelsModelParams(
-            model.params.values[0],
+            model.params.to_numpy()[0],
             None,
             model.pvalues,
             model.aic,
             model.bse,
-            model.conf_int().values.ravel()[0],
-            model.conf_int().values.ravel()[1],
+            model.conf_int().to_numpy().ravel()[0],
+            model.conf_int().to_numpy().ravel()[1],
             model.nobs,
             model.df_model,
         )
@@ -121,20 +121,20 @@ def extract_model_params_sm_OLS(model: sm.OLS) -> StatsmodelsModelParams:
             model.pvalues,
             model.aic,
             model.bse,
-            model.conf_int().values.ravel()[0],
-            model.conf_int().values.ravel()[1],
+            model.conf_int().to_numpy().ravel()[0],
+            model.conf_int().to_numpy().ravel()[1],
             model.nobs,
             model.df_model,
         )
         if len(model.params) > 1
         else StatsmodelsModelParams(
-            model.params.values[0],
+            model.params.to_numpy()[0],
             None,
             model.pvalues,
             model.aic,
             model.bse,
-            model.conf_int().values.ravel()[0],
-            model.conf_int().values.ravel()[1],
+            model.conf_int().to_numpy().ravel()[0],
+            model.conf_int().to_numpy().ravel()[1],
             model.nobs,
             model.df_model,
         )

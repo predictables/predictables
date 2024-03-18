@@ -239,7 +239,7 @@ class UnivariateAnalysis:
                         time_series_validation=self.time_series_validation,
                     ),
                 )
-            elif col_type == "categorical" or col_type == "binary":
+            elif col_type in ("categorical", "binary"):
                 setattr(
                     self,
                     obj_name,

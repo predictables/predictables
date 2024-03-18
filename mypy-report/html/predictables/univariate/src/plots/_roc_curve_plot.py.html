@@ -1433,14 +1433,15 @@ Unannotated (x1)">        _, ax = plt.subplots()</span>
 <span class="line-precise" title="No Anys on this line!">        figax = ax</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)
-Omitted Generics (x18)">    for f in fold.drop_duplicates().sort_values().values:</span>
+Explicit (x2)
+Omitted Generics (x20)
+Unannotated (x1)">    for f in fold.drop_duplicates().sort_values().to_numpy():</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x11)
-Unannotated (x1)">        y_ = filter_by_cv_fold(y, f, fold, time_series_validation, "test")</span>
+Explicit (x1)">        y_ = filter_by_cv_fold(y, f, fold, time_series_validation, "test")</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x11)
-Unannotated (x1)">        yhat_ = filter_by_cv_fold(yhat_proba, f, fold, time_series_validation, "test")</span>
+Explicit (x1)">        yhat_ = filter_by_cv_fold(yhat_proba, f, fold, time_series_validation, "test")</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x2)">        figax = plot_individual_roc_curves(</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -1448,7 +1449,7 @@ Omitted Generics (x1)">            y=y_,</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">            yhat_proba=yhat_,</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            curve_name=f"Fold {f}",</span>
+Explicit (x1)">            curve_name=f"Fold {f}",</span>
 <span class="line-precise" title="No Anys on this line!">            figax=figax,</span>
 <span class="line-precise" title="No Anys on this line!">            n_bins=n_bins if n_bins is not None else 200,</span>
 <span class="line-precise" title="No Anys on this line!">            alpha=cv_alpha if cv_alpha is not None else 0.4,</span>
@@ -1505,24 +1506,25 @@ Explicit (x8)
 Unannotated (x4)">    fprs, tprs = pd.DataFrame(), pd.DataFrame()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)
-Omitted Generics (x18)">    for f in fold.drop_duplicates().sort_values().values:</span>
+Explicit (x2)
+Omitted Generics (x20)
+Unannotated (x1)">    for f in fold.drop_duplicates().sort_values().to_numpy():</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x11)
-Unannotated (x1)">        y_ = filter_by_cv_fold(y, f, fold, time_series_validation, "test")</span>
+Explicit (x1)">        y_ = filter_by_cv_fold(y, f, fold, time_series_validation, "test")</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x11)
-Unannotated (x1)">        yhat_ = filter_by_cv_fold(yhat_proba, f, fold, time_series_validation, "test")</span>
+Explicit (x1)">        yhat_ = filter_by_cv_fold(yhat_proba, f, fold, time_series_validation, "test")</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">        if f &gt; 0:</span>
+Explicit (x2)">        if f &gt; 0:</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x10)">            fpr, tpr = create_auc_data(y_, yhat_, n_bins)</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x1)
-Unannotated (x1)">            fprs[f"fold_{f}"] = fpr</span>
+Explicit (x1)">            fprs[f"fold_{f}"] = fpr</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x1)
-Unannotated (x1)">            tprs[f"fold_{f}"] = tpr</span>
+Explicit (x1)">            tprs[f"fold_{f}"] = tpr</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x10)">    total_fpr, total_tpr = create_auc_data(y, yhat_proba, n_bins)</span>

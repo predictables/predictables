@@ -40,7 +40,7 @@ def fit_sk_logistic_regression(
         else pd.DataFrame(X)
     )
     y_ = (
-        to_pd_s(y).reset_index(drop=True).values.ravel()
+        to_pd_s(y).reset_index(drop=True).to_numpy().ravel()
         if isinstance(y, (pd.Series, pl.Series))
         else pd.Series(y)
     )

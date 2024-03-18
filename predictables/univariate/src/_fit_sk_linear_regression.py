@@ -64,7 +64,7 @@ def fit_sk_linear_regression(
         else X
     )
     y_ = (
-        to_pd_s(y).reset_index(drop=True).values.ravel()
+        to_pd_s(y).reset_index(drop=True).to_numpy().ravel()
         if isinstance(y, (pl.Series, pd.Series))
         else y
     )
