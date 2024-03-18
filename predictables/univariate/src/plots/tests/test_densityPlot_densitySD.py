@@ -16,7 +16,7 @@ def x_pd():
 
 @pytest.fixture
 def x_np(x_pd):
-    return x_pd.values
+    return x_pd.to_numpy()
 
 
 @pytest.fixture
@@ -31,7 +31,7 @@ def by_pd():
 
 @pytest.fixture
 def by_np(by_pd):
-    return by_pd.values
+    return by_pd.to_numpy()
 
 
 @pytest.fixture
@@ -46,7 +46,7 @@ def cv_pd():
 
 @pytest.fixture
 def cv_np(cv_pd):
-    return cv_pd.values
+    return cv_pd.to_numpy()
 
 
 @pytest.fixture

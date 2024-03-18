@@ -1095,8 +1095,8 @@ class Report:
 
         df = to_pd_df(df)
         data = [[""] + df.columns.tolist()] + [
-            [df.index.tolist()[i]] + df.values.tolist()[i]
-            for i, _ in enumerate(df.values.tolist())
+            [df.index.tolist()[i]] + df.to_numpy().tolist()[i]
+            for i, _ in enumerate(df.to_numpy().tolist())
         ]
         t = Table(data)
         if style is not None:

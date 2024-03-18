@@ -3,7 +3,7 @@ from __future__ import annotations
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import plotly.graph_objs as go
+import plotly.graph_objs as go  # type: ignore[import-untyped]
 import polars as pl
 
 from .util import plot_label, rotate_x_lab
@@ -21,17 +21,17 @@ def stacked_bar_chart(
     fontsize: int = 16,
     facecolor: str = "white",
 ) -> plt.Axes | go.Figure:
-    params = dict(
-        feature=feature,
-        target=target,
-        y_offset=y_offset,
-        ax=ax,
-        figsize=figsize,
-        alpha=alpha,
-        bar_width=bar_width,
-        fontsize=fontsize,
-        facecolor=facecolor,
-    )
+    params = {
+        "feature": feature,
+        "target": target,
+        "y_offset": y_offset,
+        "ax": ax,
+        "figsize": figsize,
+        "alpha": alpha,
+        "bar_width": bar_width,
+        "fontsize": fontsize,
+        "facecolor": facecolor,
+    }
     if backend == "matplotlib":
         return plot_stacked_bar_chart(**params, ax=ax, figsize=figsize)
     elif backend == "plotly":
@@ -65,7 +65,7 @@ def plot_stacked_bar_chart(
 
     for col in ct.columns:
         ax.bar(indices, ct[col], bottom=bottoms, label=col, alpha=alpha)
-        bottoms += ct[col].values
+        bottoms += ct[col].to_numpy()
 
     # get the feature/target names
     feature_name = feature if isinstance(feature, str) else feature.name
@@ -91,12 +91,12 @@ def plot_stacked_bar_chart(
                 va="center",
                 ha="center",
                 fontsize=fontsize,
-                bbox=dict(
-                    facecolor=facecolor,
-                    edgecolor="black",
-                    alpha=0.9,
-                    boxstyle="round,pad=0.2",
-                ),
+                bbox={
+                    "facecolor": facecolor,
+                    "edgecolor": "black",
+                    "alpha": 0.9,
+                    "boxstyle": "round,pad=0.2",
+                },
             )
 
             ax.annotate(
@@ -106,12 +106,12 @@ def plot_stacked_bar_chart(
                 va="center",
                 ha="center",
                 fontsize=fontsize,
-                bbox=dict(
-                    facecolor=facecolor,
-                    edgecolor="black",
-                    alpha=0.9,
-                    boxstyle="round,pad=0.2",
-                ),
+                bbox={
+                    "facecolor": facecolor,
+                    "edgecolor": "black",
+                    "alpha": 0.9,
+                    "boxstyle": "round,pad=0.2",
+                },
             )
 
     # Set x and y labels
@@ -174,7 +174,7 @@ def plotly_stacked_bar_chart(
                     y=y_value / 2 + bottoms[i],
                     text=f"{y_value:.1%}",
                     showarrow=False,
-                    font=dict(size=fontsize),
+                    font={"size": fontsize},
                     bgcolor=facecolor,
                     opacity=0.8,
                 )
@@ -184,14 +184,14 @@ def plotly_stacked_bar_chart(
     fig.update_layout(
         barmode="stack",
         title=f"Distribution of {feature} by {target}",
-        xaxis=dict(
-            title=feature,
-            tickmode="array",
-            tickvals=np.arange(len(ct.index)),
-            ticktext=ct.index,
-        ),
-        yaxis=dict(title="Percentage", tickformat=".1%"),
-        legend=dict(font=dict(size=fontsize), title="Legend"),
+        xaxis={
+            "title": feature,
+            "tickmode": "array",
+            "tickvals": np.arange(len(ct.index)),
+            "ticktext": ct.index,
+        },
+        yaxis={"title": "Percentage", "tickformat": ".1%"},
+        legend={"font": {"size": fontsize}, "title": "Legend"},
         plot_bgcolor="rgba(0,0,0,0)",  # Set transparent background color
     )
 

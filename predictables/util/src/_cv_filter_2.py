@@ -115,7 +115,7 @@ def filter_by_cv_fold(
         folds_ = to_pd_s(folds).reset_index(drop=True)
         s_ = to_pd_s(s).reset_index(drop=True)
         # filter based on cross-validation fold
-        idx = cv_filter(f, folds_, time_series_validation, train_test, "pd").values
+        idx = cv_filter(f, folds_, time_series_validation, train_test, "pd").to_numpy()
         print(f"\nidx.shape: {idx.shape}\n")
         return s_[idx]
 

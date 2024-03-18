@@ -60,7 +60,7 @@ def generate_date_lookup(
     dates = (
         pd.DataFrame(pd.date_range(start=start_date, end=end_date), columns=["date"])
         .reset_index()
-        .rename(columns=dict(index="date_id"))
+        .rename(columns={"index": "date_id"})
         .set_index("date_id")
     )
 

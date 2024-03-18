@@ -101,10 +101,10 @@ def test_delong_test_against_chance_known_values(cancer):
 
     # Fit a logistic regression model
     clf_total = LogisticRegression()
-    clf_total.fit(X.values.reshape(-1, 1), y)
+    clf_total.fit(X.to_numpy().reshape(-1, 1), y)
 
     # Predict probabilities
-    yhat_proba = clf_total.predict_proba(X.values.reshape(-1, 1))[:, 1]
+    yhat_proba = clf_total.predict_proba(X.to_numpy().reshape(-1, 1))[:, 1]
 
     # ROC AUC
     auc = roc_auc_score(y, yhat_proba)
@@ -115,8 +115,8 @@ def test_delong_test_against_chance_known_values(cancer):
         idx_train = folds != fold
         idx_val = folds == fold
         clf = LogisticRegression()
-        clf.fit(X[idx_train].values.reshape(-1, 1), y[idx_train])
-        yhat_proba_val = clf.predict_proba(X[idx_val].values.reshape(-1, 1))[:, 1]
+        clf.fit(X[idx_train].to_numpy().reshape(-1, 1), y[idx_train])
+        yhat_proba_val = clf.predict_proba(X[idx_val].to_numpy().reshape(-1, 1))[:, 1]
         auc_val = roc_auc_score(y[idx_val], yhat_proba_val)
         aucs.append(auc_val)
 
@@ -149,10 +149,10 @@ def test_delong_test_gives_significant_estimate(cancer):
 
     # Fit a logistic regression model
     clf_total = LogisticRegression()
-    clf_total.fit(X.values.reshape(-1, 1), y)
+    clf_total.fit(X.to_numpy().reshape(-1, 1), y)
 
     # Predict probabilities
-    yhat_proba = clf_total.predict_proba(X.values.reshape(-1, 1))[:, 1]
+    yhat_proba = clf_total.predict_proba(X.to_numpy().reshape(-1, 1))[:, 1]
 
     _, p_value = _delong_test_against_chance(y, yhat_proba, folds, False)
     assert (

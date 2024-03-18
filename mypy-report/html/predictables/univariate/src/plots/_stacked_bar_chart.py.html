@@ -216,7 +216,7 @@
 <span class="line-precise" title="No Anys on this line!">import matplotlib.pyplot as plt</span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
-<span class="line-any" title="No Anys on this line!">import plotly.graph_objs as go</span>
+<span class="line-any" title="No Anys on this line!">import plotly.graph_objs as go  # type: ignore[import-untyped]</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from .util import plot_label, rotate_x_lab</span>
@@ -237,19 +237,19 @@ Unimported (x1)">def stacked_bar_chart(</span>
 <span class="line-precise" title="No Anys on this line!">    facecolor: str = "white",</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes | go.Figure:</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Error (x2)">    params = dict(</span>
+Error (x1)">    params = {</span>
 <span class="line-any" title="Any Types on this line: 
-Error (x1)">        feature=feature,</span>
+Error (x1)">        "feature": feature,</span>
 <span class="line-any" title="Any Types on this line: 
-Error (x1)">        target=target,</span>
-<span class="line-precise" title="No Anys on this line!">        y_offset=y_offset,</span>
-<span class="line-precise" title="No Anys on this line!">        ax=ax,</span>
-<span class="line-precise" title="No Anys on this line!">        figsize=figsize,</span>
-<span class="line-precise" title="No Anys on this line!">        alpha=alpha,</span>
-<span class="line-precise" title="No Anys on this line!">        bar_width=bar_width,</span>
-<span class="line-precise" title="No Anys on this line!">        fontsize=fontsize,</span>
-<span class="line-precise" title="No Anys on this line!">        facecolor=facecolor,</span>
-<span class="line-empty" title="No Anys on this line!">    )</span>
+Error (x1)">        "target": target,</span>
+<span class="line-precise" title="No Anys on this line!">        "y_offset": y_offset,</span>
+<span class="line-precise" title="No Anys on this line!">        "ax": ax,</span>
+<span class="line-precise" title="No Anys on this line!">        "figsize": figsize,</span>
+<span class="line-precise" title="No Anys on this line!">        "alpha": alpha,</span>
+<span class="line-precise" title="No Anys on this line!">        "bar_width": bar_width,</span>
+<span class="line-precise" title="No Anys on this line!">        "fontsize": fontsize,</span>
+<span class="line-precise" title="No Anys on this line!">        "facecolor": facecolor,</span>
+<span class="line-empty" title="No Anys on this line!">    }</span>
 <span class="line-precise" title="No Anys on this line!">    if backend == "matplotlib":</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x2)

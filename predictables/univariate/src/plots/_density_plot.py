@@ -339,12 +339,12 @@ def _significance_annotation(
         ha="left",
         va="center",
         fontsize=24 * (figsize[0] / 16),
-        bbox=dict(
-            boxstyle="round,pad=0.3",
-            edgecolor="lightgrey",
-            facecolor="white",
-            alpha=0.5,
-        ),
+        bbox={
+            "boxstyle": "round,pad=0.3",
+            "edgecolor": "lightgrey",
+            "facecolor": "white",
+            "alpha": 0.5,
+        },
     )
     return ax0
 
@@ -1007,8 +1007,8 @@ def _annotate_mean_median(
 
     # Define annotation position and arrow properties based on mean0 and mean1
     pos0, pos1 = ("right", "left") if mean0 < mean1 else ("left", "right")
-    arrowprops0 = dict(arrowstyle="->", lw=1)
-    arrowprops1 = dict(arrowstyle="->", lw=1)
+    arrowprops0 = {"arrowstyle": "->", "lw": 1}
+    arrowprops1 = {"arrowstyle": "->", "lw": 1}
 
     # Extract the figure size
     figsize = ax_.get_figure().get_size_inches()  # type: ignore
@@ -1023,9 +1023,12 @@ def _annotate_mean_median(
         ha=pos0,
         va="bottom",
         fontsize=24 * (figsize[0] / 16),
-        bbox=dict(
-            boxstyle="round,pad=0.3", edgecolor="black", facecolor="blue", alpha=0.2
-        ),
+        bbox={
+            "boxstyle": "round,pad=0.3",
+            "edgecolor": "black",
+            "facecolor": "blue",
+            "alpha": 0.2,
+        },
         arrowprops=arrowprops0,
     )
 
@@ -1039,9 +1042,12 @@ def _annotate_mean_median(
         ha=pos1,
         va="bottom",
         fontsize=24 * (figsize[0] / 16),
-        bbox=dict(
-            boxstyle="round,pad=0.3", edgecolor="black", facecolor="orange", alpha=0.2
-        ),
+        bbox={
+            "boxstyle": "round,pad=0.3",
+            "edgecolor": "black",
+            "facecolor": "orange",
+            "alpha": 0.2,
+        },
         arrowprops=arrowprops1,
     )
 

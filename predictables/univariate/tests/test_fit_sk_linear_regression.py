@@ -39,11 +39,11 @@ def pl_y():
 
 
 def np_X():
-    return pd_df_X().values
+    return pd_df_X().to_numpy()
 
 
 def np_y():
-    return pd_series_y().values.ravel()
+    return pd_series_y().to_numpy().ravel()
 
 
 @pytest.mark.parametrize(

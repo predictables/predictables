@@ -120,20 +120,20 @@ def test_extract_model_params_sm_OLS(sm_linear_model, linear_coef):
         result.coef, linear_coef
     ), f"Expected fitted coeficient close to {linear_coef}, got {result.coef}"
     assert is_close(
-        result.pvalues.values, sm_linear_model.pvalues.values
+        result.pvalues.to_numpy(), sm_linear_model.pvalues.to_numpy()
     ), f"Expected pvalues close to {sm_linear_model.pvalues}, got {result.pvalues}"
     assert is_close(
         result.aic, sm_linear_model.aic
     ), f"Expected AIC close to {sm_linear_model.aic}, got {result.aic}"
     assert is_close(
-        result.se.values, sm_linear_model.bse.values
+        result.se.to_numpy(), sm_linear_model.bse.to_numpy()
     ), f"Expected SE close to {sm_linear_model.bse}, got {result.se}"
     assert is_close(
-        result.lower_ci, sm_linear_model.conf_int().values.ravel()[0]
-    ), f"Expected lower confidence interval close to {sm_linear_model.conf_int().values.ravel()[0]}, got {result.lower_ci}"
+        result.lower_ci, sm_linear_model.conf_int().to_numpy().ravel()[0]
+    ), f"Expected lower confidence interval close to {sm_linear_model.conf_int().to_numpy().ravel()[0]}, got {result.lower_ci}"
     assert is_close(
-        result.upper_ci, sm_linear_model.conf_int().values.ravel()[1]
-    ), f"Expected upper confidence interval close to {sm_linear_model.conf_int().values.ravel()[1]}, got {result.upper_ci}"
+        result.upper_ci, sm_linear_model.conf_int().to_numpy().ravel()[1]
+    ), f"Expected upper confidence interval close to {sm_linear_model.conf_int().to_numpy().ravel()[1]}, got {result.upper_ci}"
     assert (
         result.n == sm_linear_model.nobs
     ), f"Expected number of observations close to {sm_linear_model.nobs}, got {result.n}"
@@ -152,20 +152,20 @@ def test_extract_model_params_sm_GLM(sm_logistic_model, logistic_coef):
         result.coef, logistic_coef
     ), f"Expected fitted coeficient close to {logistic_coef}, got {result.coef}"
     assert is_close(
-        result.pvalues.values, sm_logistic_model.pvalues.values
+        result.pvalues.to_numpy(), sm_logistic_model.pvalues.to_numpy()
     ), f"Expected pvalues close to {sm_logistic_model.pvalues}, got {result.pvalues}"
     assert is_close(
         result.aic, sm_logistic_model.aic
     ), f"Expected AIC close to {sm_logistic_model.aic}, got {result.aic}"
     assert is_close(
-        result.se.values, sm_logistic_model.bse.values
+        result.se.to_numpy(), sm_logistic_model.bse.to_numpy()
     ), f"Expected SE close to {sm_logistic_model.bse}, got {result.se}"
     assert is_close(
-        result.lower_ci, sm_logistic_model.conf_int().values.ravel()[0]
-    ), f"Expected lower confidence interval close to {sm_logistic_model.conf_int().values.ravel()[0]}, got {result.lower_ci}"
+        result.lower_ci, sm_logistic_model.conf_int().to_numpy().ravel()[0]
+    ), f"Expected lower confidence interval close to {sm_logistic_model.conf_int().to_numpy().ravel()[0]}, got {result.lower_ci}"
     assert is_close(
-        result.upper_ci, sm_logistic_model.conf_int().values.ravel()[1]
-    ), f"Expected upper confidence interval close to {sm_logistic_model.conf_int().values.ravel()[1]}, got {result.upper_ci}"
+        result.upper_ci, sm_logistic_model.conf_int().to_numpy().ravel()[1]
+    ), f"Expected upper confidence interval close to {sm_logistic_model.conf_int().to_numpy().ravel()[1]}, got {result.upper_ci}"
     assert (
         result.n == sm_logistic_model.nobs
     ), f"Expected number of observations close to {sm_logistic_model.nobs}, got {result.n}"

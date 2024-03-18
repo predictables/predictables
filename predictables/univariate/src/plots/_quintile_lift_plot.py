@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import plotly.graph_objs as go  # type: ignore
+import plotly.graph_objs as go  # type: ignore[import-untyped]
 import polars as pl
 from matplotlib.axes import Axes
-from scipy.stats import entropy as kl_divergence  # type: ignore
+from scipy.stats import entropy as kl_divergence  # type: ignore[import-untyped]
 
 from predictables.util import to_pd_s
 from predictables.util.stats import gini_coefficient
@@ -16,14 +15,14 @@ from .util import rotate_x_lab
 
 
 def quintile_lift_plot(
-    feature: Union[pd.Series, pl.Series],
-    observed_target: Union[pd.Series, pl.Series],
-    modeled_target: Union[pd.Series, pl.Series],
-    ax: Optional[Axes] = None,
+    feature: pd.Series | pl.Series,
+    observed_target: pd.Series | pl.Series,
+    modeled_target: pd.Series | pl.Series,
+    ax: plt.Axes | None = None,
     backend: str = "matplotlib",
-    figsize: Optional[Tuple[float, float]] = None,
+    figsize: tuple[float, float] | None = None,
     **kwargs,
-):
+) -> plt.Axes | go.Figure:
     """
     Plots the quintile lift for a given feature and target.
 
@@ -34,18 +33,18 @@ def quintile_lift_plot(
 
     Parameters
     ----------
-    feature : Union[pd.Series, pl.Series],
+    feature : pd.Series | pl.Series,
         A Pandas Series containing the feature data.
-    observed_target : Union[pd.Series, pl.Series],
+    observed_target : pd.Series | pl.Series,
         A Pandas Series containing the observed target data.
-    modeled_target : Union[pd.Series, pl.Series],
+    modeled_target : pd.Series | pl.Series,
         A Pandas Series containing the modeled target data.
     ax: Axes, optional
         The Matplotlib axis object to plot the quintile lift on. If not provided,
         a new figure and axis object will be created.
     backend : str, optional
         The plotting backend to use. Default is 'matplotlib'.
-    figsize : Tuple[int, int], optional
+    figsize : tuple[int, int], optional
         The figure size. Default is (7, 7).
     **kwargs
         Additional keyword arguments to pass to the plotting function.
@@ -80,11 +79,11 @@ def quintile_lift_plot(
 
 
 def quintile_lift_plot_matplotlib(
-    feature: Union[pd.Series, pl.Series],
-    observed_target: Union[pd.Series, pl.Series],
-    modeled_target: Union[pd.Series, pl.Series],
+    feature: pd.Series | pl.Series,
+    observed_target: pd.Series | pl.Series,
+    modeled_target: pd.Series | pl.Series,
     ax: Optional[Axes] = None,
-    figsize: Tuple[int, int] = (7, 7),
+    figsize: tuple[int, int] = (7, 7),
 ):
     """
     Plots the quintile lift for a given feature and target.
@@ -96,11 +95,11 @@ def quintile_lift_plot_matplotlib(
 
     Parameters
     ----------
-    feature : Union[pd.Series, pl.Series],
+    feature : pd.Series | pl.Series,
         A Pandas Series containing the feature data.
-    observed_target : Union[pd.Series, pl.Series],
+    observed_target : pd.Series | pl.Series,
         A Pandas Series containing the observed target data.
-    modeled_target : Union[pd.Series, pl.Series],
+    modeled_target : pd.Series | pl.Series,
         A Pandas Series containing the modeled target data.
     ax : matplotlib.axes.Axes, optional
         The Matplotlib axis object to plot the quintile lift on. If not provided,
@@ -113,7 +112,7 @@ def quintile_lift_plot_matplotlib(
         The color of the bar edges. Default is 'black'.
     alpha : float, optional
         The transparency of the bars. Default is 0.5.
-    figsize : Tuple[int, int], optional
+    figsize : tuple[int, int], optional
         The figure size. Default is (7, 7).
 
     Returns
@@ -142,12 +141,12 @@ def quintile_lift_plot_matplotlib(
                 ha="center",
                 va="bottom",
                 fontsize=20 * font_scale_fct,
-                bbox=dict(
-                    boxstyle="round,pad=0.2",
-                    edgecolor="black",
-                    facecolor="white",
-                    alpha=0.9,
-                ),
+                bbox={
+                    "boxstyle": "round,pad=0.2",
+                    "edgecolor": "black",
+                    "facecolor": "white",
+                    "alpha": 0.9,
+                },
             )
 
     ax.set_xticks(lift_df["quintile"])
@@ -166,9 +165,9 @@ def quintile_lift_plot_matplotlib(
         xycoords="axes fraction",
         fontsize=20 * font_scale_fct,
         ha="center",
-        bbox=dict(
-            boxstyle="round,pad=0.25", edgecolor="black", facecolor="white", alpha=0.85
-        ),
+        bbox={
+            "boxstyle": "round,pad=0.25", "edgecolor": "black", "facecolor": "white", "alpha": 0.85
+        },
     )
 
     ax.set_title("Qunitile Lift Plot")
@@ -180,10 +179,10 @@ def quintile_lift_plot_matplotlib(
 
 
 def quintile_lift_plot_plotly(
-    feature: Union[pd.Series, pl.Series],
-    observed_target: Union[pd.Series, pl.Series],
-    modeled_target: Union[pd.Series, pl.Series],
-    figsize: Tuple[int, int] = (7, 7),
+    feature: pd.Series | pl.Series,
+    observed_target: pd.Series | pl.Series,
+    modeled_target: pd.Series | pl.Series,
+    figsize: tuple[int, int] = (7, 7),
 ):
     """
     Plots the quintile lift for a given feature and target.
@@ -195,13 +194,13 @@ def quintile_lift_plot_plotly(
 
     Parameters
     ----------
-    feature : Union[pd.Series, pl.Series],
+    feature : pd.Series | pl.Series,
         A Pandas Series containing the feature data.
-    observed_target : Union[pd.Series, pl.Series],
+    observed_target : pd.Series | pl.Series,
         A Pandas Series containing the observed target data.
-    modeled_target : Union[pd.Series, pl.Series],
+    modeled_target : pd.Series | pl.Series,
         A Pandas Series containing the modeled target data.
-    figsize : Tuple[int, int], optional
+    figsize : tuple[int, int], optional
         The figure size. Default is (15, 8).
 
     Returns
@@ -225,14 +224,14 @@ def quintile_lift_plot_plotly(
                 y=bar.y,
                 text=f"{bar.y:.2f}",
                 showarrow=False,
-                font=dict(size=16),
+                font={"size": 16},
             )
 
     fig.update_layout(
         xaxis_title="Modeled Quintile",
         yaxis_title="Mean Target",
         title="Quintile Lift Plot",
-        legend=dict(font=dict(size=16)),
+        legend={"font": {"size": 16}},
     )
 
     # KL Divergence calculation
@@ -245,27 +244,26 @@ def quintile_lift_plot_plotly(
         y=0.05,
         text=f"KL Divergence: {kl_div:.3f}<br>Gini Coefficient: {gini_coeff:.3f}",
         showarrow=False,
-        font=dict(size=16),
+        font={"size": 16},
     )
 
     return fig
 
 
 def _prep_data(
-    feature: Union[pd.Series, pl.Series],
-    observed_target: Union[pd.Series, pl.Series],
-    modeled_target: Union[pd.Series, pl.Series],
+    feature: pd.Series | pl.Series,
+    observed_target: pd.Series | pl.Series,
+    modeled_target: pd.Series | pl.Series,
 ) -> pd.DataFrame:
-    """
-    Prepares the data for the quintile lift plot.
+    """Prepare the data for the quintile lift plot.
 
     Parameters
     ----------
-    feature : Union[pd.Series, pl.Series],
+    feature : pd.Series | pl.Series,
         A Pandas Series containing the feature data.
-    observed_target : Union[pd.Series, pl.Series],
+    observed_target : pd.Series | pl.Series,
         A Pandas Series containing the observed target data.
-    modeled_target : Union[pd.Series, pl.Series],
+    modeled_target : pd.Series | pl.Series,
         A Pandas Series containing the modeled target data.
 
     Returns
@@ -294,15 +292,15 @@ def _prep_data(
     )
 
 
-def _make_quintiles(modeled_target: Union[pd.Series, pl.Series]) -> pd.Series:
-    """
-    Creates quintile bins based on the modeled target. If there are n < 5 unique
-    values, don't bin quintiles -- instead, bin into n bins based on the modeled
-    target.
+def _make_quintiles(modeled_target: pd.Series | pl.Series) -> pd.Series:
+    """Create quintile bins based on the modeled target.
+
+    If there are n < 5 unique values, don't bin quintiles --
+    instead, bin into n bins based on the modeled target.
 
     Parameters
     ----------
-    modeled_target : Union[pd.Series, pl.Series],
+    modeled_target : pd.Series | pl.Series,
         A Pandas Series containing the modeled target data.
 
     Returns
@@ -332,7 +330,7 @@ def _make_quintiles(modeled_target: Union[pd.Series, pl.Series]) -> pd.Series:
             )
             + 1
         )
-        if len(modeled_target.unique()) < 5
+        if len(modeled_target.unique()) < 5  # noqa: PLR2004 (5 is based off of quintiles)
         else pd.qcut(modeled_target, 5, labels=False, duplicates="drop") + 1
     )
 
@@ -345,7 +343,7 @@ def _make_bars(
     observed_color: str = "lightgreen",
     edge_color: str = "black",
     alpha: float = 0.5,
-):
+) -> tuple[plt.Bar, plt.Bar] | tuple[go.Bar, go.Bar]:
     if backend == "matplotlib":
         bars1 = ax.bar(
             df["quintile"] - 0.2,
@@ -384,7 +382,7 @@ def _make_bars(
     return bars1, bars2
 
 
-def _kl_divergence(df):
+def _kl_divergence(df: pd.DataFrame) -> float:
     return kl_divergence(
         df["observed_target_mean"].values, df["modeled_target_mean"].values
     )

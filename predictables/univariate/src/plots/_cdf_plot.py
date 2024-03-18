@@ -207,7 +207,7 @@ def cdf_plot_matplotlib_levels(
     _plotby_name = plot_by.name if plot_by.name is not None else "plot_by"
 
     # For each level of plot_by, plot the cdf of x, conditional on plot_by
-    for level in plot_by.drop_duplicates().sort_values().values:
+    for level in plot_by.drop_duplicates().sort_values().to_numpy():
         label = plot_label(_plotby_name)
         label += f" = {level}"
         x_cdf = calculate_cdf(x[plot_by == level])
@@ -269,9 +269,9 @@ def cdf_plot_matplotlib_levels_cv(
         ax_ = ax
 
     # For each level of plot_by, plot the cdf of x, conditional on plot_by
-    for level in plot_by.drop_duplicates().sort_values().values:
+    for level in plot_by.drop_duplicates().sort_values().to_numpy():
         if cv_folds is not None:
-            for fold in cv_folds.drop_duplicates().sort_values().values:
+            for fold in cv_folds.drop_duplicates().sort_values().to_numpy():
                 x_cdf = calculate_cdf(
                     filter_by_cv_fold(
                         x, fold, cv_folds, time_series_validation, "test"
@@ -375,7 +375,7 @@ def calculate_cdf(x: Union[pl.Series, pd.Series, np.ndarray]) -> pd.Series:
         raise ValueError("The array must not contain NaNs.")
     # Can't contain infs:
     if get_column_dtype(x) == "continuous":
-        if np.isinf(x.values).any():
+        if np.isinf(x.to_numpy()).any():
             raise ValueError("The array must not contain infs.")
     # Can't contain non-numeric values:
     if not np.issubdtype(x, np.number):

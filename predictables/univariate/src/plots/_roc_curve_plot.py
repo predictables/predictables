@@ -2,15 +2,13 @@ from __future__ import annotations
 
 import logging
 import warnings as warning
-from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import plotly.graph_objects as go  # type: ignore
-from matplotlib.axes import Axes
-from scipy.stats import norm  # type: ignore
-from sklearn.metrics import roc_auc_score  # type: ignore
+import plotly.graph_objects as go  # type: ignore[ignore-untyped]
+from scipy.stats import norm  # type: ignore[ignore-untyped]
+from sklearn.metrics import roc_auc_score  # type: ignore[ignore-untyped]
 from sklearn.metrics import RocCurveDisplay, roc_curve
 
 from predictables.util import DebugLogger, filter_by_cv_fold, get_column_dtype, to_pd_s
@@ -26,12 +24,12 @@ def roc_curve_plot(
     coef: float,
     se: float,
     pvalue: float,
-    figsize: Tuple[int, int] = (7, 7),
+    figsize: tuple[int, int] = (7, 7),
     n_bins: int = 200,
     cv_alpha: float = 0.4,
-    ax: Optional[Axes] = None,
+    ax: plt.Axes | None = None,
     backend: str = "matplotlib",
-) -> Union[go.Figure, Axes]:
+) -> go.Figure | plt.Axes:
     """
     Plot the ROC curve for a single model.
 
@@ -52,24 +50,24 @@ def roc_curve_plot(
         The standard error of the estimated coefficient.
     pvalue : float
         The p-value of the estimated coefficient.
-    figsize : Tuple[int, int], optional
+    figsize : tuple[int, int], optional
         The figure size to use. Defaults to (7, 7).
     n_bins : int, optional
         The number of bins to use when calculating the ROC curve. Generally, the
         more bins, the smoother the curve. Defaults to 200.
     cv_alpha : float, optional
         The opacity of the individual ROC curves.
-    ax : matplotlib.axes.Axes, optional
-        The Axes object to be configured. If provided, the figure will be plotted
-        on the provided Axes object.
+    ax : matplotlib.plt.Axes.plt.Axes, optional
+        The plt.Axes object to be configured. If provided, the figure will be plotted
+        on the provided plt.Axes object.
     backend : str, optional
         The plotting backend to use. Either "matplotlib" or "plotly". Defaults to
         "matplotlib".
 
     Returns
     -------
-    ax : matplotlib.Axes.Axes
-        The configured Axes object.
+    ax : matplotlib.plt.Axes.plt.Axes
+        The configured plt.Axes object.
     """
     if backend == "matplotlib":
         dbg.msg(f"point1: y: {y} | yhat_proba: {yhat_proba} | ROC_0001a")
@@ -96,7 +94,7 @@ def roc_curve_plot(
 
 def create_auc_data(
     y: pd.Series, yhat_proba: pd.Series, n_bins: int = 200
-) -> Tuple[pd.Series, pd.Series]:
+) -> tuple[pd.Series, pd.Series]:
     """
     Create the data for plotting an ROC curve. Calculates the false positive rate
     at each threshold and the true positive rate at each threshold.
@@ -121,7 +119,7 @@ def create_auc_data(
     dbg.msg(
         f"y: {y.shape} | yhat_proba: {yhat_proba.shape} | n_bins: {n_bins} | y:\n{y} | yhat_proba:\n{yhat_proba} |\nROC_0001d"
     )
-    roc: Tuple[np.ndarray, np.ndarray] = roc_curve(y.round(0).astype(int), yhat_proba)
+    roc: tuple[np.ndarray, np.ndarray] = roc_curve(y.round(0).astype(int), yhat_proba)
 
     # Interpolate the data to get a smoother curve
     fpr: pd.Series = pd.Series(np.linspace(0, 1, n_bins))
@@ -138,15 +136,15 @@ def plot_individual_roc_curves(
     y: pd.Series,
     yhat_proba: pd.Series,
     curve_name: str = "ROC Curve",
-    figax: Optional[Union[go.Figure, Axes]] = None,
+    figax: Optional[Union[go.Figure, plt.Axes]] = None,
     n_bins: int = 200,
     alpha: float = 0.4,
     legendgroup: Optional[str] = None,
-    figsize: Tuple[int, int] = (7, 7),
-    ax: Optional[Axes] = None,
+    figsize: tuple[int, int] = (7, 7),
+    ax: Optional[plt.Axes] = None,
     fig: Optional[go.Figure] = None,
     backend: str = "matplotlib",
-) -> Union[go.Figure, Axes]:
+) -> Union[go.Figure, plt.Axes]:
     """
     Plot the ROC curve for each fold.
 
@@ -158,7 +156,7 @@ def plot_individual_roc_curves(
         The predicted probabilities.
     curve_name : str, optional
         The name of the curve to be plotted. If not provided, defaults to "ROC Curve".
-    figax : Union[go.Figure, Axes, None], optional
+    figax : Union[go.Figure, plt.Axes, None], optional
         The plot. Will be ignored if either `fig` (in the case of plotly) or `ax`
         (in the case of matplotlib) is provided.
     n_bins : int, optional
@@ -169,9 +167,9 @@ def plot_individual_roc_curves(
     legendgroup : Union[str, None], optional
         The legend group to use for the individual ROC curves. If None, no legend
         group is used.
-    figsize : Tuple[int, int], optional
+    figsize : tuple[int, int], optional
         The figure size to use. Defaults to (7, 7).
-    ax : matplotlib.axes.Axes, optional
+    ax : matplotlib.plt.Axes.plt.Axes, optional
         Alias for figax. If provided and the backend is "matplotlib", figax is ignored.
     fig : plotly.graph_objects.Figure, optional
         Alias for figax if using plotly. If provided and the backend is "plotly",
@@ -188,7 +186,7 @@ def plot_individual_roc_curves(
 
     Returns
     -------
-    figax : Union[go.Figure, Axes]
+    figax : Union[go.Figure, plt.Axes]
         The plot.
     """
     dbg.msg(f"point2: y: {y} | yhat_proba: {yhat_proba} | ROC_0001b")
@@ -197,7 +195,7 @@ def plot_individual_roc_curves(
     # Handle the case where figax is an alias for either fig or ax
     if (backend == "matplotlib") and (ax is not None):
         figax = ax
-        if isinstance(figax, Axes):
+        if isinstance(figax, plt.Axes):
             RocCurveDisplay(fpr=fpr, tpr=tpr).plot(
                 ax=figax, alpha=alpha, label=curve_name
             )
@@ -210,24 +208,24 @@ def plot_individual_roc_curves(
             return ax
         else:
             raise TypeError(
-                "figax must be a matplotlib.axes.Axes object when using the "
+                "figax must be a matplotlib.plt.Axes.plt.Axes object when using the "
                 "matplotlib backend"
             )
     elif (backend == "plotly") and (fig is not None):
         figax = fig
-        params = dict(
-            x=fpr,
-            y=tpr,
-            mode="lines",
-            hoverdata=pd.DataFrame(dict(fpr=fpr, tpr=tpr)),
-            hovertemplate=(
+        params = {
+            "x": fpr,
+            "y": tpr,
+            "mode": "lines",
+            "hoverdata": pd.DataFrame({"fpr": fpr, "tpr": tpr}),
+            "hovertemplate": (
                 f"<h4>{curve_name}</h4><br>FPR: {{fpr:.3f}}"
                 f"<br>TPR: {{tpr:.3f}}<extra></extra>"
             ),
-            opacity=alpha,
-            line=dict(dash="dot"),
-            showlegend=False,
-        )
+            "opacity": alpha,
+            "line": {"dash": "dot"},
+            "showlegend": False,
+        }
         if legendgroup is not None:
             params["legendgroup"] = legendgroup
 
@@ -253,13 +251,13 @@ def plot_cv_roc_curves(
     yhat_proba: pd.Series,
     fold: pd.Series,
     time_series_validation: bool,
-    figax: Optional[Union[go.Figure, Axes, None]] = None,
+    figax: Optional[Union[go.Figure, plt.Axes, None]] = None,
     n_bins: int = 200,
     cv_alpha: float = 0.4,
-    ax: Optional[Axes] = None,
+    ax: Optional[plt.Axes] = None,
     fig: Optional[go.Figure] = None,
     backend: str = "matplotlib",
-) -> Union[go.Figure, Axes]:
+) -> Union[go.Figure, plt.Axes]:
     """
     Plot the ROC curve for each fold. Filters the data for each fold label,
     then plots the ROC curve for a model trained on that fold.
@@ -275,14 +273,14 @@ def plot_cv_roc_curves(
     time_series_validation : bool
         Whether the data has time series structure. If True, the data will be filtered
         by fold and time, otherwise it will be filtered by fold only.
-    figax : Union[go.Figure, Axes, None], optional
+    figax : Union[go.Figure, plt.Axes, None], optional
         The plot.
     n_bins : int, optional
         The number of bins to use when calculating the ROC curve. Generally, the
         more bins, the smoother the curve. Defaults to 200.
     cv_alpha : float, optional
         The opacity of the individual ROC curves.
-    ax : matplotlib.axes.Axes, optional
+    ax : matplotlib.plt.Axes.plt.Axes, optional
         Alias for figax. If provided and the backend is "matplotlib", figax is ignored.
     fig : plotly.graph_objects.Figure, optional
         Alias for figax if using plotly. If provided and the backend is "plotly",
@@ -293,7 +291,7 @@ def plot_cv_roc_curves(
 
     Returns
     -------
-    figax : Union[go.Figure, Axes]
+    figax : Union[go.Figure, plt.Axes]
         The plot.
     """
     if (backend == "plotly") and (fig is not None):
@@ -302,7 +300,7 @@ def plot_cv_roc_curves(
         _, ax = plt.subplots()
         figax = ax
 
-    for f in fold.drop_duplicates().sort_values().values:
+    for f in fold.drop_duplicates().sort_values().to_numpy():
         y_ = filter_by_cv_fold(y, f, fold, time_series_validation, "test")
         yhat_ = filter_by_cv_fold(yhat_proba, f, fold, time_series_validation, "test")
         figax = plot_individual_roc_curves(
@@ -325,10 +323,11 @@ def calc_auc_curve_data_from_folds(
     fold: pd.Series,
     time_series_validation: bool,
     n_bins: int = 200,
-):
-    """
-    Calculate the standard error of the ROC curve for each fold. Filters the data for
-    each fold label, then plots the ROC curve for a model trained on that fold.
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Calculate the standard error of the ROC curve for each fold.
+
+    Filters the data for each fold label, then plots the ROC curve for a model
+    trained on that fold.
 
     Parameters
     ----------
@@ -359,7 +358,7 @@ def calc_auc_curve_data_from_folds(
     # Calculate the standard error of the ROC curve for each fold
     fprs, tprs = pd.DataFrame(), pd.DataFrame()
 
-    for f in fold.drop_duplicates().sort_values().values:
+    for f in fold.drop_duplicates().sort_values().to_numpy():
         y_ = filter_by_cv_fold(y, f, fold, time_series_validation, "test")
         yhat_ = filter_by_cv_fold(yhat_proba, f, fold, time_series_validation, "test")
         if f > 0:
@@ -406,15 +405,15 @@ def plot_roc_auc_curves_and_confidence_bands(
     yhat_proba: pd.Series,
     fold: pd.Series,
     time_series_validation: bool,
-    figax: Optional[Union[go.Figure, Axes, None]] = None,
+    figax: Optional[Union[go.Figure, plt.Axes, None]] = None,
     n_bins: int = 200,
     cv_alpha: float = 0.4,
-    ax: Optional[Axes] = None,
+    ax: Optional[plt.Axes] = None,
     fig: Optional[go.Figure] = None,
-    figsize: Tuple[int, int] = (7, 7),
+    figsize: tuple[int, int] = (7, 7),
     call_legend: bool = True,
     backend: str = "matplotlib",
-) -> Union[go.Figure, Axes]:
+) -> Union[go.Figure, plt.Axes]:
     """
     Plot the ROC curve for each fold. Filters the data for each fold label,
     then plots the ROC curve for a model trained on that fold.
@@ -430,19 +429,19 @@ def plot_roc_auc_curves_and_confidence_bands(
     time_series_validation : bool
         Whether the data has time series structure. If True, the data will be filtered
         by fold and time, otherwise it will be filtered by fold only.
-    figax : Union[go.Figure, Axes, None], optional
+    figax : Union[go.Figure, plt.Axes, None], optional
         The plot.
     n_bins : int, optional
         The number of bins to use when calculating the ROC curve. Generally, the
         more bins, the smoother the curve. Defaults to 200.
     cv_alpha : float, optional
         The opacity of the individual ROC curves.
-    ax : matplotlib.axes.Axes, optional
+    ax : matplotlib.plt.Axes.plt.Axes, optional
         Alias for figax. If provided and the backend is "matplotlib", figax is ignored.
     fig : plotly.graph_objects.Figure, optional
         Alias for figax if using plotly. If provided and the backend is "plotly",
         figax is ignored.
-    figsize : Tuple[int, int], optional
+    figsize : tuple[int, int], optional
         The figure size to use. Defaults to (7, 7).
     call_legend : bool, optional
         Whether to call plt.legend() after plotting the ROC curves. Defaults to True.
@@ -452,13 +451,13 @@ def plot_roc_auc_curves_and_confidence_bands(
 
     Returns
     -------
-    figax : Union[go.Figure, Axes]
+    figax : Union[go.Figure, plt.Axes]
         The plot.
 
     Raises
     ------
     TypeError
-        If ax is not a matplotlib.axes.Axes object when using the matplotlib backend.
+        If ax is not a matplotlib.plt.Axes.plt.Axes object when using the matplotlib backend.
     NotImplementedError
         If using the plotly backend, which is not yet implemented.
     """
@@ -480,10 +479,15 @@ def plot_roc_auc_curves_and_confidence_bands(
         n_bins if n_bins is not None else 200,
     )
 
-    if isinstance(figax, Axes):
+    if isinstance(figax, plt.Axes):
 
-        def params(col):
-            d = dict(alpha=cv_alpha, label="_" + col.replace("_", " ").title(), lw=0.5)
+        def params(col: str) -> dict[str]:
+            """Build a dictionary of parameters for the plot."""
+            d = {
+                "alpha": cv_alpha,
+                "label": "_" + col.replace("_", " ").title(),
+                "lw": 0.5,
+            }
             if col == "mean":
                 d["alpha"] = 1
                 d["label"] = col.replace("_", " ").title()
@@ -524,8 +528,8 @@ def delong_statistic_annotation_mpl(
     yhat_proba: pd.Series,
     fold: pd.Series,
     time_series_validation: bool,
-    ax: Axes,
-):
+    ax: plt.Axes,
+) -> plt.Axes:
     """
     Implement the DeLong test to compare the ROC AUC against the 45-degree
     line (AUC=0.5).
@@ -547,13 +551,13 @@ def delong_statistic_annotation_mpl(
     time_series_validation : bool
         Whether the data has time series structure. If True, the data will be filtered
         by fold and time, otherwise it will be filtered by fold only.
-    ax : Axes
-        The Axes object to be configured.
+    ax : plt.Axes
+        The plt.Axes object to be configured.
 
     Returns
     -------
-    ax : matplotlib.Axes.Axes
-        The Axes object annotated with the DeLong test statistic and p-value.
+    ax : matplotlib.plt.Axes.plt.Axes
+        The plt.Axes object annotated with the DeLong test statistic and p-value.
     """
     z, p = _delong_test_against_chance(y, yhat_proba, fold, time_series_validation)
 
@@ -570,21 +574,21 @@ def delong_statistic_annotation_mpl(
         )
     )
 
-    # get the figure size from the Axes object (used to scale the annotation)
+    # get the figure size from the plt.Axes object (used to scale the annotation)
     figsize = ax.get_figure().get_size_inches()  # type: ignore
 
     # add annotation
     ax.annotate(
         significance_message,
         xy=(0.6, 0.2),
-        xycoords="axes fraction",
+        xycoords="plt.Axes fraction",
         fontsize=24 * (figsize[0] / 16),
-        bbox=dict(
-            boxstyle="round,pad=0.3",
-            edgecolor="lightgrey",
-            facecolor="white",
-            alpha=0.8,
-        ),
+        bbox={
+            "boxstyle": "round,pad=0.3",
+            "edgecolor": "lightgrey",
+            "facecolor": "white",
+            "alpha": 0.8,
+        },
     )
 
     return ax
@@ -594,10 +598,10 @@ def coefficient_annotation_mpl(
     coef: float,
     std_error: float,
     pvalue: float,
-    ax: Axes,
+    ax: plt.Axes,
     alpha: float = 0.05,
-    figsize: Tuple[int, int] = (7, 7),
-):
+    figsize: tuple[int, int] = (7, 7),
+) -> plt.Axes:
     """
     Annotate the plot with logistic regression model fit information.
 
@@ -609,17 +613,17 @@ def coefficient_annotation_mpl(
         The standard error of the estimated coefficient.
     pvalue : float
         The p-value of the estimated coefficient.
-    ax : Axes
-        The Axes object to be configured.
+    ax : plt.Axes
+        The plt.Axes object to be configured.
     alpha : float, optional
         The significance level to use. Defaults to 0.05.
-    figsize : Tuple[int, int], optional
+    figsize : tuple[int, int], optional
         The figure size to use. Defaults to (7, 7).
 
     Returns
     -------
-    ax : matplotlib.Axes.Axes
-        The Axes object annotated with the model fit information.
+    ax : matplotlib.plt.Axes.plt.Axes
+        The plt.Axes object annotated with the model fit information.
 
     Notes
     -----
@@ -673,15 +677,15 @@ def coefficient_annotation_mpl(
     ax.annotate(
         annotation_text,
         xy=(0.1, 0.05),
-        xycoords="axes fraction",
+        xycoords="plt.Axes fraction",
         fontsize=24
         * (figsize[0] / 16),  # scale the font size depending on the figure size
-        bbox=dict(
-            boxstyle="round,pad=0.3",
-            edgecolor="lightgrey",
-            facecolor="white",
-            alpha=0.8,
-        ),
+        bbox={
+            "boxstyle": "round,pad=0.3",
+            "edgecolor": "lightgrey",
+            "facecolor": "white",
+            "alpha": 0.8,
+        },
     )
 
     return ax
@@ -708,19 +712,19 @@ def auc(y: pd.Series, yhat: pd.Series) -> float:
 
 
 def finalize_plot(
-    ax: Axes,
-    figsize: Tuple[int, int],
+    ax: plt.Axes,
+    figsize: tuple[int, int],
     auc: Optional[float] = None,
     auc_p_value: Optional[float] = None,
-) -> Axes:
+) -> plt.Axes:
     """
     Finalize the plot by adjusting the figure size and layout.
 
     Parameters
     ----------
-    ax : Axes
-        The Axes object to be configured.
-    figsize : Tuple[int, int]
+    ax : plt.Axes
+        The plt.Axes object to be configured.
+    figsize : tuple[int, int]
         The figure size to use.
     auc : float
         The area under the ROC curve. Defaults to None. Used to format the plot
@@ -731,8 +735,8 @@ def finalize_plot(
 
     Returns
     -------
-    ax : matplotlib.Axes.Axes
-        The configured Axes object.
+    ax : matplotlib.plt.Axes.plt.Axes
+        The configured plt.Axes object.
     """
     if auc_p_value is None:
         auc_p_value = 1000.0
@@ -766,11 +770,11 @@ def roc_curve_plot_mpl(
     coef: float,
     se: float,
     pvalue: float,
-    figsize: Tuple[int, int] = (7, 7),
+    figsize: tuple[int, int] = (7, 7),
     n_bins: int = 200,
     cv_alpha: float = 0.4,
-    ax: Optional[Axes] = None,
-) -> Axes:
+    ax: Optional[plt.Axes] = None,
+) -> plt.Axes:
     """
     Plot the ROC curve for each fold. Filters the data for each fold label,
     then plots the ROC curve for a model trained on that fold.
@@ -792,25 +796,25 @@ def roc_curve_plot_mpl(
         The standard error of the estimated coefficient.
     pvalue : float
         The p-value of the estimated coefficient.
-    figsize : Tuple[int, int], optional
+    figsize : tuple[int, int], optional
         The figure size to use. Defaults to (7, 7).
     n_bins : int, optional
         The number of bins to use when calculating the ROC curve. Generally, the
         more bins, the smoother the curve. Defaults to 200.
     cv_alpha : float, optional
         The opacity of the individual ROC curves.
-    ax : matplotlib.axes.Axes, optional
-        The Axes object to be configured. If provided, the figure will be plotted
-        on the provided Axes object.
+    ax : matplotlib.plt.Axes.plt.Axes, optional
+        The plt.Axes object to be configured. If provided, the figure will be plotted
+        on the provided plt.Axes object.
 
     Returns
     -------
-    ax : matplotlib.Axes.Axes
-        The configured Axes object.
+    ax : matplotlib.plt.Axes.plt.Axes
+        The configured plt.Axes object.
     """
-    if isinstance(ax, go.Figure) or (not isinstance(ax, Axes)) and (ax is not None):
+    if isinstance(ax, go.Figure) or (not isinstance(ax, plt.Axes)) and (ax is not None):
         raise TypeError(
-            "The ax parameter should be a matplotlib.axes.Axes object when using the matplotlib backend"
+            "The ax parameter should be a matplotlib.plt.Axes.plt.Axes object when using the matplotlib backend"
         )
 
     if ax is None:
@@ -1029,7 +1033,7 @@ def _empirical_auc_variance(
 
 def _delong_test_against_chance(
     y: pd.Series, yhat_proba: pd.Series, fold: pd.Series, time_series_validation: bool
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """
     Implement the DeLong test to compare the ROC AUC against the 45-degree
     line (AUC = 0.5).

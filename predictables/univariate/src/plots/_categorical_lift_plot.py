@@ -124,8 +124,8 @@ def plot_cat_lift_plot(
                 textcoords="offset points",
                 ha="center",
                 va="bottom",
-                font=dict(size=14 * (figsize[0] / 8)),
-                bbox=dict(boxstyle="round", facecolor="white", alpha=0.9),
+                font={"size": 14 * (figsize[0] / 8)},
+                bbox={"boxstyle": "round", "facecolor": "white", "alpha": 0.9},
             )
         else:
             ax.annotate(
@@ -135,8 +135,8 @@ def plot_cat_lift_plot(
                 textcoords="offset points",
                 ha="center",
                 va="bottom",
-                font=dict(size=14 * (figsize[0] / 8)),
-                bbox=dict(boxstyle="round", facecolor="white", alpha=0.9),
+                font={"size": 14 * (figsize[0] / 8)},
+                bbox={"boxstyle": "round", "facecolor": "white", "alpha": 0.9},
             )
     return ax
 
@@ -186,21 +186,21 @@ def plotly_cat_lift_plot(
         )
     )
     fig.add_hline(
-        y=1, line=dict(color="black", dash="dash"), annotation_text="Baseline"
+        y=1, line={"color": "black", "dash": "dash"}, annotation_text="Baseline"
     )
 
     annotations = [
-        dict(
-            x=row[feature_name],
-            y=row["lift"],
-            text=f"{row['lift']:.2f}",
-            font=dict(family="Arial", size=16, color="black"),
-            showarrow=False,
-            bgcolor="white",
-            bordercolor="black",
-            borderwidth=1,
-            borderpad=4,
-        )
+        {
+            "x": row[feature_name],
+            "y": row["lift"],
+            "text": f"{row['lift']:.2f}",
+            "font": {"family": "Arial", "size": 16, "color": "black"},
+            "showarrow": False,
+            "bgcolor": "white",
+            "bordercolor": "black",
+            "borderwidth": 1,
+            "borderpad": 4,
+        }
         for _, row in lift_data.iterrows()
     ]
     # Update layout
