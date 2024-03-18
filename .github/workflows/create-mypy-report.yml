@@ -30,8 +30,8 @@ jobs:
       - run: source .venv/bin/activate
       - run: pip install -r requirements.txt
       - run: pip install mypy
-      - run: python -c "import mypy; print(mypy.__version__)"
-      - run: mypy --config-file ${{ env.CONFIG_FILE }} --html-report ${{ env.REPORT_FOLDER }} .
+      - name: Run mypy & generate report (even if there are errors -- we want to see these errors)
+        run: mypy --config-file ${{ env.CONFIG_FILE }} --html-report ${{ env.REPORT_FOLDER }} . || true
       - name: Upload mypy report
         uses: actions/upload-artifact@v2
         with:
