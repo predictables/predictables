@@ -16,7 +16,8 @@
         "charliermarsh.ruff",
         "ms-python.mypy-type-checker",
         "ms-python.flake8",
-        "rodolphebarbanneau.python-docstring-highlighter"
+        "rodolphebarbanneau.python-docstring-highlighter",
+        "ritwickdey.LiveServer"
       ]
     },
     "settings": {
