@@ -1,0 +1,99 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="../../../../mypy-html.css">
+</head>
+<body>
+<h2>predictables.model_analysis.tests.test_validate_input</h2>
+<table>
+<caption>predictables/model_analysis/tests/test_validate_input.py</caption>
+<tbody><tr>
+<td class="table-lines"><pre><span id="L1" class="lineno"><a class="lineno" href="#L1">1</a></span>
+<span id="L2" class="lineno"><a class="lineno" href="#L2">2</a></span>
+<span id="L3" class="lineno"><a class="lineno" href="#L3">3</a></span>
+<span id="L4" class="lineno"><a class="lineno" href="#L4">4</a></span>
+<span id="L5" class="lineno"><a class="lineno" href="#L5">5</a></span>
+<span id="L6" class="lineno"><a class="lineno" href="#L6">6</a></span>
+<span id="L7" class="lineno"><a class="lineno" href="#L7">7</a></span>
+<span id="L8" class="lineno"><a class="lineno" href="#L8">8</a></span>
+<span id="L9" class="lineno"><a class="lineno" href="#L9">9</a></span>
+<span id="L10" class="lineno"><a class="lineno" href="#L10">10</a></span>
+<span id="L11" class="lineno"><a class="lineno" href="#L11">11</a></span>
+<span id="L12" class="lineno"><a class="lineno" href="#L12">12</a></span>
+<span id="L13" class="lineno"><a class="lineno" href="#L13">13</a></span>
+<span id="L14" class="lineno"><a class="lineno" href="#L14">14</a></span>
+<span id="L15" class="lineno"><a class="lineno" href="#L15">15</a></span>
+<span id="L16" class="lineno"><a class="lineno" href="#L16">16</a></span>
+<span id="L17" class="lineno"><a class="lineno" href="#L17">17</a></span>
+<span id="L18" class="lineno"><a class="lineno" href="#L18">18</a></span>
+<span id="L19" class="lineno"><a class="lineno" href="#L19">19</a></span>
+<span id="L20" class="lineno"><a class="lineno" href="#L20">20</a></span>
+<span id="L21" class="lineno"><a class="lineno" href="#L21">21</a></span>
+<span id="L22" class="lineno"><a class="lineno" href="#L22">22</a></span>
+<span id="L23" class="lineno"><a class="lineno" href="#L23">23</a></span>
+<span id="L24" class="lineno"><a class="lineno" href="#L24">24</a></span>
+<span id="L25" class="lineno"><a class="lineno" href="#L25">25</a></span>
+<span id="L26" class="lineno"><a class="lineno" href="#L26">26</a></span>
+<span id="L27" class="lineno"><a class="lineno" href="#L27">27</a></span>
+<span id="L28" class="lineno"><a class="lineno" href="#L28">28</a></span>
+<span id="L29" class="lineno"><a class="lineno" href="#L29">29</a></span>
+<span id="L30" class="lineno"><a class="lineno" href="#L30">30</a></span>
+<span id="L31" class="lineno"><a class="lineno" href="#L31">31</a></span>
+<span id="L32" class="lineno"><a class="lineno" href="#L32">32</a></span>
+</pre></td>
+<td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
+<span class="line-any" title="No Anys on this line!">from sklearn.ensemble import RandomForestClassifier  # type: ignore</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">from predictables.model_analysis import validate_input</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"># Mocking a simple dataset and models for testing</span>
+<span class="line-precise" title="Any Types on this line: 
+Omitted Generics (x39)
+Explicit (x4)
+Unannotated (x2)">X_valid = pd.DataFrame({"feature1": [1, 2, 3], "feature2": [4, 5, 6]})</span>
+<span class="line-precise" title="No Anys on this line!">X_invalid = [1, 2, 3]  # Not a DataFrame</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="Any Types on this line: 
+Omitted Generics (x113)
+Explicit (x2)">y_valid = pd.Series([1, 0, 1])</span>
+<span class="line-precise" title="No Anys on this line!">y_invalid = [1, 0, 1]  # Not a Series</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)">model_valid = RandomForestClassifier()</span>
+<span class="line-precise" title="No Anys on this line!">model_invalid = "not_a_model"  # Does not have fit and predict methods</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"># Defining test functions</span>
+<span class="line-any" title="No Anys on this line!">def test_validate_input_with_valid_inputs():</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x3)
+Omitted Generics (x1)
+Unimported (x2)">    result, message = validate_input(X_valid, y_valid, model_valid)</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x1)">    assert result, "Test should have passed for valid inputs (Test 1)."</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="No Anys on this line!">def test_validate_input_with_invalid_dataset():</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x3)
+Omitted Generics (x1)
+Unimported (x2)">    result, message = validate_input(X_invalid, y_valid, model_valid)</span>
+<span class="line-empty" title="No Anys on this line!">    assert (</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x1)">        not result</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x4)">    ), f"Test should have failed for invalid dataset {X_invalid} (Test 2)."</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="No Anys on this line!">def test_validate_input_with_invalid_model():</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x3)
+Omitted Generics (x1)
+Unimported (x1)">    result, message = validate_input(X_valid, y_valid, model_invalid)</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x5)">    assert not result, f"Should have failed for invalid model {model_invalid} (Test 3)."</span>
+</pre></td>
+</tr></tbody>
+</table>
+</body>
+</html>

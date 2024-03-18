@@ -1,0 +1,94 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="../../../../mypy-html.css">
+</head>
+<body>
+<h2>predictables.util.src._model_object_to_model_name</h2>
+<table>
+<caption>predictables/util/src/_model_object_to_model_name.py</caption>
+<tbody><tr>
+<td class="table-lines"><pre><span id="L1" class="lineno"><a class="lineno" href="#L1">1</a></span>
+<span id="L2" class="lineno"><a class="lineno" href="#L2">2</a></span>
+<span id="L3" class="lineno"><a class="lineno" href="#L3">3</a></span>
+<span id="L4" class="lineno"><a class="lineno" href="#L4">4</a></span>
+<span id="L5" class="lineno"><a class="lineno" href="#L5">5</a></span>
+<span id="L6" class="lineno"><a class="lineno" href="#L6">6</a></span>
+<span id="L7" class="lineno"><a class="lineno" href="#L7">7</a></span>
+<span id="L8" class="lineno"><a class="lineno" href="#L8">8</a></span>
+<span id="L9" class="lineno"><a class="lineno" href="#L9">9</a></span>
+<span id="L10" class="lineno"><a class="lineno" href="#L10">10</a></span>
+<span id="L11" class="lineno"><a class="lineno" href="#L11">11</a></span>
+<span id="L12" class="lineno"><a class="lineno" href="#L12">12</a></span>
+<span id="L13" class="lineno"><a class="lineno" href="#L13">13</a></span>
+<span id="L14" class="lineno"><a class="lineno" href="#L14">14</a></span>
+<span id="L15" class="lineno"><a class="lineno" href="#L15">15</a></span>
+<span id="L16" class="lineno"><a class="lineno" href="#L16">16</a></span>
+<span id="L17" class="lineno"><a class="lineno" href="#L17">17</a></span>
+<span id="L18" class="lineno"><a class="lineno" href="#L18">18</a></span>
+<span id="L19" class="lineno"><a class="lineno" href="#L19">19</a></span>
+<span id="L20" class="lineno"><a class="lineno" href="#L20">20</a></span>
+<span id="L21" class="lineno"><a class="lineno" href="#L21">21</a></span>
+<span id="L22" class="lineno"><a class="lineno" href="#L22">22</a></span>
+<span id="L23" class="lineno"><a class="lineno" href="#L23">23</a></span>
+<span id="L24" class="lineno"><a class="lineno" href="#L24">24</a></span>
+<span id="L25" class="lineno"><a class="lineno" href="#L25">25</a></span>
+<span id="L26" class="lineno"><a class="lineno" href="#L26">26</a></span>
+<span id="L27" class="lineno"><a class="lineno" href="#L27">27</a></span>
+<span id="L28" class="lineno"><a class="lineno" href="#L28">28</a></span>
+<span id="L29" class="lineno"><a class="lineno" href="#L29">29</a></span>
+<span id="L30" class="lineno"><a class="lineno" href="#L30">30</a></span>
+<span id="L31" class="lineno"><a class="lineno" href="#L31">31</a></span>
+<span id="L32" class="lineno"><a class="lineno" href="#L32">32</a></span>
+<span id="L33" class="lineno"><a class="lineno" href="#L33">33</a></span>
+<span id="L34" class="lineno"><a class="lineno" href="#L34">34</a></span>
+<span id="L35" class="lineno"><a class="lineno" href="#L35">35</a></span>
+</pre></td>
+<td class="table-code"><pre><span class="line-any" title="No Anys on this line!">from catboost import CatBoostClassifier, CatBoostRegressor</span>
+<span class="line-precise" title="No Anys on this line!">from lightgbm import LGBMClassifier, LGBMRegressor</span>
+<span class="line-any" title="No Anys on this line!">from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor</span>
+<span class="line-any" title="No Anys on this line!">from sklearn.linear_model import ElasticNet</span>
+<span class="line-any" title="No Anys on this line!">from sklearn.svm import SVC, SVR</span>
+<span class="line-precise" title="No Anys on this line!">from xgboost import XGBClassifier, XGBRegressor</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">from ._model_name_map import model_name_map</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">def model_object_to_model_name(model: object) -&gt; str:</span>
+<span class="line-empty" title="No Anys on this line!">    """Take a model object and return the name of the model as a string."""</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">    if isinstance(model, (CatBoostClassifier, CatBoostRegressor)):</span>
+<span class="line-precise" title="No Anys on this line!">        out = "catboost"</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">    elif isinstance(model, (RandomForestClassifier, RandomForestRegressor)):</span>
+<span class="line-precise" title="No Anys on this line!">        out = "random_forest"</span>
+<span class="line-precise" title="Any Types on this line: 
+Omitted Generics (x64)
+Unannotated (x2)">    elif isinstance(model, (LGBMClassifier, LGBMRegressor)):</span>
+<span class="line-precise" title="No Anys on this line!">        out = "lightgbm"</span>
+<span class="line-precise" title="Any Types on this line: 
+Explicit (x4)">    elif isinstance(model, (XGBClassifier, XGBRegressor)):</span>
+<span class="line-precise" title="No Anys on this line!">        out = "xgboost"</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">    elif isinstance(model, (SVC, SVR)):</span>
+<span class="line-precise" title="No Anys on this line!">        out = "svm"</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x1)">    elif isinstance(model, ElasticNet):</span>
+<span class="line-precise" title="No Anys on this line!">        out = "elastic_net"</span>
+<span class="line-empty" title="No Anys on this line!">    else:</span>
+<span class="line-precise" title="No Anys on this line!">        raise ValueError(</span>
+<span class="line-precise" title="Any Types on this line: 
+Explicit (x2)">            f"Invalid model type {type(model)}. Must be one of "</span>
+<span class="line-empty" title="No Anys on this line!">            f"CatBoostClassifier, CatBoostRegressor, "</span>
+<span class="line-empty" title="No Anys on this line!">            f"RandomForestClassifier, RandomForestRegressor, "</span>
+<span class="line-empty" title="No Anys on this line!">            f"LGBMClassifier, LGBMRegressor, "</span>
+<span class="line-empty" title="No Anys on this line!">            f"XGBClassifier, XGBRegressor, "</span>
+<span class="line-empty" title="No Anys on this line!">            f"SVC, SVR, or ElasticNet."</span>
+<span class="line-empty" title="No Anys on this line!">        )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    return model_name_map(out)</span>
+</pre></td>
+</tr></tbody>
+</table>
+</body>
+</html>

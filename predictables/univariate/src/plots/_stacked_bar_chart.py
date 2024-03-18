@@ -14,7 +14,7 @@ def stacked_bar_chart(
     target: [pl.Series, pd.Series],
     backend: str = "matplotlib",
     y_offset: float = 0.035,
-    ax=None,
+    ax: plt.Axes | None = None,
     figsize: tuple[float, float] = (7, 7),
     alpha: float = 0.8,
     bar_width: float = 0.8,
