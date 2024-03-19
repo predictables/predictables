@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from typing import Union
-
 import numpy as np
 import pandas as pd
 import polars as pl
 
 
-def to_pd_df(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]) -> pd.DataFrame:
+def to_pd_df(df: pd.DataFrame | pl.DataFrame | pl.LazyFrame) -> pd.DataFrame:
     """Convert a dataframe to a pandas dataframe."""
     if isinstance(df, pd.DataFrame):
         return df
@@ -25,7 +23,7 @@ def to_pd_df(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]) -> pd.DataFram
         raise TypeError(f"df must be a pandas or polars dataframe. Got {type(df)}.")
 
 
-def to_pd_s(s: Union[pd.Series, pl.Series, list, np.ndarray]) -> pd.Series:
+def to_pd_s(s: pd.Series | pl.Series | list | np.ndarray) -> pd.Series:
     """Convert to a pandas series."""
     if isinstance(s, pd.Series):
         return s

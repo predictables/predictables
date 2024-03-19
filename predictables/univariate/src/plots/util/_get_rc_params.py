@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Dict
 
-
-def get_rc_params() -> Dict[str, Any]:
+def get_rc_params() -> dict[str, float | int | tuple[int, int] | str]:
     """Return a dictionary of Matplotlib RC parameters for customizing plot styles.
 
     The function returns a dictionary of Matplotlib RC parameters that can be used to

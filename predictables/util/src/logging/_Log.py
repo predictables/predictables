@@ -6,8 +6,6 @@ import json
 import sys
 import uuid
 from pathlib import Path
-from typing import Union
-
 from predictables.util.src.logging._LogLevel import LogLevel
 
 
@@ -29,9 +27,7 @@ class Log:
         """Return the line number the logger was called from."""
         return inspect.currentframe().f_back.f_lineno
 
-    def _msg(
-        self, message: str, level: Union[str, int, LogLevel] = LogLevel.INFO
-    ) -> Log:
+    def _msg(self, message: str, level: str | int | LogLevel = LogLevel.INFO) -> Log:
         if isinstance(level, str):
             level = LogLevel.from_str(level)
         elif isinstance(level, int):

@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from typing import Any, Optional, Union
-
 import numpy as np
 import pandas as pd
 import polars as pl
-from sklearn import metrics  # type: ignore
-from sklearn.preprocessing import StandardScaler  # type: ignore
+from sklearn import metrics
+from sklearn.preprocessing import StandardScaler
 
 from predictables.univariate.src import (
     fit_sk_linear_regression,
@@ -29,15 +27,15 @@ dbg = DebugLogger(working_file="_BaseModel.py")
 
 
 class Model:
-    """
-    A class to fit a model to a dataset. Used in the univariate analysis
-    to fit a simple model to each variable.
+    """Fit a model to a dataset.
+
+    Used in the univariate analysis to fit a simple model to each variable.
     """
 
     # Instance/type class attributes
     df: pl.LazyFrame
     df_val: pl.LazyFrame
-    fold_n: Optional[int]
+    fold_n: int | None
     fold_col: str
     feature_col: str
     target_col: str
@@ -50,20 +48,17 @@ class Model:
 
     is_binary: bool
 
-    model: Any
-    sk_model: Any
-
     yhat_train: pd.Series
     yhat_test: pd.Series
 
-    def __init__(
+    def __init__(  # noqa: PLR0915
         self,
-        df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-        df_val: Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]] = None,
-        fold_n: Optional[int] = None,
+        df: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
+        df_val: pd.DataFrame | pl.DataFrame | pl.LazyFrame | None = None,
+        fold_n: int | None = None,
         fold_col: str = "cv",
-        feature_col: Optional[str] = None,
-        target_col: Optional[str] = None,
+        feature_col: str | None = None,
+        target_col: str | None = None,
         time_series_validation: bool = False,
         categorical_encoding: str = "onehot",
     ) -> None:
@@ -197,7 +192,7 @@ class Model:
         self.y_train = train.select([self.target_col])
         self.y_test = test.select([self.target_col])
 
-        self.scaler: Optional[StandardScaler] = None
+        self.scaler: StandardScaler | None = None
 
         # Type of target variable:
         self.is_binary = get_column_dtype(self.GetY("train")) in [
@@ -237,7 +232,7 @@ class Model:
                     self.model = fit_sm_logistic_regression(X, y)
                     self.sk_model = fit_sk_logistic_regression(X, y)
                 except Exception as e:
-                    dbg.msg(f"Error: {e}")  # type: ignore
+                    dbg.msg(f"Error: {e}")
         else:
             try:
                 self.model = fit_sm_linear_regression(
@@ -265,12 +260,8 @@ class Model:
                 self.model = fit_sm_linear_regression(X, y)
                 self.sk_model = fit_sk_linear_regression(X, y)
 
-        self.yhat_train: Union[pd.Series[Any], pd.DataFrame[Any]] = self.predict(
-            self.GetX("train")
-        )  # type: ignore
-        self.yhat_test: Union[pd.Series[Any], pd.DataFrame[Any]] = self.predict(
-            self.GetX("test")
-        )  # type: ignore
+        self.yhat_train: pd.DataFrame | pd.Series = self.predict(self.GetX("train"))
+        self.yhat_test: pd.DataFrame | pd.Series = self.predict(self.GetX("test"))
 
         # Pull stats from the fitted model object
         results = results.with_columns(pl.lit(self.model.params.iloc[0]).alias("coef"))
@@ -421,9 +412,8 @@ class Model:
             f"cv={f'fold-{self.fold_n}' if self.fold_n is not None else 'none'})"
         )
 
-    def get(self, attr: str) -> Any:
-        """
-        Returns the value of the attribute.
+    def get(self, attr: str) -> pd.DataFrame | pd.Series | str | float:
+        """Return the value of the attribute.
 
         Parameters
         ----------
@@ -438,19 +428,21 @@ class Model:
         return self.results.select(attr).collect().item(0, 0)
 
     def _fit_standardization(
-        self, X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+        self, X: pd.Series | pl.Series | pd.DataFrame | pl.DataFrame | pl.LazyFrame
     ) -> None:
         """
         Fits a StandardScaler to the input data.
 
         Parameters
         ----------
-        X : Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+        X : pd.Series | pl.Series | pd.DataFrame | pl.DataFrame | pl.LazyFrame
             The data to standardize.
         """
         col_dtype = get_column_dtype(X)
         if col_dtype not in ["continuous"]:
-            exit(f"X must be a continuous variable. Got {col_dtype} instead.")
+            import sys
+
+            sys.exit(f"X must be a continuous variable. Got {col_dtype} instead.")
 
         if isinstance(X, pl.Series):
             X = to_pd_s(X)
@@ -458,21 +450,21 @@ class Model:
             X = to_pd_df(X)
 
         if isinstance(X, pd.Series):
-            X = X.to_numpy().reshape(-1, 1) if X.shape[1] == 1 else X  # type: ignore
+            X = X.to_numpy().reshape(-1, 1) if X.shape[1] == 1 else X
 
         # fit normalized data
         self.scaler = StandardScaler()
         self.scaler.fit(X.to_numpy())
 
     def standardize(
-        self, X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]
-    ) -> Union[pd.Series, pd.DataFrame]:
+        self, X: pd.Series | pl.Series | pd.DataFrame | pl.DataFrame | pl.LazyFrame
+    ) -> pd.DataFrame | pd.Series:
         """
         Standardizes the input data.
 
         Parameters
         ----------
-        X : Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+        X : pd.Series | pl.Series | pd.DataFrame | pl.DataFrame | pl.LazyFrame
             The data to standardize.
 
         Returns
@@ -511,7 +503,7 @@ class Model:
             return pd.DataFrame(
                 self.scaler.transform(
                     np.array(X.to_numpy()).reshape(-1, 1) if X.shape[1] == 1 else X
-                ),  # type: ignore
+                ),
                 index=X.index,
                 columns=X.columns,
             )
@@ -520,19 +512,19 @@ class Model:
 
     def predict(
         self,
-        X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-        name: Optional[str] = None,
-    ) -> Union[pd.Series, pd.DataFrame]:
-        """
-        Predicts the target variable using the input data. If the univariate analysis
-        found a better normalization method than the unadjusted data, the input data
-        will be normalized before prediction.
+        X: pd.Series | pl.Series | pd.DataFrame | pl.DataFrame | pl.LazyFrame,
+        name: str | None = None,
+    ) -> pd.DataFrame | pd.Series:
+        """Predict the target variable using the input data.
+
+        If the univariate analysis found a better normalization method than the
+        unadjusted data, the input data will be normalized before prediction.
 
         Parameters
         ----------
-        X : Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+        X : pd.Series | pl.Series | pd.DataFrame | pl.DataFrame | pl.LazyFrame
             The data to predict.
-        name : Optional[str], optional
+        name : str | None, optional
             The name of the column to use for the predicted target variable. If None,
             the name of the target variable from the univariate analysis with "_hat"
             will be used.
@@ -566,9 +558,8 @@ class Model:
 
     def GetX(
         self, train_test: str = "train", return_type: str = "pd"
-    ) -> Union[pd.DataFrame, pl.DataFrame]:
-        """
-        Returns the input data for the specified train or test set.
+    ) -> pd.DataFrame | pl.LazyFrame:
+        """Return the input data for the specified train or test set.
 
         Parameters
         ----------
@@ -579,7 +570,7 @@ class Model:
 
         Returns
         -------
-        Union[pd.DataFrame, pl.DataFrame]
+        pd.DataFrame | pl.LazyFrame
             The input data for the specified train or test set.
         """
         if train_test == "train":
@@ -596,8 +587,7 @@ class Model:
             raise ValueError(f"train_test must be 'train' or 'test'. Got {train_test}.")
 
     def GetY(self, train_test: str = "train", return_type: str = "pd") -> pd.Series:
-        """
-        Returns the target variable for the specified train or test set.
+        """Return the target variable for the specified train or test set.
 
         Parameters
         ----------
@@ -626,9 +616,8 @@ class Model:
 
     def GetYhat(
         self, train_test: str = "train", return_type: str = "pd"
-    ) -> Union[pd.Series, pd.DataFrame]:
-        """
-        Returns the predicted target variable for the specified train or test set.
+    ) -> pd.DataFrame | pd.Series:
+        """Return the predicted target variable for the specified train or test set.
 
         Parameters
         ----------
@@ -639,7 +628,7 @@ class Model:
 
         Returns
         -------
-        Union[pd.Series, pd.DataFrame]
+        pd.DataFrame | pd.Series
             The predicted target variable for the specified train or test set.
         """
         if train_test == "train":

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Union
-
 import numpy as np
 import pandas as pd
 import polars as pl
@@ -85,7 +83,7 @@ def _harmonic_from_list(input_list: list | np.ndarray) -> float:
     Parameters
     ----------
     input_list : list or numpy array of float
-        List or numpy array of numbers to be averaged.
+        list or numpy array of numbers to be averaged.
 
     Returns
     -------
@@ -106,7 +104,7 @@ def _harmonic_from_list(input_list: list | np.ndarray) -> float:
     return len(input_list) / denom if denom != 0 else 0
 
 
-def _harmonic_from_series(s: Union[pd.Series, pl.Series, np.ndarray]) -> float:
+def _harmonic_from_series(s: pd.Series | pl.Series | np.ndarray) -> float:
     """Calculate the harmonic mean of a pandas, polars, or numpy series of inputs.
 
     Parameters

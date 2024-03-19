@@ -30,7 +30,6 @@ def read_file_code(filepath: str) -> str:
     >>> print(read_file_code("predictables/util/src/_code.py"))  # doctest: skip
     # Path: predictables/util/src/_code.py
     import os
-    from typing import Optional
 
     def read_file_code(filepath: str) -> str:
         ...(other code)...

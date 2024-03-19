@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import List, Union
 
 import pandas as pd
 import polars as pl
@@ -10,14 +9,14 @@ from predictables.util import to_pd_df, to_pd_s
 
 
 class PredicTables:
-    feature_column_names: List[str]
+    feature_column_names: list[str]
 
     def __init__(
         self,
         model_name: str,
-        df_train: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-        df_val: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-        df_test: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+        df_train: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
+        df_val: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
+        df_test: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
         target_column_name: str,
         cv_folds: Union[pl.Series, pd.Series],
         has_time_series_structure: bool = False,

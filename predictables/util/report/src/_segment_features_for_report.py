@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import List, Optional, Union
-
 import numpy as np
 import pandas as pd
 import polars as pl
@@ -15,12 +13,12 @@ from predictables.util.src._get_unique import get_unique
 class Segment:
     file_num_start: int
     file_num_end: int
-    features: Union[pd.Series, pl.Series, np.ndarray, list]
+    features: pd.Series | pl.Series | np.ndarray | list
     max_features: int  # for validation
 
-    idx_start: Optional[int] = None
-    idx_end: Optional[int] = None
-    n_features: Optional[int] = None
+    idx_start: int | None = None
+    idx_end: int | None = None
+    n_features: int | None = None
 
     def __post_init__(self) -> None:
         if len(self.features) == 0:
@@ -115,21 +113,21 @@ class Segment:
 
 
 def segment_features_for_report(
-    features: List[str], max_per_segment: int
-) -> List[Segment]:
+    features: list[str], max_per_segment: int
+) -> list[Segment]:
     """
     Segments the features into segments of size max_per_segment.
 
     Parameters
     ----------
-    features : List[str]
+    features : list[str]
         The list of features to segment.
     max_per_segment : int
         The maximum number of features to include in each segment.
 
     Returns
     -------
-    List[Segment]
+    list[Segment]
         The list of the segmented features.
 
     Examples

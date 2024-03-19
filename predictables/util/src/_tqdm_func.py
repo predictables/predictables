@@ -1,8 +1,6 @@
 from __future__ import annotations
-
 import os
-from typing import Any, Iterable, Optional
-
+from typing import Any, Iterable
 from dotenv import load_dotenv
 from tqdm import tqdm as _tqdm
 from tqdm.notebook import tqdm as _tqdm_notebook  # type: ignore[import-untyped]
@@ -19,11 +17,11 @@ def identidy_function(x: Any) -> Any:  # noqa: ANN401
 
 def tqdm(
     x: Iterable,
-    desc: Optional[str] = None,
-    enable: Optional[bool] = None,
-    disable: Optional[bool] = None,
-    notebook: Optional[bool] = None,
-    nb: Optional[bool] = None,
+    desc: str | None = None,
+    enable: bool | None = None,
+    disable: bool | None = None,
+    notebook: bool | None = None,
+    nb: bool | None = None,
 ) -> Iterable:
     """Wrap tqdm around an iterable, with support for environment variables.
 

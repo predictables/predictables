@@ -5,8 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import polars as pl
-from matplotlib.axes import Axes
-from sklearn.preprocessing import MinMaxScaler, StandardScaler  # type: ignore
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 from predictables.univariate._BaseModel import Model
 from predictables.univariate.src._get_data import _get_data
@@ -96,15 +95,15 @@ class Univariate(Model):
     fold_name: str
     folds: pd.Series | None
 
-    normalization_obj: Optional[Union[MinMaxScaler, StandardScaler]]
+    normalization_obj: MinMaxScaler | StandardScaler
 
     def __init__(
         self,
-        df_: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
-        df_val_: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
+        df_: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
+        df_val_: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
         fold_col_: str = "cv",
-        feature_col_: Optional[str] = None,
-        target_col_: Optional[str] = None,
+        feature_col_: str | None = None,
+        target_col_: str | None = None,
         time_series_validation: bool = True,
         skewness_threshold: float = 0.5,
         **kwargs,
@@ -398,16 +397,16 @@ class Univariate(Model):
 
     def plot_roc_curve(
         self,
-        y: Optional[Union[pd.Series, pl.Series]] = None,
-        yhat: Optional[Union[pd.Series, pl.Series]] = None,
-        cv: Optional[Union[pd.Series, pl.Series]] = None,
-        coef: Optional[float] = None,
-        se: Optional[float] = None,
-        pvalues: Optional[float] = None,
-        ax: Optional[Axes] = None,
-        figsize: Optional[Tuple[float, float]] = None,
+        y: pd.Series | pl.Series | None = None,
+        yhat: pd.Series | pl.Series | None = None,
+        cv: pd.Series | pl.Series | None = None,
+        coef: float | None = None,
+        se: float | None = None,
+        pvalues: float | None = None,
+        ax: plt.Axes | None = None,
+        figsize: tuple[float, float] | None = None,
         **kwargs,
-    ) -> Axes:
+    ) -> plt.Axes:
         """Plot the ROC curve for the target variable in total and for each fold."""
         if ax is None:
             _, ax0 = plt.subplots(figsize=self.figsize if figsize is None else figsize)
@@ -423,18 +422,18 @@ class Univariate(Model):
         else:
             cv = to_pd_s(cv)
 
-        ax0 = roc_curve_plot(
+        return roc_curve_plot(
             to_pd_s(self.GetY("train")) if y is None else to_pd_s(y),
             to_pd_s(self.GetYhat("train")) if yhat is None else to_pd_s(yhat),
             cv,
             self.time_series_validation,
             (
-                to_pd_df(self.agg_results).loc["Ave.", "coef"].to_numpy()  # type: ignore
+                to_pd_df(self.agg_results).loc["Ave.", "coef"].to_numpy()
                 if coef is None
                 else coef
             ),
             (
-                to_pd_df(self.agg_results).loc["Ave.", "coef"].to_numpy()  # type: ignore
+                to_pd_df(self.agg_results).loc["Ave.", "coef"].to_numpy()
                 if se is None
                 else se
             ),
@@ -443,18 +442,17 @@ class Univariate(Model):
             figsize=self.figsize if figsize is None else figsize,
             **kwargs,
         )
-        return ax0
 
     def plot_density(
         self,
         data: str = "train",
-        ax: Optional[Axes] = None,
-        figsize: Optional[Tuple[float, float]] = None,
+        ax: plt.Axes | None = None,
+        figsize: tuple[float, float] | None = None,
         **kwargs,
-    ) -> Axes:
-        """
-        Plots the density of the feature at each level of the larget variable, both
-        in total and for each fold.
+    ) -> plt.Axes:
+        """Plot the density of the feature at each level of the larget variable.
+
+        Plots both in total and for each fold.
         """
         X, y, cv = self._plot_data(data)
 
@@ -464,7 +462,7 @@ class Univariate(Model):
         else:
             ax0 = ax
 
-        ax0 = density_plot(
+        return density_plot(
             X,
             y,
             cv,
@@ -474,17 +472,16 @@ class Univariate(Model):
             figsize=self.figsize if figsize is None else figsize,
             **kwargs,
         )
-        return ax0
 
     def plot_quintile_lift(
         self,
         data: str = "train",
-        ax: Optional[Axes] = None,
-        figsize: Optional[Tuple[float, float]] = None,
+        ax: plt.Axes | None = None,
+        figsize: tuple[float, float] | None = None,
         **kwargs,
-    ) -> Axes:
-        """
-        Plots the quintile lift for the target variable in total and for each fold.
+    ) -> plt.Axes:
+        """Plot the quintile lift for the target variable in total and for each fold.
+
         Quintile lift is a grouped bar plot with each quintile of the feature on the
         x-axis and the mean target value for each quintile on the y-axis. There are
         bars for both the actual target value and the predicted target value.
@@ -503,7 +500,7 @@ class Univariate(Model):
         ax : Axes, optional
             The axes to plot on, by default None. If None, a new figure and axes
             will be created.
-        figsize : Tuple[float, float], optional
+        figsize : tuple[float, float], optional
             The size of the figure, by default None. If None, the default figure
             size will be used.
         **kwargs
@@ -543,7 +540,7 @@ class Univariate(Model):
             ax0 = ax
 
         yhat_polars = pl.Series(yhat)
-        ax0 = quintile_lift_plot(
+        return quintile_lift_plot(
             X,
             y,
             yhat_polars,
@@ -551,25 +548,27 @@ class Univariate(Model):
             figsize=self.figsize if figsize is None else figsize,
             **kwargs,
         )
-        return ax0
 
-    def _add_to_report(self, rpt: Optional[Report] = None, **kwargs):
+    def _add_to_report(self, rpt: Report | None = None, **kwargs) -> Report:
         if rpt is None:
             rpt = Report(**kwargs)
 
-        def density():
+        def density() -> plt.Axes:
+            """Plot the kernel density for the feature variable."""
             return self.plot_density(
                 data="train", feature_name=self.feature_name, figsize=self.figsize
             )
 
-        def cdf():
+        def cdf() -> plt.Axes:
+            """Plot the empirical cumulative distribution function."""
             return self.plot_cdf(data="train", figsize=self.figsize)
 
-        def roc():
+        def roc() -> plt.Axes:
+            """Plot the ROC curve for the target variable in total and for each fold."""
             return self.plot_roc_curve(
                 y=self.GetY("train"),
                 yhat=self.GetYhat("train"),
-                cv=self.df.select(self.fold_col).collect().to_pandas()[self.fold_col],  # type: ignore
+                cv=self.df.select(self.fold_col).collect().to_pandas()[self.fold_col],
                 time_series_validation=self.time_series_validation,
                 coef=self.get("coef"),
                 se=self.get("se"),
@@ -577,7 +576,8 @@ class Univariate(Model):
                 figsize=self.figsize,
             )
 
-        def quintile():
+        def quintile() -> plt.Axes:
+            """Plot the quintile lift for the target variable in total and for each fold."""
             return self.plot_quintile_lift(data="test", figsize=self.figsize)
 
         rpt = (
@@ -610,7 +610,7 @@ class Univariate(Model):
                     "level show the mean/median ratio to help understand differences in "
                     "skewness between the levels of the target variable."
                 )
-                # TODO: Add in a table for the t-test results (Issue #62 on GitHub)
+                # TODO(<aaweaver-actuary>): Add in a table for the t-test results (Issue #62 on GitHub)  # noqa: TD003
                 .page_break()
             )
         except np.linalg.LinAlgError as err:
@@ -691,8 +691,7 @@ class Univariate(Model):
         )
 
     def get_results(self, use_formatting: bool = True) -> pd.DataFrame:
-        """
-        Returns the self.results attribute, formatted for the univariate report.
+        """Return the self.results attribute, formatted for the univariate report.
 
         Parameters
         ----------

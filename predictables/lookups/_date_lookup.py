@@ -6,7 +6,7 @@ from ._BaseLookup import BaseLookup
 
 
 @dataclass
-class date_lookup(BaseLookup):
+class DateLookup(BaseLookup):
     super().__init__()
 
     df: pd.DataFrame = None

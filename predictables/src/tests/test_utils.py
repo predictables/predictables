@@ -73,7 +73,7 @@ def test_to_numpy(pddf, pds, pldf, plser, pllf, arr, lst):
         raise AssertionError("Expected TypeError")
 
 
-def test_to_polars(pddf, pds, pldf, plser, pllf, arr, lst):
+def test_to_polars(pddf, pds, pldf, plser, pllf, arr, lst):  # noqa: PLR0915
     # Test pandas DataFrame to polars DataFrame
     assert isinstance(_to_polars(pddf, to="dataframe"), pl.DataFrame)
 

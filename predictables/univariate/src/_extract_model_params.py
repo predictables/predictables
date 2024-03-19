@@ -1,31 +1,40 @@
 from __future__ import annotations
 
-from collections import namedtuple
-from typing import Tuple
+from typing import NamedTuple
 
-import statsmodels.api as sm  # type: ignore
-from sklearn.linear_model import LinearRegression  # type: ignore
+import statsmodels.api as sm
+from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import LogisticRegression
 
 from predictables.util import DebugLogger
 
 dbg = DebugLogger(working_file="_extract_model_params.py")
 
-StatsmodelsModelParams = namedtuple(
-    "StatsmodelsModelParams",
-    ["coef", "intercept", "pvalues", "aic", "se", "lower_ci", "upper_ci", "n", "k"],
-)
 
-SKLearnModelParams = namedtuple("SKLearnModelParams", ["coef", "k"])
+class StatsmodelsModelParams(NamedTuple):
+    coef: float
+    intercept: float
+    pvalues: float
+    aic: float
+    se: float
+    lower_ci: float
+    upper_ci: float
+    n: int
+    k: int
+
+
+class SKLearnModelParams(NamedTuple):
+    coef: float
+    k: int
 
 
 def extract_model_params(
-    sm_model, sk_model
-) -> Tuple[StatsmodelsModelParams, SKLearnModelParams]:
-    """
-    Extract the parameters from a model and return them as a named tuple. Both the
-    statsmodels and sklearn model must be passed, and the function will return the
-    parameters for both models.
+    sm_model: sm.GLM | sm.OLS, sk_model: LogisticRegression | LinearRegression
+) -> tuple[StatsmodelsModelParams, SKLearnModelParams]:
+    """Extract the parameters from a model and return them as a named tuple.
+
+    Both the statsmodels and sklearn model must be passed, and the
+    function will return the parameters for both models.
 
     Parameters
     ----------
@@ -36,7 +45,7 @@ def extract_model_params(
 
     Returns
     -------
-    Tuple[StatsmodelsModelParams, SKLearnModelParams]
+    tuple[StatsmodelsModelParams, SKLearnModelParams]
         The model parameters
 
     """
@@ -54,9 +63,7 @@ def extract_model_params(
 
 
 def extract_model_params_sm_GLM(model: sm.GLM) -> StatsmodelsModelParams:
-    """
-    Extract the parameters from a statsmodels GLM model and return them as
-    a named tuple.
+    """Extract the parameters from a statsmodels GLM model and return them as a named tuple.
 
     Parameters
     ----------
@@ -98,9 +105,7 @@ def extract_model_params_sm_GLM(model: sm.GLM) -> StatsmodelsModelParams:
 
 
 def extract_model_params_sm_OLS(model: sm.OLS) -> StatsmodelsModelParams:
-    """
-    Extract the parameters from a statsmodels OLS model and return them
-    as a named tuple.
+    """Extract the parameters from a statsmodels OLS model and return them as a named tuple.
 
     Parameters
     ----------

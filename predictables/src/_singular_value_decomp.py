@@ -18,10 +18,8 @@ class SingularValueDecomposition:
         )
         self.V = None  # n x n orthogonal matrix
 
-    def subspace_iteration(self):
-        """
-        Perform subspace iteration to find the singular values and vectors of A.
-        """
+    def subspace_iteration(self) -> None:
+        """Perform subspace iteration to find the singular values and vectors of A."""
         # Initial values
         V = pl.DataFrame(
             pl.Series([1] + ([0] * (self.n_rows - 1))).cast(pl.Float32).alias("Col0")

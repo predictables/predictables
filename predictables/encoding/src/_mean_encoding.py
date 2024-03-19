@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-from typing import List
 
 import polars as pl
 
-from predictables.util import to_pl_lf, tqdm
+from predictables.util import tqdm
 
 
 def mean_encode_df(
     df: pl.DataFrame,
-    cat_cols: List[str],
+    cat_cols: list[str],
     col1: str,
     col2: str,
     date_col: str,
@@ -28,7 +27,7 @@ def mean_encode_df(
     ----------
     df : pl.DataFrame
         The dataframe to mean-encode.
-    cat_cols : List[str]
+    cat_cols : list[str]
         The list of categorical columns to mean-encode.
     col1 : str
         The name of the first column to use for mean encoding.
@@ -71,7 +70,7 @@ def mean_encode_df(
 
 def mean_encode_df2(
     df: pl.DataFrame,
-    cat_cols: List[str],
+    cat_cols: list[str],
     col1: str,
     col2: str,
     date_col: str,

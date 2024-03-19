@@ -62,10 +62,7 @@ def test_load_env_large_values(mock_dotenv_values, mock_load_dotenv):
 
 @patch("predictables.util.src._load_env.load_dotenv")
 @patch("predictables.util.src._load_env.dotenv_values")
-def test_load_env_large_number_of_variables(
-    mock_dotenv_values,
-    mock_load_dotenv,
-):
+def test_load_env_large_number_of_variables(mock_dotenv_values, mock_load_dotenv):
     mock_load_dotenv.return_value = True
     large_number_of_variables = {
         f"VAR{i}": f"value{i}" for i in range(10000)

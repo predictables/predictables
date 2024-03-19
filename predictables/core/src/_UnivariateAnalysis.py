@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import datetime
-import os
-from typing import List, Optional, Union
 
 import pandas as pd
 import polars as pl
@@ -64,7 +62,7 @@ class UnivariateAnalysis:
         Name of the target variable in the dataset.
     feature_column_names : List[str]
         List of names of the features to be analyzed.
-    cv_column_name : Optional[str]
+    cv_column_name : str | None
         Name of the column used for cross-validation splitting. Defaults to "cv" if not provided.
     cv_folds : Optional[pd.Series]
         Series containing cross-validation fold identifiers for each row in the dataset. If not provided,
@@ -147,7 +145,7 @@ class UnivariateAnalysis:
         target_column_name: str,
         feature_column_names: List[str],
         time_series_validation: bool,
-        cv_column_name: Optional[str] = None,
+        cv_column_name: str | None = None,
         cv_folds: Optional[pl.Series] = None,
     ):
         """Initialize the UnivariateAnalysis class.
@@ -169,7 +167,7 @@ class UnivariateAnalysis:
             A list of names of the features to be analyzed.
         time_series_validation : bool
             Indicates whether to use a time series validation strategy for feature evaluation.
-        cv_column_name : Optional[str], optional
+        cv_column_name : str | None, optional
             The name of the column used for cross-validation splitting, by default None. If None,
             a default column name "cv" is assumed.
         cv_folds : Optional[pl.Series], optional
@@ -393,9 +391,7 @@ class UnivariateAnalysis:
         return self._feature_list
 
     def _get_file_stem(
-        self,
-        filename: Optional[str] = None,
-        default: str = "Univariate Analysis Report",
+        self, filename: str | None = None, default: str = "Univariate Analysis Report"
     ) -> str:
         """
         Helper function to get the file stem from a filename.
@@ -445,9 +441,9 @@ class UnivariateAnalysis:
 
     def _rpt_filename(
         self,
-        file_stem: Optional[str] = None,
-        start_num: Optional[int] = None,
-        end_num: Optional[int] = None,
+        file_stem: str | None = None,
+        start_num: int | None = None,
+        end_num: int | None = None,
         default: str = "Univariate Analysis Report",
     ) -> str:
         """Helper function to get the file name from a filename."""
@@ -537,7 +533,7 @@ class UnivariateAnalysis:
 
     def build_report(
         self,
-        filename: Optional[str] = None,
+        filename: str | None = None,
         margins: Optional[List[float]] = None,
         max_per_file: int = 25,
     ) -> None:
@@ -670,7 +666,7 @@ class UnivariateAnalysis:
 
     def _rpt_title_page(
         self,
-        filename: Optional[str] = None,
+        filename: str | None = None,
         margins: Optional[List[float]] = None,
         date_of_report: datetime.datetime = current_date,
     ):

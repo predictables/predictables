@@ -28,8 +28,6 @@ def feature_importance_analysis(
 
     # Calculate mean absolute SHAP values for each feature
     shap_sum = np.abs(shap_values).mean(axis=0)
-    feature_importance_df = pd.DataFrame(
+    return pd.DataFrame(
         {"feature": X.columns, "shap_importance": shap_sum}
     ).sort_values(by="shap_importance", ascending=False)
-
-    return feature_importance_df

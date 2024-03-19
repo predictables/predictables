@@ -1,27 +1,24 @@
 from __future__ import annotations
 
-from typing import Union
-
 import numpy as np
 import pandas as pd
 import polars as pl
-from statsmodels.stats.outliers_influence import variance_inflation_factor  # type: ignore
+from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 from predictables.util import to_pd_df, tqdm
 
 
 def _vif_i(
-    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame, np.ndarray],
-    col_i: Union[int, str],
+    data: pd.DataFrame | pl.DataFrame | pl.LazyFrame | np.ndarray, col_i: int | str
 ) -> float:
     """
     Return the Variance Inflation Factor (VIF) Score for a given feature.
 
     Parameters
     ----------
-    data : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame, np.ndarray]
+    data : pd.DataFrame | pl.DataFrame | pl.LazyFrame | np.ndarray
         The data to calculate the VIF score for. Will be converted to a numpy array.
-    col_i : Union[int, str]
+    col_i : int | str
         Either an integer or string representing the column/column index of the
         feature to calculate the VIF score for.
 
@@ -62,7 +59,7 @@ Please use one of the following types:\n\
 
 
 def _vif(
-    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame, np.ndarray],
+    data: pd.DataFrame | pl.DataFrame | pl.LazyFrame | np.ndarray,
     show_progress: bool = True,
 ) -> pd.DataFrame:
     """
@@ -90,7 +87,7 @@ def _vif(
 
     Parameters
     ----------
-    data : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame, np.ndarray]
+    data : pd.DataFrame | pl.DataFrame | pl.LazyFrame | np.ndarray
         The data to calculate the VIF scores for. Will be converted to a numpy array.
     show_progress : bool, optional
         Whether to show a progress bar, by default True
@@ -127,9 +124,8 @@ Please use one of the following types:\n\
         vif_score.append(_vif_i(data, i))
 
     # Return the VIF scores as a dataframe
-    df = (
+    return (
         pd.DataFrame({"feature": column, "vif_score": vif_score})
         .sort_values(by="vif_score", ascending=False)
         .reset_index(drop=True)
     )
-    return df

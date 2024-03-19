@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List
-
 import numpy as np
 import pandas as pd
 import polars as pl
@@ -15,8 +13,8 @@ from predictables.util.report.src._segment_features_for_report import (
 
 # Fixture for common feature list inputs
 @pytest.fixture
-def features_list() -> List[str]:
-    return ["feature_" + str(i) for i in range(1, 101)]  # List of 100 features
+def features_list() -> list[str]:
+    return ["feature_" + str(i) for i in range(1, 101)]  # list of 100 features
 
 
 # Parameterized test for basic functionality

@@ -1,29 +1,27 @@
 from __future__ import annotations
 
-from typing import Union
-
 import numpy as np
 import pandas as pd
 import polars as pl
-from sklearn.linear_model import LinearRegression  # type: ignore
+from sklearn.linear_model import LinearRegression
 
 from predictables.util import to_pd_df, to_pd_s
 
 
 def fit_sk_linear_regression(
-    X: Union[np.ndarray, pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-    y: Union[np.ndarray, pd.Series, pl.Series],
+    X: np.ndarray | pd.DataFrame | pl.DataFrame | pl.LazyFrame,
+    y: np.ndarray | pd.Series | pl.Series,
     fit_intercept: bool = False,
 ) -> LinearRegression:
-    """
-    Fit a linear regression model using the scikit-learn library. Used in the univariate
-    analysis to fit a simple model to each variable.
+    """Fit a linear regression model using the scikit-learn library.
+
+    Used in the univariate analysis to fit a simple model to each variable.
 
     Parameters
     ----------
-    X : Union[np.ndarray, pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+    X : np.ndarray | pd.DataFrame | pl.DataFrame | pl.LazyFrame
         The independent variables
-    y : Union[np.ndarray, pd.Series, pl.Series]
+    y : np.ndarray | pd.Series | pl.Series
         The dependent variable. Should be a 1D array.
     fit_intercept : bool, optional
         Whether to fit an intercept in the model, by default False. I think this is

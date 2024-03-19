@@ -7,7 +7,7 @@ import polars as pl
 from predictables.util.src._to_pd import to_pd_s
 
 
-def get_column_dtype(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> str:  # noqa: PLR0911
+def get_column_dtype(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> str:
     """Return the dtype of a series as a string.
 
     The dtype is determined by checking the series against a set of rules.
@@ -163,7 +163,7 @@ def is_categorical_integer(
         return False
 
 
-def is_datetime(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool:  # noqa: PLR0911
+def is_datetime(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool:
     """Return True if the series is a datetime, False otherwise.
 
     Parameters
@@ -180,12 +180,17 @@ def is_datetime(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool:  
     if isinstance(s, pl.Series):
         if is_numeric(s) or is_integer(s):
             return False
-        elif (
-            s.dtype in (pl.datatypes.Datetime, pl.datatypes.Date, pl.datatypes.Time, pl.datatypes.Duration)
+        elif s.dtype in (
+            pl.datatypes.Datetime,
+            pl.datatypes.Date,
+            pl.datatypes.Time,
+            pl.datatypes.Duration,
         ):
             return True
-        elif (
-            s.dtype in (pl.datatypes.Object, pl.datatypes.Utf8, pl.datatypes.Categorical)
+        elif s.dtype in (
+            pl.datatypes.Object,
+            pl.datatypes.Utf8,
+            pl.datatypes.Categorical,
         ):
             try:
                 pd.to_datetime(to_pd_s(s)[0])

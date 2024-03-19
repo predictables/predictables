@@ -392,23 +392,15 @@
 <span id="L382" class="lineno"><a class="lineno" href="#L382">382</a></span>
 <span id="L383" class="lineno"><a class="lineno" href="#L383">383</a></span>
 <span id="L384" class="lineno"><a class="lineno" href="#L384">384</a></span>
-<span id="L385" class="lineno"><a class="lineno" href="#L385">385</a></span>
-<span id="L386" class="lineno"><a class="lineno" href="#L386">386</a></span>
-<span id="L387" class="lineno"><a class="lineno" href="#L387">387</a></span>
-<span id="L388" class="lineno"><a class="lineno" href="#L388">388</a></span>
-<span id="L389" class="lineno"><a class="lineno" href="#L389">389</a></span>
-<span id="L390" class="lineno"><a class="lineno" href="#L390">390</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Optional, Tuple, Union</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import matplotlib.pyplot as plt</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
-<span class="line-any" title="No Anys on this line!">import plotly.graph_objs as go  # type: ignore</span>
+<span class="line-any" title="No Anys on this line!">import plotly.graph_objs as go  # type: ignore[import-untyped]</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
-<span class="line-precise" title="No Anys on this line!">from matplotlib.axes import Axes</span>
-<span class="line-any" title="No Anys on this line!">from scipy.stats import entropy as kl_divergence  # type: ignore</span>
+<span class="line-any" title="No Anys on this line!">from scipy.stats import entropy as kl_divergence  # type: ignore[import-untyped]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from predictables.util import to_pd_s</span>
 <span class="line-precise" title="No Anys on this line!">from predictables.util.stats import gini_coefficient</span>
@@ -418,17 +410,17 @@
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x3)
-Unannotated (x2)">def quintile_lift_plot(</span>
-<span class="line-empty" title="No Anys on this line!">    feature: Union[pd.Series, pl.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    observed_target: Union[pd.Series, pl.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    modeled_target: Union[pd.Series, pl.Series],</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Optional[Axes] = None,</span>
+Unannotated (x1)
+Unimported (x1)">def quintile_lift_plot(</span>
+<span class="line-empty" title="No Anys on this line!">    feature: pd.Series | pl.Series,</span>
+<span class="line-empty" title="No Anys on this line!">    observed_target: pd.Series | pl.Series,</span>
+<span class="line-empty" title="No Anys on this line!">    modeled_target: pd.Series | pl.Series,</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    backend: str = "matplotlib",</span>
-<span class="line-precise" title="No Anys on this line!">    figsize: Optional[Tuple[float, float]] = None,</span>
+<span class="line-precise" title="No Anys on this line!">    figsize: tuple[float, float] | None = None,</span>
 <span class="line-empty" title="No Anys on this line!">    **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">):</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plots the quintile lift for a given feature and target.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes | go.Figure:</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot the quintile lift for a given feature and target.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    The function calculates the mean observed target and modeled target for each</span>
 <span class="line-empty" title="No Anys on this line!">    quintile of the modeled target, and plots them as a bar chart. The function</span>
@@ -437,18 +429,18 @@ Unannotated (x2)">def quintile_lift_plot(</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    feature : Union[pd.Series, pl.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    feature : pd.Series | pl.Series,</span>
 <span class="line-empty" title="No Anys on this line!">        A Pandas Series containing the feature data.</span>
-<span class="line-empty" title="No Anys on this line!">    observed_target : Union[pd.Series, pl.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    observed_target : pd.Series | pl.Series,</span>
 <span class="line-empty" title="No Anys on this line!">        A Pandas Series containing the observed target data.</span>
-<span class="line-empty" title="No Anys on this line!">    modeled_target : Union[pd.Series, pl.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    modeled_target : pd.Series | pl.Series,</span>
 <span class="line-empty" title="No Anys on this line!">        A Pandas Series containing the modeled target data.</span>
 <span class="line-empty" title="No Anys on this line!">    ax: Axes, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The Matplotlib axis object to plot the quintile lift on. If not provided,</span>
 <span class="line-empty" title="No Anys on this line!">        a new figure and axis object will be created.</span>
 <span class="line-empty" title="No Anys on this line!">    backend : str, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The plotting backend to use. Default is 'matplotlib'.</span>
-<span class="line-empty" title="No Anys on this line!">    figsize : Tuple[int, int], optional</span>
+<span class="line-empty" title="No Anys on this line!">    figsize : tuple[int, int], optional</span>
 <span class="line-empty" title="No Anys on this line!">        The figure size. Default is (7, 7).</span>
 <span class="line-empty" title="No Anys on this line!">    **kwargs</span>
 <span class="line-empty" title="No Anys on this line!">        Additional keyword arguments to pass to the plotting function.</span>
@@ -486,28 +478,27 @@ Unannotated (x1)">        **kwargs,</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    return (</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
+<span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x3)
+Unannotated (x1)
 Explicit (x1)">        quintile_lift_plot_matplotlib(**params, ax=ax)</span>
 <span class="line-precise" title="No Anys on this line!">        if backend == "matplotlib"</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
-Omitted Generics (x3)">        else quintile_lift_plot_plotly(**params)</span>
+Unimported (x2)
+Omitted Generics (x3)
+Unannotated (x1)">        else quintile_lift_plot_plotly(**params)</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x3)
-Unannotated (x1)">def quintile_lift_plot_matplotlib(</span>
-<span class="line-empty" title="No Anys on this line!">    feature: Union[pd.Series, pl.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    observed_target: Union[pd.Series, pl.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    modeled_target: Union[pd.Series, pl.Series],</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Optional[Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    figsize: Tuple[int, int] = (7, 7),</span>
-<span class="line-empty" title="No Anys on this line!">):</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plots the quintile lift for a given feature and target.</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x3)">def quintile_lift_plot_matplotlib(</span>
+<span class="line-empty" title="No Anys on this line!">    feature: pd.Series | pl.Series,</span>
+<span class="line-empty" title="No Anys on this line!">    observed_target: pd.Series | pl.Series,</span>
+<span class="line-empty" title="No Anys on this line!">    modeled_target: pd.Series | pl.Series,</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    figsize: tuple[int, int] = (7, 7),</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot the quintile lift for a given feature and target.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    The function calculates the mean observed target and modeled target for each</span>
 <span class="line-empty" title="No Anys on this line!">    quintile of the modeled target, and plots them as a bar chart. The function</span>
@@ -516,11 +507,11 @@ Unannotated (x1)">def quintile_lift_plot_matplotlib(</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    feature : Union[pd.Series, pl.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    feature : pd.Series | pl.Series,</span>
 <span class="line-empty" title="No Anys on this line!">        A Pandas Series containing the feature data.</span>
-<span class="line-empty" title="No Anys on this line!">    observed_target : Union[pd.Series, pl.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    observed_target : pd.Series | pl.Series,</span>
 <span class="line-empty" title="No Anys on this line!">        A Pandas Series containing the observed target data.</span>
-<span class="line-empty" title="No Anys on this line!">    modeled_target : Union[pd.Series, pl.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    modeled_target : pd.Series | pl.Series,</span>
 <span class="line-empty" title="No Anys on this line!">        A Pandas Series containing the modeled target data.</span>
 <span class="line-empty" title="No Anys on this line!">    ax : matplotlib.axes.Axes, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The Matplotlib axis object to plot the quintile lift on. If not provided,</span>
@@ -533,7 +524,7 @@ Unannotated (x1)">def quintile_lift_plot_matplotlib(</span>
 <span class="line-empty" title="No Anys on this line!">        The color of the bar edges. Default is 'black'.</span>
 <span class="line-empty" title="No Anys on this line!">    alpha : float, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The transparency of the bars. Default is 0.5.</span>
-<span class="line-empty" title="No Anys on this line!">    figsize : Tuple[int, int], optional</span>
+<span class="line-empty" title="No Anys on this line!">    figsize : tuple[int, int], optional</span>
 <span class="line-empty" title="No Anys on this line!">        The figure size. Default is (7, 7).</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
@@ -551,35 +542,30 @@ Unannotated (x1)">        _, ax = plt.subplots(figsize=figsize)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    font_scale_fct = 1.25 * figsize[0] / 16 if figsize is not None else 1</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x2)
 Explicit (x1)">    bars1, bars2 = _make_bars(lift_df, ax)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Add data labels</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">    for bars in [bars1, bars2]:</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">        for bar in bars:</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">            height = bar.get_height()</span>
+<span class="line-precise" title="No Anys on this line!">    for bars in [bars1, bars2]:</span>
+<span class="line-precise" title="No Anys on this line!">        for bar in bars:</span>
+<span class="line-precise" title="No Anys on this line!">            height = bar.get_height()</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x3)
 Unannotated (x1)">            ax.annotate(</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">                f"{height:.2f}",</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x9)">                xy=(bar.get_x() + bar.get_width() / 2, height),</span>
+<span class="line-precise" title="No Anys on this line!">                f"{height:.2f}",</span>
+<span class="line-precise" title="No Anys on this line!">                xy=(bar.get_x() + bar.get_width() / 2, height),</span>
 <span class="line-precise" title="No Anys on this line!">                xytext=(0, -3),</span>
 <span class="line-precise" title="No Anys on this line!">                textcoords="offset points",</span>
 <span class="line-precise" title="No Anys on this line!">                ha="center",</span>
 <span class="line-precise" title="No Anys on this line!">                va="bottom",</span>
 <span class="line-precise" title="No Anys on this line!">                fontsize=20 * font_scale_fct,</span>
-<span class="line-precise" title="No Anys on this line!">                bbox=dict(</span>
-<span class="line-precise" title="No Anys on this line!">                    boxstyle="round,pad=0.2",</span>
-<span class="line-precise" title="No Anys on this line!">                    edgecolor="black",</span>
-<span class="line-precise" title="No Anys on this line!">                    facecolor="white",</span>
-<span class="line-precise" title="No Anys on this line!">                    alpha=0.9,</span>
-<span class="line-empty" title="No Anys on this line!">                ),</span>
+<span class="line-empty" title="No Anys on this line!">                bbox={</span>
+<span class="line-precise" title="No Anys on this line!">                    "boxstyle": "round,pad=0.2",</span>
+<span class="line-precise" title="No Anys on this line!">                    "edgecolor": "black",</span>
+<span class="line-precise" title="No Anys on this line!">                    "facecolor": "white",</span>
+<span class="line-precise" title="No Anys on this line!">                    "alpha": 0.9,</span>
+<span class="line-empty" title="No Anys on this line!">                },</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -597,8 +583,7 @@ Explicit (x3)
 Unannotated (x4)">    ax.legend(fontsize=20 * font_scale_fct)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # KL Divergence calculation</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">    kl_div = _kl_divergence(lift_df)</span>
+<span class="line-precise" title="No Anys on this line!">    kl_div = _kl_divergence(lift_df)</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x6)
 Explicit (x2)">    gini_coeff = gini_coefficient(observed_target.to_list(), modeled_target.to_list())</span>
@@ -607,15 +592,17 @@ Explicit (x2)">    gini_coeff = gini_coefficient(observed_target.to_list(), mode
 <span class="line-any" title="Any Types on this line: 
 Explicit (x3)
 Unannotated (x1)">    ax.annotate(</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        f"KL Divergence: {kl_div:.3f}\nGini Coefficient: {gini_coeff:.3f}",</span>
+<span class="line-precise" title="No Anys on this line!">        f"KL Divergence: {kl_div:.3f}\nGini Coefficient: {gini_coeff:.3f}",</span>
 <span class="line-precise" title="No Anys on this line!">        xy=(0.75, 0.05),</span>
 <span class="line-precise" title="No Anys on this line!">        xycoords="axes fraction",</span>
 <span class="line-precise" title="No Anys on this line!">        fontsize=20 * font_scale_fct,</span>
 <span class="line-precise" title="No Anys on this line!">        ha="center",</span>
-<span class="line-precise" title="No Anys on this line!">        bbox=dict(</span>
-<span class="line-precise" title="No Anys on this line!">            boxstyle="round,pad=0.25", edgecolor="black", facecolor="white", alpha=0.85</span>
-<span class="line-empty" title="No Anys on this line!">        ),</span>
+<span class="line-empty" title="No Anys on this line!">        bbox={</span>
+<span class="line-precise" title="No Anys on this line!">            "boxstyle": "round,pad=0.25",</span>
+<span class="line-precise" title="No Anys on this line!">            "edgecolor": "black",</span>
+<span class="line-precise" title="No Anys on this line!">            "facecolor": "white",</span>
+<span class="line-precise" title="No Anys on this line!">            "alpha": 0.85,</span>
+<span class="line-empty" title="No Anys on this line!">        },</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -632,14 +619,12 @@ Unannotated (x1)">    ax.grid(True)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x3)
-Unannotated (x1)">def quintile_lift_plot_plotly(</span>
-<span class="line-empty" title="No Anys on this line!">    feature: Union[pd.Series, pl.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    observed_target: Union[pd.Series, pl.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    modeled_target: Union[pd.Series, pl.Series],</span>
-<span class="line-precise" title="No Anys on this line!">    figsize: Tuple[int, int] = (7, 7),</span>
-<span class="line-empty" title="No Anys on this line!">):</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plots the quintile lift for a given feature and target.</span>
+Unimported (x1)">def quintile_lift_plot_plotly(</span>
+<span class="line-empty" title="No Anys on this line!">    feature: pd.Series | pl.Series,</span>
+<span class="line-empty" title="No Anys on this line!">    observed_target: pd.Series | pl.Series,</span>
+<span class="line-empty" title="No Anys on this line!">    modeled_target: pd.Series | pl.Series,</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; go.Figure:</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot the quintile lift for a given feature and target.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    The function calculates the mean observed target and modeled target for each</span>
 <span class="line-empty" title="No Anys on this line!">    quintile of the modeled target, and plots them as a bar chart. The function</span>
@@ -648,14 +633,12 @@ Unannotated (x1)">def quintile_lift_plot_plotly(</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    feature : Union[pd.Series, pl.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    feature : pd.Series | pl.Series,</span>
 <span class="line-empty" title="No Anys on this line!">        A Pandas Series containing the feature data.</span>
-<span class="line-empty" title="No Anys on this line!">    observed_target : Union[pd.Series, pl.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    observed_target : pd.Series | pl.Series,</span>
 <span class="line-empty" title="No Anys on this line!">        A Pandas Series containing the observed target data.</span>
-<span class="line-empty" title="No Anys on this line!">    modeled_target : Union[pd.Series, pl.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    modeled_target : pd.Series | pl.Series,</span>
 <span class="line-empty" title="No Anys on this line!">        A Pandas Series containing the modeled target data.</span>
-<span class="line-empty" title="No Anys on this line!">    figsize : Tuple[int, int], optional</span>
-<span class="line-empty" title="No Anys on this line!">        The figure size. Default is (15, 8).</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
 <span class="line-empty" title="No Anys on this line!">    -------</span>
@@ -667,28 +650,22 @@ Omitted Generics (x6)">    lift_df = _prep_data(feature, observed_target, modele
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    ax = plt.gca()  # Create a dummy axis to pass to _make_bars</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">    bars1, bars2 = _make_bars(lift_df, ax, backend="plotly")</span>
+<span class="line-precise" title="Any Types on this line: 
+Unimported (x2)">    bars1, bars2 = _make_bars(lift_df, ax, backend="plotly")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x4)
-Unannotated (x2)">    fig = go.Figure(data=[bars1, bars2])</span>
+Unimported (x4)">    fig = go.Figure(data=[bars1, bars2])</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Add data labels</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">    for bars in [bars1, bars2]:</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">        for bar in bars:</span>
+<span class="line-precise" title="No Anys on this line!">    for bars in [bars1, bars2]:</span>
+<span class="line-precise" title="No Anys on this line!">        for bar in bars:</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x3)">            fig.add_annotation(</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                x=bar.x,</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                y=bar.y,</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                text=f"{bar.y:.2f}",</span>
+<span class="line-precise" title="No Anys on this line!">                x=bar.x,</span>
+<span class="line-precise" title="No Anys on this line!">                y=bar.y,</span>
+<span class="line-precise" title="No Anys on this line!">                text=f"{bar.y:.2f}",</span>
 <span class="line-precise" title="No Anys on this line!">                showarrow=False,</span>
-<span class="line-precise" title="No Anys on this line!">                font=dict(size=16),</span>
+<span class="line-precise" title="No Anys on this line!">                font={"size": 16},</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
@@ -696,12 +673,11 @@ Unimported (x3)">    fig.update_layout(</span>
 <span class="line-precise" title="No Anys on this line!">        xaxis_title="Modeled Quintile",</span>
 <span class="line-precise" title="No Anys on this line!">        yaxis_title="Mean Target",</span>
 <span class="line-precise" title="No Anys on this line!">        title="Quintile Lift Plot",</span>
-<span class="line-precise" title="No Anys on this line!">        legend=dict(font=dict(size=16)),</span>
+<span class="line-precise" title="No Anys on this line!">        legend={"font": {"size": 16}},</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # KL Divergence calculation</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">    kl_div = _kl_divergence(lift_df)</span>
+<span class="line-precise" title="No Anys on this line!">    kl_div = _kl_divergence(lift_df)</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x6)
 Explicit (x2)">    gini_coeff = gini_coefficient(observed_target.to_list(), modeled_target.to_list())</span>
@@ -711,10 +687,9 @@ Explicit (x2)">    gini_coeff = gini_coefficient(observed_target.to_list(), mode
 Unimported (x3)">    fig.add_annotation(</span>
 <span class="line-precise" title="No Anys on this line!">        x=0.75,</span>
 <span class="line-precise" title="No Anys on this line!">        y=0.05,</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        text=f"KL Divergence: {kl_div:.3f}&lt;br&gt;Gini Coefficient: {gini_coeff:.3f}",</span>
+<span class="line-precise" title="No Anys on this line!">        text=f"KL Divergence: {kl_div:.3f}&lt;br&gt;Gini Coefficient: {gini_coeff:.3f}",</span>
 <span class="line-precise" title="No Anys on this line!">        showarrow=False,</span>
-<span class="line-precise" title="No Anys on this line!">        font=dict(size=16),</span>
+<span class="line-precise" title="No Anys on this line!">        font={"size": 16},</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
@@ -723,20 +698,19 @@ Unimported (x1)">    return fig</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x3)">def _prep_data(</span>
-<span class="line-empty" title="No Anys on this line!">    feature: Union[pd.Series, pl.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    observed_target: Union[pd.Series, pl.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    modeled_target: Union[pd.Series, pl.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    feature: pd.Series | pl.Series,</span>
+<span class="line-empty" title="No Anys on this line!">    observed_target: pd.Series | pl.Series,</span>
+<span class="line-empty" title="No Anys on this line!">    modeled_target: pd.Series | pl.Series,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pd.DataFrame:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Prepares the data for the quintile lift plot.</span>
+<span class="line-empty" title="No Anys on this line!">    """Prepare the data for the quintile lift plot.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    feature : Union[pd.Series, pl.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    feature : pd.Series | pl.Series,</span>
 <span class="line-empty" title="No Anys on this line!">        A Pandas Series containing the feature data.</span>
-<span class="line-empty" title="No Anys on this line!">    observed_target : Union[pd.Series, pl.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    observed_target : pd.Series | pl.Series,</span>
 <span class="line-empty" title="No Anys on this line!">        A Pandas Series containing the observed target data.</span>
-<span class="line-empty" title="No Anys on this line!">    modeled_target : Union[pd.Series, pl.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    modeled_target : pd.Series | pl.Series,</span>
 <span class="line-empty" title="No Anys on this line!">        A Pandas Series containing the modeled target data.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
@@ -776,15 +750,15 @@ Explicit (x1)">        df.groupby("quintile")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">def _make_quintiles(modeled_target: Union[pd.Series, pl.Series]) -&gt; pd.Series:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Creates quintile bins based on the modeled target. If there are n &lt; 5 unique</span>
-<span class="line-empty" title="No Anys on this line!">    values, don't bin quintiles -- instead, bin into n bins based on the modeled</span>
-<span class="line-empty" title="No Anys on this line!">    target.</span>
+Omitted Generics (x2)">def _make_quintiles(modeled_target: pd.Series | pl.Series) -&gt; pd.Series:</span>
+<span class="line-empty" title="No Anys on this line!">    """Create quintile bins based on the modeled target.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    If there are n &lt; 5 unique values, don't bin quintiles --</span>
+<span class="line-empty" title="No Anys on this line!">    instead, bin into n bins based on the modeled target.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    modeled_target : Union[pd.Series, pl.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    modeled_target : pd.Series | pl.Series,</span>
 <span class="line-empty" title="No Anys on this line!">        A Pandas Series containing the modeled target data.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
@@ -826,14 +800,14 @@ Omitted Generics (x5)">                len(modeled_target.unique()),</span>
 <span class="line-precise" title="No Anys on this line!">            + 1</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x5)">        if len(modeled_target.unique()) &lt; 5</span>
+Omitted Generics (x5)">        if len(modeled_target.unique()) &lt; 5  # (5 is based off of quintiles)</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x12)">        else pd.qcut(modeled_target, 5, labels=False, duplicates="drop") + 1</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">def _make_bars(</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x2)">def _make_bars(</span>
 <span class="line-empty" title="No Anys on this line!">    df: pd.DataFrame,</span>
 <span class="line-empty" title="No Anys on this line!">    ax: plt.Axes,</span>
 <span class="line-precise" title="No Anys on this line!">    backend: str = "matplotlib",</span>
@@ -841,7 +815,7 @@ Unannotated (x1)">def _make_bars(</span>
 <span class="line-precise" title="No Anys on this line!">    observed_color: str = "lightgreen",</span>
 <span class="line-precise" title="No Anys on this line!">    edge_color: str = "black",</span>
 <span class="line-precise" title="No Anys on this line!">    alpha: float = 0.5,</span>
-<span class="line-empty" title="No Anys on this line!">):</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; tuple[plt.Bar, plt.Bar] | tuple[go.Bar, go.Bar]:</span>
 <span class="line-precise" title="No Anys on this line!">    if backend == "matplotlib":</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x2)">        bars1 = ax.bar(</span>
@@ -892,12 +866,11 @@ Omitted Generics (x1)">            y=df["modeled_target_mean"],</span>
 <span class="line-precise" title="No Anys on this line!">    return bars1, bars2</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">def _kl_divergence(df):</span>
+<span class="line-precise" title="No Anys on this line!">def _kl_divergence(df: pd.DataFrame) -&gt; float:</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)
-Unimported (x1)">    return kl_divergence(</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x6)">        df["observed_target_mean"].values, df["modeled_target_mean"].values</span>
+Unimported (x2)">    return kl_divergence(</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x6)">        df["observed_target_mean"].values, df["modeled_target_mean"].values</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 </pre></td>
 </tr></tbody>

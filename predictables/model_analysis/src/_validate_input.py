@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import Tuple, Union
 
 import pandas as pd
 import polars as pl
@@ -10,18 +9,17 @@ from predictables.util import to_pd_df, to_pd_s
 
 
 def validate_input(
-    X: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-    y: Union[pd.Series, pl.Series],
+    X: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
+    y: pd.Series | pl.Series,
     model: sklearn.base.BaseEstimator,
-) -> Tuple[bool, str]:
-    """
-    Validates the input dataset and model.
+) -> tuple[bool, str]:
+    """Validate the input dataset and model.
 
     Parameters
     ----------
-    X : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+    X : pd.DataFrame | pl.DataFrame | pl.LazyFrame
         Input dataset of model features.
-    y : Union[pd.Series, pl.Series]
+    y : pd.Series | pl.Series
         Target variable.
     model : sklearn.base.BaseEstimator
         Model to be validated. Must be a scikit-learn estimator, or an estimator that

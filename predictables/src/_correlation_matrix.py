@@ -1,5 +1,4 @@
-"""
-This module performs correlation matrix analysis on the data.
+"""Perform correlation matrix analysis on the data.
 
 Functions
 ---------
@@ -10,8 +9,6 @@ _correlation_matrix_elimination : Eliminates the features with high correlation.
 
 from __future__ import annotations
 
-from typing import Union
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -21,14 +18,13 @@ from predictables.src._utils import _to_numpy, _to_pandas
 
 
 def _pearson_correlation_matrix(
-    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], method: str = "pearson"
+    data: pd.DataFrame | pl.DataFrame | pl.LazyFrame, method: str = "pearson"
 ) -> pd.DataFrame:
-    """
-    Calculates the correlation matrix for the data.
+    """Calculate the correlation matrix for the data.
 
     Parameters
     ----------
-    data : Union[pd.DataFrame, pl.DataFrame,  pl.LazyFrame]
+    data : pd.DataFrame | pl.DataFrame | pl.LazyFrame
         The data to be analyzed.
     method : str, optional
         The method to calculate the correlation matrix. The default is 'pearson'. No other
@@ -87,14 +83,13 @@ Please use 'pearson'. I don't know why this is even an option."
 
 
 def _correlation_matrix(
-    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], method: str = "pearson"
+    data: pd.DataFrame | pl.DataFrame | pl.LazyFrame, method: str = "pearson"
 ) -> pd.DataFrame:
-    """
-    Calculates the correlation matrix for the data.
+    """Calculate the correlation matrix for the data.
 
     Parameters
     ----------
-    data : Union[pd.DataFrame, pl.DataFrame,  pl.LazyFrame]
+    data : pd.DataFrame | pl.DataFrame | pl.LazyFrame
         The data to be analyzed.
     method : str, optional
         The method to calculate the correlation matrix. The default is 'pearson'. No other
@@ -109,21 +104,26 @@ def _correlation_matrix(
 
 
 def _correlation_matrix_plot(
-    data: Union[
-        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list
-    ],
+    data: pd.DataFrame
+    | pd.Series
+    | pl.DataFrame
+    | pl.Series
+    | pl.LazyFrame
+    | np.ndarray
+    | list,
     method: str = "pearson",
     ax: plt.Axes = None,
 ) -> plt.Axes:
-    """
-    Plots the correlation matrix. If an axis is passed, the plot will be added to the
-    axis. Otherwise, a new figure will be created.
+    """Plot the correlation matrix.
+
+    If an axis is passed, the plot will be added to the axis.
+    Otherwise, a new figure will be created.
 
     Either way, the axis will be returned.
 
     Parameters
     ----------
-    data : Union[pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list]
+    data : pd.DataFrame | pd.Series | pl.DataFrame | pl.Series | pl.LazyFrame | np.ndarray | list
         The data to be analyzed.
     method : str, optional
         The method to calculate the correlation matrix. The default is 'pearson',
@@ -154,19 +154,23 @@ def _correlation_matrix_plot(
 
 
 def _highly_correlated_variables(
-    data: Union[
-        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list
-    ],
+    data: pd.DataFrame
+    | pd.Series
+    | pl.DataFrame
+    | pl.Series
+    | pl.LazyFrame
+    | np.ndarray
+    | list,
     method: str = "pearson",
     threshold: float = 0.9,
 ) -> pl.LazyFrame:
-    """
-    Returns a list of tuples of highly correlated variables. Only one of the variables
-    in each tuple will be kept.
+    """Return a list of tuples of highly correlated variables.
+
+    Only one of the variables in each tuple will be kept.
 
     Parameters
     ----------
-    data : Union[pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list]
+    data : pd.DataFrame | pd.Series | pl.DataFrame | pl.Series | pl.LazyFrame | np.ndarray | list
         The data to be analyzed.
     method : str, optional
         The method to calculate the correlation matrix. The default is 'pearson',
@@ -191,7 +195,7 @@ def _highly_correlated_variables(
     corr = corr.where(np.tril(np.ones(corr.shape), k=-1).astype(bool))
 
     # 3. Unstack (to get pairs)
-    corr = corr.unstack()
+    corr = corr.unstack()  # noqa: PD010
 
     # 4. Remove NaNs
     corr = corr.dropna()
@@ -212,6 +216,4 @@ def _highly_correlated_variables(
     corr = corr.reset_index(drop=True)
 
     # 10. Convert to list of tuples
-    corr = list(corr["var1 var2".split()].to_records(index=False))
-
-    return corr
+    return list(corr["var1 var2".split()].to_records(index=False))

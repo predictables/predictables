@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Union
-
 import numpy as np
 import pandas as pd
 import polars as pl
@@ -11,11 +9,11 @@ from predictables.src._correlation_matrix import _correlation_matrix
 
 
 def _eigenvalues(
-    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame, np.ndarray], round_to: int = 4
+    data: pd.DataFrame | pl.DataFrame | pl.LazyFrame | np.ndarray, round_to: int = 4
 ) -> pd.DataFrame:
-    """
-    Calculate the eigenvalues of the correlation matrix of the given data, then
-    a condition index. The condition index is the ratio of the largest eigenvalue
+    """Calculate the eigenvalues of the correlation matrix of the given data and a condition index.
+
+    The condition index is the ratio of the largest eigenvalue
     to each of the other eigenvalues. The larger the ratio, the larger the
     condition number, the more likely it is that the correlation matrix is
     ill-conditioned.
@@ -72,8 +70,6 @@ def _eigenvalues(
     df["log[condition_number]"] = df["log[condition_number]"].round(round_to)
 
     # Sort the DataFrame by the condition number
-    df = df.sort_values(by="log[condition_number]", ascending=False).reset_index(
+    return df.sort_values(by="log[condition_number]", ascending=False).reset_index(
         drop=True
     )
-
-    return df

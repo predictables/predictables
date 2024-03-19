@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-import os
-from typing import Optional, Union
-
-from transformers import BertTokenizer  # type: ignore
+from pathlib import Path
+from transformers import BertTokenizer
 from transformers import BertModel, BertTokenizerFast
 
 default_folder = "/sas/data/project/EG/ActShared/SmallBusiness/aw/bert/bert-cased"
@@ -17,12 +15,11 @@ class Bert:
         null_symbol: str = "[MASK]",
         padding_symbol: str = "[PAD]",
         use_fast_tokenizer: bool = True,
-        truncation: Union[bool, str] = True,
-        padding: Union[bool, str] = True,
-        text: Optional[Union[str, list]] = None,
+        truncation: bool | str = True,
+        padding: bool | str = True,
+        text: str | list | None = None,
     ):
-        """
-        Initializes the BERT model and tokenizer for generating embeddings.
+        """Initialize the BERT model and tokenizer for generating embeddings.
 
         Parameters
         ----------
@@ -39,9 +36,9 @@ class Bert:
             Whether to use the fast tokenizer or not. The default is True. Use the
             slow tokenizer if you need to tokenize text longer than 512 tokens. The
             fast tokenizer is limited to 512 tokens.
-        truncation : Union[bool, str]
+        truncation : bool | str
             Whether to truncate text to 512 tokens. The default is True.
-        padding : Union[bool, str]
+        padding : bool | str
             Whether to pad text to 512 tokens. The default is True.
         text : Union[str, list]
             A string or list of strings to add to the BERT model. The default is None.
@@ -72,8 +69,6 @@ class Bert:
         text : list
             A list of text strings, each of which is individually tokenized and
             embedded.
-
-
         """
         self.folder = bert_folder
         self.model_name = bert_model_name
@@ -89,16 +84,15 @@ class Bert:
                 self.folder, truncation=truncation, padding=padding
             )
 
-        self.model_path = os.path.join(self.folder, self.model_name)
+        self.model_path = Path(self.folder) / self.model_name
         self.model = BertModel.from_pretrained(
-            self.model_path, config=os.path.join(self.folder, "config.json")
+            self.model_path, config=self.tokenizer.config
         )
 
         self.text = text
 
     def _pad(self, string: str) -> str:
-        """
-        Pads a string to the maximum length of 512 tokens.
+        """Pad a string to the maximum length of 512 tokens.
 
         Parameters
         ----------
@@ -119,9 +113,8 @@ class Bert:
             string = f"{string} {self.padding_symbol * (512 - len(string) + 1)}"
         return string
 
-    def add(self, text: Union[list, str]) -> None:
-        """
-        Adds text to the BERT model.
+    def add(self, text: list | str) -> None:
+        """Add text to the BERT model.
 
         Parameters
         ----------
@@ -155,8 +148,7 @@ class Bert:
         return self.tokenizer(text, return_tensors="pt")
 
     def embeddings(self, masked_string: str, pad: bool = True) -> dict:
-        """
-        Generates embeddings for a string using the BERT model.
+        """Generate embeddings for a string using the BERT model.
 
         Parameters
         ----------
@@ -179,8 +171,7 @@ class Bert:
         return self.model(**self.tokens(masked_string))
 
     def get_embeddings(self, masked_string: str, pad: bool = True) -> list:
-        """
-        Generates embeddings for a string using the BERT model.
+        """Generate embeddings for a string using the BERT model.
 
         Parameters
         ----------
@@ -203,5 +194,4 @@ class Bert:
         outputs = self.embeddings(masked_string)
 
         # get embeddings
-        embeddings = outputs["last_hidden_state"]
-        return embeddings
+        return outputs["last_hidden_state"]

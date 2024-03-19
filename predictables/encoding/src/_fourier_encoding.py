@@ -12,8 +12,7 @@ def angle(x: pd.Series, k: int) -> pd.Series:
 
 def _days_in_year(x: pd.Series) -> pd.Series:
     days = pd.Series([365] * x.shape[0])
-    days = days.mask(x.dt.is_leap_year, 366)
-    return days
+    return days.mask(x.dt.is_leap_year, 366)
 
 
 def _days_in_quarter(x: pd.Series) -> pd.Series:
@@ -42,8 +41,7 @@ def _days_in_quarter_already(x: pd.Series) -> pd.Series:
         12: 30 + 31,
     }
 
-    days = x.dt.month.map(qtr).mask(x.dt.is_leap_year & (x.dt.month.eq(3)), 31 + 29)
-    return days
+    return x.dt.month.map(qtr).mask(x.dt.is_leap_year & (x.dt.month.eq(3)), 31 + 29)
 
 
 def day_of_week(x: pd.Series) -> pd.Series:

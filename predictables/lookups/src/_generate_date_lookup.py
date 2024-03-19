@@ -11,8 +11,9 @@ def generate_date_lookup(
     start_date: datetime.date = default_start_date,
     end_date: datetime.date = default_end_date,
 ) -> pd.DataFrame:
-    """
-    Generates a dataframe with the following columns:
+    """Generate a date lookup dataframe.
+
+    This dataframe has the following columns:
     - date_id: integer
     - date: date
     - year: integer
@@ -131,13 +132,12 @@ def generate_date_lookup(
     dates["cos[day_of_year]"] = dates["day_of_year_cpx"].apply(lambda x: np.cos(x))
     dates["sin[day_of_year]"] = dates["day_of_year_cpx"].apply(lambda x: np.sin(x))
 
-    dates.drop(
+    dates = dates.drop(
         columns=[
             "quarter_cpx",
             "month_cpx",
             "day_cpx",
             "day_of_week_cpx",
             "day_of_year_cpx",
-        ],
-        inplace=True,
+        ]
     )

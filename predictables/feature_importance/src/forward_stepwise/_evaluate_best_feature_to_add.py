@@ -1,10 +1,14 @@
+import polars as pl
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
 
 def evaluate_best_feature_to_add(
-    remaining_features, selected_features, sample_X, sample_y
-):
+    remaining_features: list,
+    selected_features: list,
+    sample_X: pl.LazyFrame,
+    sample_y: pl.LazyFrame,
+) -> str:
     best_feature = None
     best_performance = float(
         "inf"

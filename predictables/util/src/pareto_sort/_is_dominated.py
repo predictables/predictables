@@ -1,14 +1,10 @@
 from __future__ import annotations
 
-from typing import Union
-
 import numpy as np
 import pandas as pd
 
 
-def is_dominated(
-    a: Union[np.ndarray, pd.Series], b: Union[np.ndarray, pd.Series]
-) -> bool:
+def is_dominated(a: np.ndarray | pd.Series, b: np.ndarray | pd.Series) -> bool:
     """
     Check if a is dominated by b.
 

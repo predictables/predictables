@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import pandas as pd
 import polars as pl
+import numpy as np
 import statsmodels.api as sm
 
 from predictables.util import DebugLogger, to_pd_df, to_pd_s
@@ -11,7 +12,8 @@ dbg = DebugLogger(working_file="_fit_sm_logistic_regression.py")
 
 
 def fit_sm_logistic_regression(
-    X: pd.DataFrame | pl.DataFrame | pl.LazyFrame, y: pd.Series | pl.Series
+    X: np.ndarray | pd.DataFrame | pl.DataFrame | pl.LazyFrame,
+    y: np.ndarray | pd.Series | pl.Series,
 ) -> sm.GLM:
     """Fit a logistic regression model using the statsmodels library.
 
@@ -19,9 +21,9 @@ def fit_sm_logistic_regression(
 
     Parameters
     ----------
-    X : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+    X : np.ndarray | pd.DataFrame | pl.DataFrame | pl.LazyFrame
         The independent variables
-    y : Union[pd.Series, pl.Series]
+    y : np.ndarray | pd.Series | pl.Series
         The dependent variable. Should be a 1D array.
 
     Returns

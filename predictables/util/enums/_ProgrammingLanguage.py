@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
 
 
 class ProgrammingLanguage(Enum):
@@ -42,7 +41,7 @@ class ProgrammingLanguage(Enum):
     YAML = "yaml"
 
     @staticmethod
-    def from_string(string: Optional[str]) -> "ProgrammingLanguage":
+    def from_string(string: str | None) -> "ProgrammingLanguage":
         if string is None:
             UserWarning("Programming language is None. Defaulting to Python.")
             return ProgrammingLanguage.PYTHON

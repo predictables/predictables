@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import datetime
-from typing import Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -110,7 +109,7 @@ class DynamicRollingSum:
         # Return self updated with the validated column
         return _set_x_col(self, x_col)
 
-    def x_name(self, x_name: Optional[str] = None) -> "DynamicRollingSum":
+    def x_name(self, x_name: str | None = None) -> "DynamicRollingSum":
         """
         Sets the name of the column to be used for the rolling sum. First checks that
         the column exists in the LazyFrame.
@@ -498,10 +497,10 @@ def _get_date_list_col(
 
 def _get_value_map(
     lf: pl.LazyFrame, date_col: str, x_col: str
-) -> Dict[datetime.date, float]:
-    """
-    Produces a dictionary mapping dates to values. This is used to map the
-    list of dates to a list of values.
+) -> dict[datetime.date, float]:
+    """Produce a dictionary mapping dates to values.
+
+    This is used to map the list of dates to a list of values.
 
     Parameters
     ----------
@@ -514,12 +513,10 @@ def _get_value_map(
 
     Returns
     -------
-    Dict[datetime.date, float]
+    dict[datetime.date, float]
         A dictionary mapping dates to values.
     """
-    return {
-        d: v for d, v in lf.select([pl.col(date_col), pl.col(x_col)]).collect().rows()
-    }
+    return dict(lf.select([pl.col(date_col), pl.col(x_col)]).collect().rows())
 
 
 def _handle_date_list(
@@ -547,10 +544,7 @@ def _handle_date_list(
 
 
 def _date_list_eval(value_map: dict) -> pl.Expr:
-    """
-    Takes a dictionary mapping dates to values and returns a function that
-    can be used to map a list of dates to a list of values.
-    """
+    """Take a dictionary mapping dates to values and returns a function that can be used to map a list of dates to a list of values."""
     return (
         pl.when(pl.col("date_list").is_in(list(value_map.keys())))
         .then(

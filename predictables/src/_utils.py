@@ -1,8 +1,6 @@
-"""Utility functions for PredicTables"""
+"""Utility functions for PredicTables."""
 
 from __future__ import annotations
-
-from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -25,17 +23,22 @@ output_map = {
 
 
 def _to_numpy(
-    data: Union[
-        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list
-    ],
+    data: pd.DataFrame
+    | pd.Series
+    | pl.DataFrame
+    | pl.Series
+    | pl.LazyFrame
+    | np.ndarray
+    | list,
 ) -> np.ndarray:
-    """
-    Converts the data to a numpy array. Handles both pandas and polars dataframes and
-    Series, as well as polars lazy frames, numpy arrays, and lists.
+    """Convert the data to a numpy array.
+
+    Handles both pandas and polars dataframes and Series, as well as
+    polars lazy frames, numpy arrays, and lists.
 
     Parameters
     ----------
-    data : Union[pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list]
+    data : pd.DataFrame | pd.Series | pl.DataFrame | pl.Series | pl.LazyFrame | np.ndarray | list
         The data to be converted.
 
     Returns
@@ -67,19 +70,24 @@ Please use one of the following types: \n\
 
 
 def _to_polars(
-    data: Union[
-        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list
-    ],
+    data: pd.DataFrame
+    | pd.Series
+    | pl.DataFrame
+    | pl.Series
+    | pl.LazyFrame
+    | np.ndarray
+    | list,
     to: str = "dataframe",
-) -> Union[pl.DataFrame, pl.Series, pl.LazyFrame]:
-    """
-    Converts the data to a polars dataframe, series, or lazy frame depending on the
-    `to` parameter. Handles both pandas and polars dataframes and Series, as well as
-    polars lazy frames, numpy arrays, and lists.
+) -> pl.DataFrame | pl.Series | pl.LazyFrame:
+    """Convert the data to a polars dataframe, series, or lazy frame.
+
+    Output depends on the `to` parameter. Handles both pandas
+    and polars dataframes and Series, as well as polars lazy frames,
+    numpy arrays, and lists.
 
     Parameters
     ----------
-    data : Union[pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list]
+    data : pd.DataFrame | pd.Series | pl.DataFrame | pl.Series | pl.LazyFrame | np.ndarray | list
         The data to be converted.
     to : str, optional
         The type to convert the data to. The string is preprocessed by passing it through
@@ -87,7 +95,7 @@ def _to_polars(
 
     Returns
     -------
-    Union[pl.DataFrame, pl.Series, pl.LazyFrame]
+    pl.DataFrame | pl.Series | pl.LazyFrame
         The converted data.
     """
     # Check output type
@@ -176,19 +184,23 @@ Please use one of the following types: \n\
 
 
 def _to_pandas(
-    data: Union[
-        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list
-    ],
+    data: pd.DataFrame
+    | pd.Series
+    | pl.DataFrame
+    | pl.Series
+    | pl.LazyFrame
+    | np.ndarray
+    | list,
     to: str = "dataframe",
-) -> Union[pd.DataFrame, pd.Series]:
-    """
-    Converts the data to a pandas dataframe or series depending on the
-    `to` parameter. Handles both pandas and polars dataframes and Series, as well as
-    polars lazy frames, numpy arrays, and lists.
+) -> pd.DataFrame | pd.Series:
+    """Convert the data to a pandas dataframe or series depending on the `to` parameter.
+
+    Handles both pandas and polars dataframes and Series, as well as polars
+    lazy frames, numpy arrays, and lists.
 
     Parameters
     ----------
-    data : Union[pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list]
+    data : pd.DataFrame | pd.Series | pl.DataFrame | pl.Series | pl.LazyFrame | np.ndarray | list
         The data to be converted.
     to : str, optional
         The type to convert the data to. The string is preprocessed by passing it through
@@ -197,7 +209,7 @@ def _to_pandas(
 
     Returns
     -------
-    Union[pd.DataFrame, pd.Series]
+    pd.DataFrame | pd.Series
         The converted data.
     """
     # Check output type
@@ -295,10 +307,9 @@ Please use one of the following types: \n\
 
 
 def _select_binary_columns(
-    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], missing_col: str = "999"
+    data: pd.DataFrame | pl.DataFrame | pl.LazyFrame, missing_col: str = "999"
 ) -> list:
-    """
-    Returns the binary-coded columns from the data.
+    """Return the binary-coded columns from the data.
 
     Binary-coded columns are defined to be categorical, with at
     most three categories:
@@ -313,7 +324,7 @@ def _select_binary_columns(
 
     Parameters
     ----------
-    data : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+    data : pd.DataFrame | pl.DataFrame | pl.LazyFrame
         The data to be analyzed.
     missing_col : str
         The name of the column that indicates missingness. This column

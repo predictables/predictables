@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import Union
 
 import pandas as pd
 import polars as pl
@@ -18,18 +17,17 @@ from sklearn.metrics import (
 
 
 def calculate_error_metrics(
-    X: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-    y: Union[pd.Series, pl.Series],
+    X: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
+    y: pd.Series | pl.Series,
     model: sklearn.base.BaseEstimator,
 ) -> dict:
-    """
-    Calculates comprehensive error metrics for the model.
+    """Calculate comprehensive error metrics for the model.
 
     Parameters
     ----------
-    X : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+    X : pd.DataFrame | pl.DataFrame | pl.LazyFrame
         Input dataset of model features.
-    y : Union[pd.Series, pl.Series]
+    y : pd.Series | pl.Series
         Target variable.
     model : sklearn.base.BaseEstimator
         Model to be validated. Must be a scikit-learn estimator, or an estimator that

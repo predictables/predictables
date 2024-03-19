@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from typing import List
-
 import polars as pl
 
 
 def lagged_mean_encoding(
     lazy_frame: pl.DataFrame,
     date_column: str,
-    categorical_columns: List[str],
+    categorical_columns: list[str],
     numerator_column: str,
     denominator_column: str,
 ) -> pl.Expr:
@@ -23,7 +21,7 @@ def lagged_mean_encoding(
         The lazyframe to be processed.
     date_column : str
         The name of the date column.
-    categorical_columns : List[str]
+    categorical_columns : list[str]
         The list of names of the categorical columns.
     numerator_column : str
         The name of the numerator column.
@@ -58,11 +56,9 @@ def lagged_mean_encoding(
     )
 
     # Step 4: Merge the rolling average ratio back into the original lazyframe
-    result_frame = merge_back_to_lazyframe(
+    return merge_back_to_lazyframe(
         lazy_frame, rolling_avg_ratio, categorical_columns, date_column
     )
-
-    return result_frame
 
 
 # Placeholder for filtering rows based on date

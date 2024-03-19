@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Union
-
 import pandas as pd
 import polars as pl
 
@@ -10,7 +8,7 @@ from predictables.util.src._to_pd import to_pd_df
 
 
 def select_cols_by_dtype(
-    df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], dtype: str
+    df: pd.DataFrame | pl.DataFrame | pl.LazyFrame, dtype: str
 ) -> pd.DataFrame:
     """Select all columns of a specified dtype from a data frame.
 
@@ -26,7 +24,7 @@ def select_cols_by_dtype(
 
     Parameters
     ----------
-    df : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+    df : pd.DataFrame | pl.DataFrame | pl.LazyFrame
         The data frame to select columns from.
     dtype : str
         The dtype to select columns by. Must be one of the following:

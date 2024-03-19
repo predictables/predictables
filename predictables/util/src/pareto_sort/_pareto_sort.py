@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from typing import List
-
 import numpy as np
 
 from predictables.util.src.pareto_sort._is_dominated import is_dominated
 
 
-def pareto_sort(variables: List[np.ndarray]) -> List[np.ndarray]:
+def pareto_sort(variables: list[np.ndarray]) -> list[np.ndarray]:
     """
     Sort a list of variables based on Pareto optimality.
 
@@ -23,8 +21,8 @@ def pareto_sort(variables: List[np.ndarray]) -> List[np.ndarray]:
         A sorted list of variables based on Pareto optimality.
     """
     # Loop over the variables, sorting based on the is_dominated condition
-    sorted_variables: List[np.ndarray] = []
-    sorded_order_index: List[int] = []
+    sorted_variables: list[np.ndarray] = []
+    sorded_order_index: list[int] = []
     for i, variable in enumerate(variables):
         if not any(is_dominated(variable, v) for v in sorted_variables):
             sorted_variables.append(variable)

@@ -1,5 +1,4 @@
-"""
-This module implements the Box-Cox transformation.
+"""Implement the Box-Cox transformation.
 
 The Box-Cox transformation is a power transformation of the data that is
 intended to stabilize the variance of the data, and in particular to lessen
@@ -13,17 +12,16 @@ log(y), if lambda == 0
 
 from __future__ import annotations
 
-from typing import Tuple, Union
-
 import pandas as pd
 import polars as pl
 from sklearn.preprocessing import PowerTransformer
 
 
 def _calc_box_cox_transform(df: pl.LazyFrame, column: str, lambda_: float) -> pl.Series:
-    """
-    Calculate the Box-Cox transformation of a Series. This is a helper function
-    for the Box-Cox transformation, and is not intended to be called directly.
+    """Calculate the Box-Cox transformation of a Series.
+
+    This is a helper function for the Box-Cox transformation, and is not
+    intended to be called directly.
 
     Parameters
     ----------
@@ -51,15 +49,15 @@ def _calc_box_cox_transform(df: pl.LazyFrame, column: str, lambda_: float) -> pl
 
 
 def _box_cox_transform(
-    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], column: str
-) -> Tuple[pl.LazyFrame, float]:
-    """
-    Calculate the Box-Cox transformation of the given data. The Box-Cox
-    transformation is a power transformation of the data that is intended
-    to stabilize the variance of the data, and in particular to lessen the
-    impact of outliers on the data. It depends on a parameter lambda, which
-    is estimated to minimize the variance of the data. The Box-Cox
-    transformation is defined as:
+    data: pd.DataFrame | pl.DataFrame | pl.LazyFrame, column: str
+) -> tuple[pl.LazyFrame, float]:
+    """Calculate the Box-Cox transformation of the given data.
+
+    The Box-Cox transformation is a power transformation of the data that
+    is intended to stabilize the variance of the data, and in particular to
+    lessen the impact of outliers on the data. It depends on a parameter
+    lambda, which is estimated to minimize the variance of the data. The
+    Box-Cox transformation is defined as:
 
     (y^{lambda} - 1) / lambda, if lambda != 0
     log(y), if lambda == 0

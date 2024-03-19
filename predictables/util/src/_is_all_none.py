@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Union
-
 import numpy as np
 import pandas as pd
 import polars as pl
@@ -27,7 +25,7 @@ def _is_all_none_np(s: np.ndarray) -> bool:
     return np.isnan(s.astype(float)).all()
 
 
-def is_all_none(s: Union[pd.Series, pl.Series]) -> bool:
+def is_all_none(s: pd.Series | pl.Series) -> bool:
     """Check if a series is all None."""
     if isinstance(s, pd.Series):
         return _is_all_none_pd(s)

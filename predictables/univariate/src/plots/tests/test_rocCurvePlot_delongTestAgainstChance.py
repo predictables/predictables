@@ -2,13 +2,11 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Tuple
-
 import numpy as np
 import pandas as pd
 import pytest
 from dotenv import load_dotenv
-from sklearn.metrics import roc_auc_score  # type: ignore
+from sklearn.metrics import roc_auc_score
 
 from predictables.univariate.src.plots._roc_curve_plot import (
     _delong_test_against_chance,
@@ -26,7 +24,7 @@ def cancer():
 
 
 @pytest.fixture
-def sample_data() -> Tuple[pd.Series, pd.Series, pd.Series]:
+def sample_data() -> tuple[pd.Series, pd.Series, pd.Series]:
     """Generate sample data for testing."""
     rg = np.random.default_rng(42)  # Ensure reproducibility
     yhat_proba_logits = pd.Series(rg.random(100))
@@ -38,7 +36,7 @@ def sample_data() -> Tuple[pd.Series, pd.Series, pd.Series]:
 
 
 @pytest.fixture
-def sample_variance(sample_data: Tuple[pd.Series, pd.Series, pd.Series]) -> float:
+def sample_variance(sample_data: tuple[pd.Series, pd.Series, pd.Series]) -> float:
     """Calculate the variance of the AUC for the sample data."""
     y, yhat_proba, fold = sample_data
     aucs = [
@@ -48,7 +46,7 @@ def sample_variance(sample_data: Tuple[pd.Series, pd.Series, pd.Series]) -> floa
 
 
 @pytest.fixture
-def sample_variance_bootstrap(sample_data: Tuple[pd.Series, pd.Series, pd.Series]):
+def sample_variance_bootstrap(sample_data: tuple[pd.Series, pd.Series, pd.Series]):
     y, yhat_proba, _ = sample_data
     rg = np.random.default_rng(42)
     idx = np.array([rg.choice(len(y), len(y), replace=True) for _ in range(2500)])

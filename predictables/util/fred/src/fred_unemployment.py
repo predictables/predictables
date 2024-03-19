@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 import pandas as pd
 from _api_keys import get_fred_api_key
 from fredapi import Fred
@@ -16,7 +14,7 @@ Fred = Fred(api_key=get_fred_api_key())
 def get_fred_data(
     series_id: str,
     start_date: str = "2016-01-01",
-    end_date: Optional[str] = None,
+    end_date: str | None = None,
     frequency: str = "d",
 ) -> pd.DataFrame:
     """

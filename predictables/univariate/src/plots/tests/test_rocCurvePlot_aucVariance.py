@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import logging
-from typing import Tuple
-
 import numpy as np
 import pandas as pd
 import pytest
@@ -13,7 +11,7 @@ from predictables.util import get_unique
 
 
 @pytest.fixture
-def sample_data() -> Tuple[pd.Series, pd.Series, pd.Series]:
+def sample_data() -> tuple[pd.Series, pd.Series, pd.Series]:
     """Generate sample data for testing."""
     rg = np.random.default_rng(42)
     yhat_proba_logits = pd.Series(rg.random(100))
@@ -24,7 +22,7 @@ def sample_data() -> Tuple[pd.Series, pd.Series, pd.Series]:
 
 
 @pytest.fixture
-def sample_variance(sample_data: Tuple[pd.Series, pd.Series, pd.Series]) -> float:
+def sample_variance(sample_data: tuple[pd.Series, pd.Series, pd.Series]) -> float:
     """Calculate the variance of the AUC for the sample data."""
     y, yhat_proba, fold = sample_data
     aucs = [
@@ -34,7 +32,7 @@ def sample_variance(sample_data: Tuple[pd.Series, pd.Series, pd.Series]) -> floa
 
 
 @pytest.fixture
-def sample_variance_bootstrap(sample_data: Tuple[pd.Series, pd.Series, pd.Series]):
+def sample_variance_bootstrap(sample_data: tuple[pd.Series, pd.Series, pd.Series]):
     y, yhat_proba, _ = sample_data
     rg = np.random.default_rng(42)
     idx = np.array([rg.choice(len(y), len(y), replace=True) for _ in range(2500)])
@@ -64,7 +62,7 @@ def large_sample_data():
 
 
 def test_empirical_auc_variance_basic(
-    sample_data: Tuple[pd.Series, pd.Series, pd.Series],
+    sample_data: tuple[pd.Series, pd.Series, pd.Series],
 ):
     """Test basic functionality of the function."""
     y, yhat_proba, fold = sample_data
@@ -75,7 +73,7 @@ def test_empirical_auc_variance_basic(
 
 
 def test_empirical_auc_variance_correct_calculation(
-    sample_data: Tuple[pd.Series, pd.Series, pd.Series], sample_variance: float
+    sample_data: tuple[pd.Series, pd.Series, pd.Series], sample_variance: float
 ):
     """Test the function against a known value."""
     y, yhat_proba, fold = sample_data
@@ -121,8 +119,8 @@ def test_invalid_inputs(y: pd.Series, yhat_proba: pd.Series, fold: pd.Series):
 
 
 def test_empirical_auc_variance_with_bootstrapping(
-    sample_data: Tuple[pd.Series, pd.Series, pd.Series],
-    sample_variance_bootstrap: Tuple[float, float],
+    sample_data: tuple[pd.Series, pd.Series, pd.Series],
+    sample_variance_bootstrap: tuple[float, float],
 ):
     """Test variance computation with bootstrapping enabled."""
     y, yhat_proba, fold = sample_data
@@ -137,7 +135,7 @@ def test_empirical_auc_variance_with_bootstrapping(
 
 
 def test_imbalanced_classes_in_fold(
-    sample_data: Tuple[pd.Series, pd.Series, pd.Series],
+    sample_data: tuple[pd.Series, pd.Series, pd.Series],
 ):
     """Test that the function handles imbalanced class distributions within folds."""
     y, yhat_proba, fold = sample_data
@@ -154,7 +152,7 @@ def test_imbalanced_classes_in_fold(
 
 
 def test_large_data_performance(
-    large_sample_data: Tuple[pd.Series, pd.Series, pd.Series],
+    large_sample_data: tuple[pd.Series, pd.Series, pd.Series],
 ):
     """Test the function's performance on a larger dataset."""
     y, yhat_proba, fold = large_sample_data
@@ -203,7 +201,7 @@ def test_handling_non_numeric_missing_values(
     ],
 )
 def test_skewed_probability_distributions(
-    sample_data: Tuple[pd.Series, pd.Series, pd.Series], skewness: float
+    sample_data: tuple[pd.Series, pd.Series, pd.Series], skewness: float
 ):
     """Test variance calculation with skewed probability distributions."""
     y, yhat_proba, fold = sample_data
@@ -216,7 +214,7 @@ def test_skewed_probability_distributions(
 
 @pytest.mark.parametrize("perfect_separation", [(True,), (False,)])
 def test_perfect_separation(
-    sample_data: Tuple[pd.Series, pd.Series, pd.Series], perfect_separation: bool
+    sample_data: tuple[pd.Series, pd.Series, pd.Series], perfect_separation: bool
 ):
     """Test variance calculation with perfect or near-perfect separation."""
     y, yhat_proba, fold = sample_data

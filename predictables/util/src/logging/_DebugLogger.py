@@ -4,8 +4,7 @@ import datetime
 import logging as _logging
 import os
 import uuid as _uuid
-from typing import Callable, Optional
-
+from typing import Callable
 from dotenv import load_dotenv
 
 from predictables.util.src.logging._LogLevel import LogLevel
@@ -20,14 +19,14 @@ class DebugLogger(_logging.Logger):
     session.
     """
 
-    uuid: Optional[_uuid.UUID]
+    uuid: _uuid.UUID | None
     turned_on: bool
 
     def __init__(
         self,
         filename: str = "debug.log",
-        working_file: Optional[str] = None,
-        message_prefix: Optional[Callable] = None,
+        working_file: str | None = None,
+        message_prefix: Callable | None = None,
     ):
         """Initialize the DebugLogger class."""
         self.uuid = _uuid.uuid1()

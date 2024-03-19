@@ -4,26 +4,20 @@ from predictables.src._utils import _to_polars
 
 
 def _iqr(df: pl.LazyFrame, col: str) -> float:
-    """
-    Helper function to calculate the interquartile range (IQR) of a column in a LazyFrame.
-    """
+    """Calculate the interquartile range (IQR) of a column in a LazyFrame."""
     # Convert to LazyFrame if necessary
     df = _to_polars(df, "lf")
 
     # Calculate IQR
-    iqr = (
+    return (
         df.select(pl.col(col).quantile(0.75) - pl.col(col).quantile(0.25))
         .collect()
         .item()
     )
 
-    return iqr
-
 
 def _tukeys_fences(df: pl.LazyFrame, col: str, k: float = 1.5) -> tuple:
-    """
-    Function to calculate Tukey's fences for a column in a LazyFrame.
-    """
+    """Calculate Tukey's fences for a column in a LazyFrame."""
     # Convert to LazyFrame if necessary
     df = _to_polars(df, "lf")
 
@@ -38,8 +32,7 @@ def _tukeys_fences(df: pl.LazyFrame, col: str, k: float = 1.5) -> tuple:
 
 
 def tukeys_outliers(df: pl.LazyFrame, col: str, k: float = 1.5) -> pl.LazyFrame:
-    """
-    Function to calculate Tukey's fences a column in a LazyFrame.
+    """Calculate Tukey's fences a column in a LazyFrame.
 
     Parameters
     ----------
@@ -63,7 +56,4 @@ def tukeys_outliers(df: pl.LazyFrame, col: str, k: float = 1.5) -> pl.LazyFrame:
     lower_fence, upper_fence = _tukeys_fences(df, col, k)
 
     # Filter to only include outliers
-    df = df.filter((pl.col(col) < lower_fence).or_((pl.col(col) > upper_fence)))
-
-    # Return filtered LazyFrame
-    return df
+    return df.filter((pl.col(col) < lower_fence).or_((pl.col(col) > upper_fence)))

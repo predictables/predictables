@@ -4,13 +4,11 @@ import datetime
 import json
 import uuid
 from pathlib import Path
-from typing import Optional
-
 from predictables.util.src.logging._Log import Log
 
 
 class Logger:
-    def __init__(self, name: str = "log", file_name: Optional[str] = None):
+    def __init__(self, name: str = "log", file_name: str | None = None):
         """Create a logger that logs _Log.
 
         Parameters
