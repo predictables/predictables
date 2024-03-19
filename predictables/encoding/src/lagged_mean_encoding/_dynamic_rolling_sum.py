@@ -10,25 +10,26 @@ from predictables.util import validate_lf
 
 
 class DynamicRollingSum:
-    """
-    Class to create a dynamic rolling sum using polars' lazy API. The dynamic
-    rolling sum is a rolling sum that is calculated relative to the value in
-    a date column. The rolling sum is calculated for each row in the LazyFrame
-    using the values in a value column, and the dates in the date column.
+    """Create a dynamic rolling sum using polars' lazy API.
+
+    The dynamic rolling sum is a rolling sum that is calculated relative to
+    the value in a date column. The rolling sum is calculated for each row
+    in the LazyFrame using the values in a value column, and the dates in
+    the date column.
 
     This class uses the builder pattern to set the parameters for the rolling
     sum, and the run method to execute the rolling sum.
 
     Methods
     -------
-    lf(lf: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame, np.ndarray]) -> "DynamicRollingSum":
+    lf(lf: pl.LazyFrame | pl.DataFrame | pd.DataFrame | np.ndarray) -> "DynamicRollingSum":
         Sets the LazyFrame to be used for the rolling sum.
     x_col(x_col: str) -> "DynamicRollingSum":
         Sets the column containing the values that will be summed.
     date_col(date_col: str) -> "DynamicRollingSum":
         Sets the column containing the dates that will be used for
         the rolling sum.
-    category_cols(category_cols: Union[str, List[str]]) -> "DynamicRollingSum":
+    category_cols(category_cols: str | list[str]) -> "DynamicRollingSum":
         Sets the column containing the categories that will be used to group
         the rolling sum. If a single column is provided, the rolling sum will
         be grouped by that column. If a list of columns is provided, the rolling
@@ -64,16 +65,16 @@ class DynamicRollingSum:
         self._window = None
 
     def lf(
-        self, lf: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame, np.ndarray]
+        self, lf: pl.LazyFrame | pl.DataFrame | pd.DataFrame | np.ndarray
     ) -> "DynamicRollingSum":
-        """
-        Sets the LazyFrame to be used for the rolling sum. The column names
-        should be the same as the column names used for the x_col, date_col,
-        and index_col.
+        """Set the LazyFrame to be used for the rolling sum.
+
+        The column names should be the same as the column names used
+        for the x_col, date_col, and index_col.
 
         Parameters
         ----------
-        lf : Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame, np.ndarray]
+        lf : pl.LazyFrame | pl.DataFrame | pd.DataFrame | np.ndarray
             The LazyFrame to be used for the rolling sum.
 
         Returns
@@ -85,9 +86,9 @@ class DynamicRollingSum:
         return self
 
     def x_col(self, x_col: str = "value") -> "DynamicRollingSum":
-        """
-        Sets the column to be used for the rolling sum. First checks that the
-        column exists in the LazyFrame.
+        """Set the column to be used for the rolling sum.
+
+        First checks that the column exists in the LazyFrame.
 
         Parameters
         ----------
@@ -102,7 +103,7 @@ class DynamicRollingSum:
 
         # Define an inside function to use the validate_column decorator
         # @validate_column(self._lf, x_col)
-        def _set_x_col(self, x_col: str) -> "DynamicRollingSum":
+        def _set_x_col(self, x_col: str) -> "DynamicRollingSum":  # noqa: ANN001
             self._x_col = x_col
             return self
 
@@ -110,9 +111,9 @@ class DynamicRollingSum:
         return _set_x_col(self, x_col)
 
     def x_name(self, x_name: str | None = None) -> "DynamicRollingSum":
-        """
-        Sets the name of the column to be used for the rolling sum. First checks that
-        the column exists in the LazyFrame.
+        """Set the name of the column to be used for the rolling sum.
+
+        First checks that the column exists in the LazyFrame.
 
         Parameters
         ----------
@@ -128,7 +129,7 @@ class DynamicRollingSum:
 
         # Define an inside function to use the validate_column decorator
         # @validate_column(self._lf, x_col)
-        def _set_x_name(self, x_name: str) -> "DynamicRollingSum":
+        def _set_x_name(self, x_name: str) -> "DynamicRollingSum":  # noqa: ANN001
             self._x_name = x_name
             return self
 
@@ -141,9 +142,9 @@ class DynamicRollingSum:
             return self
 
     def date_col(self, date_col: str = "date") -> "DynamicRollingSum":
-        """
-        Sets the date column to be used for the rolling sum. First checks that
-        the column exists in the LazyFrame.
+        """Set the date column to be used for the rolling sum.
+
+        First checks that the column exists in the LazyFrame.
 
         Parameters
         ----------
@@ -158,7 +159,7 @@ class DynamicRollingSum:
 
         # Define an inside function to use the validate_column decorator
         # @validate_column(self._lf, date_col)
-        def _set_date_col(self, date_col: str) -> "DynamicRollingSum":
+        def _set_date_col(self, date_col: str) -> "DynamicRollingSum":  # noqa: ANN001
             self._date_col = date_col
             return self
 
@@ -166,15 +167,15 @@ class DynamicRollingSum:
         return _set_date_col(self, date_col)
 
     def category_cols(
-        self, category_cols: Union[str, List[str]] = "category"
+        self, category_cols: str | list[str] = "category"
     ) -> "DynamicRollingSum":
-        """
-        Sets the category column to be used for the rolling sum. First checks
-        that the column exists in the LazyFrame.
+        """Set the category column to be used for the rolling sum.
+
+        First checks that the column exists in the LazyFrame.
 
         Parameters
         ----------
-        category_cols : Union[str, List[str]], default "category"
+        category_cols : str | list[str], default "category"
             The name of the column to be used for the rolling sum.
 
         Returns
@@ -186,7 +187,8 @@ class DynamicRollingSum:
         # Define an inside function to use the validate_column decorator
         # @validate_column(self._lf, category_cols)
         def _set_category_cols(
-            self, category_cols: Union[str, List[str]]
+            self,  # noqa: ANN001
+            category_cols: str | list[str],
         ) -> "DynamicRollingSum":
             self._category_cols = category_cols
             return self
@@ -195,9 +197,9 @@ class DynamicRollingSum:
         return _set_category_cols(self, category_cols)
 
     def index_col(self, index_col: str = "index") -> "DynamicRollingSum":
-        """
-        Sets the index column to be used for the rolling sum. First checks that
-        the column exists in the LazyFrame.
+        """Set the index column to be used for the rolling sum.
+
+        First checks that the column exists in the LazyFrame.
 
         Parameters
         ----------
@@ -212,7 +214,7 @@ class DynamicRollingSum:
 
         # Define an inside function to use the validate_column decorator
         # @validate_column(self._lf, index_col)
-        def _set_index_col(self, index_col: str) -> "DynamicRollingSum":
+        def _set_index_col(self, index_col: str) -> "DynamicRollingSum":  # noqa: ANN001
             self._index_col = index_col
             return self
 
@@ -220,10 +222,10 @@ class DynamicRollingSum:
         return _set_index_col(self, index_col)
 
     def offset(self, offset: int = 30) -> "DynamicRollingSum":
-        """
-        Sets the offset for the rolling sum. The offset is the number of days
-        to offset the rolling sum by. The most recent day considered will be
-        the date in the date column minus the offset.
+        """Set the offset for the rolling sum.
+
+        The offset is the number of days to offset the rolling sum by.
+        The most recent day considered will be the date in the date column minus the offset.
 
         Parameters
         ----------
@@ -239,10 +241,11 @@ class DynamicRollingSum:
         return self
 
     def window(self, window: int = 360) -> "DynamicRollingSum":
-        """
-        Sets the window for the rolling sum. The window is the number of days
-        to include in the rolling sum. The earliest day considered will be
-        the date in the date column minus the sum of the offset and the window.
+        """Set the window for the rolling sum.
+
+        The window is the number of days to include in the rolling sum. The
+        earliest day considered will be the date in the date column minus the
+        sum of the offset and the window.
 
         Parameters
         ----------
@@ -258,8 +261,8 @@ class DynamicRollingSum:
         return self
 
     def run(self) -> pl.LazyFrame:
-        """
-        Runs the dynamic rolling sum using the provided LazyFrame and parameters.
+        """Run the dynamic rolling sum using the provided LazyFrame and parameters.
+
         Raises an exception if any of the required parameters are not set.
 
         If a categorical column is provided, the rolling sum will be grouped by
@@ -275,7 +278,7 @@ class DynamicRollingSum:
         Note that the categorical columns are the only optional parameters.
         """
 
-        def test_param(self, p):
+        def test_param(self, p: str) -> None:  # noqa: ANN001
             if getattr(self, p) is None:
                 raise ValueError(f"Parameter {p} has not been set.")
 
@@ -293,24 +296,21 @@ class DynamicRollingSum:
                 unique_levels = (
                     self._lf.select(c).unique().collect().to_series().to_list()
                 )
-                cat_dfs = []
-                for level in unique_levels:
-                    cat_dfs.append(
-                        dynamic_rolling_sum(
-                            lf=self._lf.filter(pl.col(c).cast(pl.Utf8) == str(level)),
-                            x_col=self._x_col,
-                            date_col=self._date_col,
-                            index_col=self._index_col,
-                            offset=self._offset,
-                            window=self._window,
-                        )
-                        .with_columns([pl.lit(str(level)).alias(c)])
-                        .with_columns(
-                            pl.col("rolling_value_list").alias(f"rolling_{c}")
-                        )
-                        .drop(["rolling_value_list"])
-                        .sort(["index", c])
+                cat_dfs = [
+                    dynamic_rolling_sum(
+                        lf=self._lf.filter(pl.col(c).cast(pl.Utf8) == str(level)),
+                        x_col=self._x_col,
+                        date_col=self._date_col,
+                        index_col=self._index_col,
+                        offset=self._offset,
+                        window=self._window,
                     )
+                    .with_columns([pl.lit(str(level)).alias(c)])
+                    .with_columns(pl.col("rolling_value_list").alias(f"rolling_{c}"))
+                    .drop(["rolling_value_list"])
+                    .sort(["index", c])
+                    for level in unique_levels
+                ]
 
                 self._lf = self._lf.join(
                     pl.concat(cat_dfs, how="vertical"), on=["index", c], how="left"
@@ -434,7 +434,8 @@ def dynamic_rolling_sum(
 
 
 def _format_date_col(lf: pl.LazyFrame, date_col: str) -> pl.LazyFrame:
-    """
+    """Generate a LazyFrame with the date column correctly formatted as a Date.
+
     Takes a LazyFrame and the name of the date column, and returns a LazyFrame
     with the date column correctly formatted as a Date.
     """
@@ -442,7 +443,8 @@ def _format_date_col(lf: pl.LazyFrame, date_col: str) -> pl.LazyFrame:
 
 
 def _format_value_col(lf: pl.LazyFrame, value_col: str) -> pl.LazyFrame:
-    """
+    """Generate a LazyFrame with the value column correctly formatted as a Float64.
+
     Takes a LazyFrame and the name of the value column, and returns a LazyFrame
     with the value column correctly formatted as a Float64.
     """
@@ -452,7 +454,8 @@ def _format_value_col(lf: pl.LazyFrame, value_col: str) -> pl.LazyFrame:
 def _get_date_list_col(
     lf: pl.LazyFrame, date_col: str, offset: int = 30, window: int = 360
 ) -> pl.LazyFrame:
-    """
+    """Generate a LazyFrame with a new column containing a list of dates.
+
     Takes a LazyFrame and the name of the date column, and optionally an
     integer representing the offset and window, and returns a LazyFrame with
     a new column containing a list of dates. This list of dates is used to

@@ -1,2 +1,2 @@
-# from ._PredicTables import PredicTables  # noqa F401
-# from .src import *  # noqa F401
+# from ._PredicTables import PredicTables  # noqa: ERA001
+# from .src import *  # noqa: ERA001

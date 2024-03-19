@@ -1,9 +1,8 @@
 import polars as pl
 
 
-def results_tbl_expr(col, formatted_name, formatting_str) -> pl.Expr:
-    """
-    Create an expression to format a column in a results table.
+def results_tbl_expr(col: pl.Expr, formatted_name: str, formatting_str: str) -> pl.Expr:
+    """Create an expression to format a column in a results table.
 
     Parameters
     ----------

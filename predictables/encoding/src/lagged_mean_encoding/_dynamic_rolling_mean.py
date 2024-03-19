@@ -12,8 +12,9 @@ class DynamicRollingMean(DynamicRollingSum):
         self._numrator_col = None
         self._denominator_col = None
 
-    def x_col(*args, **kwargs):
-        """
+    def x_col(*args, **kwargs) -> "DynamicRollingMean":
+        """Set the column to use as the numerator in the rolling mean calculation.
+
         Warning
         -------
         This method is not implemented for `DynamicRollingMean`. Use
@@ -24,8 +25,9 @@ class DynamicRollingMean(DynamicRollingSum):
             "Use `numerator_col` and `denominator_col` instead."
         )
 
-    def x_name(*args, **kwargs):
-        """
+    def x_name(*args, **kwargs) -> "DynamicRollingMean":
+        """Set the name of the column to use as the numerator in the rolling mean calculation.
+
         Warning
         -------
         This method is not implemented for `DynamicRollingMean`. Use
@@ -55,7 +57,7 @@ class DynamicRollingMean(DynamicRollingSum):
 
         # Define an inside function to use the validate_column decorator
         # @validate_column(self._lf, x_col)
-        def _set_numerator_col(self, numerator_col: str) -> "DynamicRollingSum":
+        def _set_numerator_col(self, numerator_col: str) -> "DynamicRollingSum":  # noqa: ANN001
             self.numerator_col = numerator_col
             return self
 
@@ -89,9 +91,7 @@ class DynamicRollingMean(DynamicRollingSum):
         return self
 
     def build_numerator_col(self) -> None:
-        """
-        Build the numerator column for the rolling mean calculation, and return
-        the `LazyFrame` with the numerator column built.
+        """Build the numerator column for the rolling mean calculation, and return the `LazyFrame` with the numerator column built.
 
         Parameters
         ----------
@@ -165,9 +165,7 @@ class DynamicRollingMean(DynamicRollingSum):
         )
 
     def run(self) -> pl.LazyFrame:
-        """
-        Run the rolling mean calculation on the `LazyFrame` and return the
-        result.
+        """Run the rolling mean calculation on the `LazyFrame` and return the result.
 
         Returns
         -------

@@ -60,8 +60,8 @@ class UnivariateAnalysis:
         Validation dataset used for evaluating feature performance.
     target_column_name : str
         Name of the target variable in the dataset.
-    feature_column_names : List[str]
-        List of names of the features to be analyzed.
+    feature_column_names : list[str]
+        list of names of the features to be analyzed.
     cv_column_name : str | None
         Name of the column used for cross-validation splitting. Defaults to "cv" if not provided.
     cv_folds : Optional[pd.Series]
@@ -143,10 +143,10 @@ class UnivariateAnalysis:
         df_train: pl.LazyFrame,
         df_val: pl.LazyFrame,
         target_column_name: str,
-        feature_column_names: List[str],
+        feature_column_names: list[str],
         time_series_validation: bool,
         cv_column_name: str | None = None,
-        cv_folds: Optional[pl.Series] = None,
+        cv_folds: pl.Series | None = None,
     ):
         """Initialize the UnivariateAnalysis class.
 
@@ -163,14 +163,14 @@ class UnivariateAnalysis:
             The validation dataset used for evaluating feature performance.
         target_column_name : str
             The name of the target variable in the dataset.
-        feature_column_names : List[str]
+        feature_column_names : list[str]
             A list of names of the features to be analyzed.
         time_series_validation : bool
             Indicates whether to use a time series validation strategy for feature evaluation.
         cv_column_name : str | None, optional
             The name of the column used for cross-validation splitting, by default None. If None,
             a default column name "cv" is assumed.
-        cv_folds : Optional[pl.Series], optional
+        cv_folds : pl.Series | None, optional
             A series containing cross-validation fold identifiers for each row in the dataset. If None,
             it is assumed that the `cv_column_name` in `df_train` is used, by default None.
 
@@ -319,7 +319,7 @@ class UnivariateAnalysis:
 
     def _sort_features_by_ua(
         self, return_pd: bool = False
-    ) -> Union[pl.LazyFrame, pd.DataFrame]:
+    ) -> pd.DataFrame | pl.LazyFrame:
         """
         Sorts features based on their average performance metrics in univariate analysis.
 
@@ -331,7 +331,7 @@ class UnivariateAnalysis:
 
         Returns
         -------
-        Union[pl.LazyFrame, pd.DataFrame]
+        pd.DataFrame | pl.LazyFrame
             Sorted features based on average performance metrics. The format of the return
             value depends on the `return_pd` parameter.
 
@@ -386,15 +386,15 @@ class UnivariateAnalysis:
                 "No valid Univariate analysis results found for any feature."
             )
 
-    def get_features(self):
+    def get_features(self) -> list[str]:
+        """Return a list of feature names that have been analyzed."""
         dbg.msg("Getting features - UA0002")  # debug only
         return self._feature_list
 
     def _get_file_stem(
         self, filename: str | None = None, default: str = "Univariate Analysis Report"
     ) -> str:
-        """
-        Helper function to get the file stem from a filename.
+        """Generate the file stem from a filename.
 
         Parameters
         ----------
@@ -425,12 +425,8 @@ class UnivariateAnalysis:
         >>> _get_file_stem(None, "Univariate Analysis Report")
         "Univariate Analysis Report"
         """
-        dbg.msg("Getting file stem - UA0003")
         if filename is not None:
-            dbg.msg(
-                f"Filename ({filename}) was passed to _get_file_stem - UA0004"
-            )  # debug only
-            file_stem, _ = os.path.splitext(filename)
+            file_stem = filename.split(".")[0]
             dbg.msg(
                 f"File stem ({file_stem}) was extracted from filename ({filename}) "
                 "and should not have an extension - UA0005"
@@ -446,7 +442,7 @@ class UnivariateAnalysis:
         end_num: int | None = None,
         default: str = "Univariate Analysis Report",
     ) -> str:
-        """Helper function to get the file name from a filename."""
+        """Generate the file name from a filename."""
         if file_stem is not None and (start_num is None or end_num is None):
             return file_stem + ".pdf"
         if start_num is not None and end_num is not None:
@@ -463,8 +459,8 @@ class UnivariateAnalysis:
         )
 
     def _segment_features(
-        self, features: List[str], max_per_file: int
-    ) -> List[Segment]:
+        self, features: list[str], max_per_file: int
+    ) -> list[Segment]:
         """
         Segments features into chunks for report generation.
 
@@ -506,12 +502,12 @@ class UnivariateAnalysis:
 
     def _add_to_report(self, rpt: Report, feature: str) -> Report:
         ua = getattr(self, fmt_col_name(feature))
-        return ua._add_to_report(rpt)
+        return ua._add_to_report(rpt)  # noqa: SLF001
 
     def _generate_segment_report(
-        self, segment: dict, filestem_: str, margins_: List[float]
-    ):
-        """Generates a report for a specific segment of features."""
+        self, segment: dict, filestem_: str, margins_: list[float]
+    ) -> None:
+        """Generate a report for a specific segment of features."""
         filename_ = self._rpt_filename(
             filestem_, segment["file_num_start"], segment["file_num_end"]
         )
@@ -534,11 +530,10 @@ class UnivariateAnalysis:
     def build_report(
         self,
         filename: str | None = None,
-        margins: Optional[List[float]] = None,
+        margins: list[float] | None = None,
         max_per_file: int = 25,
     ) -> None:
-        """
-        Builds a report for the univariate analysis.
+        """Build a report for the univariate analysis.
 
         Parameters
         ----------
@@ -581,11 +576,11 @@ class UnivariateAnalysis:
 
             # Process each feature within the current segment
             for feature_name in segment.features:
-                rpt = getattr(self, fmt_col_name(feature_name))._add_to_report(rpt)
+                rpt = getattr(self, fmt_col_name(feature_name))._add_to_report(rpt)  # noqa: SLF001
 
             # Finalize the current segment's report
             rpt.build()
-            i += 1
+            i += 1  # noqa: SIM113 (if I do this I can't use i in the tqdm description)
 
     def _rpt_overview_page(self, rpt: Report, first_idx: int, last_idx: int) -> Report:
         overview_df = self._sort_features_by_ua().slice(
@@ -667,9 +662,9 @@ class UnivariateAnalysis:
     def _rpt_title_page(
         self,
         filename: str | None = None,
-        margins: Optional[List[float]] = None,
+        margins: list[float] | None = None,
         date_of_report: datetime.datetime = current_date,
-    ):
+    ) -> Report:
         rpt = Report(
             filename if filename is not None else "univariate_report.pdf",
             margins=margins if margins is not None else [0.5, 0.5, 0.5, 0.5],

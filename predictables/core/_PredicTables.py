@@ -18,7 +18,7 @@ class PredicTables:
         df_val: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
         df_test: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
         target_column_name: str,
-        cv_folds: Union[pl.Series, pd.Series],
+        cv_folds: pd.Series | pl.Series,
         has_time_series_structure: bool = False,
     ):
         self.model_name = model_name
@@ -31,9 +31,7 @@ class PredicTables:
         self.has_time_series_structure = has_time_series_structure
 
         self.feature_column_names = [
-            col
-            for col in self.df_train
-            if col not in ["cv", self.target_column_name]  # type: ignore
+            col for col in self.df_train if col not in ["cv", self.target_column_name]
         ]
 
         self.ua = UnivariateAnalysis(

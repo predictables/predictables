@@ -104,7 +104,7 @@ def test_univariate_analysis_init(test_data):
 )
 def test_get_file_stem(ua, filename, default, expected):
     assert (
-        ua._get_file_stem(filename, default) == expected
+        ua._get_file_stem(filename, default) == expected  # noqa: SLF001
     ), f"Expected {expected} but got a different result"
 
 
@@ -119,7 +119,7 @@ def test_get_file_stem(ua, filename, default, expected):
     ],
 )
 def test_rpt_filename(ua, file_stem, file_num_start_num, end_num, default, expected):
-    result = ua._rpt_filename(
+    result = ua._rpt_filename(  # noqa: SLF001
         file_stem=file_stem,
         start_num=file_num_start_num,
         end_num=end_num,
@@ -154,7 +154,7 @@ def test_rpt_filename(ua, file_stem, file_num_start_num, end_num, default, expec
     ],
 )
 def test_build_desc(total_features, max_per_file, expected):
-    description = UnivariateAnalysis._build_desc(total_features, max_per_file)
+    description = UnivariateAnalysis._build_desc(total_features, max_per_file)  # noqa: SLF001
     assert (
         description == expected
     ), f"Expected description '{expected}', but got '{description}'"

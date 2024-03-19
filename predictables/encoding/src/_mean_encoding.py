@@ -1,8 +1,5 @@
 from __future__ import annotations
-
-
 import polars as pl
-
 from predictables.util import tqdm
 
 
@@ -13,15 +10,14 @@ def mean_encode_df(
     col2: str,
     date_col: str,
     date_offset: int = 1,
-    drop_cols: bool = True,
-    drop_mean_ratio: bool = True,
-    keep_cat_col: bool = True,
+    drop_cols: bool = True,  # noqa: ARG001
+    drop_mean_ratio: bool = True,  # noqa: ARG001
+    keep_cat_col: bool = True,  # noqa: ARG001
     laplace_alpha: int = 0,
 ) -> pl.DataFrame:
-    """
-    Mean-encode a list of categorical columns in a dataframe using lazy evaluation
-    and window functions. Calculate running sums of `col1` and `col2` up to but not
-    including the date in each row.
+    """Mean-encode a list of categorical columns in a dataframe using lazy evaluation and window functions.
+
+    Calculate running sums of `col1` and `col2` up to but not including the date in each row.
 
     Parameters
     ----------
@@ -75,9 +71,9 @@ def mean_encode_df2(
     col2: str,
     date_col: str,
     date_offset: int = 1,
-    drop_cols: bool = True,
-    drop_mean_ratio: bool = True,
-    keep_cat_col: bool = True,
+    drop_cols: bool = True,  # noqa: ARG001
+    drop_mean_ratio: bool = True,  # noqa: ARG001
+    keep_cat_col: bool = True,  # noqa: ARG001
     laplace_alpha: int = 0,
 ) -> pl.DataFrame:
     for c in tqdm(cat_cols, desc="Mean-encoding columns"):
@@ -109,10 +105,38 @@ def mean_encoding_with_ratio_lazy(
     keep_cat_col: bool = True,
     laplace_alpha: int = 0,
 ) -> pl.DataFrame:
-    """
-    Perform mean encoding on a categorical column using lazy evaluation and window
-    functions. Calculate running sums of `col1` and `col2` up to but not including
-    the date in each row.
+    """Perform mean encoding on a categorical column using lazy evaluation and window functions.
+
+    Calculate running sums of `col1` and `col2` up to but not including the
+    date in each row.
+
+    Parameters
+    ----------
+    df : pl.DataFrame
+        The dataframe to mean-encode.
+    cat_col : str
+        The name of the categorical column to mean-encode.
+    col1 : str
+        The name of the numerator column to use for mean encoding.
+    col2 : str
+        The name of the denominator column to use for mean encoding.
+    date_col : str
+        The name of the date column to use for mean encoding.
+    date_offset : int, optional
+        The number of days to offset the date column. Default is 1.
+    drop_cols : bool, optional
+        Whether to drop the intermediate columns. Default is True.
+    drop_mean_ratio : bool, optional
+        Whether to drop the mean ratio column. Default is True.
+    keep_cat_col : bool, optional
+        Whether to keep the original categorical column. Default is True.
+    laplace_alpha : int, optional
+        The Laplace smoothing parameter. Default is 0.
+
+    Returns
+    -------
+    pl.DataFrame
+        The mean-encoded dataframe.
     """
     # Get the number of unique features in the categorical column
     n_cats = df.select(pl.col(cat_col)).n_unique()

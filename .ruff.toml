@@ -27,6 +27,7 @@ exclude = [
     "node_modules",
     "site-packages",
     "venv",
+    "docs/*"
 ]
 
 # Same as Black.
@@ -47,6 +48,7 @@ skip-magic-trailing-comma = true
 [lint]
 dummy-variable-rgx = "^_$" # Only ignore variables named "_"
 fixable = ["ALL"]
+exclude = ["*.ipynb"]
 ignore = [
     "ANN002",
     "ANN003",
@@ -190,6 +192,7 @@ unfixable = ["F401"] # Disable fix for unused imports (`F401`).
 "*.ipynb" = ["T201", "PLR2004", "ERA001"]
 "*Univariate_2.py" = ["ERA001"]
 "*Model_2.py" = ["ERA001", "PGH003"]
+"*_lagged_mean_encoding*" = ["ALL"]
 
 [lint.extend-per-file-ignores]
 # Ignore `E402` and `F401` in all `__init__.py` files.
