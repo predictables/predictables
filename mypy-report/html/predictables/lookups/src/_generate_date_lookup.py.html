@@ -165,8 +165,9 @@
 <span class="line-precise" title="No Anys on this line!">    start_date: datetime.date = default_start_date,</span>
 <span class="line-precise" title="No Anys on this line!">    end_date: datetime.date = default_end_date,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pd.DataFrame:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Generates a dataframe with the following columns:</span>
+<span class="line-empty" title="No Anys on this line!">    """Generate a date lookup dataframe.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    This dataframe has the following columns:</span>
 <span class="line-empty" title="No Anys on this line!">    - date_id: integer</span>
 <span class="line-empty" title="No Anys on this line!">    - date: date</span>
 <span class="line-empty" title="No Anys on this line!">    - year: integer</span>
@@ -217,7 +218,7 @@ Omitted Generics (x54)
 Explicit (x4)
 Unannotated (x2)">        pd.DataFrame(pd.date_range(start=start_date, end=end_date), columns=["date"])</span>
 <span class="line-empty" title="No Anys on this line!">        .reset_index()</span>
-<span class="line-precise" title="No Anys on this line!">        .rename(columns=dict(index="date_id"))</span>
+<span class="line-precise" title="No Anys on this line!">        .rename(columns={"index": "date_id"})</span>
 <span class="line-precise" title="No Anys on this line!">        .set_index("date_id")</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -346,15 +347,14 @@ Explicit (x5)
 Unannotated (x2)">    dates["sin[day_of_year]"] = dates["day_of_year_cpx"].apply(lambda x: np.sin(x))</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="Any Types on this line: 
-Omitted Generics (x9)">    dates.drop(</span>
+Omitted Generics (x9)">    dates = dates.drop(</span>
 <span class="line-empty" title="No Anys on this line!">        columns=[</span>
 <span class="line-precise" title="No Anys on this line!">            "quarter_cpx",</span>
 <span class="line-precise" title="No Anys on this line!">            "month_cpx",</span>
 <span class="line-precise" title="No Anys on this line!">            "day_cpx",</span>
 <span class="line-precise" title="No Anys on this line!">            "day_of_week_cpx",</span>
 <span class="line-precise" title="No Anys on this line!">            "day_of_year_cpx",</span>
-<span class="line-empty" title="No Anys on this line!">        ],</span>
-<span class="line-precise" title="No Anys on this line!">        inplace=True,</span>
+<span class="line-empty" title="No Anys on this line!">        ]</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 </pre></td>
 </tr></tbody>

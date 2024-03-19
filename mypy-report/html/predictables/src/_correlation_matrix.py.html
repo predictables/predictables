@@ -225,9 +225,10 @@
 <span id="L215" class="lineno"><a class="lineno" href="#L215">215</a></span>
 <span id="L216" class="lineno"><a class="lineno" href="#L216">216</a></span>
 <span id="L217" class="lineno"><a class="lineno" href="#L217">217</a></span>
+<span id="L218" class="lineno"><a class="lineno" href="#L218">218</a></span>
+<span id="L219" class="lineno"><a class="lineno" href="#L219">219</a></span>
 </pre></td>
-<td class="table-code"><pre><span class="line-empty" title="No Anys on this line!">"""</span>
-<span class="line-empty" title="No Anys on this line!">This module performs correlation matrix analysis on the data.</span>
+<td class="table-code"><pre><span class="line-empty" title="No Anys on this line!">"""Perform correlation matrix analysis on the data.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">Functions</span>
 <span class="line-empty" title="No Anys on this line!">---------</span>
@@ -238,8 +239,6 @@
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Union</span>
-<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import matplotlib.pyplot as plt</span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
@@ -249,14 +248,13 @@
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">def _pearson_correlation_matrix(</span>
-<span class="line-precise" title="No Anys on this line!">    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], method: str = "pearson"</span>
+<span class="line-precise" title="No Anys on this line!">    data: pd.DataFrame | pl.DataFrame | pl.LazyFrame, method: str = "pearson"</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pd.DataFrame:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Calculates the correlation matrix for the data.</span>
+<span class="line-empty" title="No Anys on this line!">    """Calculate the correlation matrix for the data.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    data : Union[pd.DataFrame, pl.DataFrame,  pl.LazyFrame]</span>
+<span class="line-empty" title="No Anys on this line!">    data : pd.DataFrame | pl.DataFrame | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">        The data to be analyzed.</span>
 <span class="line-empty" title="No Anys on this line!">    method : str, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The method to calculate the correlation matrix. The default is 'pearson'. No other</span>
@@ -335,14 +333,13 @@ Explicit (x1)">    return corr</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">def _correlation_matrix(</span>
-<span class="line-precise" title="No Anys on this line!">    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], method: str = "pearson"</span>
+<span class="line-precise" title="No Anys on this line!">    data: pd.DataFrame | pl.DataFrame | pl.LazyFrame, method: str = "pearson"</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pd.DataFrame:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Calculates the correlation matrix for the data.</span>
+<span class="line-empty" title="No Anys on this line!">    """Calculate the correlation matrix for the data.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    data : Union[pd.DataFrame, pl.DataFrame,  pl.LazyFrame]</span>
+<span class="line-empty" title="No Anys on this line!">    data : pd.DataFrame | pl.DataFrame | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">        The data to be analyzed.</span>
 <span class="line-empty" title="No Anys on this line!">    method : str, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The method to calculate the correlation matrix. The default is 'pearson'. No other</span>
@@ -358,21 +355,26 @@ Explicit (x1)">    return corr</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x4)">def _correlation_matrix_plot(</span>
-<span class="line-empty" title="No Anys on this line!">    data: Union[</span>
-<span class="line-empty" title="No Anys on this line!">        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list</span>
-<span class="line-empty" title="No Anys on this line!">    ],</span>
+<span class="line-empty" title="No Anys on this line!">    data: pd.DataFrame</span>
+<span class="line-empty" title="No Anys on this line!">    | pd.Series</span>
+<span class="line-empty" title="No Anys on this line!">    | pl.DataFrame</span>
+<span class="line-empty" title="No Anys on this line!">    | pl.Series</span>
+<span class="line-empty" title="No Anys on this line!">    | pl.LazyFrame</span>
+<span class="line-empty" title="No Anys on this line!">    | np.ndarray</span>
+<span class="line-empty" title="No Anys on this line!">    | list,</span>
 <span class="line-precise" title="No Anys on this line!">    method: str = "pearson",</span>
 <span class="line-precise" title="No Anys on this line!">    ax: plt.Axes = None,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plots the correlation matrix. If an axis is passed, the plot will be added to the</span>
-<span class="line-empty" title="No Anys on this line!">    axis. Otherwise, a new figure will be created.</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot the correlation matrix.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    If an axis is passed, the plot will be added to the axis.</span>
+<span class="line-empty" title="No Anys on this line!">    Otherwise, a new figure will be created.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Either way, the axis will be returned.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    data : Union[pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list]</span>
+<span class="line-empty" title="No Anys on this line!">    data : pd.DataFrame | pd.Series | pl.DataFrame | pl.Series | pl.LazyFrame | np.ndarray | list</span>
 <span class="line-empty" title="No Anys on this line!">        The data to be analyzed.</span>
 <span class="line-empty" title="No Anys on this line!">    method : str, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The method to calculate the correlation matrix. The default is 'pearson',</span>
@@ -420,19 +422,23 @@ Unannotated (x1)">    ax.set_title(f"Correlation Matrix ({method.capitalize()})"
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x4)">def _highly_correlated_variables(</span>
-<span class="line-empty" title="No Anys on this line!">    data: Union[</span>
-<span class="line-empty" title="No Anys on this line!">        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list</span>
-<span class="line-empty" title="No Anys on this line!">    ],</span>
+<span class="line-empty" title="No Anys on this line!">    data: pd.DataFrame</span>
+<span class="line-empty" title="No Anys on this line!">    | pd.Series</span>
+<span class="line-empty" title="No Anys on this line!">    | pl.DataFrame</span>
+<span class="line-empty" title="No Anys on this line!">    | pl.Series</span>
+<span class="line-empty" title="No Anys on this line!">    | pl.LazyFrame</span>
+<span class="line-empty" title="No Anys on this line!">    | np.ndarray</span>
+<span class="line-empty" title="No Anys on this line!">    | list,</span>
 <span class="line-precise" title="No Anys on this line!">    method: str = "pearson",</span>
 <span class="line-precise" title="No Anys on this line!">    threshold: float = 0.9,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pl.LazyFrame:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Returns a list of tuples of highly correlated variables. Only one of the variables</span>
-<span class="line-empty" title="No Anys on this line!">    in each tuple will be kept.</span>
+<span class="line-empty" title="No Anys on this line!">    """Return a list of tuples of highly correlated variables.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Only one of the variables in each tuple will be kept.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    data : Union[pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list]</span>
+<span class="line-empty" title="No Anys on this line!">    data : pd.DataFrame | pd.Series | pl.DataFrame | pl.Series | pl.LazyFrame | np.ndarray | list</span>
 <span class="line-empty" title="No Anys on this line!">        The data to be analyzed.</span>
 <span class="line-empty" title="No Anys on this line!">    method : str, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The method to calculate the correlation matrix. The default is 'pearson',</span>
@@ -462,7 +468,7 @@ Unannotated (x1)">    corr = corr.where(np.tril(np.ones(corr.shape), k=-1).astyp
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # 3. Unstack (to get pairs)</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x4)">    corr = corr.unstack()</span>
+Omitted Generics (x4)">    corr = corr.unstack()  # noqa: PD010</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # 4. Remove NaNs</span>
 <span class="line-precise" title="Any Types on this line: 
@@ -490,9 +496,7 @@ Omitted Generics (x3)">    corr = corr.reset_index(drop=True)</span>
 <span class="line-empty" title="No Anys on this line!">    # 10. Convert to list of tuples</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x2)
-Omitted Generics (x7)">    corr = list(corr["var1 var2".split()].to_records(index=False))</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    return corr</span>
+Omitted Generics (x7)">    return list(corr["var1 var2".split()].to_records(index=False))</span>
 </pre></td>
 </tr></tbody>
 </table>

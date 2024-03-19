@@ -69,8 +69,10 @@
 <span id="L59" class="lineno"><a class="lineno" href="#L59">59</a></span>
 <span id="L60" class="lineno"><a class="lineno" href="#L60">60</a></span>
 <span id="L61" class="lineno"><a class="lineno" href="#L61">61</a></span>
+<span id="L62" class="lineno"><a class="lineno" href="#L62">62</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">import os</span>
+<span class="line-precise" title="No Anys on this line!">from pathlib import Path</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import matplotlib.pyplot as plt</span>
 <span class="line-precise" title="No Anys on this line!">import pytest</span>
@@ -87,12 +89,14 @@ Unannotated (x3)">    id = d.uuid</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x8)">    d.msg(f"saving figure to ./tmp_img/{id!s}.png")</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    if os.path.exists("./tmp_img"):</span>
+Unannotated (x3)
+Explicit (x1)">    if Path("./tmp_img").exists():</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x8)">        plt.savefig(f"./tmp_img/{id!s}.png")</span>
 <span class="line-empty" title="No Anys on this line!">    else:</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        os.mkdir("./tmp_img")</span>
+Unannotated (x3)
+Explicit (x1)">        Path("./tmp_img").mkdir()</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x8)">        plt.savefig(f"./tmp_img/{id!s}.png")</span>
 <span class="line-empty" title="No Anys on this line!"></span>

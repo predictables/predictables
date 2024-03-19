@@ -1045,29 +1045,17 @@
 <span id="L1035" class="lineno"><a class="lineno" href="#L1035">1035</a></span>
 <span id="L1036" class="lineno"><a class="lineno" href="#L1036">1036</a></span>
 <span id="L1037" class="lineno"><a class="lineno" href="#L1037">1037</a></span>
-<span id="L1038" class="lineno"><a class="lineno" href="#L1038">1038</a></span>
-<span id="L1039" class="lineno"><a class="lineno" href="#L1039">1039</a></span>
-<span id="L1040" class="lineno"><a class="lineno" href="#L1040">1040</a></span>
-<span id="L1041" class="lineno"><a class="lineno" href="#L1041">1041</a></span>
-<span id="L1042" class="lineno"><a class="lineno" href="#L1042">1042</a></span>
-<span id="L1043" class="lineno"><a class="lineno" href="#L1043">1043</a></span>
-<span id="L1044" class="lineno"><a class="lineno" href="#L1044">1044</a></span>
-<span id="L1045" class="lineno"><a class="lineno" href="#L1045">1045</a></span>
-<span id="L1046" class="lineno"><a class="lineno" href="#L1046">1046</a></span>
-<span id="L1047" class="lineno"><a class="lineno" href="#L1047">1047</a></span>
-<span id="L1048" class="lineno"><a class="lineno" href="#L1048">1048</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from functools import wraps</span>
-<span class="line-precise" title="No Anys on this line!">from typing import Callable, Optional, Tuple, Union</span>
+<span class="line-precise" title="No Anys on this line!">from typing import Callable</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import matplotlib.pyplot as plt</span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
-<span class="line-precise" title="No Anys on this line!">from matplotlib.axes import Axes</span>
-<span class="line-any" title="No Anys on this line!">from scipy.stats import gaussian_kde, ttest_ind  # type: ignore</span>
+<span class="line-any" title="No Anys on this line!">from scipy.stats import gaussian_kde, ttest_ind</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from predictables.univariate.src.plots.util import binary_color, plot_label</span>
 <span class="line-precise" title="No Anys on this line!">from predictables.util import (</span>
@@ -1080,33 +1068,31 @@
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x3)">def density_plot(</span>
-<span class="line-empty" title="No Anys on this line!">    x: Union[pd.Series, pl.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    plot_by: Union[pd.Series, pl.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    cv_label: Union[pd.Series, pl.Series],</span>
-<span class="line-precise" title="No Anys on this line!">    x_min: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    x_max: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Optional[Axes] = None,</span>
+<span class="line-empty" title="No Anys on this line!">    x: pd.Series | pl.Series,</span>
+<span class="line-empty" title="No Anys on this line!">    plot_by: pd.Series | pl.Series,</span>
+<span class="line-empty" title="No Anys on this line!">    cv_label: pd.Series | pl.Series,</span>
+<span class="line-precise" title="No Anys on this line!">    x_min: float | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    x_max: float | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    grid_bins: int = 200,</span>
 <span class="line-precise" title="No Anys on this line!">    cv_alpha: float = 0.5,</span>
 <span class="line-precise" title="No Anys on this line!">    cv_line_width: float = 0.5,</span>
 <span class="line-precise" title="No Anys on this line!">    t_test_alpha: float = 0.05,</span>
-<span class="line-precise" title="No Anys on this line!">    figsize: Tuple[int, int] = (7, 7),</span>
+<span class="line-precise" title="No Anys on this line!">    figsize: tuple[int, int] = (7, 7),</span>
 <span class="line-precise" title="No Anys on this line!">    call_legend: bool = True,</span>
 <span class="line-precise" title="No Anys on this line!">    backend: str = "matplotlib",</span>
 <span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Axes:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plot density function as well as cross-validation densities using the</span>
-<span class="line-empty" title="No Anys on this line!">    specified backend.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot density function as well as cross-validation densities using the specified backend.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    x : Union[pd.Series, pl.Series]</span>
+<span class="line-empty" title="No Anys on this line!">    x : pd.Series | pl.Series</span>
 <span class="line-empty" title="No Anys on this line!">        The variable to plot the density of.</span>
-<span class="line-empty" title="No Anys on this line!">    plot_by : Union[pd.Series, pl.Series]</span>
+<span class="line-empty" title="No Anys on this line!">    plot_by : pd.Series | pl.Series</span>
 <span class="line-empty" title="No Anys on this line!">        The variable to group by. For a binary target, this is the target.</span>
 <span class="line-empty" title="No Anys on this line!">        The plot will generate a density for each level of the target.</span>
-<span class="line-empty" title="No Anys on this line!">    cv_label : Union[pd.Series, pl.Series]</span>
+<span class="line-empty" title="No Anys on this line!">    cv_label : pd.Series | pl.Series</span>
 <span class="line-empty" title="No Anys on this line!">        The cross-validation fold to group by. If None, no grouping is done.</span>
 <span class="line-empty" title="No Anys on this line!">        Defaults to None.</span>
 <span class="line-empty" title="No Anys on this line!">    x_min : float, optional</span>
@@ -1149,7 +1135,7 @@ Omitted Generics (x3)">def density_plot(</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-precise" title="No Anys on this line!">    if backend == "matplotlib":</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">        return density_plot_mpl(</span>
+Omitted Generics (x4)">        return density_plot_mpl(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">            x,</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -1175,11 +1161,9 @@ Omitted Generics (x1)">            cv_label,</span>
 <span class="line-precise" title="No Anys on this line!">        raise ValueError(f"Invalid backend {backend}.")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x3)
-Unannotated (x1)">def validate_density_plot_mpl(func: Callable):</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Decorator to validate the inputs to the density plot functions.</span>
+<span class="line-precise" title="Any Types on this line: 
+Omitted Generics (x6)">def validate_density_plot_mpl(func: Callable) -&gt; Callable:</span>
+<span class="line-empty" title="No Anys on this line!">    """Validate the inputs to the density plot functions with a decorator.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -1199,23 +1183,22 @@ Unannotated (x1)">def validate_density_plot_mpl(func: Callable):</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="Any Types on this line: 
 Omitted Generics (x3)">    @wraps(func)</span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x3)
-Unannotated (x1)">    def wrapper(</span>
-<span class="line-empty" title="No Anys on this line!">        x: Union[pd.Series, pl.Series],</span>
-<span class="line-empty" title="No Anys on this line!">        plot_by: Union[pd.Series, pl.Series],</span>
-<span class="line-empty" title="No Anys on this line!">        cv_label: Union[pd.Series, pl.Series],</span>
-<span class="line-precise" title="No Anys on this line!">        x_min: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        x_max: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        ax: Optional["plt.axes.Axes"] = None,</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x3)">    def wrapper(</span>
+<span class="line-empty" title="No Anys on this line!">        x: pd.Series | pl.Series,</span>
+<span class="line-empty" title="No Anys on this line!">        plot_by: pd.Series | pl.Series,</span>
+<span class="line-empty" title="No Anys on this line!">        cv_label: pd.Series | pl.Series,</span>
+<span class="line-precise" title="No Anys on this line!">        x_min: float | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        x_max: float | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        ax: plt.Axes | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">        grid_bins: int = 200,</span>
 <span class="line-precise" title="No Anys on this line!">        cv_alpha: float = 0.5,</span>
 <span class="line-precise" title="No Anys on this line!">        cv_line_width: float = 0.5,</span>
 <span class="line-precise" title="No Anys on this line!">        t_test_alpha: float = 0.05,</span>
-<span class="line-precise" title="No Anys on this line!">        figsize: Tuple[int, int] = (7, 7),</span>
+<span class="line-precise" title="No Anys on this line!">        figsize: tuple[int, int] = (7, 7),</span>
 <span class="line-precise" title="No Anys on this line!">        call_legend: bool = True,</span>
 <span class="line-precise" title="No Anys on this line!">        time_series_validation: bool = True,</span>
-<span class="line-empty" title="No Anys on this line!">    ):</span>
+<span class="line-empty" title="No Anys on this line!">    ) -&gt; plt.Axes:</span>
 <span class="line-empty" title="No Anys on this line!">        # Input validations</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x114)
@@ -1247,28 +1230,24 @@ Omitted Generics (x2)
 Explicit (x2)">                f"`cv_label` must be a pandas or polars Series, but got {type(cv_label)}."</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">        def validate_float_int(value, arg_name):</span>
+<span class="line-precise" title="No Anys on this line!">        def validate_float_int(value: float, arg_name: str) -&gt; float:</span>
 <span class="line-empty" title="No Anys on this line!">            try:</span>
 <span class="line-empty" title="No Anys on this line!">                # Attempt to convert the value to a float</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                return float(value)</span>
-<span class="line-precise" title="No Anys on this line!">            except ValueError:</span>
+<span class="line-precise" title="No Anys on this line!">                return float(value)</span>
+<span class="line-precise" title="No Anys on this line!">            except ValueError as err:</span>
 <span class="line-empty" title="No Anys on this line!">                # If conversion fails, raise an informative error</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">                raise ValueError(</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x13)
+Error (x1)">                raise ValueError from err(</span>
+<span class="line-precise" title="Any Types on this line: 
 Explicit (x2)">                    f"Argument `{arg_name}` must be convertible to float, but got value `{value}` of type `{type(value).__name__}`."</span>
 <span class="line-empty" title="No Anys on this line!">                )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Inside the wrapper function of the decorator</span>
 <span class="line-precise" title="No Anys on this line!">        if x_min is not None:</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">            x_min = validate_float_int(x_min, "x_min")</span>
+<span class="line-precise" title="No Anys on this line!">            x_min = validate_float_int(x_min, "x_min")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">        if x_max is not None:</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">            x_max = validate_float_int(x_max, "x_max")</span>
+<span class="line-precise" title="No Anys on this line!">            x_max = validate_float_int(x_max, "x_max")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">        if not isinstance(grid_bins, int):</span>
 <span class="line-unanalyzed" title="No Anys on this line!">            raise ValueError(f"`grid_bins` must be an int, but got {type(grid_bins)}.")</span>
@@ -1298,40 +1277,38 @@ Omitted Generics (x4)">        return func(</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="Any Types on this line: 
-Omitted Generics (x3)
-Unannotated (x1)">    return wrapper</span>
+Omitted Generics (x3)">    return wrapper</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="Any Types on this line: 
-Omitted Generics (x3)
-Unannotated (x1)">@validate_density_plot_mpl</span>
+Omitted Generics (x6)">@validate_density_plot_mpl</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x3)">def density_plot_mpl(</span>
-<span class="line-empty" title="No Anys on this line!">    x: Union[pd.Series, pl.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    plot_by: Union[pd.Series, pl.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    cv_label: Union[pd.Series, pl.Series],</span>
-<span class="line-precise" title="No Anys on this line!">    x_min: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    x_max: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Optional[Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    grid_bins: int = 200,</span>
+<span class="line-empty" title="No Anys on this line!">    x: pd.Series | pl.Series,</span>
+<span class="line-empty" title="No Anys on this line!">    plot_by: pd.Series | pl.Series,</span>
+<span class="line-empty" title="No Anys on this line!">    cv_label: pd.Series | pl.Series,</span>
+<span class="line-precise" title="No Anys on this line!">    x_min: float | None = None,  # noqa: ARG001</span>
+<span class="line-precise" title="No Anys on this line!">    x_max: float | None = None,  # noqa: ARG001</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    grid_bins: int = 200,  # noqa: ARG001</span>
 <span class="line-precise" title="No Anys on this line!">    cv_alpha: float = 0.5,</span>
 <span class="line-precise" title="No Anys on this line!">    cv_line_width: float = 0.5,</span>
 <span class="line-precise" title="No Anys on this line!">    t_test_alpha: float = 0.05,</span>
-<span class="line-precise" title="No Anys on this line!">    figsize: Tuple[int, int] = (7, 7),</span>
+<span class="line-precise" title="No Anys on this line!">    figsize: tuple[int, int] = (7, 7),</span>
 <span class="line-precise" title="No Anys on this line!">    call_legend: bool = True,</span>
 <span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Axes:</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-empty" title="No Anys on this line!">    Plot density function as well as cross-validation densities.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    x : Union[pd.Series, pl.Series]</span>
+<span class="line-empty" title="No Anys on this line!">    x : pd.Series | pl.Series</span>
 <span class="line-empty" title="No Anys on this line!">        The variable to plot the density of.</span>
-<span class="line-empty" title="No Anys on this line!">    plot_by : Union[pd.Series, pl.Series]</span>
+<span class="line-empty" title="No Anys on this line!">    plot_by : pd.Series | pl.Series</span>
 <span class="line-empty" title="No Anys on this line!">        The variable to group by. For a binary target, this is the target.</span>
 <span class="line-empty" title="No Anys on this line!">        The plot will generate a density for each level of the target.</span>
-<span class="line-empty" title="No Anys on this line!">    cv_label : Union[pd.Series, pl.Series]</span>
+<span class="line-empty" title="No Anys on this line!">    cv_label : pd.Series | pl.Series</span>
 <span class="line-empty" title="No Anys on this line!">        The cross-validation fold to group by. If None, no grouping is</span>
 <span class="line-empty" title="No Anys on this line!">        done. Defaults to None.</span>
 <span class="line-empty" title="No Anys on this line!">    x_min : float, optional</span>
@@ -1388,13 +1365,11 @@ Omitted Generics (x8)">    cv_label_ = to_pd_s(cv_label)  # Convert cv_label to 
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Plot the density of x by the levels of plot_by</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)
 Omitted Generics (x5)
 Explicit (x2)">    ax0 = density_by_mpl(x, plot_by, fill_under=False, ax=ax0)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Plot the density of x by the levels of plot_by for each cv fold</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)
 Omitted Generics (x3)
 Explicit (x1)">    ax0 = density_by_mpl(</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -1418,8 +1393,7 @@ Omitted Generics (x8)
 Explicit (x2)">    ax0 = _annotate_mean_median(x, plot_by, ax0)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Calculate the t-test results:</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)
+<span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">    _, p, significance_statement = _density_t_test_binary_target(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">        x, plot_by, t_test_alpha</span>
@@ -1427,21 +1401,19 @@ Omitted Generics (x2)">        x, plot_by, t_test_alpha</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Add a significance annotation for the t-test results</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)
 Explicit (x2)">    ax0 = _significance_annotation(significance_statement, ax0, figsize)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Add a dynamic title reflecting the t-test results</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x3)">    ax0.set_title(</span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x4)
-Unannotated (x1)">        _get_title(x, plot_by, p, t_test_alpha), fontsize=24 * (figsize[0] / 16)</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x4)">        _get_title(x, plot_by, p, t_test_alpha), fontsize=24 * (figsize[0] / 16)</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Set the x-axis label</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x3)
-Omitted Generics (x2)">    ax0.set_xlabel(plot_label(x.name if x.name is not None else "Var", False))  # type: ignore</span>
+Omitted Generics (x2)">    ax0.set_xlabel(plot_label(x.name if x.name is not None else "Var", False))</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # show gridlines</span>
 <span class="line-any" title="Any Types on this line: 
@@ -1456,7 +1428,7 @@ Explicit (x1)">    return ax0</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">def _significance_annotation(</span>
-<span class="line-empty" title="No Anys on this line!">    significance_statement: str, ax0: plt.Axes, figsize: Tuple[int, int]</span>
+<span class="line-empty" title="No Anys on this line!">    significance_statement: str, ax0: plt.Axes, figsize: tuple[int, int]</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x1)
@@ -1469,13 +1441,12 @@ Unannotated (x1)">    ax0.annotate(</span>
 <span class="line-precise" title="No Anys on this line!">        ha="left",</span>
 <span class="line-precise" title="No Anys on this line!">        va="center",</span>
 <span class="line-precise" title="No Anys on this line!">        fontsize=24 * (figsize[0] / 16),</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Unannotated (x2)">        bbox=dict(</span>
-<span class="line-precise" title="No Anys on this line!">            boxstyle="round,pad=0.3",</span>
-<span class="line-precise" title="No Anys on this line!">            edgecolor="lightgrey",</span>
-<span class="line-precise" title="No Anys on this line!">            facecolor="white",</span>
-<span class="line-precise" title="No Anys on this line!">            alpha=0.5,</span>
-<span class="line-empty" title="No Anys on this line!">        ),</span>
+<span class="line-empty" title="No Anys on this line!">        bbox={</span>
+<span class="line-precise" title="No Anys on this line!">            "boxstyle": "round,pad=0.3",</span>
+<span class="line-precise" title="No Anys on this line!">            "edgecolor": "lightgrey",</span>
+<span class="line-precise" title="No Anys on this line!">            "facecolor": "white",</span>
+<span class="line-precise" title="No Anys on this line!">            "alpha": 0.5,</span>
+<span class="line-empty" title="No Anys on this line!">        },</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-precise" title="No Anys on this line!">    return ax0</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -1505,10 +1476,10 @@ Omitted Generics (x2)">def _get_title(x: pd.Series, plot_by: pd.Series, p: float
 <span class="line-precise" title="No Anys on this line!">    title = (</span>
 <span class="line-precise" title="No Anys on this line!">        "Kernel Density Plot of "</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">        f"{plot_label(x.name if x.name is not None else 'Var')}"  # type: ignore</span>
+Omitted Generics (x2)">        f"{plot_label(x.name if x.name is not None else 'Var')}"</span>
 <span class="line-empty" title="No Anys on this line!">        " by "</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">        f"{plot_label(plot_by.name if plot_by.name is not None else 'Groupby Var')}."  # type: ignore</span>
+Omitted Generics (x2)">        f"{plot_label(plot_by.name if plot_by.name is not None else 'Groupby Var')}."</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-precise" title="No Anys on this line!">    title += "\nDistributions by level are"</span>
 <span class="line-precise" title="No Anys on this line!">    title += " not " if p &gt;= t_test_alpha else " "</span>
@@ -1516,22 +1487,19 @@ Omitted Generics (x2)">        f"{plot_label(plot_by.name if plot_by.name is not
 <span class="line-precise" title="No Anys on this line!">    return title</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x2)
-Unannotated (x1)">def _density_t_test_binary_target(</span>
-<span class="line-empty" title="No Anys on this line!">    x: Union[pd.Series, pl.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    plot_by: Union[pd.Series, pl.Series],</span>
-<span class="line-precise" title="No Anys on this line!">    alpha: float = 0.05,</span>
-<span class="line-empty" title="No Anys on this line!">):</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Perform a t-test on the density of x by the levels of plot_by. This function</span>
-<span class="line-empty" title="No Anys on this line!">    will be used only when the target variable is binary.</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)">def _density_t_test_binary_target(</span>
+<span class="line-precise" title="No Anys on this line!">    x: pd.Series | pl.Series, plot_by: pd.Series | pl.Series, alpha: float = 0.05</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; tuple[float, float, str]:</span>
+<span class="line-empty" title="No Anys on this line!">    """Perform a t-test on the density of x by the levels of plot_by.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    This function will be used only when the target variable is binary.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    x : Union[pd.Series, pl.Series]</span>
+<span class="line-empty" title="No Anys on this line!">    x : pd.Series | pl.Series</span>
 <span class="line-empty" title="No Anys on this line!">        The variable to plot the density of.</span>
-<span class="line-empty" title="No Anys on this line!">    plot_by : Union[pd.Series, pl.Series]</span>
+<span class="line-empty" title="No Anys on this line!">    plot_by : pd.Series | pl.Series</span>
 <span class="line-empty" title="No Anys on this line!">        The variable to group by. For a binary target, this is the target.</span>
 <span class="line-empty" title="No Anys on this line!">        The plot will generate a density for each level of the target.</span>
 <span class="line-empty" title="No Anys on this line!">    alpha : float, optional</span>
@@ -1611,20 +1579,20 @@ Unimported (x2)">    return t, p, significance_statement</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">def _plot_density_mpl(</span>
 <span class="line-empty" title="No Anys on this line!">    x: pd.Series,</span>
-<span class="line-precise" title="No Anys on this line!">    x_min: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    x_max: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Optional[Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    label: Union[str, None] = None,</span>
+<span class="line-precise" title="No Anys on this line!">    x_min: float | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    x_max: float | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    label: str | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    grid_bins: int = 200,</span>
 <span class="line-precise" title="No Anys on this line!">    line_width: float = 1,</span>
-<span class="line-precise" title="No Anys on this line!">    line_color: Union[str, None] = None,</span>
+<span class="line-precise" title="No Anys on this line!">    line_color: str | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    line_style: str = "-",</span>
 <span class="line-precise" title="No Anys on this line!">    alpha: float = 1,</span>
 <span class="line-precise" title="No Anys on this line!">    fill_under: bool = True,</span>
 <span class="line-precise" title="No Anys on this line!">    fill_alpha: float = 0.3,</span>
-<span class="line-precise" title="No Anys on this line!">    figsize: Tuple[int, int] = (7, 7),</span>
-<span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Axes:</span>
+<span class="line-precise" title="No Anys on this line!">    figsize: tuple[int, int] = (7, 7),</span>
+<span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,  # noqa: ARG001</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-empty" title="No Anys on this line!">    Plot the density of x.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -1691,7 +1659,7 @@ Omitted Generics (x7)">    x_grid = np.linspace(x_min, x_max, grid_bins)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    if label is None:</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">        label = x.name if x.name is not None else "Var"  # type: ignore</span>
+Omitted Generics (x2)">        label = x.name if x.name is not None else "Var"</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    if fill_under:</span>
 <span class="line-any" title="Any Types on this line: 
@@ -1731,27 +1699,24 @@ Explicit (x1)">            density(x_grid),</span>
 Explicit (x1)">    return ax</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x3)
-Unannotated (x1)">def density_by_mpl(</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x3)">def density_by_mpl(</span>
 <span class="line-empty" title="No Anys on this line!">    x: pd.Series,</span>
 <span class="line-empty" title="No Anys on this line!">    by: pd.Series,</span>
-<span class="line-precise" title="No Anys on this line!">    cv_fold: Optional[pd.Series] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    x_min: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    x_max: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Optional[Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    use_labels: bool = True,</span>
+<span class="line-precise" title="No Anys on this line!">    cv_fold: pd.Series | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    x_min: float | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    x_max: float | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    use_labels: bool = True,  # noqa: ARG001</span>
 <span class="line-precise" title="No Anys on this line!">    grid_bins: int = 200,</span>
 <span class="line-precise" title="No Anys on this line!">    line_width: float = 1.0,</span>
 <span class="line-precise" title="No Anys on this line!">    alpha: float = 1.0,</span>
 <span class="line-precise" title="No Anys on this line!">    fill_under: bool = True,</span>
 <span class="line-precise" title="No Anys on this line!">    fill_alpha: float = 0.3,</span>
-<span class="line-precise" title="No Anys on this line!">    figsize: Tuple[int, int] = (7, 7),</span>
+<span class="line-precise" title="No Anys on this line!">    figsize: tuple[int, int] = (7, 7),</span>
 <span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
-<span class="line-empty" title="No Anys on this line!">):</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plot the density of x by the levels of by, using matplotlib,</span>
-<span class="line-empty" title="No Anys on this line!">    all on the same axss.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot the density of x by the levels of by, using matplotlib, all on the same axss.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -1836,16 +1801,10 @@ Omitted Generics (x2)">            byname = by.name if by.name is not None else 
 Omitted Generics (x7)">            color_ = binary_color(level) if get_column_dtype(by) == "binary" else None</span>
 <span class="line-precise" title="No Anys on this line!">            color__ = color_ if color_ is not None else None</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x1)">            label = f"{plot_label(byname)} = {level}"  # type: ignore</span>
+Omitted Generics (x1)">            label = f"{plot_label(byname)} = {level}"</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">            _plot_density_mpl(</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">                group,</span>
-<span class="line-precise" title="No Anys on this line!">                label=label,</span>
-<span class="line-precise" title="No Anys on this line!">                line_color=color__,</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Explicit (x1)">                **params,  # type: ignore</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
+Omitted Generics (x2)
+Explicit (x1)">            _plot_density_mpl(group, label=label, line_color=color__, **params)</span>
 <span class="line-empty" title="No Anys on this line!">    # Otherwise, plot the density by CV fold</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    else:</span>
@@ -1858,7 +1817,7 @@ Omitted Generics (x12)">            by_ = filter_by_cv_fold(by, f, cv_fold, time
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x34)
 Error (x2)
-Explicit (x1)">            for level, group in x_.groupby(by_):  # type: ignore</span>
+Explicit (x1)">            for level, group in x_.groupby(by_):</span>
 <span class="line-precise" title="No Anys on this line!">                color_ = (</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x7)">                    binary_color(level) if get_column_dtype(by) == "binary" else None</span>
@@ -1868,29 +1827,26 @@ Omitted Generics (x7)">                    binary_color(level) if get_column_dty
 Omitted Generics (x1)">                _plot_density_mpl(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)
-Error (x1)">                    group,</span>
-<span class="line-precise" title="No Anys on this line!">                    label="_nolegend_",</span>
-<span class="line-precise" title="No Anys on this line!">                    line_color=color__,</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Explicit (x1)">                    **params,  # type: ignore</span>
+Error (x1)
+Explicit (x1)">                    group, label="_nolegend_", line_color=color__, **params</span>
 <span class="line-empty" title="No Anys on this line!">                )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)">    return ax</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x9)
-Unannotated (x1)">def calculate_density_sd(</span>
-<span class="line-empty" title="No Anys on this line!">    x: Union[pd.Series, pl.Series, np.ndarray],</span>
-<span class="line-empty" title="No Anys on this line!">    by: Union[pd.Series, pl.Series, np.ndarray],</span>
-<span class="line-empty" title="No Anys on this line!">    cv_fold: Union[pd.Series, pl.Series, np.ndarray],</span>
-<span class="line-precise" title="No Anys on this line!">    x_min: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    x_max: Optional[float] = None,</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x10)">def calculate_density_sd(</span>
+<span class="line-empty" title="No Anys on this line!">    x: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-empty" title="No Anys on this line!">    by: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-empty" title="No Anys on this line!">    cv_fold: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-precise" title="No Anys on this line!">    x_min: float | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    x_max: float | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    grid_bins: int = 200,</span>
 <span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
-<span class="line-empty" title="No Anys on this line!">):</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; pd.Series:</span>
+<span class="line-empty" title="No Anys on this line!">    """Calculate the SD of the KDE of `x` grouped by `by`.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Calculates the standard deviation of the kernel density estimates (KDE) of `x`</span>
 <span class="line-empty" title="No Anys on this line!">    grouped by the levels of `by` across different cross-validation folds specified</span>
 <span class="line-empty" title="No Anys on this line!">    by `cv_fold`.</span>
@@ -1903,11 +1859,11 @@ Unannotated (x1)">def calculate_density_sd(</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    x : Union[pd.Series, pl.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    x : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        The data series for which the density's standard deviation is computed.</span>
-<span class="line-empty" title="No Anys on this line!">    by : Union[pd.Series, pl.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    by : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        A series indicating the group of each observation in `x`.</span>
-<span class="line-empty" title="No Anys on this line!">    cv_fold : Union[pd.Series, pl.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    cv_fold : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        A series indicating the cross-validation fold of each observation in `x`.</span>
 <span class="line-empty" title="No Anys on this line!">        Unique values in `cv_fold` are treated as separate folds.</span>
 <span class="line-empty" title="No Anys on this line!">    x_min : float, optional</span>
@@ -1973,7 +1929,7 @@ Omitted Generics (x12)">        by_ = filter_by_cv_fold(by, f, cv_fold, time_ser
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x34)
 Error (x3)
-Explicit (x1)">        for level, group in x_.groupby(by_):  # type: ignore</span>
+Explicit (x1)">        for level, group in x_.groupby(by_):</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x3)
 Omitted Generics (x1)
@@ -1987,7 +1943,7 @@ Omitted Generics (x9)">    sd = sd.drop(columns=["x"])</span>
 <span class="line-any" title="Any Types on this line: 
 Error (x1)
 Omitted Generics (x5)
-Unannotated (x2)">    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)  # type: ignore</span>
+Unannotated (x2)">    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # smooth the standard deviation (should not deviate much from one</span>
 <span class="line-empty" title="No Anys on this line!">    # x value to the next)</span>
@@ -2011,14 +1967,12 @@ Omitted Generics (x6)">    sd_smooth[len(sd_smooth) - 2] = np.mean(sd[-3:])</spa
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x7)">def _calculate_single_density_sd(</span>
-<span class="line-empty" title="No Anys on this line!">    x: Union[pd.Series, pl.Series, np.ndarray],</span>
-<span class="line-empty" title="No Anys on this line!">    cv_fold: Union[pd.Series, pl.Series, np.ndarray],</span>
+<span class="line-empty" title="No Anys on this line!">    x: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-empty" title="No Anys on this line!">    cv_fold: pd.Series | pl.Series | np.ndarray,</span>
 <span class="line-precise" title="No Anys on this line!">    grid_bins: int = 200,</span>
 <span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pd.Series:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Calculates the standard deviation of the density estimates of `x` across</span>
-<span class="line-empty" title="No Anys on this line!">    different cross-validation folds.</span>
+<span class="line-empty" title="No Anys on this line!">    """Calculate the standard deviation of the density estimates of `x` across different cross-validation folds.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    This function computes the kernel density estimate (KDE) of `x` for each unique</span>
 <span class="line-empty" title="No Anys on this line!">    value in `cv_fold`. It then calculates the standard deviation of these density</span>
@@ -2028,9 +1982,9 @@ Omitted Generics (x7)">def _calculate_single_density_sd(</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    x : Union[pd.Series, pl.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    x : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        The data series for which the density's standard deviation is to be computed.</span>
-<span class="line-empty" title="No Anys on this line!">    cv_fold : Union[pd.Series, pl.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    cv_fold : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        A series indicating the cross-validation fold of each observation in `x`.</span>
 <span class="line-empty" title="No Anys on this line!">        Unique values in `cv_fold` are treated as separate folds.</span>
 <span class="line-empty" title="No Anys on this line!">    grid_bins : int, optional</span>
@@ -2092,7 +2046,7 @@ Omitted Generics (x9)">    sd = sd.drop(columns=["x"])</span>
 <span class="line-any" title="Any Types on this line: 
 Error (x1)
 Omitted Generics (x5)
-Unannotated (x2)">    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)  # type: ignore</span>
+Unannotated (x2)">    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # smooth the standard deviation (should not deviate much from one</span>
 <span class="line-empty" title="No Anys on this line!">    # x value to the next)</span>
@@ -2111,25 +2065,25 @@ Omitted Generics (x6)">    sd_smooth[len(sd_smooth) - 1] = np.mean(sd[-2:])</spa
 Explicit (x9)
 Omitted Generics (x6)">    sd_smooth[len(sd_smooth) - 2] = np.mean(sd[-3:])</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    return sd_smooth, sd  # type: ignore</span>
+<span class="line-precise" title="No Anys on this line!">    return sd_smooth, sd</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">def _plot_single_density_pm_standard_deviation(</span>
 <span class="line-empty" title="No Anys on this line!">    x: pd.Series,</span>
-<span class="line-precise" title="No Anys on this line!">    cv_fold: Union[pd.Series, None] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    x_min: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    x_max: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Optional[Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    label: Union[str, None] = None,</span>
+<span class="line-precise" title="No Anys on this line!">    cv_fold: pd.Series | None = None,  # noqa: ARG001</span>
+<span class="line-precise" title="No Anys on this line!">    x_min: float | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    x_max: float | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    label: str | None = None,  # noqa: ARG001</span>
 <span class="line-precise" title="No Anys on this line!">    grid_bins: int = 200,</span>
-<span class="line-precise" title="No Anys on this line!">    line_width: float = 0.5,</span>
-<span class="line-precise" title="No Anys on this line!">    line_style: str = "-",</span>
-<span class="line-precise" title="No Anys on this line!">    alpha: float = 0.5,</span>
-<span class="line-precise" title="No Anys on this line!">    fill_alpha: float = 0.3,</span>
-<span class="line-precise" title="No Anys on this line!">    figsize: Tuple[int, int] = (7, 7),</span>
-<span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Axes:</span>
+<span class="line-precise" title="No Anys on this line!">    line_width: float = 0.5,  # noqa: ARG001</span>
+<span class="line-precise" title="No Anys on this line!">    line_style: str = "-",  # noqa: ARG001</span>
+<span class="line-precise" title="No Anys on this line!">    alpha: float = 0.5,  # noqa: ARG001</span>
+<span class="line-precise" title="No Anys on this line!">    fill_alpha: float = 0.3,  # noqa: ARG001</span>
+<span class="line-precise" title="No Anys on this line!">    figsize: tuple[int, int] = (7, 7),</span>
+<span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,  # noqa: ARG001</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-empty" title="No Anys on this line!">    Plot the density of x.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -2222,9 +2176,9 @@ Explicit (x1)">    return ax_</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x6)">def _annotate_mean_median(</span>
-<span class="line-empty" title="No Anys on this line!">    feature: Union[pd.Series, pl.Series, np.ndarray],</span>
-<span class="line-empty" title="No Anys on this line!">    target: Union[pd.Series, pl.Series, np.ndarray],</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Optional[plt.Axes] = None,</span>
+<span class="line-empty" title="No Anys on this line!">    feature: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-empty" title="No Anys on this line!">    target: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-empty" title="No Anys on this line!">    Annotates the mean and median of the feature variable for each target class.</span>
@@ -2240,9 +2194,9 @@ Omitted Generics (x6)">def _annotate_mean_median(</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    feature : Union[pd.Series, pl.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    feature : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        The feature variable.</span>
-<span class="line-empty" title="No Anys on this line!">    target : Union[pd.Series, pl.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    target : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        The target variable.</span>
 <span class="line-empty" title="No Anys on this line!">    ax : plt.Axes, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The axes to annotate. If None, a new figure and axes is created.</span>
@@ -2261,7 +2215,7 @@ Omitted Generics (x6)">    if len(feature) != len(target):</span>
 Omitted Generics (x6)">            f"but got {len(feature)} and {len(target)}."</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x6)">    elif (len(feature) == 0) | (len(target) == 0):</span>
+Omitted Generics (x6)">    if (len(feature) == 0) | (len(target) == 0):</span>
 <span class="line-precise" title="No Anys on this line!">        raise ValueError(</span>
 <span class="line-precise" title="No Anys on this line!">            "The feature and target series should not contain NaN or missing values"</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
@@ -2272,7 +2226,7 @@ Omitted Generics (x6)">    elif (len(feature) == 0) | (len(target) == 0):</span>
 Omitted Generics (x116)
 Explicit (x2)">        isinstance(feature, pd.Series)</span>
 <span class="line-precise" title="Any Types on this line: 
-Unannotated (x1)">        and feature.isnull().any()</span>
+Unannotated (x1)">        and feature.isna().any()</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x3)
 Unimported (x2)">        or isinstance(feature, pl.Series)</span>
@@ -2292,7 +2246,7 @@ Omitted Generics (x2)">        and np.isnan(feature).any()</span>
 Omitted Generics (x116)
 Explicit (x2)">        isinstance(target, pd.Series)</span>
 <span class="line-precise" title="Any Types on this line: 
-Unannotated (x1)">        and target.isnull().any()</span>
+Unannotated (x1)">        and target.isna().any()</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x3)
 Unimported (x2)">        or isinstance(target, pl.Series)</span>
@@ -2343,12 +2297,12 @@ Explicit (x3)">    ax_.axvline(median1, color="orange", linestyle="dotted", line
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Define annotation position and arrow properties based on mean0 and mean1</span>
 <span class="line-precise" title="No Anys on this line!">    pos0, pos1 = ("right", "left") if mean0 &lt; mean1 else ("left", "right")</span>
-<span class="line-precise" title="No Anys on this line!">    arrowprops0 = dict(arrowstyle="-&gt;", lw=1)</span>
-<span class="line-precise" title="No Anys on this line!">    arrowprops1 = dict(arrowstyle="-&gt;", lw=1)</span>
+<span class="line-precise" title="No Anys on this line!">    arrowprops0 = {"arrowstyle": "-&gt;", "lw": 1}</span>
+<span class="line-precise" title="No Anys on this line!">    arrowprops1 = {"arrowstyle": "-&gt;", "lw": 1}</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Extract the figure size</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x6)">    figsize = ax_.get_figure().get_size_inches()  # type: ignore</span>
+Explicit (x6)">    figsize = ax_.get_figure().get_size_inches()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Annotate for target=0</span>
 <span class="line-any" title="Any Types on this line: 
@@ -2363,9 +2317,12 @@ Omitted Generics (x1)">        f"{target_.name}=0\n===========\nMean / Median =\
 <span class="line-precise" title="No Anys on this line!">        va="bottom",</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x4)">        fontsize=24 * (figsize[0] / 16),</span>
-<span class="line-precise" title="No Anys on this line!">        bbox=dict(</span>
-<span class="line-precise" title="No Anys on this line!">            boxstyle="round,pad=0.3", edgecolor="black", facecolor="blue", alpha=0.2</span>
-<span class="line-empty" title="No Anys on this line!">        ),</span>
+<span class="line-empty" title="No Anys on this line!">        bbox={</span>
+<span class="line-precise" title="No Anys on this line!">            "boxstyle": "round,pad=0.3",</span>
+<span class="line-precise" title="No Anys on this line!">            "edgecolor": "black",</span>
+<span class="line-precise" title="No Anys on this line!">            "facecolor": "blue",</span>
+<span class="line-precise" title="No Anys on this line!">            "alpha": 0.2,</span>
+<span class="line-empty" title="No Anys on this line!">        },</span>
 <span class="line-precise" title="No Anys on this line!">        arrowprops=arrowprops0,</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -2382,9 +2339,12 @@ Omitted Generics (x1)">        f"{target_.name}=1\n===========\nMean / Median =\
 <span class="line-precise" title="No Anys on this line!">        va="bottom",</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x4)">        fontsize=24 * (figsize[0] / 16),</span>
-<span class="line-precise" title="No Anys on this line!">        bbox=dict(</span>
-<span class="line-precise" title="No Anys on this line!">            boxstyle="round,pad=0.3", edgecolor="black", facecolor="orange", alpha=0.2</span>
-<span class="line-empty" title="No Anys on this line!">        ),</span>
+<span class="line-empty" title="No Anys on this line!">        bbox={</span>
+<span class="line-precise" title="No Anys on this line!">            "boxstyle": "round,pad=0.3",</span>
+<span class="line-precise" title="No Anys on this line!">            "edgecolor": "black",</span>
+<span class="line-precise" title="No Anys on this line!">            "facecolor": "orange",</span>
+<span class="line-precise" title="No Anys on this line!">            "alpha": 0.2,</span>
+<span class="line-empty" title="No Anys on this line!">        },</span>
 <span class="line-precise" title="No Anys on this line!">        arrowprops=arrowprops1,</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>

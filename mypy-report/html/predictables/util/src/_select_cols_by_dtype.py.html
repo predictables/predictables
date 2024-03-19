@@ -72,12 +72,8 @@
 <span id="L62" class="lineno"><a class="lineno" href="#L62">62</a></span>
 <span id="L63" class="lineno"><a class="lineno" href="#L63">63</a></span>
 <span id="L64" class="lineno"><a class="lineno" href="#L64">64</a></span>
-<span id="L65" class="lineno"><a class="lineno" href="#L65">65</a></span>
-<span id="L66" class="lineno"><a class="lineno" href="#L66">66</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Union</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
@@ -87,7 +83,7 @@
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">def select_cols_by_dtype(</span>
-<span class="line-empty" title="No Anys on this line!">    df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], dtype: str</span>
+<span class="line-empty" title="No Anys on this line!">    df: pd.DataFrame | pl.DataFrame | pl.LazyFrame, dtype: str</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pd.DataFrame:</span>
 <span class="line-empty" title="No Anys on this line!">    """Select all columns of a specified dtype from a data frame.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -103,7 +99,7 @@
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    df : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]</span>
+<span class="line-empty" title="No Anys on this line!">    df : pd.DataFrame | pl.DataFrame | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">        The data frame to select columns from.</span>
 <span class="line-empty" title="No Anys on this line!">    dtype : str</span>
 <span class="line-empty" title="No Anys on this line!">        The dtype to select columns by. Must be one of the following:</span>

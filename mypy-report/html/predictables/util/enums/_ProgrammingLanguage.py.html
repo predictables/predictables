@@ -131,12 +131,10 @@
 <span id="L121" class="lineno"><a class="lineno" href="#L121">121</a></span>
 <span id="L122" class="lineno"><a class="lineno" href="#L122">122</a></span>
 <span id="L123" class="lineno"><a class="lineno" href="#L123">123</a></span>
-<span id="L124" class="lineno"><a class="lineno" href="#L124">124</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from enum import Enum</span>
-<span class="line-precise" title="No Anys on this line!">from typing import Optional</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">class ProgrammingLanguage(Enum):</span>
@@ -177,7 +175,7 @@
 <span class="line-precise" title="No Anys on this line!">    YAML = "yaml"</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    @staticmethod</span>
-<span class="line-precise" title="No Anys on this line!">    def from_string(string: Optional[str]) -&gt; "ProgrammingLanguage":</span>
+<span class="line-precise" title="No Anys on this line!">    def from_string(string: str | None) -&gt; "ProgrammingLanguage":</span>
 <span class="line-precise" title="No Anys on this line!">        if string is None:</span>
 <span class="line-precise" title="No Anys on this line!">            UserWarning("Programming language is None. Defaulting to Python.")</span>
 <span class="line-precise" title="No Anys on this line!">            return ProgrammingLanguage.PYTHON</span>

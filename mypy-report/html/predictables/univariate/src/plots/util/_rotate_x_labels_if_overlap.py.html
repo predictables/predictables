@@ -195,9 +195,6 @@
 <span id="L185" class="lineno"><a class="lineno" href="#L185">185</a></span>
 <span id="L186" class="lineno"><a class="lineno" href="#L186">186</a></span>
 <span id="L187" class="lineno"><a class="lineno" href="#L187">187</a></span>
-<span id="L188" class="lineno"><a class="lineno" href="#L188">188</a></span>
-<span id="L189" class="lineno"><a class="lineno" href="#L189">189</a></span>
-<span id="L190" class="lineno"><a class="lineno" href="#L190">190</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from itertools import combinations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -262,10 +259,10 @@ Omitted Generics (x3)">d = DebugLogger()</span>
 <span class="line-empty" title="No Anys on this line!">    #         if ax.figure is not None:</span>
 <span class="line-empty" title="No Anys on this line!">    #             ax.figure.canvas.draw()</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-precise" title="No Anys on this line!">    return rotate_x_labels_if_overlap_V2(ax)</span>
+<span class="line-precise" title="No Anys on this line!">    return rotate_x_labels_if_overlap_v2(ax)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">def rotate_x_labels_if_overlap_V2(ax: plt.Axes) -&gt; plt.Axes:</span>
+<span class="line-precise" title="No Anys on this line!">def rotate_x_labels_if_overlap_v2(ax: plt.Axes) -&gt; plt.Axes:</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-empty" title="No Anys on this line!">    Rotates the x-axis tick labels of a given Matplotlib axis if they overlap.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -279,7 +276,7 @@ Omitted Generics (x3)">d = DebugLogger()</span>
 <span class="line-empty" title="No Anys on this line!">    matplotlib.axes.Axes</span>
 <span class="line-empty" title="No Anys on this line!">        The same Matplotlib axis object with potentially rotated x-axis tick labels.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-precise" title="No Anys on this line!">    d.msg("Entering rotate_x_labels_if_overlap_V2")</span>
+<span class="line-precise" title="No Anys on this line!">    d.msg("Entering rotate_x_labels_if_overlap_v2")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    rotation_angle = _calculate_rotation_angle(ax)</span>
 <span class="line-precise" title="No Anys on this line!">    if rotation_angle &gt; 0:</span>
@@ -291,14 +288,12 @@ Omitted Generics (x3)">d = DebugLogger()</span>
 <span class="line-precise" title="No Anys on this line!">    for label in ax.xaxis.get_ticklabels():</span>
 <span class="line-precise" title="No Anys on this line!">        label.set_horizontalalignment("right")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    d.msg("Exiting rotate_x_labels_if_overlap_V2")</span>
+<span class="line-precise" title="No Anys on this line!">    d.msg("Exiting rotate_x_labels_if_overlap_v2")</span>
 <span class="line-precise" title="No Anys on this line!">    return ax</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">def _calculate_rotation_angle(ax: plt.Axes) -&gt; int:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Determines if there's overlap between x-axis tick labels and calculates</span>
-<span class="line-empty" title="No Anys on this line!">    the necessary rotation angle.</span>
+<span class="line-empty" title="No Anys on this line!">    """Determine if there's overlap between x-axis tick labels and calculate the necessary rotation angle.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -341,7 +336,7 @@ Omitted Generics (x20)">        for label_i, label_j in combinations(labels, 2):
 <span class="line-imprecise" title="Any Types on this line: 
 Error (x1)
 Omitted Generics (x2)
-Unannotated (x1)">                        ax.get_figure().savefig(f"overlap_{d.uuid}.png")  # type: ignore</span>
+Unannotated (x1)">                        ax.get_figure().savefig(f"overlap_{d.uuid}.png")</span>
 <span class="line-precise" title="No Anys on this line!">                        if ax is not None</span>
 <span class="line-precise" title="No Anys on this line!">                        else d.msg("No figure to save...")</span>
 <span class="line-empty" title="No Anys on this line!">                    )</span>
@@ -351,7 +346,7 @@ Unannotated (x1)">                        ax.get_figure().savefig(f"overlap_{d.u
 <span class="line-precise" title="No Anys on this line!">                    f"Overlap found when rotation_angle={rotation_angle}, breaking..."</span>
 <span class="line-empty" title="No Anys on this line!">                )</span>
 <span class="line-precise" title="No Anys on this line!">                break</span>
-<span class="line-empty" title="No Anys on this line!">            else:</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">                d.msg(</span>
 <span class="line-precise" title="No Anys on this line!">                    f"No overlap found between {label_i.get_text()} "</span>
 <span class="line-precise" title="No Anys on this line!">                    f"and {label_j.get_text()} "</span>
@@ -371,8 +366,7 @@ Unannotated (x1)">                        ax.get_figure().savefig(f"overlap_{d.u
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">def _get_bbox(label: plt.Text, ax: plt.Axes) -&gt; Bbox:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Returns the bounding box of a given x-axis tick label.</span>
+<span class="line-empty" title="No Anys on this line!">    """Return the bounding box of a given x-axis tick label.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>

@@ -69,12 +69,9 @@
 <span id="L59" class="lineno"><a class="lineno" href="#L59">59</a></span>
 <span id="L60" class="lineno"><a class="lineno" href="#L60">60</a></span>
 <span id="L61" class="lineno"><a class="lineno" href="#L61">61</a></span>
-<span id="L62" class="lineno"><a class="lineno" href="#L62">62</a></span>
-<span id="L63" class="lineno"><a class="lineno" href="#L63">63</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Union</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
@@ -94,18 +91,17 @@
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x3)
 Unimported (x1)">def calculate_error_metrics(</span>
-<span class="line-empty" title="No Anys on this line!">    X: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],</span>
-<span class="line-empty" title="No Anys on this line!">    y: Union[pd.Series, pl.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    X: pd.DataFrame | pl.DataFrame | pl.LazyFrame,</span>
+<span class="line-empty" title="No Anys on this line!">    y: pd.Series | pl.Series,</span>
 <span class="line-empty" title="No Anys on this line!">    model: sklearn.base.BaseEstimator,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; dict:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Calculates comprehensive error metrics for the model.</span>
+<span class="line-empty" title="No Anys on this line!">    """Calculate comprehensive error metrics for the model.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    X : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]</span>
+<span class="line-empty" title="No Anys on this line!">    X : pd.DataFrame | pl.DataFrame | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">        Input dataset of model features.</span>
-<span class="line-empty" title="No Anys on this line!">    y : Union[pd.Series, pl.Series]</span>
+<span class="line-empty" title="No Anys on this line!">    y : pd.Series | pl.Series</span>
 <span class="line-empty" title="No Anys on this line!">        Target variable.</span>
 <span class="line-empty" title="No Anys on this line!">    model : sklearn.base.BaseEstimator</span>
 <span class="line-empty" title="No Anys on this line!">        Model to be validated. Must be a scikit-learn estimator, or an estimator that</span>

@@ -109,6 +109,18 @@
 <span id="L99" class="lineno"><a class="lineno" href="#L99">99</a></span>
 <span id="L100" class="lineno"><a class="lineno" href="#L100">100</a></span>
 <span id="L101" class="lineno"><a class="lineno" href="#L101">101</a></span>
+<span id="L102" class="lineno"><a class="lineno" href="#L102">102</a></span>
+<span id="L103" class="lineno"><a class="lineno" href="#L103">103</a></span>
+<span id="L104" class="lineno"><a class="lineno" href="#L104">104</a></span>
+<span id="L105" class="lineno"><a class="lineno" href="#L105">105</a></span>
+<span id="L106" class="lineno"><a class="lineno" href="#L106">106</a></span>
+<span id="L107" class="lineno"><a class="lineno" href="#L107">107</a></span>
+<span id="L108" class="lineno"><a class="lineno" href="#L108">108</a></span>
+<span id="L109" class="lineno"><a class="lineno" href="#L109">109</a></span>
+<span id="L110" class="lineno"><a class="lineno" href="#L110">110</a></span>
+<span id="L111" class="lineno"><a class="lineno" href="#L111">111</a></span>
+<span id="L112" class="lineno"><a class="lineno" href="#L112">112</a></span>
+<span id="L113" class="lineno"><a class="lineno" href="#L113">113</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">import matplotlib.pyplot as plt</span>
 <span class="line-precise" title="No Anys on this line!">import pytest</span>
@@ -144,7 +156,12 @@ Unannotated (x9)
 Explicit (x2)">    ), f"The returned object is not a Bbox instance: it is {bbox}, a {type(bbox)}."</span>
 <span class="line-empty" title="No Anys on this line!">    assert (</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x5)">        bbox.width &gt; 0 and bbox.height &gt; 0</span>
+Unannotated (x2)">        bbox.width &gt; 0</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x10)">    ), f"The Bbox should have positive width and height, but it is {bbox}, with width {bbox.width} and height {bbox.height}."</span>
+<span class="line-empty" title="No Anys on this line!">    assert (</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x2)">        bbox.height &gt; 0</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x10)">    ), f"The Bbox should have positive width and height, but it is {bbox}, with width {bbox.width} and height {bbox.height}."</span>
 <span class="line-any" title="Any Types on this line: 
@@ -166,7 +183,12 @@ Unannotated (x4)">    bbox = _get_bbox(label, ax)</span>
 <span class="line-empty" title="No Anys on this line!">    # Assert that the returned bbox is the default empty bbox</span>
 <span class="line-empty" title="No Anys on this line!">    assert (</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x7)">        bbox.width == 0 and bbox.height == 0</span>
+Unannotated (x3)">        bbox.width == 0</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x13)">    ), f"The Bbox should be empty for invalid labels, but it is {bbox}, with width {bbox.width} and height {bbox.height}."</span>
+<span class="line-empty" title="No Anys on this line!">    assert (</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x3)">        bbox.height == 0</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x13)">    ), f"The Bbox should be empty for invalid labels, but it is {bbox}, with width {bbox.width} and height {bbox.height}."</span>
 <span class="line-any" title="Any Types on this line: 
@@ -228,7 +250,12 @@ Unannotated (x9)
 Explicit (x2)">    ), f"Expected a Bbox instance, but got {bbox}, a {type(bbox)}."</span>
 <span class="line-empty" title="No Anys on this line!">    assert (</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x5)">        bbox.width &gt; 0 and bbox.height &gt; 0</span>
+Unannotated (x2)">        bbox.width &gt; 0</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x10)">    ), f"Expected positive width and height, but got {bbox}, with width {bbox.width} and height {bbox.height}."</span>
+<span class="line-empty" title="No Anys on this line!">    assert (</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x2)">        bbox.height &gt; 0</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x10)">    ), f"Expected positive width and height, but got {bbox}, with width {bbox.width} and height {bbox.height}."</span>
 <span class="line-any" title="Any Types on this line: 
@@ -262,7 +289,12 @@ Unannotated (x9)
 Explicit (x2)">    ), f"Expected a Bbox instance for automatic tick labels, but got {bbox}, a {type(bbox)}."</span>
 <span class="line-empty" title="No Anys on this line!">    assert (</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x5)">        bbox.width &gt; 0 and bbox.height &gt; 0</span>
+Unannotated (x2)">        bbox.width &gt; 0</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x10)">    ), f"Expected positive width and height for tick labels, but got {bbox}, with width {bbox.width} and height {bbox.height}."</span>
+<span class="line-empty" title="No Anys on this line!">    assert (</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x2)">        bbox.height &gt; 0</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x10)">    ), f"Expected positive width and height for tick labels, but got {bbox}, with width {bbox.width} and height {bbox.height}."</span>
 <span class="line-any" title="Any Types on this line: 

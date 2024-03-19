@@ -140,12 +140,8 @@
 <span id="L130" class="lineno"><a class="lineno" href="#L130">130</a></span>
 <span id="L131" class="lineno"><a class="lineno" href="#L131">131</a></span>
 <span id="L132" class="lineno"><a class="lineno" href="#L132">132</a></span>
-<span id="L133" class="lineno"><a class="lineno" href="#L133">133</a></span>
-<span id="L134" class="lineno"><a class="lineno" href="#L134">134</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Union</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
@@ -274,7 +270,7 @@ Omitted Generics (x3)">def _harmonic_from_list(input_list: list | np.ndarray) -&
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
 <span class="line-empty" title="No Anys on this line!">    input_list : list or numpy array of float</span>
-<span class="line-empty" title="No Anys on this line!">        List or numpy array of numbers to be averaged.</span>
+<span class="line-empty" title="No Anys on this line!">        list or numpy array of numbers to be averaged.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
 <span class="line-empty" title="No Anys on this line!">    -------</span>
@@ -305,7 +301,7 @@ Omitted Generics (x3)">    return len(input_list) / denom if denom != 0 else 0</
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x3)">def _harmonic_from_series(s: Union[pd.Series, pl.Series, np.ndarray]) -&gt; float:</span>
+Omitted Generics (x3)">def _harmonic_from_series(s: pd.Series | pl.Series | np.ndarray) -&gt; float:</span>
 <span class="line-empty" title="No Anys on this line!">    """Calculate the harmonic mean of a pandas, polars, or numpy series of inputs.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>

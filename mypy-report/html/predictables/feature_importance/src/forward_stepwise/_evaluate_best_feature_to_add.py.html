@@ -38,53 +38,62 @@
 <span id="L28" class="lineno"><a class="lineno" href="#L28">28</a></span>
 <span id="L29" class="lineno"><a class="lineno" href="#L29">29</a></span>
 <span id="L30" class="lineno"><a class="lineno" href="#L30">30</a></span>
+<span id="L31" class="lineno"><a class="lineno" href="#L31">31</a></span>
+<span id="L32" class="lineno"><a class="lineno" href="#L32">32</a></span>
+<span id="L33" class="lineno"><a class="lineno" href="#L33">33</a></span>
+<span id="L34" class="lineno"><a class="lineno" href="#L34">34</a></span>
 </pre></td>
-<td class="table-code"><pre><span class="line-any" title="No Anys on this line!">from sklearn.linear_model import LinearRegression</span>
+<td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">import polars as pl</span>
+<span class="line-any" title="No Anys on this line!">from sklearn.linear_model import LinearRegression</span>
 <span class="line-any" title="No Anys on this line!">from sklearn.metrics import mean_squared_error</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">def evaluate_best_feature_to_add(</span>
-<span class="line-empty" title="No Anys on this line!">    remaining_features, selected_features, sample_X, sample_y</span>
-<span class="line-empty" title="No Anys on this line!">):</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    best_feature = None</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">    best_performance = float(</span>
-<span class="line-any" title="No Anys on this line!">        "inf"</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)">def evaluate_best_feature_to_add(</span>
+<span class="line-empty" title="No Anys on this line!">    remaining_features: list,</span>
+<span class="line-empty" title="No Anys on this line!">    selected_features: list,</span>
+<span class="line-empty" title="No Anys on this line!">    sample_X: pl.LazyFrame,</span>
+<span class="line-empty" title="No Anys on this line!">    sample_y: pl.LazyFrame,</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; str:</span>
+<span class="line-precise" title="No Anys on this line!">    best_feature = None</span>
+<span class="line-precise" title="No Anys on this line!">    best_performance = float(</span>
+<span class="line-precise" title="No Anys on this line!">        "inf"</span>
 <span class="line-empty" title="No Anys on this line!">    )  # Assuming we are using MSE which should be minimized</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">    for feature in remaining_features:</span>
+Omitted Generics (x2)">    for feature in remaining_features:</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">        features_to_test = [*selected_features, feature]</span>
+Omitted Generics (x3)">        features_to_test = [*selected_features, feature]</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)
-Unimported (x1)">        model = LinearRegression()</span>
+Unimported (x3)">        model = LinearRegression()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Assuming sample_X and sample_y are LazyFrames, we collect them here.</span>
 <span class="line-empty" title="No Anys on this line!">        # In a real-world scenario, consider using a more efficient approach</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x8)">        X_train = sample_X[features_to_test].collect().to_numpy()</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x6)">        y_train = sample_y.collect().to_numpy()</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Explicit (x6)
+Omitted Generics (x1)">        X_train = sample_X[features_to_test].collect().to_numpy()</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Explicit (x6)">        y_train = sample_y.collect().to_numpy()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x5)">        model.fit(X_train, y_train)</span>
+Unimported (x3)
+Explicit (x4)">        model.fit(X_train, y_train)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x5)">        predictions = model.predict(X_train)</span>
+Unimported (x4)
+Explicit (x2)">        predictions = model.predict(X_train)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x4)
-Unimported (x1)">        performance = mean_squared_error(y_train, predictions)</span>
+Unimported (x4)
+Explicit (x2)">        performance = mean_squared_error(y_train, predictions)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">        if performance &lt; best_performance:</span>
+Unimported (x2)">        if performance &lt; best_performance:</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">            best_performance = performance</span>
+Unimported (x1)">            best_performance = performance</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">            best_feature = feature</span>
+Omitted Generics (x2)">            best_feature = feature</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    return best_feature</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">    return best_feature</span>
 </pre></td>
 </tr></tbody>
 </table>

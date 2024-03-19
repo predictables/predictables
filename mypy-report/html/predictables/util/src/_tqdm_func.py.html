@@ -109,14 +109,10 @@
 <span id="L99" class="lineno"><a class="lineno" href="#L99">99</a></span>
 <span id="L100" class="lineno"><a class="lineno" href="#L100">100</a></span>
 <span id="L101" class="lineno"><a class="lineno" href="#L101">101</a></span>
-<span id="L102" class="lineno"><a class="lineno" href="#L102">102</a></span>
-<span id="L103" class="lineno"><a class="lineno" href="#L103">103</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
-<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import os</span>
-<span class="line-precise" title="No Anys on this line!">from typing import Any, Iterable, Optional</span>
-<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">from typing import Any, Iterable</span>
 <span class="line-precise" title="No Anys on this line!">from dotenv import load_dotenv</span>
 <span class="line-precise" title="No Anys on this line!">from tqdm import tqdm as _tqdm</span>
 <span class="line-any" title="No Anys on this line!">from tqdm.notebook import tqdm as _tqdm_notebook  # type: ignore[import-untyped]</span>
@@ -136,11 +132,11 @@ Explicit (x1)">    return x</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">def tqdm(</span>
 <span class="line-empty" title="No Anys on this line!">    x: Iterable,</span>
-<span class="line-precise" title="No Anys on this line!">    desc: Optional[str] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    enable: Optional[bool] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    disable: Optional[bool] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    notebook: Optional[bool] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    nb: Optional[bool] = None,</span>
+<span class="line-precise" title="No Anys on this line!">    desc: str | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    enable: bool | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    disable: bool | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    notebook: bool | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    nb: bool | None = None,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; Iterable:</span>
 <span class="line-empty" title="No Anys on this line!">    """Wrap tqdm around an iterable, with support for environment variables.</span>
 <span class="line-empty" title="No Anys on this line!"></span>

@@ -303,14 +303,8 @@
 <span id="L293" class="lineno"><a class="lineno" href="#L293">293</a></span>
 <span id="L294" class="lineno"><a class="lineno" href="#L294">294</a></span>
 <span id="L295" class="lineno"><a class="lineno" href="#L295">295</a></span>
-<span id="L296" class="lineno"><a class="lineno" href="#L296">296</a></span>
-<span id="L297" class="lineno"><a class="lineno" href="#L297">297</a></span>
-<span id="L298" class="lineno"><a class="lineno" href="#L298">298</a></span>
-<span id="L299" class="lineno"><a class="lineno" href="#L299">299</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import List, Optional, Union</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
@@ -319,24 +313,23 @@
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">def _get_data(</span>
-<span class="line-empty" title="No Anys on this line!">    df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],</span>
-<span class="line-empty" title="No Anys on this line!">    df_val: Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]],</span>
+<span class="line-empty" title="No Anys on this line!">    df: pd.DataFrame | pl.DataFrame | pl.LazyFrame,</span>
+<span class="line-precise" title="No Anys on this line!">    df_val: pd.DataFrame | pl.DataFrame | pl.LazyFrame | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    element: str = "x",</span>
 <span class="line-precise" title="No Anys on this line!">    data: str = "train",</span>
-<span class="line-precise" title="No Anys on this line!">    fold_n: Optional[int] = None,</span>
+<span class="line-precise" title="No Anys on this line!">    fold_n: int | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    feature_col_name: str = "feature",</span>
 <span class="line-precise" title="No Anys on this line!">    target_col_name: str = "target",</span>
 <span class="line-precise" title="No Anys on this line!">    fold_col_name: str = "fold",</span>
 <span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; List[Union[int, float, str]]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Helper function to get the requested data element.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; int | float | str:</span>
+<span class="line-empty" title="No Anys on this line!">    """Get the requested data element.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    df : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]</span>
+<span class="line-empty" title="No Anys on this line!">    df : pd.DataFrame | pl.DataFrame | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">        The dataframe to get the data from.</span>
-<span class="line-empty" title="No Anys on this line!">    df_val : Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]]</span>
+<span class="line-empty" title="No Anys on this line!">    df_val : pd.DataFrame | pl.DataFrame | pl.LazyFrame | Non = None,</span>
 <span class="line-empty" title="No Anys on this line!">        The validation dataframe.</span>
 <span class="line-empty" title="No Anys on this line!">    element : str, optional</span>
 <span class="line-empty" title="No Anys on this line!">        What data element to get. Choices are "x", "y", or "fold"</span>
@@ -361,7 +354,7 @@
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
 <span class="line-empty" title="No Anys on this line!">    -------</span>
-<span class="line-empty" title="No Anys on this line!">    List[Union[int, float, str]]</span>
+<span class="line-empty" title="No Anys on this line!">    int | float | str</span>
 <span class="line-empty" title="No Anys on this line!">        The values for the requested column.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-precise" title="No Anys on this line!">    df_: pd.DataFrame = to_pd_df(df)</span>
@@ -416,9 +409,9 @@ Omitted Generics (x3)">    return split[feature_col_name if element_ == "x" else
 <span class="line-precise" title="No Anys on this line!">    data: str = "all",</span>
 <span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pd.DataFrame:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Get the data for the requested fold. This means that we only return</span>
-<span class="line-empty" title="No Anys on this line!">    rows having the cv label of the fold.</span>
+<span class="line-empty" title="No Anys on this line!">    """Get the data for the requested fold.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    This means that we only return rows having the cv label of the fold.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -471,19 +464,20 @@ Omitted Generics (x4)">    if fold not in get_unique(df[fold_col]):</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">def _filter_df_for_cv_train(</span>
-<span class="line-empty" title="No Anys on this line!">    df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],</span>
+<span class="line-empty" title="No Anys on this line!">    df: pd.DataFrame | pl.DataFrame | pl.LazyFrame,</span>
 <span class="line-empty" title="No Anys on this line!">    fold: int,</span>
 <span class="line-empty" title="No Anys on this line!">    fold_col: str,</span>
 <span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
 <span class="line-precise" title="No Anys on this line!">    return_type: str = "pd",</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Union[pd.DataFrame, pl.LazyFrame]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Get the training data for the requested fold. This means that we exclude</span>
-<span class="line-empty" title="No Anys on this line!">    all rows having the label of the fold, and return the remaining rows.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; pd.DataFrame | pl.LazyFrame:</span>
+<span class="line-empty" title="No Anys on this line!">    """Get the training data for the requested fold.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    This means that we exclude all rows having the label of the fold,</span>
+<span class="line-empty" title="No Anys on this line!">    and return the remaining rows.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    df : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]</span>
+<span class="line-empty" title="No Anys on this line!">    df : pd.DataFrame | pl.DataFrame | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">        The dataframe to get the data from.</span>
 <span class="line-empty" title="No Anys on this line!">    fold : int</span>
 <span class="line-empty" title="No Anys on this line!">        The fold number to get the training data for. Must be a named</span>
@@ -499,7 +493,7 @@ Omitted Generics (x4)">    if fold not in get_unique(df[fold_col]):</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
 <span class="line-empty" title="No Anys on this line!">    -------</span>
-<span class="line-empty" title="No Anys on this line!">    Union[pd.DataFrame, pl.LazyFrame]</span>
+<span class="line-empty" title="No Anys on this line!">    pd.DataFrame | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">        The training data for the requested fold.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Raises</span>
@@ -537,10 +531,10 @@ Omitted Generics (x1)">        df, fold, fold_col_pd, time_series_validation, "t
 <span class="line-empty" title="No Anys on this line!">    fold_col: str,</span>
 <span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
 <span class="line-precise" title="No Anys on this line!">    return_type: str = "pd",</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Union[pd.DataFrame, pl.LazyFrame]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Get the testing/validation data for the requested fold. This means that</span>
-<span class="line-empty" title="No Anys on this line!">    we only return rows having the cv label of the fold.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; pd.DataFrame | pl.LazyFrame:</span>
+<span class="line-empty" title="No Anys on this line!">    """Get the testing/validation data for the requested fold.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    This means that we only return rows having the cv label of the fold.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -559,7 +553,7 @@ Omitted Generics (x1)">        df, fold, fold_col_pd, time_series_validation, "t
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
 <span class="line-empty" title="No Anys on this line!">    -------</span>
-<span class="line-empty" title="No Anys on this line!">    Union[pd.DataFrame, pl.LazyFrame]</span>
+<span class="line-empty" title="No Anys on this line!">    pd.DataFrame | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">        The validation data for the requested fold.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Raises</span>
@@ -592,13 +586,11 @@ Omitted Generics (x1)">        df, fold, fold_col_pd, time_series_validation, "t
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">def _filter_df_for_train_test(</span>
-<span class="line-empty" title="No Anys on this line!">    df: pd.DataFrame,</span>
-<span class="line-precise" title="No Anys on this line!">    df_val: Optional[pd.DataFrame] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    data: str = "all",</span>
-<span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
+<span class="line-precise" title="No Anys on this line!">    df: pd.DataFrame, df_val: pd.DataFrame | None = None, data: str = "all"</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pd.DataFrame:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Returns a dataframe representing the `data` string input -- one of:</span>
+<span class="line-empty" title="No Anys on this line!">    """Return a dataframe representing the `data` string input.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    String input should be one of:</span>
 <span class="line-empty" title="No Anys on this line!">        `all` - returns the concatenated [df, df_val] set</span>
 <span class="line-empty" title="No Anys on this line!">        `train` - returns df</span>
 <span class="line-empty" title="No Anys on this line!">        `test` - returns df_val</span>

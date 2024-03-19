@@ -372,12 +372,21 @@
 <span id="L362" class="lineno"><a class="lineno" href="#L362">362</a></span>
 <span id="L363" class="lineno"><a class="lineno" href="#L363">363</a></span>
 <span id="L364" class="lineno"><a class="lineno" href="#L364">364</a></span>
+<span id="L365" class="lineno"><a class="lineno" href="#L365">365</a></span>
+<span id="L366" class="lineno"><a class="lineno" href="#L366">366</a></span>
+<span id="L367" class="lineno"><a class="lineno" href="#L367">367</a></span>
+<span id="L368" class="lineno"><a class="lineno" href="#L368">368</a></span>
+<span id="L369" class="lineno"><a class="lineno" href="#L369">369</a></span>
+<span id="L370" class="lineno"><a class="lineno" href="#L370">370</a></span>
+<span id="L371" class="lineno"><a class="lineno" href="#L371">371</a></span>
+<span id="L372" class="lineno"><a class="lineno" href="#L372">372</a></span>
+<span id="L373" class="lineno"><a class="lineno" href="#L373">373</a></span>
+<span id="L374" class="lineno"><a class="lineno" href="#L374">374</a></span>
+<span id="L375" class="lineno"><a class="lineno" href="#L375">375</a></span>
 </pre></td>
-<td class="table-code"><pre><span class="line-empty" title="No Anys on this line!">"""Utility functions for PredicTables"""</span>
+<td class="table-code"><pre><span class="line-empty" title="No Anys on this line!">"""Utility functions for PredicTables."""</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Union</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
@@ -401,17 +410,22 @@
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x6)">def _to_numpy(</span>
-<span class="line-empty" title="No Anys on this line!">    data: Union[</span>
-<span class="line-empty" title="No Anys on this line!">        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list</span>
-<span class="line-empty" title="No Anys on this line!">    ],</span>
+<span class="line-empty" title="No Anys on this line!">    data: pd.DataFrame</span>
+<span class="line-empty" title="No Anys on this line!">    | pd.Series</span>
+<span class="line-empty" title="No Anys on this line!">    | pl.DataFrame</span>
+<span class="line-empty" title="No Anys on this line!">    | pl.Series</span>
+<span class="line-empty" title="No Anys on this line!">    | pl.LazyFrame</span>
+<span class="line-empty" title="No Anys on this line!">    | np.ndarray</span>
+<span class="line-empty" title="No Anys on this line!">    | list,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; np.ndarray:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Converts the data to a numpy array. Handles both pandas and polars dataframes and</span>
-<span class="line-empty" title="No Anys on this line!">    Series, as well as polars lazy frames, numpy arrays, and lists.</span>
+<span class="line-empty" title="No Anys on this line!">    """Convert the data to a numpy array.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Handles both pandas and polars dataframes and Series, as well as</span>
+<span class="line-empty" title="No Anys on this line!">    polars lazy frames, numpy arrays, and lists.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    data : Union[pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list]</span>
+<span class="line-empty" title="No Anys on this line!">    data : pd.DataFrame | pd.Series | pl.DataFrame | pl.Series | pl.LazyFrame | np.ndarray | list</span>
 <span class="line-empty" title="No Anys on this line!">        The data to be converted.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
@@ -461,19 +475,24 @@ Explicit (x2)">            f"Input data type {type(data)} not supported. \n\</sp
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x4)">def _to_polars(</span>
-<span class="line-empty" title="No Anys on this line!">    data: Union[</span>
-<span class="line-empty" title="No Anys on this line!">        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list</span>
-<span class="line-empty" title="No Anys on this line!">    ],</span>
+<span class="line-empty" title="No Anys on this line!">    data: pd.DataFrame</span>
+<span class="line-empty" title="No Anys on this line!">    | pd.Series</span>
+<span class="line-empty" title="No Anys on this line!">    | pl.DataFrame</span>
+<span class="line-empty" title="No Anys on this line!">    | pl.Series</span>
+<span class="line-empty" title="No Anys on this line!">    | pl.LazyFrame</span>
+<span class="line-empty" title="No Anys on this line!">    | np.ndarray</span>
+<span class="line-empty" title="No Anys on this line!">    | list,</span>
 <span class="line-precise" title="No Anys on this line!">    to: str = "dataframe",</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Union[pl.DataFrame, pl.Series, pl.LazyFrame]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Converts the data to a polars dataframe, series, or lazy frame depending on the</span>
-<span class="line-empty" title="No Anys on this line!">    `to` parameter. Handles both pandas and polars dataframes and Series, as well as</span>
-<span class="line-empty" title="No Anys on this line!">    polars lazy frames, numpy arrays, and lists.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; pl.DataFrame | pl.Series | pl.LazyFrame:</span>
+<span class="line-empty" title="No Anys on this line!">    """Convert the data to a polars dataframe, series, or lazy frame.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Output depends on the `to` parameter. Handles both pandas</span>
+<span class="line-empty" title="No Anys on this line!">    and polars dataframes and Series, as well as polars lazy frames,</span>
+<span class="line-empty" title="No Anys on this line!">    numpy arrays, and lists.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    data : Union[pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list]</span>
+<span class="line-empty" title="No Anys on this line!">    data : pd.DataFrame | pd.Series | pl.DataFrame | pl.Series | pl.LazyFrame | np.ndarray | list</span>
 <span class="line-empty" title="No Anys on this line!">        The data to be converted.</span>
 <span class="line-empty" title="No Anys on this line!">    to : str, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The type to convert the data to. The string is preprocessed by passing it through</span>
@@ -481,7 +500,7 @@ Omitted Generics (x4)">def _to_polars(</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
 <span class="line-empty" title="No Anys on this line!">    -------</span>
-<span class="line-empty" title="No Anys on this line!">    Union[pl.DataFrame, pl.Series, pl.LazyFrame]</span>
+<span class="line-empty" title="No Anys on this line!">    pl.DataFrame | pl.Series | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">        The converted data.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-empty" title="No Anys on this line!">    # Check output type</span>
@@ -609,19 +628,23 @@ Explicit (x2)">            f"Input data type {type(data)} not supported. \n\</sp
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x5)">def _to_pandas(</span>
-<span class="line-empty" title="No Anys on this line!">    data: Union[</span>
-<span class="line-empty" title="No Anys on this line!">        pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list</span>
-<span class="line-empty" title="No Anys on this line!">    ],</span>
+<span class="line-empty" title="No Anys on this line!">    data: pd.DataFrame</span>
+<span class="line-empty" title="No Anys on this line!">    | pd.Series</span>
+<span class="line-empty" title="No Anys on this line!">    | pl.DataFrame</span>
+<span class="line-empty" title="No Anys on this line!">    | pl.Series</span>
+<span class="line-empty" title="No Anys on this line!">    | pl.LazyFrame</span>
+<span class="line-empty" title="No Anys on this line!">    | np.ndarray</span>
+<span class="line-empty" title="No Anys on this line!">    | list,</span>
 <span class="line-precise" title="No Anys on this line!">    to: str = "dataframe",</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Union[pd.DataFrame, pd.Series]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Converts the data to a pandas dataframe or series depending on the</span>
-<span class="line-empty" title="No Anys on this line!">    `to` parameter. Handles both pandas and polars dataframes and Series, as well as</span>
-<span class="line-empty" title="No Anys on this line!">    polars lazy frames, numpy arrays, and lists.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; pd.DataFrame | pd.Series:</span>
+<span class="line-empty" title="No Anys on this line!">    """Convert the data to a pandas dataframe or series depending on the `to` parameter.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Handles both pandas and polars dataframes and Series, as well as polars</span>
+<span class="line-empty" title="No Anys on this line!">    lazy frames, numpy arrays, and lists.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    data : Union[pd.DataFrame, pd.Series, pl.DataFrame, pl.Series, pl.LazyFrame, np.ndarray, list]</span>
+<span class="line-empty" title="No Anys on this line!">    data : pd.DataFrame | pd.Series | pl.DataFrame | pl.Series | pl.LazyFrame | np.ndarray | list</span>
 <span class="line-empty" title="No Anys on this line!">        The data to be converted.</span>
 <span class="line-empty" title="No Anys on this line!">    to : str, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The type to convert the data to. The string is preprocessed by passing it through</span>
@@ -630,7 +653,7 @@ Omitted Generics (x5)">def _to_pandas(</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
 <span class="line-empty" title="No Anys on this line!">    -------</span>
-<span class="line-empty" title="No Anys on this line!">    Union[pd.DataFrame, pd.Series]</span>
+<span class="line-empty" title="No Anys on this line!">    pd.DataFrame | pd.Series</span>
 <span class="line-empty" title="No Anys on this line!">        The converted data.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-empty" title="No Anys on this line!">    # Check output type</span>
@@ -758,10 +781,9 @@ Explicit (x2)">            f"Input data type {type(data)} not supported. \n\</sp
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">def _select_binary_columns(</span>
-<span class="line-precise" title="No Anys on this line!">    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame], missing_col: str = "999"</span>
+<span class="line-precise" title="No Anys on this line!">    data: pd.DataFrame | pl.DataFrame | pl.LazyFrame, missing_col: str = "999"</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; list:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Returns the binary-coded columns from the data.</span>
+<span class="line-empty" title="No Anys on this line!">    """Return the binary-coded columns from the data.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Binary-coded columns are defined to be categorical, with at</span>
 <span class="line-empty" title="No Anys on this line!">    most three categories:</span>
@@ -776,7 +798,7 @@ Omitted Generics (x1)">def _select_binary_columns(</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    data : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]</span>
+<span class="line-empty" title="No Anys on this line!">    data : pd.DataFrame | pl.DataFrame | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">        The data to be analyzed.</span>
 <span class="line-empty" title="No Anys on this line!">    missing_col : str</span>
 <span class="line-empty" title="No Anys on this line!">        The name of the column that indicates missingness. This column</span>

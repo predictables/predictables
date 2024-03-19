@@ -32,16 +32,13 @@
 <span id="L22" class="lineno"><a class="lineno" href="#L22">22</a></span>
 <span id="L23" class="lineno"><a class="lineno" href="#L23">23</a></span>
 <span id="L24" class="lineno"><a class="lineno" href="#L24">24</a></span>
-<span id="L25" class="lineno"><a class="lineno" href="#L25">25</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from ._get_rc_params import get_rc_params</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)
-Omitted Generics (x2)">def set_rc_params(rcParams) -&gt; dict:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Sets Matplotlib RC parameters for customizing plot styles.</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x4)">def set_rc_params(rc_params: dict) -&gt; dict:</span>
+<span class="line-empty" title="No Anys on this line!">    """Set Matplotlib RC parameters for customizing plot styles.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    The function sets Matplotlib RC parameters for customizing the style of Matplotlib</span>
 <span class="line-empty" title="No Anys on this line!">    plots. The parameters include font sizes, tick label sizes, legend font size,</span>
@@ -50,7 +47,7 @@ Omitted Generics (x2)">def set_rc_params(rcParams) -&gt; dict:</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    rcParams : dict</span>
+<span class="line-empty" title="No Anys on this line!">    rc_params : dict</span>
 <span class="line-empty" title="No Anys on this line!">        A dictionary of Matplotlib RC parameters to be updated.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
@@ -58,13 +55,11 @@ Omitted Generics (x2)">def set_rc_params(rcParams) -&gt; dict:</span>
 <span class="line-empty" title="No Anys on this line!">    dict</span>
 <span class="line-empty" title="No Anys on this line!">        A dictionary of Matplotlib RC parameters with the updated values.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x5)">    for k, v in get_rc_params().items():</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)
-Unannotated (x1)">        rcParams[k] = v</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    return rcParams</span>
+<span class="line-precise" title="No Anys on this line!">    for k, v in get_rc_params().items():</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)">        rc_params[k] = v</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)">    return rc_params</span>
 </pre></td>
 </tr></tbody>
 </table>

@@ -253,14 +253,10 @@
 <span id="L243" class="lineno"><a class="lineno" href="#L243">243</a></span>
 <span id="L244" class="lineno"><a class="lineno" href="#L244">244</a></span>
 <span id="L245" class="lineno"><a class="lineno" href="#L245">245</a></span>
-<span id="L246" class="lineno"><a class="lineno" href="#L246">246</a></span>
-<span id="L247" class="lineno"><a class="lineno" href="#L247">247</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import logging</span>
-<span class="line-precise" title="No Anys on this line!">from typing import Tuple</span>
-<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import pytest</span>
@@ -274,7 +270,7 @@
 Explicit (x6)
 Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x3)">def sample_data() -&gt; Tuple[pd.Series, pd.Series, pd.Series]:</span>
+Omitted Generics (x3)">def sample_data() -&gt; tuple[pd.Series, pd.Series, pd.Series]:</span>
 <span class="line-empty" title="No Anys on this line!">    """Generate sample data for testing."""</span>
 <span class="line-precise" title="No Anys on this line!">    rg = np.random.default_rng(42)</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -297,7 +293,7 @@ Explicit (x3)">    return y, pd.Series(yhat_proba), fold</span>
 Explicit (x6)
 Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x3)">def sample_variance(sample_data: Tuple[pd.Series, pd.Series, pd.Series]) -&gt; float:</span>
+Omitted Generics (x3)">def sample_variance(sample_data: tuple[pd.Series, pd.Series, pd.Series]) -&gt; float:</span>
 <span class="line-empty" title="No Anys on this line!">    """Calculate the variance of the AUC for the sample data."""</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x6)">    y, yhat_proba, fold = sample_data</span>
@@ -318,7 +314,7 @@ Explicit (x6)
 Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x3)
-Unannotated (x1)">def sample_variance_bootstrap(sample_data: Tuple[pd.Series, pd.Series, pd.Series]):</span>
+Unannotated (x1)">def sample_variance_bootstrap(sample_data: tuple[pd.Series, pd.Series, pd.Series]):</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x5)">    y, yhat_proba, _ = sample_data</span>
 <span class="line-precise" title="No Anys on this line!">    rg = np.random.default_rng(42)</span>
@@ -379,7 +375,7 @@ Unannotated (x3)">    return y, yhat_proba, fold</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x3)
 Unannotated (x1)">def test_empirical_auc_variance_basic(</span>
-<span class="line-empty" title="No Anys on this line!">    sample_data: Tuple[pd.Series, pd.Series, pd.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    sample_data: tuple[pd.Series, pd.Series, pd.Series],</span>
 <span class="line-empty" title="No Anys on this line!">):</span>
 <span class="line-empty" title="No Anys on this line!">    """Test basic functionality of the function."""</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -395,7 +391,7 @@ Explicit (x2)">    ), f"Variance should be a float, not {type(var_auc)}"</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x3)
 Unannotated (x1)">def test_empirical_auc_variance_correct_calculation(</span>
-<span class="line-empty" title="No Anys on this line!">    sample_data: Tuple[pd.Series, pd.Series, pd.Series], sample_variance: float</span>
+<span class="line-empty" title="No Anys on this line!">    sample_data: tuple[pd.Series, pd.Series, pd.Series], sample_variance: float</span>
 <span class="line-empty" title="No Anys on this line!">):</span>
 <span class="line-empty" title="No Anys on this line!">    """Test the function against a known value."""</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -459,8 +455,8 @@ Omitted Generics (x3)">        if (len(y) == 0) | (len(yhat_proba) == 0) | (len(
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x3)
 Unannotated (x1)">def test_empirical_auc_variance_with_bootstrapping(</span>
-<span class="line-empty" title="No Anys on this line!">    sample_data: Tuple[pd.Series, pd.Series, pd.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    sample_variance_bootstrap: Tuple[float, float],</span>
+<span class="line-empty" title="No Anys on this line!">    sample_data: tuple[pd.Series, pd.Series, pd.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    sample_variance_bootstrap: tuple[float, float],</span>
 <span class="line-empty" title="No Anys on this line!">):</span>
 <span class="line-empty" title="No Anys on this line!">    """Test variance computation with bootstrapping enabled."""</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -480,7 +476,7 @@ Omitted Generics (x6)">    var_auc = _empirical_auc_variance(y, yhat_proba, fold
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x3)
 Unannotated (x1)">def test_imbalanced_classes_in_fold(</span>
-<span class="line-empty" title="No Anys on this line!">    sample_data: Tuple[pd.Series, pd.Series, pd.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    sample_data: tuple[pd.Series, pd.Series, pd.Series],</span>
 <span class="line-empty" title="No Anys on this line!">):</span>
 <span class="line-empty" title="No Anys on this line!">    """Test that the function handles imbalanced class distributions within folds."""</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -506,7 +502,7 @@ Omitted Generics (x6)">    var_auc = _empirical_auc_variance(y, yhat_proba, fold
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x3)
 Unannotated (x1)">def test_large_data_performance(</span>
-<span class="line-empty" title="No Anys on this line!">    large_sample_data: Tuple[pd.Series, pd.Series, pd.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    large_sample_data: tuple[pd.Series, pd.Series, pd.Series],</span>
 <span class="line-empty" title="No Anys on this line!">):</span>
 <span class="line-empty" title="No Anys on this line!">    """Test the function's performance on a larger dataset."""</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -588,7 +584,7 @@ Omitted Generics (x6)">        _empirical_auc_variance(y_mod, yhat_proba_mod, fo
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x3)
 Unannotated (x1)">def test_skewed_probability_distributions(</span>
-<span class="line-empty" title="No Anys on this line!">    sample_data: Tuple[pd.Series, pd.Series, pd.Series], skewness: float</span>
+<span class="line-empty" title="No Anys on this line!">    sample_data: tuple[pd.Series, pd.Series, pd.Series], skewness: float</span>
 <span class="line-empty" title="No Anys on this line!">):</span>
 <span class="line-empty" title="No Anys on this line!">    """Test variance calculation with skewed probability distributions."""</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -608,7 +604,7 @@ Omitted Generics (x6)">    var_auc = _empirical_auc_variance(y, yhat_proba, fold
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x3)
 Unannotated (x1)">def test_perfect_separation(</span>
-<span class="line-empty" title="No Anys on this line!">    sample_data: Tuple[pd.Series, pd.Series, pd.Series], perfect_separation: bool</span>
+<span class="line-empty" title="No Anys on this line!">    sample_data: tuple[pd.Series, pd.Series, pd.Series], perfect_separation: bool</span>
 <span class="line-empty" title="No Anys on this line!">):</span>
 <span class="line-empty" title="No Anys on this line!">    """Test variance calculation with perfect or near-perfect separation."""</span>
 <span class="line-imprecise" title="Any Types on this line: 

@@ -92,7 +92,6 @@
 <span id="L82" class="lineno"><a class="lineno" href="#L82">82</a></span>
 <span id="L83" class="lineno"><a class="lineno" href="#L83">83</a></span>
 <span id="L84" class="lineno"><a class="lineno" href="#L84">84</a></span>
-<span id="L85" class="lineno"><a class="lineno" href="#L85">85</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -100,8 +99,7 @@
 <span class="line-precise" title="No Anys on this line!">import logging as _logging</span>
 <span class="line-precise" title="No Anys on this line!">import os</span>
 <span class="line-precise" title="No Anys on this line!">import uuid as _uuid</span>
-<span class="line-precise" title="No Anys on this line!">from typing import Callable, Optional</span>
-<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">from typing import Callable</span>
 <span class="line-precise" title="No Anys on this line!">from dotenv import load_dotenv</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from predictables.util.src.logging._LogLevel import LogLevel</span>
@@ -116,15 +114,15 @@
 <span class="line-empty" title="No Anys on this line!">    session.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    uuid: Optional[_uuid.UUID]</span>
+<span class="line-precise" title="No Anys on this line!">    uuid: _uuid.UUID | None</span>
 <span class="line-precise" title="No Anys on this line!">    turned_on: bool</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="Any Types on this line: 
 Omitted Generics (x3)">    def __init__(</span>
 <span class="line-empty" title="No Anys on this line!">        self,</span>
 <span class="line-precise" title="No Anys on this line!">        filename: str = "debug.log",</span>
-<span class="line-precise" title="No Anys on this line!">        working_file: Optional[str] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        message_prefix: Optional[Callable] = None,</span>
+<span class="line-precise" title="No Anys on this line!">        working_file: str | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        message_prefix: Callable | None = None,</span>
 <span class="line-empty" title="No Anys on this line!">    ):</span>
 <span class="line-empty" title="No Anys on this line!">        """Initialize the DebugLogger class."""</span>
 <span class="line-precise" title="No Anys on this line!">        self.uuid = _uuid.uuid1()</span>
@@ -157,7 +155,7 @@ Omitted Generics (x3)">            if message_prefix is not None</span>
 <span class="line-precise" title="No Anys on this line!">    def _init_log(self) -&gt; None:</span>
 <span class="line-empty" title="No Anys on this line!">        """Initialize the logging module."""</span>
 <span class="line-precise" title="No Anys on this line!">        _logging.basicConfig(filename=self.filename, level=_logging.DEBUG)</span>
-<span class="line-precise" title="No Anys on this line!">        _logging.debug(f"Debugging UUID: {self.uuid}")  # noqa: G004</span>
+<span class="line-precise" title="No Anys on this line!">        _logging.debug(f"Debugging UUID: {self.uuid}")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def debug_(self, message: str) -&gt; None:</span>
 <span class="line-empty" title="No Anys on this line!">        """Log a debug message with the unique identifier.</span>
@@ -168,7 +166,7 @@ Omitted Generics (x3)">            if message_prefix is not None</span>
 <span class="line-empty" title="No Anys on this line!">            The debug message to log.</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-precise" title="No Anys on this line!">        if self.turned_on:</span>
-<span class="line-precise" title="No Anys on this line!">            _logging.debug(f"{self._default_message_prefix()} - {message}")  # noqa: G004</span>
+<span class="line-precise" title="No Anys on this line!">            _logging.debug(f"{self._default_message_prefix()} - {message}")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def msg(self, message: str) -&gt; None:</span>
 <span class="line-empty" title="No Anys on this line!">        """Alias for the debug method."""</span>

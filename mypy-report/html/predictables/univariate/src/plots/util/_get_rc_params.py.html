@@ -33,19 +33,12 @@
 <span id="L23" class="lineno"><a class="lineno" href="#L23">23</a></span>
 <span id="L24" class="lineno"><a class="lineno" href="#L24">24</a></span>
 <span id="L25" class="lineno"><a class="lineno" href="#L25">25</a></span>
-<span id="L26" class="lineno"><a class="lineno" href="#L26">26</a></span>
-<span id="L27" class="lineno"><a class="lineno" href="#L27">27</a></span>
-<span id="L28" class="lineno"><a class="lineno" href="#L28">28</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Any, Dict</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-imprecise" title="Any Types on this line: 
-Explicit (x1)">def get_rc_params() -&gt; Dict[str, Any]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Returns a dictionary of Matplotlib RC parameters for customizing plot styles.</span>
+<span class="line-precise" title="No Anys on this line!">def get_rc_params() -&gt; dict[str, float | int | tuple[int, int] | str]:</span>
+<span class="line-empty" title="No Anys on this line!">    """Return a dictionary of Matplotlib RC parameters for customizing plot styles.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    The function returns a dictionary of Matplotlib RC parameters that can be used to</span>
 <span class="line-empty" title="No Anys on this line!">    customize the style of Matplotlib plots. The parameters include font sizes, tick</span>
@@ -63,7 +56,7 @@ Explicit (x1)">def get_rc_params() -&gt; Dict[str, Any]:</span>
 <span class="line-precise" title="No Anys on this line!">        "xtick.labelsize": 14,</span>
 <span class="line-precise" title="No Anys on this line!">        "ytick.labelsize": 14,</span>
 <span class="line-precise" title="No Anys on this line!">        "figure.titlesize": 16,</span>
-<span class="line-precise" title="No Anys on this line!">        "figure.figsize": (7, 7),  # type: ignore</span>
+<span class="line-precise" title="No Anys on this line!">        "figure.figsize": (7, 7),</span>
 <span class="line-precise" title="No Anys on this line!">        "figure.dpi": 150,</span>
 <span class="line-empty" title="No Anys on this line!">    }</span>
 </pre></td>

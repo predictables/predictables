@@ -159,8 +159,6 @@
 <span id="L149" class="lineno"><a class="lineno" href="#L149">149</a></span>
 <span id="L150" class="lineno"><a class="lineno" href="#L150">150</a></span>
 <span id="L151" class="lineno"><a class="lineno" href="#L151">151</a></span>
-<span id="L152" class="lineno"><a class="lineno" href="#L152">152</a></span>
-<span id="L153" class="lineno"><a class="lineno" href="#L153">153</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -168,13 +166,11 @@
 <span class="line-precise" title="No Anys on this line!">import json</span>
 <span class="line-precise" title="No Anys on this line!">import uuid</span>
 <span class="line-precise" title="No Anys on this line!">from pathlib import Path</span>
-<span class="line-precise" title="No Anys on this line!">from typing import Optional</span>
-<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from predictables.util.src.logging._Log import Log</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">class Logger:</span>
-<span class="line-precise" title="No Anys on this line!">    def __init__(self, name: str = "log", file_name: Optional[str] = None):</span>
+<span class="line-precise" title="No Anys on this line!">    def __init__(self, name: str = "log", file_name: str | None = None):</span>
 <span class="line-empty" title="No Anys on this line!">        """Create a logger that logs _Log.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>

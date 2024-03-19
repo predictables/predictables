@@ -53,13 +53,9 @@
 <span id="L43" class="lineno"><a class="lineno" href="#L43">43</a></span>
 <span id="L44" class="lineno"><a class="lineno" href="#L44">44</a></span>
 <span id="L45" class="lineno"><a class="lineno" href="#L45">45</a></span>
-<span id="L46" class="lineno"><a class="lineno" href="#L46">46</a></span>
-<span id="L47" class="lineno"><a class="lineno" href="#L47">47</a></span>
-<span id="L48" class="lineno"><a class="lineno" href="#L48">48</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import List, Union</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
@@ -69,17 +65,17 @@
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">class PredicTables:</span>
-<span class="line-precise" title="No Anys on this line!">    feature_column_names: List[str]</span>
+<span class="line-precise" title="No Anys on this line!">    feature_column_names: list[str]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">    def __init__(</span>
 <span class="line-empty" title="No Anys on this line!">        self,</span>
 <span class="line-empty" title="No Anys on this line!">        model_name: str,</span>
-<span class="line-empty" title="No Anys on this line!">        df_train: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],</span>
-<span class="line-empty" title="No Anys on this line!">        df_val: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],</span>
-<span class="line-empty" title="No Anys on this line!">        df_test: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],</span>
+<span class="line-empty" title="No Anys on this line!">        df_train: pd.DataFrame | pl.DataFrame | pl.LazyFrame,</span>
+<span class="line-empty" title="No Anys on this line!">        df_val: pd.DataFrame | pl.DataFrame | pl.LazyFrame,</span>
+<span class="line-empty" title="No Anys on this line!">        df_test: pd.DataFrame | pl.DataFrame | pl.LazyFrame,</span>
 <span class="line-empty" title="No Anys on this line!">        target_column_name: str,</span>
-<span class="line-empty" title="No Anys on this line!">        cv_folds: Union[pl.Series, pd.Series],</span>
+<span class="line-empty" title="No Anys on this line!">        cv_folds: pd.Series | pl.Series,</span>
 <span class="line-precise" title="No Anys on this line!">        has_time_series_structure: bool = False,</span>
 <span class="line-empty" title="No Anys on this line!">    ):</span>
 <span class="line-precise" title="No Anys on this line!">        self.model_name = model_name</span>
@@ -95,9 +91,7 @@ Omitted Generics (x1)">        self.df_train = to_pd_df(df_train).assign(cv=self
 <span class="line-precise" title="No Anys on this line!">        self.has_time_series_structure = has_time_series_structure</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">        self.feature_column_names = [</span>
-<span class="line-precise" title="No Anys on this line!">            col</span>
-<span class="line-precise" title="No Anys on this line!">            for col in self.df_train</span>
-<span class="line-precise" title="No Anys on this line!">            if col not in ["cv", self.target_column_name]  # type: ignore</span>
+<span class="line-precise" title="No Anys on this line!">            col for col in self.df_train if col not in ["cv", self.target_column_name]</span>
 <span class="line-empty" title="No Anys on this line!">        ]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">        self.ua = UnivariateAnalysis(</span>

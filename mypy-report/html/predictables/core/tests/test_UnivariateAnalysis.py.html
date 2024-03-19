@@ -333,7 +333,7 @@ Omitted Generics (x10)">    ), f"Expected {to_pd_s(cv_folds)}, got {to_pd_s(ua.c
 <span class="line-any" title="No Anys on this line!">def test_get_file_stem(ua, filename, default, expected):</span>
 <span class="line-empty" title="No Anys on this line!">    assert (</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x7)">        ua._get_file_stem(filename, default) == expected</span>
+Unannotated (x7)">        ua._get_file_stem(filename, default) == expected  # noqa: SLF001</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)">    ), f"Expected {expected} but got a different result"</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -350,7 +350,7 @@ Unannotated (x5)">    ), f"Expected {expected} but got a different result"</span
 <span class="line-empty" title="No Anys on this line!">)</span>
 <span class="line-any" title="No Anys on this line!">def test_rpt_filename(ua, file_stem, file_num_start_num, end_num, default, expected):</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">    result = ua._rpt_filename(</span>
+Unannotated (x4)">    result = ua._rpt_filename(  # noqa: SLF001</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">        file_stem=file_stem,</span>
 <span class="line-any" title="Any Types on this line: 
@@ -391,7 +391,7 @@ Unannotated (x11)">    assert result == expected, f"Expected filename '{expected
 <span class="line-empty" title="No Anys on this line!">)</span>
 <span class="line-any" title="No Anys on this line!">def test_build_desc(total_features, max_per_file, expected):</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x5)">    description = UnivariateAnalysis._build_desc(total_features, max_per_file)</span>
+Unannotated (x5)">    description = UnivariateAnalysis._build_desc(total_features, max_per_file)  # noqa: SLF001</span>
 <span class="line-empty" title="No Anys on this line!">    assert (</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x3)">        description == expected</span>

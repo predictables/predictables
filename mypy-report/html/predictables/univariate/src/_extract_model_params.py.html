@@ -191,14 +191,18 @@
 <span id="L181" class="lineno"><a class="lineno" href="#L181">181</a></span>
 <span id="L182" class="lineno"><a class="lineno" href="#L182">182</a></span>
 <span id="L183" class="lineno"><a class="lineno" href="#L183">183</a></span>
+<span id="L184" class="lineno"><a class="lineno" href="#L184">184</a></span>
+<span id="L185" class="lineno"><a class="lineno" href="#L185">185</a></span>
+<span id="L186" class="lineno"><a class="lineno" href="#L186">186</a></span>
+<span id="L187" class="lineno"><a class="lineno" href="#L187">187</a></span>
+<span id="L188" class="lineno"><a class="lineno" href="#L188">188</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from collections import namedtuple</span>
-<span class="line-precise" title="No Anys on this line!">from typing import Tuple</span>
+<span class="line-precise" title="No Anys on this line!">from typing import NamedTuple</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">import statsmodels.api as sm  # type: ignore</span>
-<span class="line-any" title="No Anys on this line!">from sklearn.linear_model import LinearRegression  # type: ignore</span>
+<span class="line-any" title="No Anys on this line!">import statsmodels.api as sm</span>
+<span class="line-any" title="No Anys on this line!">from sklearn.linear_model import LinearRegression</span>
 <span class="line-any" title="No Anys on this line!">from sklearn.linear_model import LogisticRegression</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from predictables.util import DebugLogger</span>
@@ -206,22 +210,32 @@
 <span class="line-precise" title="Any Types on this line: 
 Omitted Generics (x3)">dbg = DebugLogger(working_file="_extract_model_params.py")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">StatsmodelsModelParams = namedtuple(</span>
-<span class="line-empty" title="No Anys on this line!">    "StatsmodelsModelParams",</span>
-<span class="line-empty" title="No Anys on this line!">    ["coef", "intercept", "pvalues", "aic", "se", "lower_ci", "upper_ci", "n", "k"],</span>
-<span class="line-empty" title="No Anys on this line!">)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">SKLearnModelParams = namedtuple("SKLearnModelParams", ["coef", "k"])</span>
+<span class="line-precise" title="No Anys on this line!">class StatsmodelsModelParams(NamedTuple):</span>
+<span class="line-precise" title="No Anys on this line!">    coef: float</span>
+<span class="line-precise" title="No Anys on this line!">    intercept: float</span>
+<span class="line-precise" title="No Anys on this line!">    pvalues: float</span>
+<span class="line-precise" title="No Anys on this line!">    aic: float</span>
+<span class="line-precise" title="No Anys on this line!">    se: float</span>
+<span class="line-precise" title="No Anys on this line!">    lower_ci: float</span>
+<span class="line-precise" title="No Anys on this line!">    upper_ci: float</span>
+<span class="line-precise" title="No Anys on this line!">    n: int</span>
+<span class="line-precise" title="No Anys on this line!">    k: int</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x13)">def extract_model_params(</span>
-<span class="line-empty" title="No Anys on this line!">    sm_model, sk_model</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Tuple[StatsmodelsModelParams, SKLearnModelParams]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Extract the parameters from a model and return them as a named tuple. Both the</span>
-<span class="line-empty" title="No Anys on this line!">    statsmodels and sklearn model must be passed, and the function will return the</span>
-<span class="line-empty" title="No Anys on this line!">    parameters for both models.</span>
+<span class="line-precise" title="No Anys on this line!">class SKLearnModelParams(NamedTuple):</span>
+<span class="line-precise" title="No Anys on this line!">    coef: float</span>
+<span class="line-precise" title="No Anys on this line!">    k: int</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x4)">def extract_model_params(</span>
+<span class="line-empty" title="No Anys on this line!">    sm_model: sm.GLM | sm.OLS, sk_model: LogisticRegression | LinearRegression</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; tuple[StatsmodelsModelParams, SKLearnModelParams]:</span>
+<span class="line-empty" title="No Anys on this line!">    """Extract the parameters from a model and return them as a named tuple.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Both the statsmodels and sklearn model must be passed, and the</span>
+<span class="line-empty" title="No Anys on this line!">    function will return the parameters for both models.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -232,43 +246,34 @@ Unannotated (x13)">def extract_model_params(</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
 <span class="line-empty" title="No Anys on this line!">    -------</span>
-<span class="line-empty" title="No Anys on this line!">    Tuple[StatsmodelsModelParams, SKLearnModelParams]</span>
+<span class="line-empty" title="No Anys on this line!">    tuple[StatsmodelsModelParams, SKLearnModelParams]</span>
 <span class="line-empty" title="No Anys on this line!">        The model parameters</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-precise" title="No Anys on this line!">    dbg.msg("Entering extract_model_params function")</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)
-Unimported (x2)">    if isinstance(sm_model, sm.GLM):</span>
+Unimported (x4)">    if isinstance(sm_model, sm.GLM):</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x18)
 Unimported (x1)">        return extract_model_params_sm_GLM(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            sm_model</span>
+Unimported (x1)">            sm_model</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x5)
-Unimported (x1)">        ), extract_model_params_sk_LogisticRegression(sk_model)</span>
+Unimported (x3)">        ), extract_model_params_sk_LogisticRegression(sk_model)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)
-Unimported (x2)">    elif isinstance(sm_model, sm.OLS):</span>
+Unimported (x4)">    elif isinstance(sm_model, sm.OLS):</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x18)
 Unimported (x1)">        return extract_model_params_sm_OLS(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            sm_model</span>
+Unimported (x1)">            sm_model</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x5)
-Unimported (x1)">        ), extract_model_params_sk_LinearRegression(sk_model)</span>
+Unimported (x3)">        ), extract_model_params_sk_LinearRegression(sk_model)</span>
 <span class="line-empty" title="No Anys on this line!">    else:</span>
 <span class="line-precise" title="No Anys on this line!">        raise ValueError("Model type not supported")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x1)
-Unannotated (x9)">def extract_model_params_sm_GLM(model: sm.GLM) -&gt; StatsmodelsModelParams:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Extract the parameters from a statsmodels GLM model and return them as</span>
-<span class="line-empty" title="No Anys on this line!">    a named tuple.</span>
+Unimported (x1)">def extract_model_params_sm_GLM(model: sm.GLM) -&gt; StatsmodelsModelParams:</span>
+<span class="line-empty" title="No Anys on this line!">    """Extract the parameters from a statsmodels GLM model and return them as a named tuple.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -283,12 +288,11 @@ Unannotated (x9)">def extract_model_params_sm_GLM(model: sm.GLM) -&gt; Statsmode
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-precise" title="No Anys on this line!">    dbg.msg("Entering extract_model_params_sm_GLM function")</span>
 <span class="line-empty" title="No Anys on this line!">    return (</span>
+<span class="line-precise" title="No Anys on this line!">        StatsmodelsModelParams(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x27)">        StatsmodelsModelParams(</span>
+Unimported (x5)">            model.params.to_numpy()[1:],</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x4)">            model.params.values[1:],</span>
-<span class="line-any" title="Any Types on this line: 
-Unimported (x4)">            model.params.values[0],</span>
+Unimported (x5)">            model.params.to_numpy()[0],</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x2)">            model.pvalues,</span>
 <span class="line-any" title="Any Types on this line: 
@@ -296,9 +300,9 @@ Unimported (x2)">            model.aic,</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x2)">            model.bse,</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x7)">            model.conf_int().values.ravel()[0],</span>
+Unimported (x8)">            model.conf_int().to_numpy().ravel()[0],</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x7)">            model.conf_int().values.ravel()[1],</span>
+Unimported (x8)">            model.conf_int().to_numpy().ravel()[1],</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x2)">            model.nobs,</span>
 <span class="line-any" title="Any Types on this line: 
@@ -306,10 +310,9 @@ Unimported (x2)">            model.df_model,</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x2)">        if len(model.params) &gt; 1</span>
+<span class="line-precise" title="No Anys on this line!">        else StatsmodelsModelParams(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x27)">        else StatsmodelsModelParams(</span>
-<span class="line-any" title="Any Types on this line: 
-Unimported (x4)">            model.params.values[0],</span>
+Unimported (x5)">            model.params.to_numpy()[0],</span>
 <span class="line-precise" title="No Anys on this line!">            None,</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x2)">            model.pvalues,</span>
@@ -318,9 +321,9 @@ Unimported (x2)">            model.aic,</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x2)">            model.bse,</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x7)">            model.conf_int().values.ravel()[0],</span>
+Unimported (x8)">            model.conf_int().to_numpy().ravel()[0],</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x7)">            model.conf_int().values.ravel()[1],</span>
+Unimported (x8)">            model.conf_int().to_numpy().ravel()[1],</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x2)">            model.nobs,</span>
 <span class="line-any" title="Any Types on this line: 
@@ -330,11 +333,8 @@ Unimported (x2)">            model.df_model,</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x1)
-Unannotated (x9)">def extract_model_params_sm_OLS(model: sm.OLS) -&gt; StatsmodelsModelParams:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Extract the parameters from a statsmodels OLS model and return them</span>
-<span class="line-empty" title="No Anys on this line!">    as a named tuple.</span>
+Unimported (x1)">def extract_model_params_sm_OLS(model: sm.OLS) -&gt; StatsmodelsModelParams:</span>
+<span class="line-empty" title="No Anys on this line!">    """Extract the parameters from a statsmodels OLS model and return them as a named tuple.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -349,8 +349,7 @@ Unannotated (x9)">def extract_model_params_sm_OLS(model: sm.OLS) -&gt; Statsmode
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-precise" title="No Anys on this line!">    dbg.msg("Entering extract_model_params_sm_OLS function")</span>
 <span class="line-empty" title="No Anys on this line!">    return (</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x27)">        StatsmodelsModelParams(</span>
+<span class="line-precise" title="No Anys on this line!">        StatsmodelsModelParams(</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x3)">            model.params[1:],</span>
 <span class="line-any" title="Any Types on this line: 
@@ -362,9 +361,9 @@ Unimported (x2)">            model.aic,</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x2)">            model.bse,</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x7)">            model.conf_int().values.ravel()[0],</span>
+Unimported (x8)">            model.conf_int().to_numpy().ravel()[0],</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x7)">            model.conf_int().values.ravel()[1],</span>
+Unimported (x8)">            model.conf_int().to_numpy().ravel()[1],</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x2)">            model.nobs,</span>
 <span class="line-any" title="Any Types on this line: 
@@ -372,10 +371,9 @@ Unimported (x2)">            model.df_model,</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x2)">        if len(model.params) &gt; 1</span>
+<span class="line-precise" title="No Anys on this line!">        else StatsmodelsModelParams(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x27)">        else StatsmodelsModelParams(</span>
-<span class="line-any" title="Any Types on this line: 
-Unimported (x4)">            model.params.values[0],</span>
+Unimported (x5)">            model.params.to_numpy()[0],</span>
 <span class="line-precise" title="No Anys on this line!">            None,</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x2)">            model.pvalues,</span>
@@ -384,9 +382,9 @@ Unimported (x2)">            model.aic,</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x2)">            model.bse,</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x7)">            model.conf_int().values.ravel()[0],</span>
+Unimported (x8)">            model.conf_int().to_numpy().ravel()[0],</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x7)">            model.conf_int().values.ravel()[1],</span>
+Unimported (x8)">            model.conf_int().to_numpy().ravel()[1],</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x2)">            model.nobs,</span>
 <span class="line-any" title="Any Types on this line: 
@@ -396,8 +394,7 @@ Unimported (x2)">            model.df_model,</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x1)
-Unannotated (x2)">def extract_model_params_sk_LogisticRegression(</span>
+Unimported (x1)">def extract_model_params_sk_LogisticRegression(</span>
 <span class="line-empty" title="No Anys on this line!">    model: LogisticRegression,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; SKLearnModelParams:</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
@@ -416,13 +413,11 @@ Unannotated (x2)">def extract_model_params_sk_LogisticRegression(</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-precise" title="No Anys on this line!">    dbg.msg("Entering extract_model_params_sk function")</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x6)
 Unimported (x6)">    return SKLearnModelParams(model.coef_, model.coef_.shape[0])</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x1)
-Unannotated (x2)">def extract_model_params_sk_LinearRegression(</span>
+Unimported (x1)">def extract_model_params_sk_LinearRegression(</span>
 <span class="line-empty" title="No Anys on this line!">    model: LinearRegression,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; SKLearnModelParams:</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
@@ -441,7 +436,6 @@ Unannotated (x2)">def extract_model_params_sk_LinearRegression(</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-precise" title="No Anys on this line!">    dbg.msg("Entering extract_model_params_sk function")</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x6)
 Unimported (x6)">    return SKLearnModelParams(model.coef_, model.coef_.shape[0])</span>
 </pre></td>
 </tr></tbody>

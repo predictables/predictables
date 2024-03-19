@@ -83,14 +83,8 @@
 <span id="L73" class="lineno"><a class="lineno" href="#L73">73</a></span>
 <span id="L74" class="lineno"><a class="lineno" href="#L74">74</a></span>
 <span id="L75" class="lineno"><a class="lineno" href="#L75">75</a></span>
-<span id="L76" class="lineno"><a class="lineno" href="#L76">76</a></span>
-<span id="L77" class="lineno"><a class="lineno" href="#L77">77</a></span>
-<span id="L78" class="lineno"><a class="lineno" href="#L78">78</a></span>
-<span id="L79" class="lineno"><a class="lineno" href="#L79">79</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Union</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
@@ -102,11 +96,11 @@
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">def _eigenvalues(</span>
-<span class="line-precise" title="No Anys on this line!">    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame, np.ndarray], round_to: int = 4</span>
+<span class="line-precise" title="No Anys on this line!">    data: pd.DataFrame | pl.DataFrame | pl.LazyFrame | np.ndarray, round_to: int = 4</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pd.DataFrame:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Calculate the eigenvalues of the correlation matrix of the given data, then</span>
-<span class="line-empty" title="No Anys on this line!">    a condition index. The condition index is the ratio of the largest eigenvalue</span>
+<span class="line-empty" title="No Anys on this line!">    """Calculate the eigenvalues of the correlation matrix of the given data and a condition index.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    The condition index is the ratio of the largest eigenvalue</span>
 <span class="line-empty" title="No Anys on this line!">    to each of the other eigenvalues. The larger the ratio, the larger the</span>
 <span class="line-empty" title="No Anys on this line!">    condition number, the more likely it is that the correlation matrix is</span>
 <span class="line-empty" title="No Anys on this line!">    ill-conditioned.</span>
@@ -182,11 +176,9 @@ Unannotated (x2)">    df["log[condition_number]"] = df["log[condition_number]"].
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Sort the DataFrame by the condition number</span>
 <span class="line-precise" title="Any Types on this line: 
-Omitted Generics (x12)">    df = df.sort_values(by="log[condition_number]", ascending=False).reset_index(</span>
+Omitted Generics (x12)">    return df.sort_values(by="log[condition_number]", ascending=False).reset_index(</span>
 <span class="line-precise" title="No Anys on this line!">        drop=True</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    return df</span>
 </pre></td>
 </tr></tbody>
 </table>

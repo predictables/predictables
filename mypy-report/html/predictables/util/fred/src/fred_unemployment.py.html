@@ -184,14 +184,15 @@
 <span id="L174" class="lineno"><a class="lineno" href="#L174">174</a></span>
 <span id="L175" class="lineno"><a class="lineno" href="#L175">175</a></span>
 <span id="L176" class="lineno"><a class="lineno" href="#L176">176</a></span>
+<span id="L177" class="lineno"><a class="lineno" href="#L177">177</a></span>
 </pre></td>
-<td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
+<td class="table-code"><pre><span class="line-empty" title="No Anys on this line!">"""Get unemployment data from FRED and save to parquet files."""</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Optional</span>
+<span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
-<span class="line-any" title="No Anys on this line!">from _api_keys import get_fred_api_key  # type: ignore</span>
-<span class="line-any" title="No Anys on this line!">from fredapi import Fred  # type: ignore</span>
+<span class="line-any" title="No Anys on this line!">from _api_keys import get_fred_api_key</span>
+<span class="line-any" title="No Anys on this line!">from fredapi import Fred</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from predictables.util.src._tqdm_func import tqdm</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -202,7 +203,7 @@ Unimported (x5)">Fred = Fred(api_key=get_fred_api_key())</span>
 <span class="line-precise" title="No Anys on this line!">def get_fred_data(</span>
 <span class="line-empty" title="No Anys on this line!">    series_id: str,</span>
 <span class="line-precise" title="No Anys on this line!">    start_date: str = "2016-01-01",</span>
-<span class="line-precise" title="No Anys on this line!">    end_date: Optional[str] = None,</span>
+<span class="line-precise" title="No Anys on this line!">    end_date: str | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    frequency: str = "d",</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pd.DataFrame:</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
@@ -237,203 +238,184 @@ Unimported (x3)">    return Fred.get_series(</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">def fred_unemployment_data():</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)
+<span class="line-precise" title="No Anys on this line!">def fred_unemployment_data() -&gt; None:</span>
+<span class="line-empty" title="No Anys on this line!">    """Get unemployment data from FRED and save to parquet files."""</span>
+<span class="line-precise" title="Any Types on this line: 
 Explicit (x1)">    unemployment = pd.read_parquet("./fred_unemployment.parquet")</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    state_unemployment_list = []</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    state_series = (</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x11)">        unemployment.loc[unemployment.state_indicator.eq(1), "id"]</span>
+<span class="line-precise" title="No Anys on this line!">    state_unemployment_list = []</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">    state_series = (</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x8)">        unemployment.loc[unemployment.state_indicator.eq(1), "id"]</span>
 <span class="line-empty" title="No Anys on this line!">        .drop_duplicates()</span>
 <span class="line-empty" title="No Anys on this line!">        .tolist()</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
-Omitted Generics (x2)">    for s in tqdm(state_series):</span>
+Omitted Generics (x5)">    for s in tqdm(state_series):</span>
+<span class="line-precise" title="No Anys on this line!">        test = (</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        test = (</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x10)">            get_fred_data(s, frequency="m")</span>
+Omitted Generics (x16)
+Unannotated (x1)">            get_fred_data(s, frequency="m")</span>
 <span class="line-empty" title="No Anys on this line!">            .reset_index()</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            .assign(id=s)</span>
-<span class="line-any" title="No Anys on this line!">            .set_index(["id"])</span>
-<span class="line-any" title="No Anys on this line!">            .rename(columns={"index": "date", 0: "state_unemployment_rate"})</span>
+Omitted Generics (x1)">            .assign(id=s)</span>
+<span class="line-precise" title="No Anys on this line!">            .set_index(["id"])</span>
+<span class="line-precise" title="No Anys on this line!">            .rename(columns={"index": "date", 0: "state_unemployment_rate"})</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">        state_unemployment_list.append(test)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
+<span class="line-precise" title="No Anys on this line!">        state_unemployment_list.append(test)</span>
+<span class="line-precise" title="Any Types on this line: 
 Omitted Generics (x20)">    state_unemployment = pd.concat(state_unemployment_list)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">    state_unemployment.to_parquet("./fred_state_unemployment_pull.parquet")</span>
+<span class="line-precise" title="Any Types on this line: 
+Omitted Generics (x2)
+Explicit (x2)">    state_unemployment.to_parquet("./fred_state_unemployment_pull.parquet")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    county_unemployment_list = []</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    county_series = (</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x11)">        unemployment.loc[unemployment.county_indicator.eq(1), "id"]</span>
+<span class="line-precise" title="No Anys on this line!">    county_unemployment_list = []</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">    county_series = (</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x8)">        unemployment.loc[unemployment.county_indicator.eq(1), "id"]</span>
 <span class="line-empty" title="No Anys on this line!">        .drop_duplicates()</span>
 <span class="line-empty" title="No Anys on this line!">        .tolist()</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
-Omitted Generics (x2)">    for s in tqdm(county_series):</span>
+Omitted Generics (x5)">    for s in tqdm(county_series):</span>
+<span class="line-precise" title="No Anys on this line!">        test = (</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        test = (</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x10)">            get_fred_data(s, frequency="m")</span>
+Omitted Generics (x16)
+Unannotated (x1)">            get_fred_data(s, frequency="m")</span>
 <span class="line-empty" title="No Anys on this line!">            .reset_index()</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            .assign(id=s)</span>
-<span class="line-any" title="No Anys on this line!">            .set_index(["id"])</span>
-<span class="line-any" title="No Anys on this line!">            .rename(columns={"index": "date", 0: "county_unemployment_rate"})</span>
+Omitted Generics (x1)">            .assign(id=s)</span>
+<span class="line-precise" title="No Anys on this line!">            .set_index(["id"])</span>
+<span class="line-precise" title="No Anys on this line!">            .rename(columns={"index": "date", 0: "county_unemployment_rate"})</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">        county_unemployment_list.append(test)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
+<span class="line-precise" title="No Anys on this line!">        county_unemployment_list.append(test)</span>
+<span class="line-precise" title="Any Types on this line: 
 Omitted Generics (x20)">    county_unemployment = pd.concat(county_unemployment_list)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">    county_unemployment.to_parquet("./fred_county_unemployment_pull.parquet")</span>
+<span class="line-precise" title="Any Types on this line: 
+Omitted Generics (x2)
+Explicit (x2)">    county_unemployment.to_parquet("./fred_county_unemployment_pull.parquet")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    msa_unemployment_list = []</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    msa_series = (</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x11)">        unemployment.loc[unemployment.msa_indicator.eq(1), "id"]</span>
+<span class="line-precise" title="No Anys on this line!">    msa_unemployment_list = []</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">    msa_series = (</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x8)">        unemployment.loc[unemployment.msa_indicator.eq(1), "id"]</span>
 <span class="line-empty" title="No Anys on this line!">        .drop_duplicates()</span>
 <span class="line-empty" title="No Anys on this line!">        .tolist()</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
-Omitted Generics (x2)">    for s in tqdm(msa_series):</span>
+Omitted Generics (x5)">    for s in tqdm(msa_series):</span>
+<span class="line-precise" title="No Anys on this line!">        test = (</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        test = (</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x10)">            get_fred_data(s, frequency="m")</span>
+Omitted Generics (x16)
+Unannotated (x1)">            get_fred_data(s, frequency="m")</span>
 <span class="line-empty" title="No Anys on this line!">            .reset_index()</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            .assign(id=s)</span>
-<span class="line-any" title="No Anys on this line!">            .set_index(["id"])</span>
-<span class="line-any" title="No Anys on this line!">            .rename(columns={"index": "date", 0: "msa_unemployment_rate"})</span>
+Omitted Generics (x1)">            .assign(id=s)</span>
+<span class="line-precise" title="No Anys on this line!">            .set_index(["id"])</span>
+<span class="line-precise" title="No Anys on this line!">            .rename(columns={"index": "date", 0: "msa_unemployment_rate"})</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">        msa_unemployment_list.append(test)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
+<span class="line-precise" title="No Anys on this line!">        msa_unemployment_list.append(test)</span>
+<span class="line-precise" title="Any Types on this line: 
 Omitted Generics (x20)">    msa_unemployment = pd.concat(msa_unemployment_list)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">    msa_unemployment.to_parquet("./fred_msa_unemployment_pull.parquet")</span>
+<span class="line-precise" title="Any Types on this line: 
+Omitted Generics (x2)
+Explicit (x2)">    msa_unemployment.to_parquet("./fred_msa_unemployment_pull.parquet")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)
+<span class="line-precise" title="Any Types on this line: 
 Explicit (x1)">    county = pd.read_parquet("./fred_county_unemployment_pull.parquet").rename(</span>
-<span class="line-any" title="No Anys on this line!">        columns={"county_unemployment_rate": "unemployment_rate"}</span>
+<span class="line-precise" title="No Anys on this line!">        columns={"county_unemployment_rate": "unemployment_rate"}</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)
+<span class="line-precise" title="Any Types on this line: 
 Explicit (x1)">    msa = pd.read_parquet("./fred_msa_unemployment_pull.parquet").rename(</span>
-<span class="line-any" title="No Anys on this line!">        columns={"msa_unemployment_rate": "unemployment_rate"}</span>
+<span class="line-precise" title="No Anys on this line!">        columns={"msa_unemployment_rate": "unemployment_rate"}</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)
+<span class="line-precise" title="Any Types on this line: 
 Explicit (x1)">    state = pd.read_parquet("./fred_state_unemployment_pull.parquet").rename(</span>
-<span class="line-any" title="No Anys on this line!">        columns={"state_unemployment_rate": "unemployment_rate"}</span>
+<span class="line-precise" title="No Anys on this line!">        columns={"state_unemployment_rate": "unemployment_rate"}</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x5)
+<span class="line-precise" title="Any Types on this line: 
 Omitted Generics (x20)">    pull = pd.concat([county, msa, state])</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    unemployment = (</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x11)
+<span class="line-precise" title="No Anys on this line!">    unemployment = (</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x29)
 Explicit (x1)">        pd.read_parquet("./fred_unemployment.parquet")</span>
 <span class="line-empty" title="No Anys on this line!">        .reset_index()</span>
-<span class="line-any" title="No Anys on this line!">        .drop(columns="series id")</span>
-<span class="line-any" title="No Anys on this line!">        .set_index("id")</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        .join(pull, how="left")</span>
+<span class="line-precise" title="No Anys on this line!">        .drop(columns="series id")</span>
+<span class="line-precise" title="No Anys on this line!">        .set_index("id")</span>
+<span class="line-precise" title="No Anys on this line!">        .join(pull, how="left")</span>
 <span class="line-empty" title="No Anys on this line!">        .reset_index()</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    county_unemployment = (</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    county_unemployment = (</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x11)">        unemployment.loc[</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">            unemployment.county_indicator.eq(1),</span>
-<span class="line-any" title="No Anys on this line!">            ["location", "date", "unemployment_rate"],</span>
+Unannotated (x2)
+Omitted Generics (x3)">        unemployment.loc[</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)">            unemployment.county_indicator.eq(1),</span>
+<span class="line-precise" title="No Anys on this line!">            ["location", "date", "unemployment_rate"],</span>
 <span class="line-empty" title="No Anys on this line!">        ]</span>
 <span class="line-empty" title="No Anys on this line!">        .rename(</span>
 <span class="line-empty" title="No Anys on this line!">            columns={</span>
-<span class="line-any" title="No Anys on this line!">                "location": "county",</span>
-<span class="line-any" title="No Anys on this line!">                "unemployment_rate": "county_unemployment_rate",</span>
+<span class="line-precise" title="No Anys on this line!">                "location": "county",</span>
+<span class="line-precise" title="No Anys on this line!">                "unemployment_rate": "county_unemployment_rate",</span>
 <span class="line-empty" title="No Anys on this line!">            }</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-any" title="No Anys on this line!">        .reset_index(drop=True)</span>
+<span class="line-precise" title="No Anys on this line!">        .reset_index(drop=True)</span>
 <span class="line-empty" title="No Anys on this line!">        .assign(</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x9)">            state=lambda x: x.county.str.split(",").str[1].str.strip(),</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x9)">            county=lambda x: x.county.str.split(",").str[0].str.strip(),</span>
+<span class="line-precise" title="No Anys on this line!">            state=lambda x: x.county.str.split(",").str[1].str.strip(),</span>
+<span class="line-precise" title="No Anys on this line!">            county=lambda x: x.county.str.split(",").str[0].str.strip(),</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">        .assign(county=lambda x: x.county.str.replace(" county", ""))</span>
+<span class="line-precise" title="No Anys on this line!">        .assign(county=lambda x: x.county.str.replace(" county", ""))</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">    county_unemployment.to_parquet("./fred_county_unemployment.parquet")</span>
+<span class="line-precise" title="Any Types on this line: 
+Omitted Generics (x2)
+Explicit (x2)">    county_unemployment.to_parquet("./fred_county_unemployment.parquet")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    msa_unemployment = (</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    msa_unemployment = (</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x11)">        unemployment.loc[</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">            unemployment.msa_indicator.eq(1), ["location", "date", "unemployment_rate"]</span>
+Unannotated (x2)
+Omitted Generics (x3)">        unemployment.loc[</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)">            unemployment.msa_indicator.eq(1), ["location", "date", "unemployment_rate"]</span>
 <span class="line-empty" title="No Anys on this line!">        ]</span>
 <span class="line-empty" title="No Anys on this line!">        .rename(</span>
-<span class="line-any" title="No Anys on this line!">            columns={"location": "msa", "unemployment_rate": "msa_unemployment_rate"}</span>
+<span class="line-precise" title="No Anys on this line!">            columns={"location": "msa", "unemployment_rate": "msa_unemployment_rate"}</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-any" title="No Anys on this line!">        .reset_index(drop=True)</span>
+<span class="line-precise" title="No Anys on this line!">        .reset_index(drop=True)</span>
 <span class="line-empty" title="No Anys on this line!">        .assign(</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x9)">            state=lambda x: x.msa.str.split(",").str[1].str.strip(),</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x9)">            msa=lambda x: x.msa.str.split(",").str[0].str.strip(),</span>
+<span class="line-precise" title="No Anys on this line!">            state=lambda x: x.msa.str.split(",").str[1].str.strip(),</span>
+<span class="line-precise" title="No Anys on this line!">            msa=lambda x: x.msa.str.split(",").str[0].str.strip(),</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">        .assign(msa=lambda x: x.msa.str.replace(" MSA", ""))</span>
+<span class="line-precise" title="No Anys on this line!">        .assign(msa=lambda x: x.msa.str.replace(" MSA", ""))</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x6)">    msa_unemployment["state"] = msa_unemployment["state"].str.replace(" (msa)", "")</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">    msa_unemployment.to_parquet("./fred_msa_unemployment.parquet")</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x5)">    msa_unemployment["state"] = msa_unemployment["state"].str.replace(" (msa)", "")</span>
+<span class="line-precise" title="Any Types on this line: 
+Omitted Generics (x2)
+Explicit (x2)">    msa_unemployment.to_parquet("./fred_msa_unemployment.parquet")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    state_unemployment = (</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    state_unemployment = (</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x9)">        unemployment.loc[</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">            unemployment.state_indicator.eq(1),</span>
-<span class="line-any" title="No Anys on this line!">            ["location", "date", "unemployment_rate"],</span>
+Unannotated (x1)
+Omitted Generics (x3)">        unemployment.loc[</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)">            unemployment.state_indicator.eq(1),</span>
+<span class="line-precise" title="No Anys on this line!">            ["location", "date", "unemployment_rate"],</span>
 <span class="line-empty" title="No Anys on this line!">        ]</span>
 <span class="line-empty" title="No Anys on this line!">        .rename(</span>
 <span class="line-empty" title="No Anys on this line!">            columns={</span>
-<span class="line-any" title="No Anys on this line!">                "location": "state",</span>
-<span class="line-any" title="No Anys on this line!">                "unemployment_rate": "state_unemployment_rate",</span>
+<span class="line-precise" title="No Anys on this line!">                "location": "state",</span>
+<span class="line-precise" title="No Anys on this line!">                "unemployment_rate": "state_unemployment_rate",</span>
 <span class="line-empty" title="No Anys on this line!">            }</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-any" title="No Anys on this line!">        .reset_index(drop=True)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">        .assign(state=lambda x: x.state.str.strip())</span>
+<span class="line-precise" title="No Anys on this line!">        .reset_index(drop=True)</span>
+<span class="line-precise" title="No Anys on this line!">        .assign(state=lambda x: x.state.str.strip())</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">    state_unemployment.to_parquet("./fred_state_unemployment.parquet")</span>
+<span class="line-precise" title="Any Types on this line: 
+Omitted Generics (x2)
+Explicit (x2)">    state_unemployment.to_parquet("./fred_state_unemployment.parquet")</span>
 </pre></td>
 </tr></tbody>
 </table>

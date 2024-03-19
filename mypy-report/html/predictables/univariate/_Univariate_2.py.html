@@ -741,946 +741,740 @@
 <span id="L731" class="lineno"><a class="lineno" href="#L731">731</a></span>
 <span id="L732" class="lineno"><a class="lineno" href="#L732">732</a></span>
 <span id="L733" class="lineno"><a class="lineno" href="#L733">733</a></span>
-<span id="L734" class="lineno"><a class="lineno" href="#L734">734</a></span>
-<span id="L735" class="lineno"><a class="lineno" href="#L735">735</a></span>
 </pre></td>
-<td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Any, List, Optional, Tuple, Union</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">import matplotlib.pyplot as plt</span>
-<span class="line-precise" title="No Anys on this line!">import numpy as np</span>
-<span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
-<span class="line-precise" title="No Anys on this line!">import polars as pl</span>
-<span class="line-precise" title="No Anys on this line!">from matplotlib.axes import Axes</span>
-<span class="line-any" title="No Anys on this line!">from sklearn.preprocessing import MinMaxScaler, StandardScaler  # type: ignore</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from predictables.univariate._BaseModel import Model</span>
-<span class="line-precise" title="No Anys on this line!">from predictables.univariate.src._get_data import _get_data</span>
-<span class="line-precise" title="No Anys on this line!">from predictables.univariate.src.plots import (</span>
-<span class="line-empty" title="No Anys on this line!">    cdf_plot,</span>
-<span class="line-empty" title="No Anys on this line!">    density_plot,</span>
-<span class="line-empty" title="No Anys on this line!">    quintile_lift_plot,</span>
-<span class="line-empty" title="No Anys on this line!">    roc_curve_plot,</span>
-<span class="line-empty" title="No Anys on this line!">)</span>
-<span class="line-precise" title="No Anys on this line!">from predictables.univariate.src.plots.util import plot_label</span>
-<span class="line-precise" title="No Anys on this line!">from predictables.util import DebugLogger, get_unique, to_pd_df, to_pd_s</span>
-<span class="line-precise" title="No Anys on this line!">from predictables.util.report import Report</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="Any Types on this line: 
-Omitted Generics (x3)">dbg = DebugLogger(working_file="_Univariate.py")</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">def get_col(self, col: str) -&gt; List[Union[int, float, str]]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Helper function to get the requested column from the data.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    Parameters</span>
-<span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    col : str</span>
-<span class="line-empty" title="No Anys on this line!">        The name of the column to get. Choices are</span>
-<span class="line-empty" title="No Anys on this line!">            - "coef"</span>
-<span class="line-empty" title="No Anys on this line!">            - "pvalues",</span>
-<span class="line-empty" title="No Anys on this line!">            - "se"</span>
-<span class="line-empty" title="No Anys on this line!">            - "lower_ci"</span>
-<span class="line-empty" title="No Anys on this line!">            - "upper_ci"</span>
-<span class="line-empty" title="No Anys on this line!">            - "acc_train"</span>
-<span class="line-empty" title="No Anys on this line!">            - "acc_test"</span>
-<span class="line-empty" title="No Anys on this line!">            - "auc_train"</span>
-<span class="line-empty" title="No Anys on this line!">            - "auc_test"</span>
-<span class="line-empty" title="No Anys on this line!">            - "f1_train"</span>
-<span class="line-empty" title="No Anys on this line!">            - "f1_test"</span>
-<span class="line-empty" title="No Anys on this line!">            - "precision_train"</span>
-<span class="line-empty" title="No Anys on this line!">            - "precision_test"</span>
-<span class="line-empty" title="No Anys on this line!">            - "recall_train"</span>
-<span class="line-empty" title="No Anys on this line!">            - "recall_test"</span>
-<span class="line-empty" title="No Anys on this line!">            - "mcc_train"</span>
-<span class="line-empty" title="No Anys on this line!">            - "mcc_test"</span>
-<span class="line-empty" title="No Anys on this line!">            - "logloss_train"</span>
-<span class="line-empty" title="No Anys on this line!">            - "logloss_test"</span>
-<span class="line-empty" title="No Anys on this line!">            - "auc_train"</span>
-<span class="line-empty" title="No Anys on this line!">            - "auc_test"</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    Returns</span>
-<span class="line-empty" title="No Anys on this line!">    -------</span>
-<span class="line-empty" title="No Anys on this line!">    List[Union[int, float, str]]</span>
-<span class="line-empty" title="No Anys on this line!">        The values for the requested column.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    Examples</span>
-<span class="line-empty" title="No Anys on this line!">    --------</span>
-<span class="line-empty" title="No Anys on this line!">    # Assume you have fit a model with coefficients [0.1, 0.2, 0.3, 0.4, 0.5]</span>
-<span class="line-empty" title="No Anys on this line!">    # and a standard deviation of 0.01.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    &gt;&gt;&gt; get_col(self, "coef")</span>
-<span class="line-empty" title="No Anys on this line!">    [0.1, 0.2, 0.3, 0.4, 0.5]</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    &gt;&gt;&gt; get_col(self, "std")</span>
-<span class="line-empty" title="No Anys on this line!">    [0.01, 0.01, 0.01, 0.01, 0.01]</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x7)
-Explicit (x14)
-Omitted Generics (x2)">    attributes = [getattr(self.cv_dict[fold], col) for fold in self.unique_folds]</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x113)
-Explicit (x3)">    sd = pd.Series(attributes).std()</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x14)
-Omitted Generics (x2)
-Unannotated (x1)">    return [*attributes, getattr(self, col), sd]</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">class Univariate(Model):</span>
-<span class="line-precise" title="No Anys on this line!">    target_name: str</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">    target: Optional[pd.Series]</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">    y: Optional[pd.Series]</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">    Y: Optional[pd.Series]</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    feature_name: str</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">    feature: Optional[pd.Series]</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">    X: Optional[pd.Series]</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">    x: Optional[pd.Series]</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    fold_name: str</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">    folds: Optional[pd.Series]</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-imprecise" title="Any Types on this line: 
-Unimported (x4)">    normalization_obj: Optional[Union[MinMaxScaler, StandardScaler]]</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    def __init__(</span>
-<span class="line-empty" title="No Anys on this line!">        self,</span>
-<span class="line-empty" title="No Anys on this line!">        df_: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],</span>
-<span class="line-empty" title="No Anys on this line!">        df_val_: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],</span>
-<span class="line-precise" title="No Anys on this line!">        fold_col_: str = "fold",</span>
-<span class="line-precise" title="No Anys on this line!">        feature_col_: Optional[str] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        target_col_: Optional[str] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        time_series_validation: bool = True,</span>
-<span class="line-empty" title="No Anys on this line!">        **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">    ) -&gt; None:</span>
-<span class="line-precise" title="No Anys on this line!">        df: pd.DataFrame = to_pd_df(df_)</span>
-<span class="line-precise" title="No Anys on this line!">        df_val: pd.DataFrame = to_pd_df(df_val_)</span>
-<span class="line-precise" title="No Anys on this line!">        if feature_col_ is None:</span>
-<span class="line-precise" title="No Anys on this line!">            feature_col_ = df.columns[1]</span>
-<span class="line-precise" title="No Anys on this line!">        if target_col_ is None:</span>
-<span class="line-precise" title="No Anys on this line!">            target_col_ = df.columns[0]</span>
-<span class="line-precise" title="No Anys on this line!">        dbg.msg("Entering Univariate.__init__: | Ux0001a")</span>
-<span class="line-precise" title="No Anys on this line!">        dbg.msg(f"feature_col_={feature_col_}, target_col_={target_col_} | Ux0001b")</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        super().__init__(</span>
-<span class="line-precise" title="No Anys on this line!">            df,</span>
-<span class="line-precise" title="No Anys on this line!">            df_val,</span>
-<span class="line-precise" title="No Anys on this line!">            fold_col=fold_col_,</span>
-<span class="line-precise" title="No Anys on this line!">            feature_col=feature_col_,</span>
-<span class="line-precise" title="No Anys on this line!">            target_col=target_col_,</span>
-<span class="line-precise" title="No Anys on this line!">            time_series_validation=time_series_validation,</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        dbg.msg(</span>
-<span class="line-precise" title="No Anys on this line!">            f"[{self.feature_col}]: Before normalization, mean of feature_col_ is: "</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Unannotated (x1)
-Omitted Generics (x1)">            f"{df[feature_col_].mean()} | Ux0001c"</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-empty" title="No Anys on this line!">        # Normalize the column if the cross-validated fit is improved</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x3)">        df[feature_col_] = self.standardize(X=df[[feature_col_]])</span>
-<span class="line-precise" title="No Anys on this line!">        dbg.msg(</span>
-<span class="line-precise" title="No Anys on this line!">            f"[{self.feature_col}]: After normalization, mean of feature_col_ is: "</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Unannotated (x1)
-Omitted Generics (x1)">            f"{df[feature_col_].mean()} | Ux0001d"</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x4)">        self.unique_folds = get_unique(</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)
-Explicit (x2)">            self.df.select(self.fold_col).collect().to_pandas()[self.fold_col]</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x3)">        self.unique_folds_str = [f"Fold-{f}".zfill(2) for f in self.unique_folds]</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        self.cv_dict = {}</span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x2)">        for fold in self.unique_folds:</span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x1)">            dbg.msg(f"Creating cv_dict for fold {fold} | Ux0001e")</span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x2)">            self.cv_dict[fold] = Model(</span>
-<span class="line-precise" title="No Anys on this line!">                self.df,</span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x1)">                fold_n=fold,</span>
-<span class="line-precise" title="No Anys on this line!">                fold_col=self.fold_col,</span>
-<span class="line-empty" title="No Anys on this line!">                feature_col=(</span>
-<span class="line-precise" title="No Anys on this line!">                    self.feature_col if self.feature_col is not None else None</span>
-<span class="line-empty" title="No Anys on this line!">                ),</span>
-<span class="line-precise" title="No Anys on this line!">                target_col=(self.target_col if self.target_col is not None else None),</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        dbg.msg(f"[{self.feature_col}]: Producing results dataframe | Ux0001f")</span>
-<span class="line-precise" title="Any Types on this line: 
-Explicit (x2)">        self.agg_results = pl.from_pandas(</span>
-<span class="line-precise" title="Any Types on this line: 
-Omitted Generics (x39)
-Explicit (x4)
-Unannotated (x2)">            pd.DataFrame({"fold": [*self.unique_folds_str, "mean", "std"]})</span>
-<span class="line-empty" title="No Anys on this line!">        ).lazy()</span>
-<span class="line-precise" title="No Anys on this line!">        for attribute in [</span>
-<span class="line-precise" title="No Anys on this line!">            "coef",</span>
-<span class="line-precise" title="No Anys on this line!">            "pvalues",</span>
-<span class="line-precise" title="No Anys on this line!">            "se",</span>
-<span class="line-precise" title="No Anys on this line!">            "lower_ci",</span>
-<span class="line-precise" title="No Anys on this line!">            "upper_ci",</span>
-<span class="line-precise" title="No Anys on this line!">            "acc_train",</span>
-<span class="line-precise" title="No Anys on this line!">            "acc_test",</span>
-<span class="line-precise" title="No Anys on this line!">            "auc_train",</span>
-<span class="line-precise" title="No Anys on this line!">            "auc_test",</span>
-<span class="line-precise" title="No Anys on this line!">            "f1_train",</span>
-<span class="line-precise" title="No Anys on this line!">            "f1_test",</span>
-<span class="line-precise" title="No Anys on this line!">            "precision_train",</span>
-<span class="line-precise" title="No Anys on this line!">            "precision_test",</span>
-<span class="line-precise" title="No Anys on this line!">            "recall_train",</span>
-<span class="line-precise" title="No Anys on this line!">            "recall_test",</span>
-<span class="line-precise" title="No Anys on this line!">            "mcc_train",</span>
-<span class="line-precise" title="No Anys on this line!">            "mcc_test",</span>
-<span class="line-precise" title="No Anys on this line!">            "logloss_train",</span>
-<span class="line-precise" title="No Anys on this line!">            "logloss_test",</span>
-<span class="line-empty" title="No Anys on this line!">        ]:</span>
-<span class="line-precise" title="No Anys on this line!">            if (self.results is not None) and (attribute in self.results.columns):</span>
-<span class="line-empty" title="No Anys on this line!">                # Get the attribute from the cv_dict for each fold</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Explicit (x1)">                att = [</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x2)
-Omitted Generics (x2)">                    self.cv_dict[fold].results.select(attribute).collect().item(0, 0)</span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x2)">                    for fold in self.unique_folds</span>
-<span class="line-empty" title="No Anys on this line!">                ]</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">                # Get the mean and standard deviation of the attribute</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x113)
-Explicit (x3)">                std = pd.Series(att).std()</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x3)">                att += [self.results.select(pl.col(attribute)).collect().item(0, 0)]</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Explicit (x1)">                att += [std]</span>
-<span class="line-precise" title="No Anys on this line!">                self.agg_results = self.agg_results.with_columns(</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Unimported (x2)
-Explicit (x1)">                    pl.Series(att).alias(attribute)</span>
-<span class="line-empty" title="No Anys on this line!">                )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">            else:</span>
-<span class="line-precise" title="No Anys on this line!">                dbg.msg(</span>
-<span class="line-precise" title="No Anys on this line!">                    f"[{self.feature_col}]: Attribute {attribute} not found in "</span>
-<span class="line-empty" title="No Anys on this line!">                    "self | Ux0001g"</span>
-<span class="line-empty" title="No Anys on this line!">                )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        # ALIASES</span>
-<span class="line-empty" title="No Anys on this line!">        # =======</span>
-<span class="line-empty" title="No Anys on this line!">        # I am going to alias some of the api syntax errors here if they are</span>
-<span class="line-empty" title="No Anys on this line!">        # reasonable guesses. This needs to be as intuitive as possible.</span>
-<span class="line-precise" title="No Anys on this line!">        dfpd: pd.DataFrame = to_pd_df(df)</span>
-<span class="line-precise" title="No Anys on this line!">        self.target_name: str = (</span>
-<span class="line-precise" title="No Anys on this line!">            self.target_col if isinstance(self.target_col, str) else dfpd.columns[0]</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">        self.target: Optional[pd.Series] = (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">            dfpd.loc[:, self.target_name] if dfpd is not None else None</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">        self.y: Optional[pd.Series] = (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">            dfpd.loc[:, self.target_name] if dfpd is not None else None</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">        self.Y: Optional[pd.Series] = (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">            dfpd.loc[:, self.target_name] if dfpd is not None else None</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        self.feature_name = (</span>
-<span class="line-precise" title="No Anys on this line!">            self.feature_col if isinstance(self.feature_col, str) else dfpd.columns[1]</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">        self.feature: Optional[pd.Series] = (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">            dfpd.loc[:, self.feature_name] if dfpd is not None else None</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">        self.X: Optional[pd.Series] = (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">            dfpd.loc[:, self.feature_name] if dfpd is not None else None</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">        self.x: Optional[pd.Series] = (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">            dfpd.loc[:, self.feature_name] if dfpd is not None else None</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        self.fold_name: str = (</span>
-<span class="line-precise" title="No Anys on this line!">            self.fold_col</span>
-<span class="line-precise" title="No Anys on this line!">            if (hasattr(self, "fold_col") and isinstance(self.fold_col, str))</span>
-<span class="line-precise" title="No Anys on this line!">            else dfpd.columns[2]</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Explicit (x1)
-Omitted Generics (x1)">        self.folds: Optional[pd.Series[Any]] = (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">            dfpd.loc[:, self.fold_name] if dfpd is not None else None</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Explicit (x2)">        self.cv: Optional[pd.Series[Any]] = (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">            dfpd.loc[:, self.fold_name] if dfpd is not None else None</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Explicit (x2)">        self.fold: Optional[pd.Series[Any]] = (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">            dfpd.loc[:, self.fold_name] if dfpd is not None else None</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">        self.figsize = (7, 7) if "figsize" not in kwargs else kwargs["figsize"]</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    def _get_folds(self) -&gt; List[Union[int, float, str]]:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Helper method that returns an ordered list of the unique elements of</span>
-<span class="line-empty" title="No Anys on this line!">        self.df.cv. Used for reference only.</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x3)">        return get_unique(</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x6)">            to_pd_s(self.cv)</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Explicit (x3)
-Unimported (x2)
-Omitted Generics (x113)">            if isinstance(self.cv, (pl.Series, pd.Series))</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)
-Explicit (x2)">            else self.df.select(self.fold_col).collect().to_pandas()[self.fold_col]</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    def get_data(</span>
-<span class="line-precise" title="No Anys on this line!">        self, element: str = "x", data: str = "train", fold_n: Optional[int] = None</span>
-<span class="line-empty" title="No Anys on this line!">    ) -&gt; List[Union[int, float, str]]:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Helper function to get the requested data element.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        Parameters</span>
-<span class="line-empty" title="No Anys on this line!">        ----------</span>
-<span class="line-empty" title="No Anys on this line!">        element : str, optional</span>
-<span class="line-empty" title="No Anys on this line!">            What data element to get. Choices are "x", "y", or "fold"</span>
-<span class="line-empty" title="No Anys on this line!">            for X data (features), y data (target), or data from the nth</span>
-<span class="line-empty" title="No Anys on this line!">            cv fold. Note that `n` must be a named cv fold in the data,</span>
-<span class="line-empty" title="No Anys on this line!">            or an error will be raised.</span>
-<span class="line-empty" title="No Anys on this line!">        data : str, optional</span>
-<span class="line-empty" title="No Anys on this line!">            What data to use for the plot. Choices are "train", "test",</span>
-<span class="line-empty" title="No Anys on this line!">            "all".</span>
-<span class="line-empty" title="No Anys on this line!">        fold_n : int, optional</span>
-<span class="line-empty" title="No Anys on this line!">            If element is "fold", which fold to get. Must be a named</span>
-<span class="line-empty" title="No Anys on this line!">            cv fold in the data.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        Returns</span>
-<span class="line-empty" title="No Anys on this line!">        -------</span>
-<span class="line-empty" title="No Anys on this line!">        List[Union[int, float, str]]</span>
-<span class="line-empty" title="No Anys on this line!">            The values for the requested column.</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-precise" title="No Anys on this line!">        return _get_data(</span>
-<span class="line-precise" title="No Anys on this line!">            self.df,</span>
-<span class="line-precise" title="No Anys on this line!">            self.df_val,</span>
-<span class="line-precise" title="No Anys on this line!">            element,</span>
-<span class="line-precise" title="No Anys on this line!">            data,</span>
-<span class="line-precise" title="No Anys on this line!">            fold_n,</span>
-<span class="line-precise" title="No Anys on this line!">            self.feature_name,</span>
-<span class="line-precise" title="No Anys on this line!">            self.target_name,</span>
-<span class="line-precise" title="No Anys on this line!">            self.fold_col,</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    def _plot_data(self, data: str = "train"):</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Helper function to get the data for plotting.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        Parameters</span>
-<span class="line-empty" title="No Anys on this line!">        ----------</span>
-<span class="line-empty" title="No Anys on this line!">        data : str, optional</span>
-<span class="line-empty" title="No Anys on this line!">            What data to use for the plot. Choices are "train", "test",</span>
-<span class="line-empty" title="No Anys on this line!">            "all".</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        Returns</span>
-<span class="line-empty" title="No Anys on this line!">        -------</span>
-<span class="line-empty" title="No Anys on this line!">        Tuple[pd.Series, pd.Series, pd.Series]</span>
-<span class="line-empty" title="No Anys on this line!">            The X, y, and cv data.</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-precise" title="No Anys on this line!">        if data not in ["train", "test", "all"]:</span>
-<span class="line-precise" title="No Anys on this line!">            raise ValueError(</span>
-<span class="line-precise" title="No Anys on this line!">                f"data must be one of 'train', 'test', or 'all'. Got {data}."</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        # Set the data</span>
-<span class="line-precise" title="No Anys on this line!">        if data == "train":</span>
-<span class="line-precise" title="No Anys on this line!">            df = to_pd_df(self.df)</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">            cv = (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">                df.loc[:, self.fold_col]</span>
-<span class="line-precise" title="No Anys on this line!">                if df is not None</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)
-Explicit (x2)">                else self.df.select(pl.col(self.fold_col))</span>
-<span class="line-empty" title="No Anys on this line!">                .collect()</span>
-<span class="line-precise" title="No Anys on this line!">                .to_pandas()[self.fold_col]</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-precise" title="No Anys on this line!">        elif data == "test":</span>
-<span class="line-precise" title="No Anys on this line!">            df = to_pd_df(self.df_val) if self.df_val is not None else to_pd_df(self.df)</span>
-<span class="line-precise" title="No Anys on this line!">            df[self.fold_col] = -42</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">            cv = df[self.fold_col]</span>
-<span class="line-empty" title="No Anys on this line!">        else:</span>
-<span class="line-precise" title="No Anys on this line!">            df = (</span>
-<span class="line-precise" title="Any Types on this line: 
-Omitted Generics (x20)">                pd.concat(</span>
-<span class="line-empty" title="No Anys on this line!">                    [</span>
-<span class="line-precise" title="No Anys on this line!">                        to_pd_df(self.df),</span>
-<span class="line-precise" title="No Anys on this line!">                        to_pd_df(</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">                            self.df_val.with_columns(pl.lit(-42).alias(self.fold_col))</span>
-<span class="line-empty" title="No Anys on this line!">                        ),</span>
-<span class="line-empty" title="No Anys on this line!">                    ]</span>
-<span class="line-empty" title="No Anys on this line!">                )</span>
-<span class="line-precise" title="No Anys on this line!">                if to_pd_df(self.df_val)</span>
-<span class="line-precise" title="No Anys on this line!">                else to_pd_df(self.df)</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">            cv = df[self.fold_col]</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">        X = (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">            df.loc[:, self.feature_name]</span>
-<span class="line-precise" title="No Anys on this line!">            if df is not None</span>
-<span class="line-precise" title="No Anys on this line!">            else self.df.select(self.feature_name)</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">        y = (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">            df.loc[:, self.target_name]</span>
-<span class="line-precise" title="No Anys on this line!">            if df is not None</span>
-<span class="line-precise" title="No Anys on this line!">            else self.df.select(self.target_name)</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x3)">        return X, y, cv</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">    def plot_cdf(</span>
-<span class="line-empty" title="No Anys on this line!">        self,</span>
-<span class="line-precise" title="No Anys on this line!">        data: str = "train",</span>
-<span class="line-precise" title="No Anys on this line!">        ax: Optional[Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        figsize: Optional[Tuple[float, float]] = None,</span>
-<span class="line-empty" title="No Anys on this line!">        **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">    ):</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Plots the empirical cumulative distribution function for the target variable</span>
-<span class="line-empty" title="No Anys on this line!">        in total and for each fold.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        Parameters</span>
-<span class="line-empty" title="No Anys on this line!">        ----------</span>
-<span class="line-empty" title="No Anys on this line!">        data : str, optional</span>
-<span class="line-empty" title="No Anys on this line!">            What data to use for the plot. Choices are "train", "test", and</span>
-<span class="line-empty" title="No Anys on this line!">            "all", "fold-n".</span>
-<span class="line-empty" title="No Anys on this line!">        **kwargs</span>
-<span class="line-empty" title="No Anys on this line!">            Additional keyword arguments passed to the plot function.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x5)">        X, y, cv = self._plot_data(data)</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        # make plot</span>
-<span class="line-precise" title="No Anys on this line!">        if ax is None:</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x5)
-Unannotated (x2)">            _, ax1 = plt.subplots(figsize=self.figsize if figsize is None else figsize)</span>
-<span class="line-empty" title="No Anys on this line!">        else:</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">            ax1 = ax</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x9)
-Unannotated (x1)">        return cdf_plot(</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            X,</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            y,</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            cv,</span>
-<span class="line-precise" title="No Anys on this line!">            self.feature_name,</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">            ax=ax1,</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            figsize=self.figsize if figsize is None else figsize,</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Unannotated (x1)">            **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x3)
-Unannotated (x1)">    def plot_roc_curve(</span>
-<span class="line-empty" title="No Anys on this line!">        self,</span>
-<span class="line-precise" title="No Anys on this line!">        y: Optional[Union[pd.Series, pl.Series]] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        yhat: Optional[Union[pd.Series, pl.Series]] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        cv: Optional[Union[pd.Series, pl.Series]] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        coef: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        se: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        pvalues: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        ax: Optional[Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        figsize: Optional[Tuple[float, float]] = None,</span>
-<span class="line-empty" title="No Anys on this line!">        **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">    ) -&gt; Axes:</span>
-<span class="line-empty" title="No Anys on this line!">        """Plot the ROC curve for the target variable in total and for each fold."""</span>
-<span class="line-precise" title="No Anys on this line!">        if ax is None:</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x5)
-Unannotated (x2)">            _, ax0 = plt.subplots(figsize=self.figsize if figsize is None else figsize)</span>
-<span class="line-empty" title="No Anys on this line!">        else:</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">            ax0 = ax</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">        if cv is None:</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">            cv = (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x6)
-Explicit (x1)">                to_pd_s(self.cv)</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Explicit (x1)">                if self.cv is not None</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x6)">                else to_pd_s(self.df.select(self.fold_col).collect()[self.fold_col])</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-empty" title="No Anys on this line!">        else:</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x8)">            cv = to_pd_s(cv)</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unimported (x2)
-Omitted Generics (x3)
-Explicit (x1)">        ax0 = roc_curve_plot(</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x16)">            to_pd_s(self.GetY("train")) if y is None else to_pd_s(y),</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x16)">            to_pd_s(self.GetYhat("train")) if yhat is None else to_pd_s(yhat),</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">            cv,</span>
-<span class="line-precise" title="No Anys on this line!">            self.time_series_validation,</span>
-<span class="line-empty" title="No Anys on this line!">            (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Error (x2)">                to_pd_df(self.agg_results).loc["Ave.", "coef"].to_numpy()  # type: ignore</span>
-<span class="line-precise" title="No Anys on this line!">                if coef is None</span>
-<span class="line-precise" title="No Anys on this line!">                else coef</span>
-<span class="line-empty" title="No Anys on this line!">            ),</span>
-<span class="line-empty" title="No Anys on this line!">            (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Error (x2)">                to_pd_df(self.agg_results).loc["Ave.", "coef"].to_numpy()  # type: ignore</span>
-<span class="line-precise" title="No Anys on this line!">                if se is None</span>
-<span class="line-precise" title="No Anys on this line!">                else se</span>
-<span class="line-empty" title="No Anys on this line!">            ),</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x2)">            self.get("pvalues") if pvalues is None else pvalues,</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">            ax=ax0,</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            figsize=self.figsize if figsize is None else figsize,</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Unannotated (x1)">            **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">        return ax0</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    def plot_density(</span>
-<span class="line-empty" title="No Anys on this line!">        self,</span>
-<span class="line-precise" title="No Anys on this line!">        data: str = "train",</span>
-<span class="line-precise" title="No Anys on this line!">        ax: Optional[Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        figsize: Optional[Tuple[float, float]] = None,</span>
-<span class="line-empty" title="No Anys on this line!">        **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">    ) -&gt; Axes:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Plots the density of the feature at each level of the larget variable, both</span>
-<span class="line-empty" title="No Anys on this line!">        in total and for each fold.</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x5)">        X, y, cv = self._plot_data(data)</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        # make plot</span>
-<span class="line-precise" title="No Anys on this line!">        if ax is None:</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x5)
-Unannotated (x2)">            _, ax0 = plt.subplots(figsize=self.figsize if figsize is None else figsize)</span>
-<span class="line-empty" title="No Anys on this line!">        else:</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">            ax0 = ax</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x3)
-Explicit (x1)">        ax0 = density_plot(</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            X,</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            y,</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            cv,</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">            X.min(),</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">            X.max(),</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">            ax=ax0,</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            figsize=self.figsize if figsize is None else figsize,</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Unannotated (x1)">            **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">        return ax0</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    def plot_quintile_lift(</span>
-<span class="line-empty" title="No Anys on this line!">        self,</span>
-<span class="line-precise" title="No Anys on this line!">        data: str = "train",</span>
-<span class="line-precise" title="No Anys on this line!">        ax: Optional[Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        figsize: Optional[Tuple[float, float]] = None,</span>
-<span class="line-empty" title="No Anys on this line!">        **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">    ) -&gt; Axes:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Plots the quintile lift for the target variable in total and for each fold.</span>
-<span class="line-empty" title="No Anys on this line!">        Quintile lift is a grouped bar plot with each quintile of the feature on the</span>
-<span class="line-empty" title="No Anys on this line!">        x-axis and the mean target value for each quintile on the y-axis. There are</span>
-<span class="line-empty" title="No Anys on this line!">        bars for both the actual target value and the predicted target value.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        This plot is useful for understanding how well the model is able to segment</span>
-<span class="line-empty" title="No Anys on this line!">        the target variable based on the feature variable, and in the specific context</span>
-<span class="line-empty" title="No Anys on this line!">        of a univariate analysis, how well the feature variable is able to predict the</span>
-<span class="line-empty" title="No Anys on this line!">        target variable by itself, eg with no intercept, no other features, no</span>
-<span class="line-empty" title="No Anys on this line!">        regularization, etc.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        Parameters</span>
-<span class="line-empty" title="No Anys on this line!">        ----------</span>
-<span class="line-empty" title="No Anys on this line!">        data : str, optional</span>
-<span class="line-empty" title="No Anys on this line!">            What data to use for the plot. Choices are "train", "test", and</span>
-<span class="line-empty" title="No Anys on this line!">            "all", "fold-n".</span>
-<span class="line-empty" title="No Anys on this line!">        ax : Axes, optional</span>
-<span class="line-empty" title="No Anys on this line!">            The axes to plot on, by default None. If None, a new figure and axes</span>
-<span class="line-empty" title="No Anys on this line!">            will be created.</span>
-<span class="line-empty" title="No Anys on this line!">        figsize : Tuple[float, float], optional</span>
-<span class="line-empty" title="No Anys on this line!">            The size of the figure, by default None. If None, the default figure</span>
-<span class="line-empty" title="No Anys on this line!">            size will be used.</span>
-<span class="line-empty" title="No Anys on this line!">        **kwargs</span>
-<span class="line-empty" title="No Anys on this line!">            Additional keyword arguments passed to the plot function.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        Returns</span>
-<span class="line-empty" title="No Anys on this line!">        -------</span>
-<span class="line-empty" title="No Anys on this line!">        Axes</span>
-<span class="line-empty" title="No Anys on this line!">            The axes object for the plot.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        Examples</span>
-<span class="line-empty" title="No Anys on this line!">        --------</span>
-<span class="line-empty" title="No Anys on this line!">        # Plot the quintile lift for the training data in a univariate analysis `uni`</span>
-<span class="line-empty" title="No Anys on this line!">        # with the default figure size.</span>
-<span class="line-empty" title="No Anys on this line!">        &gt;&gt;&gt; uni.plot_quintile_lift(data="train")</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        # Plot the quintile lift for the test data in a univariate analysis `uni`</span>
-<span class="line-empty" title="No Anys on this line!">        # with a figure size of (10, 10).</span>
-<span class="line-empty" title="No Anys on this line!">        &gt;&gt;&gt; uni.plot_quintile_lift(data="test", figsize=(10, 10))</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        # Plot the quintile lift for the training data in a univariate analysis `uni`</span>
-<span class="line-empty" title="No Anys on this line!">        # with the default figure size and a custom color for the predicted target</span>
-<span class="line-empty" title="No Anys on this line!">        # value.</span>
-<span class="line-empty" title="No Anys on this line!">        &gt;&gt;&gt; uni.plot_quintile_lift(data="train", color="red")</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        # Plot the quintile lift for the training data in a univariate analysis `uni`</span>
-<span class="line-empty" title="No Anys on this line!">        # with the default figure size and a custom title.</span>
-<span class="line-empty" title="No Anys on this line!">        &gt;&gt;&gt; uni.plot_quintile_lift(data="train", title="Quintile Lift Plot")</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">        X, y, _ = self._plot_data(data)</span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x4)
-Unannotated (x1)">        yhat = self.predict(X)</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        # make plot</span>
-<span class="line-precise" title="No Anys on this line!">        if ax is None:</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x5)
-Unannotated (x2)">            _, ax0 = plt.subplots(figsize=self.figsize if figsize is None else figsize)</span>
-<span class="line-empty" title="No Anys on this line!">        else:</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">            ax0 = ax</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-imprecise" title="Any Types on this line: 
-Unimported (x2)
-Omitted Generics (x1)">        yhat_polars = pl.Series(yhat)</span>
-<span class="line-any" title="Any Types on this line: 
-Unimported (x2)
-Omitted Generics (x3)
-Unannotated (x1)
-Explicit (x1)">        ax0 = quintile_lift_plot(</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            X,</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            y,</span>
-<span class="line-precise" title="No Anys on this line!">            yhat_polars,</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">            ax=ax0,</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            figsize=self.figsize if figsize is None else figsize,</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Unannotated (x1)">            **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">        return ax0</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">    def _add_to_report(self, rpt: Optional[Report] = None, **kwargs):</span>
-<span class="line-precise" title="No Anys on this line!">        if rpt is None:</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)
-Unannotated (x1)">            rpt = Report(**kwargs)</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">        def density():</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">            return self.plot_density(</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                data="train", feature_name=self.feature_name, figsize=self.figsize</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">        def cdf():</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">            return self.plot_cdf(data="train", figsize=self.figsize)</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">        def roc():</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">            return self.plot_roc_curve(</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                y=self.GetY("train"),</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                yhat=self.GetYhat("train"),</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x10)">                cv=self.df.select(self.fold_col).collect().to_pandas()[self.fold_col],  # type: ignore</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">                time_series_validation=self.time_series_validation,</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                coef=self.get("coef"),</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                se=self.get("se"),</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                pvalues=self.get("pvalues"),</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">                figsize=self.figsize,</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">        def quintile():</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">            return self.plot_quintile_lift(data="test", figsize=self.figsize)</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        return (</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)
-Unimported (x1)">            rpt.h2("Univariate Report")</span>
-<span class="line-precise" title="No Anys on this line!">            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - Results")</span>
-<span class="line-precise" title="No Anys on this line!">            .spacer(0.5)</span>
-<span class="line-precise" title="No Anys on this line!">            .table(self.get_results())</span>
-<span class="line-empty" title="No Anys on this line!">            .page_break()</span>
-<span class="line-precise" title="No Anys on this line!">            .h2("Univariate Report")</span>
-<span class="line-empty" title="No Anys on this line!">            .h3(</span>
-<span class="line-precise" title="No Anys on this line!">                f"{plot_label(self.feature_name, incl_bracket=False)} - "</span>
-<span class="line-empty" title="No Anys on this line!">                "Kernel Density Plot"</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-precise" title="Any Types on this line: 
-Unannotated (x1)">            .plot(density)</span>
-<span class="line-precise" title="No Anys on this line!">            .spacer(0.125)</span>
-<span class="line-empty" title="No Anys on this line!">            .caption(</span>
-<span class="line-precise" title="No Anys on this line!">                "This plot shows the Gaussian kernel density for each level of the "</span>
-<span class="line-empty" title="No Anys on this line!">                "target variable, both in total and for each fold. "</span>
-<span class="line-empty" title="No Anys on this line!">                "The x-axis represents the feature variable, and the y-axis represents "</span>
-<span class="line-empty" title="No Anys on this line!">                "the density of the target variable. "</span>
-<span class="line-empty" title="No Anys on this line!">                "The cross-validation folds are included in slightly washed-out colors "</span>
-<span class="line-empty" title="No Anys on this line!">                "to help understand the variability of the data. "</span>
-<span class="line-empty" title="No Anys on this line!">                "There are annotations with the results of a t-test for the difference "</span>
-<span class="line-empty" title="No Anys on this line!">                "in means between the feature variable at each level of the target "</span>
-<span class="line-empty" title="No Anys on this line!">                "variable. "</span>
-<span class="line-empty" title="No Anys on this line!">                "The annotations corresponding to the color of the target variable "</span>
-<span class="line-empty" title="No Anys on this line!">                "level show the mean/median ratio to help understand differences in "</span>
-<span class="line-empty" title="No Anys on this line!">                "skewness between the levels of the target variable."</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-empty" title="No Anys on this line!">            # TODO: Add in a table for the t-test results (Issue #62 on GitHub)</span>
-<span class="line-empty" title="No Anys on this line!">            .page_break()</span>
-<span class="line-precise" title="No Anys on this line!">            .h2("Univariate Report")</span>
-<span class="line-empty" title="No Anys on this line!">            .h3(</span>
-<span class="line-precise" title="No Anys on this line!">                f"{plot_label(self.feature_name, incl_bracket=False)} "</span>
-<span class="line-empty" title="No Anys on this line!">                "- Empirical CDF Plot"</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-precise" title="Any Types on this line: 
-Unannotated (x1)">            .plot(cdf)</span>
-<span class="line-precise" title="No Anys on this line!">            .spacer(0.125)</span>
-<span class="line-empty" title="No Anys on this line!">            .caption(</span>
-<span class="line-precise" title="No Anys on this line!">                "This plot shows the empirical cumulative distribution function for "</span>
-<span class="line-empty" title="No Anys on this line!">                "each level of the target variable, both in total and for each fold. "</span>
-<span class="line-empty" title="No Anys on this line!">                "The x-axis represents the feature variable, and the y-axis represents "</span>
-<span class="line-empty" title="No Anys on this line!">                "the cumulative distribution of the target variable. "</span>
-<span class="line-empty" title="No Anys on this line!">                "The cross-validation folds are included in slightly washed-out colors "</span>
-<span class="line-empty" title="No Anys on this line!">                "to help understand the variability of the data, and whether or not it "</span>
-<span class="line-empty" title="No Anys on this line!">                "is reasonable to assume that the data is drawn from different "</span>
-<span class="line-empty" title="No Anys on this line!">                "distributions."</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-empty" title="No Anys on this line!">            .page_break()</span>
-<span class="line-precise" title="No Anys on this line!">            .h2("Univariate Report")</span>
-<span class="line-precise" title="No Anys on this line!">            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - ROC Curve")</span>
-<span class="line-precise" title="Any Types on this line: 
-Unannotated (x1)">            .plot(roc)</span>
-<span class="line-precise" title="No Anys on this line!">            .spacer(0.125)</span>
-<span class="line-empty" title="No Anys on this line!">            .caption(</span>
-<span class="line-precise" title="No Anys on this line!">                "This plot shows the receiver operating characteristic (ROC) curve "</span>
-<span class="line-empty" title="No Anys on this line!">                "for the target variable in total and for each fold. "</span>
-<span class="line-empty" title="No Anys on this line!">                "The x-axis represents the false positive rate, and the y-axis "</span>
-<span class="line-empty" title="No Anys on this line!">                "represents the true positive rate. This is based on a simple "</span>
-<span class="line-empty" title="No Anys on this line!">                "Logistic Regression model with no regularization, no intercept, "</span>
-<span class="line-empty" title="No Anys on this line!">                "and no other features. "</span>
-<span class="line-empty" title="No Anys on this line!">                "Annotations are on the plot to help understand the results of the "</span>
-<span class="line-empty" title="No Anys on this line!">                "model, including the coefficient, standard error, and p-value for "</span>
-<span class="line-empty" title="No Anys on this line!">                "the feature variable. "</span>
-<span class="line-empty" title="No Anys on this line!">                "The cross-validation folds are used to create the grey region around "</span>
-<span class="line-empty" title="No Anys on this line!">                "the mean ROC curve to help understand the variability of the data."</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-empty" title="No Anys on this line!">            .caption(</span>
-<span class="line-precise" title="No Anys on this line!">                "Significance of the ROC curve is determined based on a modified "</span>
-<span class="line-empty" title="No Anys on this line!">                "version the method from DeLong et al. (1988). In brief, the AUC "</span>
-<span class="line-empty" title="No Anys on this line!">                "is assumed to be normally distributed, and I calculate the empirical "</span>
-<span class="line-empty" title="No Anys on this line!">                "standard error from the cross-validated AUC values. "</span>
-<span class="line-empty" title="No Anys on this line!">                "I then calculate a z-score for the AUC, and use the z-score to "</span>
-<span class="line-empty" title="No Anys on this line!">                "calculate a p-value. "</span>
-<span class="line-empty" title="No Anys on this line!">                "The p-value is then used to determine the significance of the AUC. "</span>
-<span class="line-empty" title="No Anys on this line!">                "This is a simple test, and should be used with caution."</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-empty" title="No Anys on this line!">            .page_break()</span>
-<span class="line-precise" title="No Anys on this line!">            .h2("Univariate Report")</span>
-<span class="line-precise" title="No Anys on this line!">            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - Quintile Lift")</span>
-<span class="line-precise" title="Any Types on this line: 
-Unannotated (x1)">            .plot(quintile)</span>
-<span class="line-precise" title="No Anys on this line!">            .spacer(0.125)</span>
-<span class="line-empty" title="No Anys on this line!">            .caption(</span>
-<span class="line-precise" title="No Anys on this line!">                "The quintile lift plot is meant to show the power of the single "</span>
-<span class="line-empty" title="No Anys on this line!">                "feature to discriminate between the highest and lowest quintiles "</span>
-<span class="line-empty" title="No Anys on this line!">                "of the target variable."</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-empty" title="No Anys on this line!">            .page_break()</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    def get_results(self, use_formatting: bool = True) -&gt; pd.DataFrame:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Returns the self.results attribute, formatted for the univariate report.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        Parameters</span>
-<span class="line-empty" title="No Anys on this line!">        ----------</span>
-<span class="line-empty" title="No Anys on this line!">        use_formatting : bool, optional</span>
-<span class="line-empty" title="No Anys on this line!">            Whether to use formatting or not. Defaults to True. If set to False,</span>
-<span class="line-empty" title="No Anys on this line!">            the unformated results will be returned as a pandas DataFrame.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        Returns</span>
-<span class="line-empty" title="No Anys on this line!">        -------</span>
-<span class="line-empty" title="No Anys on this line!">        pd.DataFrame</span>
-<span class="line-empty" title="No Anys on this line!">            The results dataframe.</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-precise" title="No Anys on this line!">        results = to_pd_df(self.agg_results)</span>
-<span class="line-precise" title="No Anys on this line!">        if use_formatting:</span>
-<span class="line-precise" title="No Anys on this line!">            pct_cols = [</span>
-<span class="line-precise" title="No Anys on this line!">                "acc_train",</span>
-<span class="line-precise" title="No Anys on this line!">                "acc_test",</span>
-<span class="line-precise" title="No Anys on this line!">                "auc_train",</span>
-<span class="line-precise" title="No Anys on this line!">                "auc_test",</span>
-<span class="line-precise" title="No Anys on this line!">                "f1_train",</span>
-<span class="line-precise" title="No Anys on this line!">                "f1_test",</span>
-<span class="line-precise" title="No Anys on this line!">                "precision_train",</span>
-<span class="line-precise" title="No Anys on this line!">                "precision_test",</span>
-<span class="line-precise" title="No Anys on this line!">                "recall_train",</span>
-<span class="line-precise" title="No Anys on this line!">                "recall_test",</span>
-<span class="line-precise" title="No Anys on this line!">                "mcc_train",</span>
-<span class="line-precise" title="No Anys on this line!">                "mcc_test",</span>
-<span class="line-empty" title="No Anys on this line!">            ]</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">            # Percent-format with single decimal point:</span>
-<span class="line-precise" title="No Anys on this line!">            for col in pct_cols:</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x10)
-Explicit (x4)
-Unannotated (x2)">                results[col] = results[col].apply(lambda x: f"{x:.1%}")</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">            # Hierarchy of formatting depending on size of median value in col</span>
-<span class="line-precise" title="No Anys on this line!">            for col in [c for c in results.columns.tolist()[1:] if c not in pct_cols]:</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Unannotated (x1)
-Omitted Generics (x1)">                m = results[col].median()</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x2)">                if np.abs(m) &gt; 1.0:</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x10)
-Explicit (x4)
-Unannotated (x2)">                    results[col] = results[col].apply(lambda x: f"{x:.2f}")</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x2)">                elif np.abs(m) &gt; 0.1:</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x10)
-Explicit (x4)
-Unannotated (x2)">                    results[col] = results[col].apply(lambda x: f"{x:.3f}")</span>
-<span class="line-empty" title="No Anys on this line!">                else:</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x10)
-Explicit (x4)
-Unannotated (x2)">                    results[col] = results[col].apply(lambda x: f"{x:.1e}")</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">            # Apply an index at the end</span>
-<span class="line-precise" title="Any Types on this line: 
-Omitted Generics (x42)
-Unannotated (x35)
-Explicit (x1)">            results.columns = pd.Index(</span>
-<span class="line-empty" title="No Anys on this line!">                [</span>
-<span class="line-precise" title="No Anys on this line!">                    "CV Fold",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Fitted Coef.",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Fitted p-Value",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Fitted Std. Err.",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Conf. Int. Lower",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Conf. Int. Upper",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Train Accuracy",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Val Accuracy",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Train AUC",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Val AUC",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Train F1",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Test F1",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Train Precision",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Val Precision",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Train Recall",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Val Recall",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Train MCC",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Val MCC",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Train Log-Loss",</span>
-<span class="line-precise" title="No Anys on this line!">                    "Val Log-Loss",</span>
-<span class="line-empty" title="No Anys on this line!">                ]</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="Any Types on this line: 
-Omitted Generics (x12)">        return results.set_index("CV Fold").T</span>
+<td class="table-code"><pre><span class="line-empty" title="No Anys on this line!"># pragma: noqa: ERA001</span>
+<span class="line-empty" title="No Anys on this line!"># from __future__ import annotations</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"># import matplotlib.pyplot as plt</span>
+<span class="line-empty" title="No Anys on this line!"># import numpy as np</span>
+<span class="line-empty" title="No Anys on this line!"># import pandas as pd</span>
+<span class="line-empty" title="No Anys on this line!"># import polars as pl</span>
+<span class="line-empty" title="No Anys on this line!"># from matplotlib.axes import Axes</span>
+<span class="line-empty" title="No Anys on this line!"># from sklearn.preprocessing import MinMaxScaler, StandardScaler</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"># from predictables.univariate._BaseModel import Model</span>
+<span class="line-empty" title="No Anys on this line!"># from predictables.univariate.src._get_data import _get_data</span>
+<span class="line-empty" title="No Anys on this line!"># from predictables.univariate.src.plots import (</span>
+<span class="line-empty" title="No Anys on this line!">#     cdf_plot,</span>
+<span class="line-empty" title="No Anys on this line!">#     density_plot,</span>
+<span class="line-empty" title="No Anys on this line!">#     quintile_lift_plot,</span>
+<span class="line-empty" title="No Anys on this line!">#     roc_curve_plot,</span>
+<span class="line-empty" title="No Anys on this line!"># )</span>
+<span class="line-empty" title="No Anys on this line!"># from predictables.univariate.src.plots.util import plot_label</span>
+<span class="line-empty" title="No Anys on this line!"># from predictables.util import DebugLogger, get_unique, to_pd_df, to_pd_s</span>
+<span class="line-empty" title="No Anys on this line!"># from predictables.util.report import Report</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"># dbg = DebugLogger(working_file="_Univariate.py")</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"># def get_col(self, col: str) -&gt; List[Union[int, float, str]]:</span>
+<span class="line-empty" title="No Anys on this line!">#     """</span>
+<span class="line-empty" title="No Anys on this line!">#     Helper function to get the requested column from the data.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     Parameters</span>
+<span class="line-empty" title="No Anys on this line!">#     ----------</span>
+<span class="line-empty" title="No Anys on this line!">#     col : str</span>
+<span class="line-empty" title="No Anys on this line!">#         The name of the column to get. Choices are</span>
+<span class="line-empty" title="No Anys on this line!">#             - "coef"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "pvalues",</span>
+<span class="line-empty" title="No Anys on this line!">#             - "se"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "lower_ci"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "upper_ci"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "acc_train"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "acc_test"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "auc_train"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "auc_test"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "f1_train"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "f1_test"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "precision_train"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "precision_test"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "recall_train"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "recall_test"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "mcc_train"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "mcc_test"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "logloss_train"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "logloss_test"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "auc_train"</span>
+<span class="line-empty" title="No Anys on this line!">#             - "auc_test"</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     Returns</span>
+<span class="line-empty" title="No Anys on this line!">#     -------</span>
+<span class="line-empty" title="No Anys on this line!">#     List[Union[int, float, str]]</span>
+<span class="line-empty" title="No Anys on this line!">#         The values for the requested column.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     Examples</span>
+<span class="line-empty" title="No Anys on this line!">#     --------</span>
+<span class="line-empty" title="No Anys on this line!">#     # Assume you have fit a model with coefficients [0.1, 0.2, 0.3, 0.4, 0.5]</span>
+<span class="line-empty" title="No Anys on this line!">#     # and a standard deviation of 0.01.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     &gt;&gt;&gt; get_col(self, "coef")</span>
+<span class="line-empty" title="No Anys on this line!">#     [0.1, 0.2, 0.3, 0.4, 0.5]</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     &gt;&gt;&gt; get_col(self, "std")</span>
+<span class="line-empty" title="No Anys on this line!">#     [0.01, 0.01, 0.01, 0.01, 0.01]</span>
+<span class="line-empty" title="No Anys on this line!">#     """</span>
+<span class="line-empty" title="No Anys on this line!">#     attributes = [getattr(self.cv_dict[fold], col) for fold in self.unique_folds]</span>
+<span class="line-empty" title="No Anys on this line!">#     sd = pd.Series(attributes).std()</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     return [*attributes, getattr(self, col), sd]</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"># class Univariate(Model):</span>
+<span class="line-empty" title="No Anys on this line!">#     target_name: str</span>
+<span class="line-empty" title="No Anys on this line!">#     target: Optional[pd.Series]</span>
+<span class="line-empty" title="No Anys on this line!">#     y: Optional[pd.Series]</span>
+<span class="line-empty" title="No Anys on this line!">#     Y: Optional[pd.Series]</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     feature_name: str</span>
+<span class="line-empty" title="No Anys on this line!">#     feature: Optional[pd.Series]</span>
+<span class="line-empty" title="No Anys on this line!">#     X: Optional[pd.Series]</span>
+<span class="line-empty" title="No Anys on this line!">#     x: Optional[pd.Series]</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     fold_name: str</span>
+<span class="line-empty" title="No Anys on this line!">#     folds: Optional[pd.Series]</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     normalization_obj: Optional[Union[MinMaxScaler, StandardScaler]]</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     def __init__(</span>
+<span class="line-empty" title="No Anys on this line!">#         self,</span>
+<span class="line-empty" title="No Anys on this line!">#         df_: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],</span>
+<span class="line-empty" title="No Anys on this line!">#         df_val_: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],</span>
+<span class="line-empty" title="No Anys on this line!">#         fold_col_: str = "fold",</span>
+<span class="line-empty" title="No Anys on this line!">#         feature_col_: str | None = None,</span>
+<span class="line-empty" title="No Anys on this line!">#         target_col_: str | None = None,</span>
+<span class="line-empty" title="No Anys on this line!">#         time_series_validation: bool = True,</span>
+<span class="line-empty" title="No Anys on this line!">#         **kwargs,</span>
+<span class="line-empty" title="No Anys on this line!">#     ) -&gt; None:</span>
+<span class="line-empty" title="No Anys on this line!">#         df: pd.DataFrame = to_pd_df(df_)</span>
+<span class="line-empty" title="No Anys on this line!">#         df_val: pd.DataFrame = to_pd_df(df_val_)</span>
+<span class="line-empty" title="No Anys on this line!">#         if feature_col_ is None:</span>
+<span class="line-empty" title="No Anys on this line!">#             feature_col_ = df.columns[1]</span>
+<span class="line-empty" title="No Anys on this line!">#         if target_col_ is None:</span>
+<span class="line-empty" title="No Anys on this line!">#             target_col_ = df.columns[0]</span>
+<span class="line-empty" title="No Anys on this line!">#         dbg.msg("Entering Univariate.__init__: | Ux0001a")</span>
+<span class="line-empty" title="No Anys on this line!">#         dbg.msg(f"feature_col_={feature_col_}, target_col_={target_col_} | Ux0001b")</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         super().__init__(</span>
+<span class="line-empty" title="No Anys on this line!">#             df,</span>
+<span class="line-empty" title="No Anys on this line!">#             df_val,</span>
+<span class="line-empty" title="No Anys on this line!">#             fold_col=fold_col_,</span>
+<span class="line-empty" title="No Anys on this line!">#             feature_col=feature_col_,</span>
+<span class="line-empty" title="No Anys on this line!">#             target_col=target_col_,</span>
+<span class="line-empty" title="No Anys on this line!">#             time_series_validation=time_series_validation,</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         dbg.msg(</span>
+<span class="line-empty" title="No Anys on this line!">#             f"[{self.feature_col}]: Before normalization, mean of feature_col_ is: "</span>
+<span class="line-empty" title="No Anys on this line!">#             f"{df[feature_col_].mean()} | Ux0001c"</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!">#         # Normalize the column if the cross-validated fit is improved</span>
+<span class="line-empty" title="No Anys on this line!">#         df[feature_col_] = self.standardize(X=df[[feature_col_]])</span>
+<span class="line-empty" title="No Anys on this line!">#         dbg.msg(</span>
+<span class="line-empty" title="No Anys on this line!">#             f"[{self.feature_col}]: After normalization, mean of feature_col_ is: "</span>
+<span class="line-empty" title="No Anys on this line!">#             f"{df[feature_col_].mean()} | Ux0001d"</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!">#         self.unique_folds = get_unique(</span>
+<span class="line-empty" title="No Anys on this line!">#             self.df.select(self.fold_col).collect().to_pandas()[self.fold_col]</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!">#         self.unique_folds_str = [f"Fold-{f}".zfill(2) for f in self.unique_folds]</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         self.cv_dict = {}</span>
+<span class="line-empty" title="No Anys on this line!">#         for fold in self.unique_folds:</span>
+<span class="line-empty" title="No Anys on this line!">#             dbg.msg(f"Creating cv_dict for fold {fold} | Ux0001e")</span>
+<span class="line-empty" title="No Anys on this line!">#             self.cv_dict[fold] = Model(</span>
+<span class="line-empty" title="No Anys on this line!">#                 self.df,</span>
+<span class="line-empty" title="No Anys on this line!">#                 fold_n=fold,</span>
+<span class="line-empty" title="No Anys on this line!">#                 fold_col=self.fold_col,</span>
+<span class="line-empty" title="No Anys on this line!">#                 feature_col=(</span>
+<span class="line-empty" title="No Anys on this line!">#                     self.feature_col if self.feature_col is not None else None</span>
+<span class="line-empty" title="No Anys on this line!">#                 ),</span>
+<span class="line-empty" title="No Anys on this line!">#                 target_col=(self.target_col if self.target_col is not None else None),</span>
+<span class="line-empty" title="No Anys on this line!">#             )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         dbg.msg(f"[{self.feature_col}]: Producing results dataframe | Ux0001f")</span>
+<span class="line-empty" title="No Anys on this line!">#         self.agg_results = pl.from_pandas(</span>
+<span class="line-empty" title="No Anys on this line!">#             pd.DataFrame({"fold": [*self.unique_folds_str, "mean", "std"]})</span>
+<span class="line-empty" title="No Anys on this line!">#         ).lazy()</span>
+<span class="line-empty" title="No Anys on this line!">#         for attribute in [</span>
+<span class="line-empty" title="No Anys on this line!">#             "coef",</span>
+<span class="line-empty" title="No Anys on this line!">#             "pvalues",</span>
+<span class="line-empty" title="No Anys on this line!">#             "se",</span>
+<span class="line-empty" title="No Anys on this line!">#             "lower_ci",</span>
+<span class="line-empty" title="No Anys on this line!">#             "upper_ci",</span>
+<span class="line-empty" title="No Anys on this line!">#             "acc_train",</span>
+<span class="line-empty" title="No Anys on this line!">#             "acc_test",</span>
+<span class="line-empty" title="No Anys on this line!">#             "auc_train",</span>
+<span class="line-empty" title="No Anys on this line!">#             "auc_test",</span>
+<span class="line-empty" title="No Anys on this line!">#             "f1_train",</span>
+<span class="line-empty" title="No Anys on this line!">#             "f1_test",</span>
+<span class="line-empty" title="No Anys on this line!">#             "precision_train",</span>
+<span class="line-empty" title="No Anys on this line!">#             "precision_test",</span>
+<span class="line-empty" title="No Anys on this line!">#             "recall_train",</span>
+<span class="line-empty" title="No Anys on this line!">#             "recall_test",</span>
+<span class="line-empty" title="No Anys on this line!">#             "mcc_train",</span>
+<span class="line-empty" title="No Anys on this line!">#             "mcc_test",</span>
+<span class="line-empty" title="No Anys on this line!">#             "logloss_train",</span>
+<span class="line-empty" title="No Anys on this line!">#             "logloss_test",</span>
+<span class="line-empty" title="No Anys on this line!">#         ]:</span>
+<span class="line-empty" title="No Anys on this line!">#             if (self.results is not None) and (attribute in self.results.columns):</span>
+<span class="line-empty" title="No Anys on this line!">#                 # Get the attribute from the cv_dict for each fold</span>
+<span class="line-empty" title="No Anys on this line!">#                 att = [</span>
+<span class="line-empty" title="No Anys on this line!">#                     self.cv_dict[fold].results.select(attribute).collect().item(0, 0)</span>
+<span class="line-empty" title="No Anys on this line!">#                     for fold in self.unique_folds</span>
+<span class="line-empty" title="No Anys on this line!">#                 ]</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#                 # Get the mean and standard deviation of the attribute</span>
+<span class="line-empty" title="No Anys on this line!">#                 std = pd.Series(att).std()</span>
+<span class="line-empty" title="No Anys on this line!">#                 att += [self.results.select(pl.col(attribute)).collect().item(0, 0)]</span>
+<span class="line-empty" title="No Anys on this line!">#                 att += [std]</span>
+<span class="line-empty" title="No Anys on this line!">#                 self.agg_results = self.agg_results.with_columns(</span>
+<span class="line-empty" title="No Anys on this line!">#                     pl.Series(att).alias(attribute)</span>
+<span class="line-empty" title="No Anys on this line!">#                 )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#             else:</span>
+<span class="line-empty" title="No Anys on this line!">#                 dbg.msg(</span>
+<span class="line-empty" title="No Anys on this line!">#                     f"[{self.feature_col}]: Attribute {attribute} not found in "</span>
+<span class="line-empty" title="No Anys on this line!">#                     "self | Ux0001g"</span>
+<span class="line-empty" title="No Anys on this line!">#                 )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         # ALIASES</span>
+<span class="line-empty" title="No Anys on this line!">#         # =======</span>
+<span class="line-empty" title="No Anys on this line!">#         # I am going to alias some of the api syntax errors here if they are</span>
+<span class="line-empty" title="No Anys on this line!">#         # reasonable guesses. This needs to be as intuitive as possible.</span>
+<span class="line-empty" title="No Anys on this line!">#         dfpd: pd.DataFrame = to_pd_df(df)</span>
+<span class="line-empty" title="No Anys on this line!">#         self.target_name: str = (</span>
+<span class="line-empty" title="No Anys on this line!">#             self.target_col if isinstance(self.target_col, str) else dfpd.columns[0]</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!">#         self.target: Optional[pd.Series] = (</span>
+<span class="line-empty" title="No Anys on this line!">#             dfpd.loc[:, self.target_name] if dfpd is not None else None</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!">#         self.y: Optional[pd.Series] = (</span>
+<span class="line-empty" title="No Anys on this line!">#             dfpd.loc[:, self.target_name] if dfpd is not None else None</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!">#         self.Y: Optional[pd.Series] = (</span>
+<span class="line-empty" title="No Anys on this line!">#             dfpd.loc[:, self.target_name] if dfpd is not None else None</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         self.feature_name = (</span>
+<span class="line-empty" title="No Anys on this line!">#             self.feature_col if isinstance(self.feature_col, str) else dfpd.columns[1]</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!">#         self.feature: Optional[pd.Series] = (</span>
+<span class="line-empty" title="No Anys on this line!">#             dfpd.loc[:, self.feature_name] if dfpd is not None else None</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!">#         self.X: Optional[pd.Series] = (</span>
+<span class="line-empty" title="No Anys on this line!">#             dfpd.loc[:, self.feature_name] if dfpd is not None else None</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!">#         self.x: Optional[pd.Series] = (</span>
+<span class="line-empty" title="No Anys on this line!">#             dfpd.loc[:, self.feature_name] if dfpd is not None else None</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         self.fold_name: str = (</span>
+<span class="line-empty" title="No Anys on this line!">#             self.fold_col</span>
+<span class="line-empty" title="No Anys on this line!">#             if (hasattr(self, "fold_col") and isinstance(self.fold_col, str))</span>
+<span class="line-empty" title="No Anys on this line!">#             else dfpd.columns[2]</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!">#         self.folds: Optional[pd.Series[Any]] = (</span>
+<span class="line-empty" title="No Anys on this line!">#             dfpd.loc[:, self.fold_name] if dfpd is not None else None</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!">#         self.cv: Optional[pd.Series[Any]] = (</span>
+<span class="line-empty" title="No Anys on this line!">#             dfpd.loc[:, self.fold_name] if dfpd is not None else None</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!">#         self.fold: Optional[pd.Series[Any]] = (</span>
+<span class="line-empty" title="No Anys on this line!">#             dfpd.loc[:, self.fold_name] if dfpd is not None else None</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         self.figsize = (7, 7) if "figsize" not in kwargs else kwargs["figsize"]</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     def _get_folds(self) -&gt; List[Union[int, float, str]]:</span>
+<span class="line-empty" title="No Anys on this line!">#         """</span>
+<span class="line-empty" title="No Anys on this line!">#         Helper method that returns an ordered list of the unique elements of</span>
+<span class="line-empty" title="No Anys on this line!">#         self.df.cv. Used for reference only.</span>
+<span class="line-empty" title="No Anys on this line!">#         """</span>
+<span class="line-empty" title="No Anys on this line!">#         return get_unique(</span>
+<span class="line-empty" title="No Anys on this line!">#             to_pd_s(self.cv)</span>
+<span class="line-empty" title="No Anys on this line!">#             if isinstance(self.cv, (pl.Series, pd.Series))</span>
+<span class="line-empty" title="No Anys on this line!">#             else self.df.select(self.fold_col).collect().to_pandas()[self.fold_col]</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     def get_data(</span>
+<span class="line-empty" title="No Anys on this line!">#         self, element: str = "x", data: str = "train", fold_n: Optional[int] = None</span>
+<span class="line-empty" title="No Anys on this line!">#     ) -&gt; List[Union[int, float, str]]:</span>
+<span class="line-empty" title="No Anys on this line!">#         """</span>
+<span class="line-empty" title="No Anys on this line!">#         Helper function to get the requested data element.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         Parameters</span>
+<span class="line-empty" title="No Anys on this line!">#         ----------</span>
+<span class="line-empty" title="No Anys on this line!">#         element : str, optional</span>
+<span class="line-empty" title="No Anys on this line!">#             What data element to get. Choices are "x", "y", or "fold"</span>
+<span class="line-empty" title="No Anys on this line!">#             for X data (features), y data (target), or data from the nth</span>
+<span class="line-empty" title="No Anys on this line!">#             cv fold. Note that `n` must be a named cv fold in the data,</span>
+<span class="line-empty" title="No Anys on this line!">#             or an error will be raised.</span>
+<span class="line-empty" title="No Anys on this line!">#         data : str, optional</span>
+<span class="line-empty" title="No Anys on this line!">#             What data to use for the plot. Choices are "train", "test",</span>
+<span class="line-empty" title="No Anys on this line!">#             "all".</span>
+<span class="line-empty" title="No Anys on this line!">#         fold_n : int, optional</span>
+<span class="line-empty" title="No Anys on this line!">#             If element is "fold", which fold to get. Must be a named</span>
+<span class="line-empty" title="No Anys on this line!">#             cv fold in the data.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         Returns</span>
+<span class="line-empty" title="No Anys on this line!">#         -------</span>
+<span class="line-empty" title="No Anys on this line!">#         List[Union[int, float, str]]</span>
+<span class="line-empty" title="No Anys on this line!">#             The values for the requested column.</span>
+<span class="line-empty" title="No Anys on this line!">#         """</span>
+<span class="line-empty" title="No Anys on this line!">#         return _get_data(</span>
+<span class="line-empty" title="No Anys on this line!">#             self.df,</span>
+<span class="line-empty" title="No Anys on this line!">#             self.df_val,</span>
+<span class="line-empty" title="No Anys on this line!">#             element,</span>
+<span class="line-empty" title="No Anys on this line!">#             data,</span>
+<span class="line-empty" title="No Anys on this line!">#             fold_n,</span>
+<span class="line-empty" title="No Anys on this line!">#             self.feature_name,</span>
+<span class="line-empty" title="No Anys on this line!">#             self.target_name,</span>
+<span class="line-empty" title="No Anys on this line!">#             self.fold_col,</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     def _plot_data(self, data: str = "train"):</span>
+<span class="line-empty" title="No Anys on this line!">#         """</span>
+<span class="line-empty" title="No Anys on this line!">#         Helper function to get the data for plotting.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         Parameters</span>
+<span class="line-empty" title="No Anys on this line!">#         ----------</span>
+<span class="line-empty" title="No Anys on this line!">#         data : str, optional</span>
+<span class="line-empty" title="No Anys on this line!">#             What data to use for the plot. Choices are "train", "test",</span>
+<span class="line-empty" title="No Anys on this line!">#             "all".</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         Returns</span>
+<span class="line-empty" title="No Anys on this line!">#         -------</span>
+<span class="line-empty" title="No Anys on this line!">#         Tuple[pd.Series, pd.Series, pd.Series]</span>
+<span class="line-empty" title="No Anys on this line!">#             The X, y, and cv data.</span>
+<span class="line-empty" title="No Anys on this line!">#         """</span>
+<span class="line-empty" title="No Anys on this line!">#         if data not in ["train", "test", "all"]:</span>
+<span class="line-empty" title="No Anys on this line!">#             raise ValueError(</span>
+<span class="line-empty" title="No Anys on this line!">#                 f"data must be one of 'train', 'test', or 'all'. Got {data}."</span>
+<span class="line-empty" title="No Anys on this line!">#             )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         # Set the data</span>
+<span class="line-empty" title="No Anys on this line!">#         if data == "train":</span>
+<span class="line-empty" title="No Anys on this line!">#             df = to_pd_df(self.df)</span>
+<span class="line-empty" title="No Anys on this line!">#             cv = (</span>
+<span class="line-empty" title="No Anys on this line!">#                 df.loc[:, self.fold_col]</span>
+<span class="line-empty" title="No Anys on this line!">#                 if df is not None</span>
+<span class="line-empty" title="No Anys on this line!">#                 else self.df.select(pl.col(self.fold_col))</span>
+<span class="line-empty" title="No Anys on this line!">#                 .collect()</span>
+<span class="line-empty" title="No Anys on this line!">#                 .to_pandas()[self.fold_col]</span>
+<span class="line-empty" title="No Anys on this line!">#             )</span>
+<span class="line-empty" title="No Anys on this line!">#         elif data == "test":</span>
+<span class="line-empty" title="No Anys on this line!">#             df = to_pd_df(self.df_val) if self.df_val is not None else to_pd_df(self.df)</span>
+<span class="line-empty" title="No Anys on this line!">#             df[self.fold_col] = -42</span>
+<span class="line-empty" title="No Anys on this line!">#             cv = df[self.fold_col]</span>
+<span class="line-empty" title="No Anys on this line!">#         else:</span>
+<span class="line-empty" title="No Anys on this line!">#             df = (</span>
+<span class="line-empty" title="No Anys on this line!">#                 pd.concat(</span>
+<span class="line-empty" title="No Anys on this line!">#                     [</span>
+<span class="line-empty" title="No Anys on this line!">#                         to_pd_df(self.df),</span>
+<span class="line-empty" title="No Anys on this line!">#                         to_pd_df(</span>
+<span class="line-empty" title="No Anys on this line!">#                             self.df_val.with_columns(pl.lit(-42).alias(self.fold_col))</span>
+<span class="line-empty" title="No Anys on this line!">#                         ),</span>
+<span class="line-empty" title="No Anys on this line!">#                     ]</span>
+<span class="line-empty" title="No Anys on this line!">#                 )</span>
+<span class="line-empty" title="No Anys on this line!">#                 if to_pd_df(self.df_val)</span>
+<span class="line-empty" title="No Anys on this line!">#                 else to_pd_df(self.df)</span>
+<span class="line-empty" title="No Anys on this line!">#             )</span>
+<span class="line-empty" title="No Anys on this line!">#             cv = df[self.fold_col]</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         X = (</span>
+<span class="line-empty" title="No Anys on this line!">#             df.loc[:, self.feature_name]</span>
+<span class="line-empty" title="No Anys on this line!">#             if df is not None</span>
+<span class="line-empty" title="No Anys on this line!">#             else self.df.select(self.feature_name)</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!">#         y = (</span>
+<span class="line-empty" title="No Anys on this line!">#             df.loc[:, self.target_name]</span>
+<span class="line-empty" title="No Anys on this line!">#             if df is not None</span>
+<span class="line-empty" title="No Anys on this line!">#             else self.df.select(self.target_name)</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         return X, y, cv</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     def plot_cdf(</span>
+<span class="line-empty" title="No Anys on this line!">#         self,</span>
+<span class="line-empty" title="No Anys on this line!">#         data: str = "train",</span>
+<span class="line-empty" title="No Anys on this line!">#         ax: Optional[Axes] = None,</span>
+<span class="line-empty" title="No Anys on this line!">#         figsize: Optional[Tuple[float, float]] = None,</span>
+<span class="line-empty" title="No Anys on this line!">#         **kwargs,</span>
+<span class="line-empty" title="No Anys on this line!">#     ):</span>
+<span class="line-empty" title="No Anys on this line!">#         """</span>
+<span class="line-empty" title="No Anys on this line!">#         Plots the empirical cumulative distribution function for the target variable</span>
+<span class="line-empty" title="No Anys on this line!">#         in total and for each fold.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         Parameters</span>
+<span class="line-empty" title="No Anys on this line!">#         ----------</span>
+<span class="line-empty" title="No Anys on this line!">#         data : str, optional</span>
+<span class="line-empty" title="No Anys on this line!">#             What data to use for the plot. Choices are "train", "test", and</span>
+<span class="line-empty" title="No Anys on this line!">#             "all", "fold-n".</span>
+<span class="line-empty" title="No Anys on this line!">#         **kwargs</span>
+<span class="line-empty" title="No Anys on this line!">#             Additional keyword arguments passed to the plot function.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         """</span>
+<span class="line-empty" title="No Anys on this line!">#         X, y, cv = self._plot_data(data)</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         # make plot</span>
+<span class="line-empty" title="No Anys on this line!">#         if ax is None:</span>
+<span class="line-empty" title="No Anys on this line!">#             _, ax1 = plt.subplots(figsize=self.figsize if figsize is None else figsize)</span>
+<span class="line-empty" title="No Anys on this line!">#         else:</span>
+<span class="line-empty" title="No Anys on this line!">#             ax1 = ax</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         return cdf_plot(</span>
+<span class="line-empty" title="No Anys on this line!">#             X,</span>
+<span class="line-empty" title="No Anys on this line!">#             y,</span>
+<span class="line-empty" title="No Anys on this line!">#             cv,</span>
+<span class="line-empty" title="No Anys on this line!">#             self.feature_name,</span>
+<span class="line-empty" title="No Anys on this line!">#             ax=ax1,</span>
+<span class="line-empty" title="No Anys on this line!">#             figsize=self.figsize if figsize is None else figsize,</span>
+<span class="line-empty" title="No Anys on this line!">#             **kwargs,</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     def plot_roc_curve(</span>
+<span class="line-empty" title="No Anys on this line!">#         self,</span>
+<span class="line-empty" title="No Anys on this line!">#         y: Optional[Union[pd.Series, pl.Series]] = None,</span>
+<span class="line-empty" title="No Anys on this line!">#         yhat: Optional[Union[pd.Series, pl.Series]] = None,</span>
+<span class="line-empty" title="No Anys on this line!">#         cv: Optional[Union[pd.Series, pl.Series]] = None,</span>
+<span class="line-empty" title="No Anys on this line!">#         coef: Optional[float] = None,</span>
+<span class="line-empty" title="No Anys on this line!">#         se: Optional[float] = None,</span>
+<span class="line-empty" title="No Anys on this line!">#         pvalues: Optional[float] = None,</span>
+<span class="line-empty" title="No Anys on this line!">#         ax: Optional[Axes] = None,</span>
+<span class="line-empty" title="No Anys on this line!">#         figsize: Optional[Tuple[float, float]] = None,</span>
+<span class="line-empty" title="No Anys on this line!">#         **kwargs,</span>
+<span class="line-empty" title="No Anys on this line!">#     ) -&gt; Axes:</span>
+<span class="line-empty" title="No Anys on this line!">#         """Plot the ROC curve for the target variable in total and for each fold."""</span>
+<span class="line-empty" title="No Anys on this line!">#         if ax is None:</span>
+<span class="line-empty" title="No Anys on this line!">#             _, ax0 = plt.subplots(figsize=self.figsize if figsize is None else figsize)</span>
+<span class="line-empty" title="No Anys on this line!">#         else:</span>
+<span class="line-empty" title="No Anys on this line!">#             ax0 = ax</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         if cv is None:</span>
+<span class="line-empty" title="No Anys on this line!">#             cv = (</span>
+<span class="line-empty" title="No Anys on this line!">#                 to_pd_s(self.cv)</span>
+<span class="line-empty" title="No Anys on this line!">#                 if self.cv is not None</span>
+<span class="line-empty" title="No Anys on this line!">#                 else to_pd_s(self.df.select(self.fold_col).collect()[self.fold_col])</span>
+<span class="line-empty" title="No Anys on this line!">#             )</span>
+<span class="line-empty" title="No Anys on this line!">#         else:</span>
+<span class="line-empty" title="No Anys on this line!">#             cv = to_pd_s(cv)</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         ax0 = roc_curve_plot(</span>
+<span class="line-empty" title="No Anys on this line!">#             to_pd_s(self.GetY("train")) if y is None else to_pd_s(y),</span>
+<span class="line-empty" title="No Anys on this line!">#             to_pd_s(self.GetYhat("train")) if yhat is None else to_pd_s(yhat),</span>
+<span class="line-empty" title="No Anys on this line!">#             cv,</span>
+<span class="line-empty" title="No Anys on this line!">#             self.time_series_validation,</span>
+<span class="line-empty" title="No Anys on this line!">#             (</span>
+<span class="line-empty" title="No Anys on this line!">#                 to_pd_df(self.agg_results).loc["Ave.", "coef"].to_numpy()</span>
+<span class="line-empty" title="No Anys on this line!">#                 if coef is None</span>
+<span class="line-empty" title="No Anys on this line!">#                 else coef</span>
+<span class="line-empty" title="No Anys on this line!">#             ),</span>
+<span class="line-empty" title="No Anys on this line!">#             (</span>
+<span class="line-empty" title="No Anys on this line!">#                 to_pd_df(self.agg_results).loc["Ave.", "coef"].to_numpy()</span>
+<span class="line-empty" title="No Anys on this line!">#                 if se is None</span>
+<span class="line-empty" title="No Anys on this line!">#                 else se</span>
+<span class="line-empty" title="No Anys on this line!">#             ),</span>
+<span class="line-empty" title="No Anys on this line!">#             self.get("pvalues") if pvalues is None else pvalues,</span>
+<span class="line-empty" title="No Anys on this line!">#             ax=ax0,</span>
+<span class="line-empty" title="No Anys on this line!">#             figsize=self.figsize if figsize is None else figsize,</span>
+<span class="line-empty" title="No Anys on this line!">#             **kwargs,</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!">#         return ax0</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     def plot_density(</span>
+<span class="line-empty" title="No Anys on this line!">#         self,</span>
+<span class="line-empty" title="No Anys on this line!">#         data: str = "train",</span>
+<span class="line-empty" title="No Anys on this line!">#         ax: Optional[Axes] = None,</span>
+<span class="line-empty" title="No Anys on this line!">#         figsize: Optional[Tuple[float, float]] = None,</span>
+<span class="line-empty" title="No Anys on this line!">#         **kwargs,</span>
+<span class="line-empty" title="No Anys on this line!">#     ) -&gt; Axes:</span>
+<span class="line-empty" title="No Anys on this line!">#         """</span>
+<span class="line-empty" title="No Anys on this line!">#         Plots the density of the feature at each level of the larget variable, both</span>
+<span class="line-empty" title="No Anys on this line!">#         in total and for each fold.</span>
+<span class="line-empty" title="No Anys on this line!">#         """</span>
+<span class="line-empty" title="No Anys on this line!">#         X, y, cv = self._plot_data(data)</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         # make plot</span>
+<span class="line-empty" title="No Anys on this line!">#         if ax is None:</span>
+<span class="line-empty" title="No Anys on this line!">#             _, ax0 = plt.subplots(figsize=self.figsize if figsize is None else figsize)</span>
+<span class="line-empty" title="No Anys on this line!">#         else:</span>
+<span class="line-empty" title="No Anys on this line!">#             ax0 = ax</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         ax0 = density_plot(</span>
+<span class="line-empty" title="No Anys on this line!">#             X,</span>
+<span class="line-empty" title="No Anys on this line!">#             y,</span>
+<span class="line-empty" title="No Anys on this line!">#             cv,</span>
+<span class="line-empty" title="No Anys on this line!">#             X.min(),</span>
+<span class="line-empty" title="No Anys on this line!">#             X.max(),</span>
+<span class="line-empty" title="No Anys on this line!">#             ax=ax0,</span>
+<span class="line-empty" title="No Anys on this line!">#             figsize=self.figsize if figsize is None else figsize,</span>
+<span class="line-empty" title="No Anys on this line!">#             **kwargs,</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!">#         return ax0</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     def plot_quintile_lift(</span>
+<span class="line-empty" title="No Anys on this line!">#         self,</span>
+<span class="line-empty" title="No Anys on this line!">#         data: str = "train",</span>
+<span class="line-empty" title="No Anys on this line!">#         ax: Optional[Axes] = None,</span>
+<span class="line-empty" title="No Anys on this line!">#         figsize: Optional[Tuple[float, float]] = None,</span>
+<span class="line-empty" title="No Anys on this line!">#         **kwargs,</span>
+<span class="line-empty" title="No Anys on this line!">#     ) -&gt; Axes:</span>
+<span class="line-empty" title="No Anys on this line!">#         """</span>
+<span class="line-empty" title="No Anys on this line!">#         Plots the quintile lift for the target variable in total and for each fold.</span>
+<span class="line-empty" title="No Anys on this line!">#         Quintile lift is a grouped bar plot with each quintile of the feature on the</span>
+<span class="line-empty" title="No Anys on this line!">#         x-axis and the mean target value for each quintile on the y-axis. There are</span>
+<span class="line-empty" title="No Anys on this line!">#         bars for both the actual target value and the predicted target value.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         This plot is useful for understanding how well the model is able to segment</span>
+<span class="line-empty" title="No Anys on this line!">#         the target variable based on the feature variable, and in the specific context</span>
+<span class="line-empty" title="No Anys on this line!">#         of a univariate analysis, how well the feature variable is able to predict the</span>
+<span class="line-empty" title="No Anys on this line!">#         target variable by itself, eg with no intercept, no other features, no</span>
+<span class="line-empty" title="No Anys on this line!">#         regularization, etc.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         Parameters</span>
+<span class="line-empty" title="No Anys on this line!">#         ----------</span>
+<span class="line-empty" title="No Anys on this line!">#         data : str, optional</span>
+<span class="line-empty" title="No Anys on this line!">#             What data to use for the plot. Choices are "train", "test", and</span>
+<span class="line-empty" title="No Anys on this line!">#             "all", "fold-n".</span>
+<span class="line-empty" title="No Anys on this line!">#         ax : Axes, optional</span>
+<span class="line-empty" title="No Anys on this line!">#             The axes to plot on, by default None. If None, a new figure and axes</span>
+<span class="line-empty" title="No Anys on this line!">#             will be created.</span>
+<span class="line-empty" title="No Anys on this line!">#         figsize : Tuple[float, float], optional</span>
+<span class="line-empty" title="No Anys on this line!">#             The size of the figure, by default None. If None, the default figure</span>
+<span class="line-empty" title="No Anys on this line!">#             size will be used.</span>
+<span class="line-empty" title="No Anys on this line!">#         **kwargs</span>
+<span class="line-empty" title="No Anys on this line!">#             Additional keyword arguments passed to the plot function.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         Returns</span>
+<span class="line-empty" title="No Anys on this line!">#         -------</span>
+<span class="line-empty" title="No Anys on this line!">#         Axes</span>
+<span class="line-empty" title="No Anys on this line!">#             The axes object for the plot.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         Examples</span>
+<span class="line-empty" title="No Anys on this line!">#         --------</span>
+<span class="line-empty" title="No Anys on this line!">#         # Plot the quintile lift for the training data in a univariate analysis `uni`</span>
+<span class="line-empty" title="No Anys on this line!">#         # with the default figure size.</span>
+<span class="line-empty" title="No Anys on this line!">#         &gt;&gt;&gt; uni.plot_quintile_lift(data="train")</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         # Plot the quintile lift for the test data in a univariate analysis `uni`</span>
+<span class="line-empty" title="No Anys on this line!">#         # with a figure size of (10, 10).</span>
+<span class="line-empty" title="No Anys on this line!">#         &gt;&gt;&gt; uni.plot_quintile_lift(data="test", figsize=(10, 10))</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         # Plot the quintile lift for the training data in a univariate analysis `uni`</span>
+<span class="line-empty" title="No Anys on this line!">#         # with the default figure size and a custom color for the predicted target</span>
+<span class="line-empty" title="No Anys on this line!">#         # value.</span>
+<span class="line-empty" title="No Anys on this line!">#         &gt;&gt;&gt; uni.plot_quintile_lift(data="train", color="red")</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         # Plot the quintile lift for the training data in a univariate analysis `uni`</span>
+<span class="line-empty" title="No Anys on this line!">#         # with the default figure size and a custom title.</span>
+<span class="line-empty" title="No Anys on this line!">#         &gt;&gt;&gt; uni.plot_quintile_lift(data="train", title="Quintile Lift Plot")</span>
+<span class="line-empty" title="No Anys on this line!">#         """</span>
+<span class="line-empty" title="No Anys on this line!">#         X, y, _ = self._plot_data(data)</span>
+<span class="line-empty" title="No Anys on this line!">#         yhat = self.predict(X)</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         # make plot</span>
+<span class="line-empty" title="No Anys on this line!">#         if ax is None:</span>
+<span class="line-empty" title="No Anys on this line!">#             _, ax0 = plt.subplots(figsize=self.figsize if figsize is None else figsize)</span>
+<span class="line-empty" title="No Anys on this line!">#         else:</span>
+<span class="line-empty" title="No Anys on this line!">#             ax0 = ax</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         yhat_polars = pl.Series(yhat)</span>
+<span class="line-empty" title="No Anys on this line!">#         ax0 = quintile_lift_plot(</span>
+<span class="line-empty" title="No Anys on this line!">#             X,</span>
+<span class="line-empty" title="No Anys on this line!">#             y,</span>
+<span class="line-empty" title="No Anys on this line!">#             yhat_polars,</span>
+<span class="line-empty" title="No Anys on this line!">#             ax=ax0,</span>
+<span class="line-empty" title="No Anys on this line!">#             figsize=self.figsize if figsize is None else figsize,</span>
+<span class="line-empty" title="No Anys on this line!">#             **kwargs,</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!">#         return ax0</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     def _add_to_report(self, rpt: Optional[Report] = None, **kwargs):</span>
+<span class="line-empty" title="No Anys on this line!">#         if rpt is None:</span>
+<span class="line-empty" title="No Anys on this line!">#             rpt = Report(**kwargs)</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         def density():</span>
+<span class="line-empty" title="No Anys on this line!">#             return self.plot_density(</span>
+<span class="line-empty" title="No Anys on this line!">#                 data="train", feature_name=self.feature_name, figsize=self.figsize</span>
+<span class="line-empty" title="No Anys on this line!">#             )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         def cdf():</span>
+<span class="line-empty" title="No Anys on this line!">#             return self.plot_cdf(data="train", figsize=self.figsize)</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         def roc():</span>
+<span class="line-empty" title="No Anys on this line!">#             return self.plot_roc_curve(</span>
+<span class="line-empty" title="No Anys on this line!">#                 y=self.GetY("train"),</span>
+<span class="line-empty" title="No Anys on this line!">#                 yhat=self.GetYhat("train"),</span>
+<span class="line-empty" title="No Anys on this line!">#                 cv=self.df.select(self.fold_col).collect().to_pandas()[self.fold_col],</span>
+<span class="line-empty" title="No Anys on this line!">#                 time_series_validation=self.time_series_validation,</span>
+<span class="line-empty" title="No Anys on this line!">#                 coef=self.get("coef"),</span>
+<span class="line-empty" title="No Anys on this line!">#                 se=self.get("se"),</span>
+<span class="line-empty" title="No Anys on this line!">#                 pvalues=self.get("pvalues"),</span>
+<span class="line-empty" title="No Anys on this line!">#                 figsize=self.figsize,</span>
+<span class="line-empty" title="No Anys on this line!">#             )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         def quintile():</span>
+<span class="line-empty" title="No Anys on this line!">#             return self.plot_quintile_lift(data="test", figsize=self.figsize)</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         return (</span>
+<span class="line-empty" title="No Anys on this line!">#             rpt.h2("Univariate Report")</span>
+<span class="line-empty" title="No Anys on this line!">#             .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - Results")</span>
+<span class="line-empty" title="No Anys on this line!">#             .spacer(0.5)</span>
+<span class="line-empty" title="No Anys on this line!">#             .table(self.get_results())</span>
+<span class="line-empty" title="No Anys on this line!">#             .page_break()</span>
+<span class="line-empty" title="No Anys on this line!">#             .h2("Univariate Report")</span>
+<span class="line-empty" title="No Anys on this line!">#             .h3(</span>
+<span class="line-empty" title="No Anys on this line!">#                 f"{plot_label(self.feature_name, incl_bracket=False)} - "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "Kernel Density Plot"</span>
+<span class="line-empty" title="No Anys on this line!">#             )</span>
+<span class="line-empty" title="No Anys on this line!">#             .plot(density)</span>
+<span class="line-empty" title="No Anys on this line!">#             .spacer(0.125)</span>
+<span class="line-empty" title="No Anys on this line!">#             .caption(</span>
+<span class="line-empty" title="No Anys on this line!">#                 "This plot shows the Gaussian kernel density for each level of the "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "target variable, both in total and for each fold. "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "The x-axis represents the feature variable, and the y-axis represents "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "the density of the target variable. "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "The cross-validation folds are included in slightly washed-out colors "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "to help understand the variability of the data. "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "There are annotations with the results of a t-test for the difference "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "in means between the feature variable at each level of the target "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "variable. "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "The annotations corresponding to the color of the target variable "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "level show the mean/median ratio to help understand differences in "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "skewness between the levels of the target variable."</span>
+<span class="line-empty" title="No Anys on this line!">#             )</span>
+<span class="line-empty" title="No Anys on this line!">#            TODO: Add in a table for the t-test results (Issue #62 on GitHub)  # noqa: TD002, TD003</span>
+<span class="line-empty" title="No Anys on this line!">#             .page_break()</span>
+<span class="line-empty" title="No Anys on this line!">#             .h2("Univariate Report")</span>
+<span class="line-empty" title="No Anys on this line!">#             .h3(</span>
+<span class="line-empty" title="No Anys on this line!">#                 f"{plot_label(self.feature_name, incl_bracket=False)} "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "- Empirical CDF Plot"</span>
+<span class="line-empty" title="No Anys on this line!">#             )</span>
+<span class="line-empty" title="No Anys on this line!">#             .plot(cdf)</span>
+<span class="line-empty" title="No Anys on this line!">#             .spacer(0.125)</span>
+<span class="line-empty" title="No Anys on this line!">#             .caption(</span>
+<span class="line-empty" title="No Anys on this line!">#                 "This plot shows the empirical cumulative distribution function for "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "each level of the target variable, both in total and for each fold. "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "The x-axis represents the feature variable, and the y-axis represents "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "the cumulative distribution of the target variable. "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "The cross-validation folds are included in slightly washed-out colors "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "to help understand the variability of the data, and whether or not it "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "is reasonable to assume that the data is drawn from different "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "distributions."</span>
+<span class="line-empty" title="No Anys on this line!">#             )</span>
+<span class="line-empty" title="No Anys on this line!">#             .page_break()</span>
+<span class="line-empty" title="No Anys on this line!">#             .h2("Univariate Report")</span>
+<span class="line-empty" title="No Anys on this line!">#             .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - ROC Curve")</span>
+<span class="line-empty" title="No Anys on this line!">#             .plot(roc)</span>
+<span class="line-empty" title="No Anys on this line!">#             .spacer(0.125)</span>
+<span class="line-empty" title="No Anys on this line!">#             .caption(</span>
+<span class="line-empty" title="No Anys on this line!">#                 "This plot shows the receiver operating characteristic (ROC) curve "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "for the target variable in total and for each fold. "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "The x-axis represents the false positive rate, and the y-axis "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "represents the true positive rate. This is based on a simple "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "Logistic Regression model with no regularization, no intercept, "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "and no other features. "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "Annotations are on the plot to help understand the results of the "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "model, including the coefficient, standard error, and p-value for "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "the feature variable. "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "The cross-validation folds are used to create the grey region around "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "the mean ROC curve to help understand the variability of the data."</span>
+<span class="line-empty" title="No Anys on this line!">#             )</span>
+<span class="line-empty" title="No Anys on this line!">#             .caption(</span>
+<span class="line-empty" title="No Anys on this line!">#                 "Significance of the ROC curve is determined based on a modified "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "version the method from DeLong et al. (1988). In brief, the AUC "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "is assumed to be normally distributed, and I calculate the empirical "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "standard error from the cross-validated AUC values. "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "I then calculate a z-score for the AUC, and use the z-score to "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "calculate a p-value. "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "The p-value is then used to determine the significance of the AUC. "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "This is a simple test, and should be used with caution."</span>
+<span class="line-empty" title="No Anys on this line!">#             )</span>
+<span class="line-empty" title="No Anys on this line!">#             .page_break()</span>
+<span class="line-empty" title="No Anys on this line!">#             .h2("Univariate Report")</span>
+<span class="line-empty" title="No Anys on this line!">#             .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - Quintile Lift")</span>
+<span class="line-empty" title="No Anys on this line!">#             .plot(quintile)</span>
+<span class="line-empty" title="No Anys on this line!">#             .spacer(0.125)</span>
+<span class="line-empty" title="No Anys on this line!">#             .caption(</span>
+<span class="line-empty" title="No Anys on this line!">#                 "The quintile lift plot is meant to show the power of the single "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "feature to discriminate between the highest and lowest quintiles "</span>
+<span class="line-empty" title="No Anys on this line!">#                 "of the target variable."</span>
+<span class="line-empty" title="No Anys on this line!">#             )</span>
+<span class="line-empty" title="No Anys on this line!">#             .page_break()</span>
+<span class="line-empty" title="No Anys on this line!">#         )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#     def get_results(self, use_formatting: bool = True) -&gt; pd.DataFrame:</span>
+<span class="line-empty" title="No Anys on this line!">#         """Return the self.results attribute, formatted for the univariate report.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         Parameters</span>
+<span class="line-empty" title="No Anys on this line!">#         ----------</span>
+<span class="line-empty" title="No Anys on this line!">#         use_formatting : bool, optional</span>
+<span class="line-empty" title="No Anys on this line!">#             Whether to use formatting or not. Defaults to True. If set to False,</span>
+<span class="line-empty" title="No Anys on this line!">#             the unformated results will be returned as a pandas DataFrame.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         Returns</span>
+<span class="line-empty" title="No Anys on this line!">#         -------</span>
+<span class="line-empty" title="No Anys on this line!">#         pd.DataFrame</span>
+<span class="line-empty" title="No Anys on this line!">#             The results dataframe.</span>
+<span class="line-empty" title="No Anys on this line!">#         """</span>
+<span class="line-empty" title="No Anys on this line!">#         results = to_pd_df(self.agg_results)</span>
+<span class="line-empty" title="No Anys on this line!">#         if use_formatting:</span>
+<span class="line-empty" title="No Anys on this line!">#             pct_cols = [</span>
+<span class="line-empty" title="No Anys on this line!">#                 "acc_train",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "acc_test",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "auc_train",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "auc_test",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "f1_train",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "f1_test",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "precision_train",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "precision_test",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "recall_train",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "recall_test",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "mcc_train",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "mcc_test",</span>
+<span class="line-empty" title="No Anys on this line!">#             ]</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#             # Percent-format with single decimal point:</span>
+<span class="line-empty" title="No Anys on this line!">#             for col in pct_cols:</span>
+<span class="line-empty" title="No Anys on this line!">#                 results[col] = results[col].apply(lambda x: f"{x:.1%}")</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#             # Hierarchy of formatting depending on size of median value in col</span>
+<span class="line-empty" title="No Anys on this line!">#             for col in [c for c in results.columns.tolist()[1:] if c not in pct_cols]:</span>
+<span class="line-empty" title="No Anys on this line!">#                 m = results[col].median()</span>
+<span class="line-empty" title="No Anys on this line!">#                 if np.abs(m) &gt; 1.0:</span>
+<span class="line-empty" title="No Anys on this line!">#                     results[col] = results[col].apply(lambda x: f"{x:.2f}")</span>
+<span class="line-empty" title="No Anys on this line!">#                 elif np.abs(m) &gt; 0.1:</span>
+<span class="line-empty" title="No Anys on this line!">#                     results[col] = results[col].apply(lambda x: f"{x:.3f}")</span>
+<span class="line-empty" title="No Anys on this line!">#                 else:</span>
+<span class="line-empty" title="No Anys on this line!">#                     results[col] = results[col].apply(lambda x: f"{x:.1e}")</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#             # Apply an index at the end</span>
+<span class="line-empty" title="No Anys on this line!">#             results.columns = pd.Index(</span>
+<span class="line-empty" title="No Anys on this line!">#                 [</span>
+<span class="line-empty" title="No Anys on this line!">#                     "CV Fold",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Fitted Coef.",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Fitted p-Value",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Fitted Std. Err.",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Conf. Int. Lower",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Conf. Int. Upper",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Train Accuracy",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Val Accuracy",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Train AUC",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Val AUC",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Train F1",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Test F1",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Train Precision",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Val Precision",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Train Recall",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Val Recall",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Train MCC",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Val MCC",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Train Log-Loss",</span>
+<span class="line-empty" title="No Anys on this line!">#                     "Val Log-Loss",</span>
+<span class="line-empty" title="No Anys on this line!">#                 ]</span>
+<span class="line-empty" title="No Anys on this line!">#             )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">#         return results.set_index("CV Fold").T</span>
 </pre></td>
 </tr></tbody>
 </table>

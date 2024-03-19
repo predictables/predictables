@@ -51,23 +51,19 @@
 <span id="L41" class="lineno"><a class="lineno" href="#L41">41</a></span>
 <span id="L42" class="lineno"><a class="lineno" href="#L42">42</a></span>
 <span id="L43" class="lineno"><a class="lineno" href="#L43">43</a></span>
-<span id="L44" class="lineno"><a class="lineno" href="#L44">44</a></span>
-<span id="L45" class="lineno"><a class="lineno" href="#L45">45</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Union</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">def binary_color(x: Union[int, float, str, bool]) -&gt; str:</span>
+<span class="line-precise" title="No Anys on this line!">def binary_color(x: float | str | bool) -&gt; str:</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-empty" title="No Anys on this line!">    Return a color for each value in x, based on whether it is 0 or 1.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    x : Union[int, float, str, bool]</span>
+<span class="line-empty" title="No Anys on this line!">    x : float | str | bool</span>
 <span class="line-empty" title="No Anys on this line!">        The value to get the color for.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>

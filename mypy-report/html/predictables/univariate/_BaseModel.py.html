@@ -647,27 +647,14 @@
 <span id="L637" class="lineno"><a class="lineno" href="#L637">637</a></span>
 <span id="L638" class="lineno"><a class="lineno" href="#L638">638</a></span>
 <span id="L639" class="lineno"><a class="lineno" href="#L639">639</a></span>
-<span id="L640" class="lineno"><a class="lineno" href="#L640">640</a></span>
-<span id="L641" class="lineno"><a class="lineno" href="#L641">641</a></span>
-<span id="L642" class="lineno"><a class="lineno" href="#L642">642</a></span>
-<span id="L643" class="lineno"><a class="lineno" href="#L643">643</a></span>
-<span id="L644" class="lineno"><a class="lineno" href="#L644">644</a></span>
-<span id="L645" class="lineno"><a class="lineno" href="#L645">645</a></span>
-<span id="L646" class="lineno"><a class="lineno" href="#L646">646</a></span>
-<span id="L647" class="lineno"><a class="lineno" href="#L647">647</a></span>
-<span id="L648" class="lineno"><a class="lineno" href="#L648">648</a></span>
-<span id="L649" class="lineno"><a class="lineno" href="#L649">649</a></span>
-<span id="L650" class="lineno"><a class="lineno" href="#L650">650</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Any, Optional, Union</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
-<span class="line-any" title="No Anys on this line!">from sklearn import metrics  # type: ignore</span>
-<span class="line-any" title="No Anys on this line!">from sklearn.preprocessing import StandardScaler  # type: ignore</span>
+<span class="line-any" title="No Anys on this line!">from sklearn import metrics</span>
+<span class="line-any" title="No Anys on this line!">from sklearn.preprocessing import StandardScaler</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from predictables.univariate.src import (</span>
 <span class="line-empty" title="No Anys on this line!">    fit_sk_linear_regression,</span>
@@ -691,15 +678,15 @@ Omitted Generics (x3)">dbg = DebugLogger(working_file="_BaseModel.py")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">class Model:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    A class to fit a model to a dataset. Used in the univariate analysis</span>
-<span class="line-empty" title="No Anys on this line!">    to fit a simple model to each variable.</span>
+<span class="line-empty" title="No Anys on this line!">    """Fit a model to a dataset.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Used in the univariate analysis to fit a simple model to each variable.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Instance/type class attributes</span>
 <span class="line-precise" title="No Anys on this line!">    df: pl.LazyFrame</span>
 <span class="line-precise" title="No Anys on this line!">    df_val: pl.LazyFrame</span>
-<span class="line-precise" title="No Anys on this line!">    fold_n: Optional[int]</span>
+<span class="line-precise" title="No Anys on this line!">    fold_n: int | None</span>
 <span class="line-precise" title="No Anys on this line!">    fold_col: str</span>
 <span class="line-precise" title="No Anys on this line!">    feature_col: str</span>
 <span class="line-precise" title="No Anys on this line!">    target_col: str</span>
@@ -714,24 +701,19 @@ Omitted Generics (x2)">    y_test: pd.Series</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    is_binary: bool</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x2)">    model: Any</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x2)">    sk_model: Any</span>
-<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">    yhat_train: pd.Series</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">    yhat_test: pd.Series</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    def __init__(</span>
+<span class="line-precise" title="No Anys on this line!">    def __init__(  # noqa: PLR0915</span>
 <span class="line-empty" title="No Anys on this line!">        self,</span>
-<span class="line-empty" title="No Anys on this line!">        df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],</span>
-<span class="line-precise" title="No Anys on this line!">        df_val: Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        fold_n: Optional[int] = None,</span>
+<span class="line-empty" title="No Anys on this line!">        df: pd.DataFrame | pl.DataFrame | pl.LazyFrame,</span>
+<span class="line-precise" title="No Anys on this line!">        df_val: pd.DataFrame | pl.DataFrame | pl.LazyFrame | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        fold_n: int | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">        fold_col: str = "cv",</span>
-<span class="line-precise" title="No Anys on this line!">        feature_col: Optional[str] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        target_col: Optional[str] = None,</span>
+<span class="line-precise" title="No Anys on this line!">        feature_col: str | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        target_col: str | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">        time_series_validation: bool = False,</span>
 <span class="line-precise" title="No Anys on this line!">        categorical_encoding: str = "onehot",</span>
 <span class="line-empty" title="No Anys on this line!">    ) -&gt; None:</span>
@@ -750,10 +732,8 @@ Omitted Generics (x6)">        self.df_val = to_pl_lf(df_val) if df_val is not N
 <span class="line-precise" title="No Anys on this line!">        self.time_series_validation = time_series_validation</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Remove rows with missing values</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">        self.df = remove_missing_rows(self.df, self.feature_col, self.target_col)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">        self.df_val = remove_missing_rows(</span>
+<span class="line-precise" title="No Anys on this line!">        self.df = remove_missing_rows(self.df, self.feature_col, self.target_col)</span>
+<span class="line-precise" title="No Anys on this line!">        self.df_val = remove_missing_rows(</span>
 <span class="line-precise" title="No Anys on this line!">            self.df_val, self.feature_col, self.target_col</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -880,7 +860,7 @@ Omitted Generics (x1)">        self.y_train = train.select([self.target_col])</s
 Omitted Generics (x1)">        self.y_test = test.select([self.target_col])</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
-Unimported (x2)">        self.scaler: Optional[StandardScaler] = None</span>
+Unimported (x2)">        self.scaler: StandardScaler | None = None</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Type of target variable:</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -893,16 +873,14 @@ Omitted Generics (x7)">        self.is_binary = get_column_dtype(self.GetY("trai
 <span class="line-precise" title="No Anys on this line!">        if self.is_binary:</span>
 <span class="line-empty" title="No Anys on this line!">            try:</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x2)
-Omitted Generics (x1)
-Explicit (x1)">                self.model = fit_sm_logistic_regression(</span>
+Unimported (x3)
+Omitted Generics (x5)">                self.model = fit_sm_logistic_regression(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">                    self.GetX("train"), self.GetY("train")</span>
 <span class="line-empty" title="No Anys on this line!">                )</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x2)
-Omitted Generics (x5)
-Explicit (x1)">                self.sk_model = fit_sk_logistic_regression(</span>
+Unimported (x3)
+Omitted Generics (x5)">                self.sk_model = fit_sk_logistic_regression(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">                    self.GetX("train"), self.GetY("train")</span>
 <span class="line-empty" title="No Anys on this line!">                )</span>
@@ -930,28 +908,24 @@ Omitted Generics (x7)">                y = self.GetY("train").reset_index(drop=T
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">                try:</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x2)
-Omitted Generics (x2)
-Explicit (x1)">                    self.model = fit_sm_logistic_regression(X, y)</span>
+Unimported (x3)
+Omitted Generics (x6)">                    self.model = fit_sm_logistic_regression(X, y)</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x2)
-Omitted Generics (x6)
-Explicit (x1)">                    self.sk_model = fit_sk_logistic_regression(X, y)</span>
+Unimported (x3)
+Omitted Generics (x6)">                    self.sk_model = fit_sk_logistic_regression(X, y)</span>
 <span class="line-precise" title="No Anys on this line!">                except Exception as e:</span>
-<span class="line-precise" title="No Anys on this line!">                    dbg.msg(f"Error: {e}")  # type: ignore</span>
+<span class="line-precise" title="No Anys on this line!">                    dbg.msg(f"Error: {e}")</span>
 <span class="line-empty" title="No Anys on this line!">        else:</span>
 <span class="line-empty" title="No Anys on this line!">            try:</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x2)
-Omitted Generics (x5)
-Explicit (x1)">                self.model = fit_sm_linear_regression(</span>
+Unimported (x3)
+Omitted Generics (x5)">                self.model = fit_sm_linear_regression(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">                    self.GetX("train"), self.GetY("train")</span>
 <span class="line-empty" title="No Anys on this line!">                )</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x2)
-Omitted Generics (x5)
-Explicit (x1)">                self.sk_model = fit_sk_linear_regression(</span>
+Unimported (x3)
+Omitted Generics (x5)">                self.sk_model = fit_sk_linear_regression(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">                    self.GetX("train"), self.GetY("train")</span>
 <span class="line-empty" title="No Anys on this line!">                )</span>
@@ -975,50 +949,51 @@ Omitted Generics (x13)">                y = to_pd_s(self.GetY("train")).reset_in
 <span class="line-precise" title="No Anys on this line!">                    ~missing_zero_idx</span>
 <span class="line-empty" title="No Anys on this line!">                ]</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x2)
-Omitted Generics (x6)
-Explicit (x1)">                self.model = fit_sm_linear_regression(X, y)</span>
+Unimported (x3)
+Omitted Generics (x6)">                self.model = fit_sm_linear_regression(X, y)</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x2)
-Omitted Generics (x6)
-Explicit (x1)">                self.sk_model = fit_sk_linear_regression(X, y)</span>
+Unimported (x3)
+Omitted Generics (x6)">                self.sk_model = fit_sk_linear_regression(X, y)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
-Explicit (x1)
-Omitted Generics (x4)">        self.yhat_train: Union[pd.Series[Any], pd.DataFrame[Any]] = self.predict(</span>
-<span class="line-precise" title="No Anys on this line!">            self.GetX("train")</span>
-<span class="line-empty" title="No Anys on this line!">        )  # type: ignore</span>
+Omitted Generics (x5)">        self.yhat_train: pd.DataFrame | pd.Series = self.predict(self.GetX("train"))</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Explicit (x1)
-Omitted Generics (x4)">        self.yhat_test: Union[pd.Series[Any], pd.DataFrame[Any]] = self.predict(</span>
-<span class="line-precise" title="No Anys on this line!">            self.GetX("test")</span>
-<span class="line-empty" title="No Anys on this line!">        )  # type: ignore</span>
+Omitted Generics (x5)">        self.yhat_test: pd.DataFrame | pd.Series = self.predict(self.GetX("test"))</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Pull stats from the fitted model object</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x5)">        results = results.with_columns(pl.lit(self.model.params.iloc[0]).alias("coef"))</span>
+Explicit (x1)
+Unimported (x4)">        results = results.with_columns(pl.lit(self.model.params.iloc[0]).alias("coef"))</span>
 <span class="line-precise" title="No Anys on this line!">        results = results.with_columns(</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x5)">            pl.lit(self.model.pvalues.iloc[0]).alias("pvalues")</span>
+Explicit (x1)
+Unimported (x4)">            pl.lit(self.model.pvalues.iloc[0]).alias("pvalues")</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x3)">        results = results.with_columns(pl.lit(self.model.aic).alias("aic"))</span>
+Explicit (x1)
+Unimported (x2)">        results = results.with_columns(pl.lit(self.model.aic).alias("aic"))</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x5)">        results = results.with_columns(pl.lit(self.model.bse.iloc[0]).alias("se"))</span>
+Explicit (x1)
+Unimported (x4)">        results = results.with_columns(pl.lit(self.model.bse.iloc[0]).alias("se"))</span>
 <span class="line-precise" title="No Anys on this line!">        results = results.with_columns(</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x8)">            pl.lit(self.model.conf_int()[0].to_numpy()[0]).alias("lower_ci")</span>
+Explicit (x1)
+Unimported (x7)">            pl.lit(self.model.conf_int()[0].to_numpy()[0]).alias("lower_ci")</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-precise" title="No Anys on this line!">        results = results.with_columns(</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x5)">            pl.lit(self.model.conf_int()[1]).alias("upper_ci")</span>
+Explicit (x1)
+Unimported (x4)">            pl.lit(self.model.conf_int()[1]).alias("upper_ci")</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x3)">        results = results.with_columns(pl.lit(self.model.nobs).alias("n"))</span>
+Explicit (x1)
+Unimported (x2)">        results = results.with_columns(pl.lit(self.model.nobs).alias("n"))</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x5)">        results = results.with_columns(pl.lit(self.model.params.shape[0]).alias("k"))</span>
+Explicit (x1)
+Unimported (x4)">        results = results.with_columns(pl.lit(self.model.params.shape[0]).alias("k"))</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x4)">        results = results.with_columns(pl.lit(self.sk_model.coef_[0]).alias("sk_coef"))</span>
+Explicit (x1)
+Unimported (x3)">        results = results.with_columns(pl.lit(self.sk_model.coef_[0]).alias("sk_coef"))</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">        if self.is_binary:</span>
 <span class="line-precise" title="No Anys on this line!">            results = results.with_columns(</span>
@@ -1031,7 +1006,7 @@ Unimported (x3)">                        metrics.accuracy_score(</span>
 Omitted Generics (x4)">                            self.GetY("train").astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x7)
+Omitted Generics (x5)
 Unannotated (x2)">                            self.GetYhat("train").round(0).astype(int),</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-precise" title="No Anys on this line!">                    ).alias("acc_train"),</span>
@@ -1043,7 +1018,7 @@ Unimported (x3)">                        metrics.accuracy_score(</span>
 Omitted Generics (x4)">                            self.GetY("test").astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x7)
+Omitted Generics (x5)
 Unannotated (x2)">                            self.GetYhat("test").round(0).astype(int),</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-precise" title="No Anys on this line!">                    ).alias("acc_test"),</span>
@@ -1055,7 +1030,7 @@ Unimported (x3)">                        metrics.f1_score(</span>
 Omitted Generics (x4)">                            self.GetY("train").astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x7)
+Omitted Generics (x5)
 Unannotated (x2)">                            self.GetYhat("train").round(0).astype(int),</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-precise" title="No Anys on this line!">                    ).alias("f1_train"),</span>
@@ -1067,7 +1042,7 @@ Unimported (x3)">                        metrics.f1_score(</span>
 Omitted Generics (x4)">                            self.GetY("test").astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x7)
+Omitted Generics (x5)
 Unannotated (x2)">                            self.GetYhat("test").round(0).astype(int),</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-precise" title="No Anys on this line!">                    ).alias("f1_test"),</span>
@@ -1079,7 +1054,7 @@ Unimported (x3)">                        metrics.recall_score(</span>
 Omitted Generics (x4)">                            self.GetY("train").astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x7)
+Omitted Generics (x5)
 Unannotated (x2)">                            self.GetYhat("train").round(0).astype(int),</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-precise" title="No Anys on this line!">                    ).alias("recall_train"),</span>
@@ -1091,7 +1066,7 @@ Unimported (x3)">                        metrics.recall_score(</span>
 Omitted Generics (x4)">                            self.GetY("test").astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x7)
+Omitted Generics (x5)
 Unannotated (x2)">                            self.GetYhat("test").round(0).astype(int),</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-precise" title="No Anys on this line!">                    ).alias("recall_test"),</span>
@@ -1103,7 +1078,7 @@ Unimported (x3)">                        metrics.log_loss(</span>
 Omitted Generics (x4)">                            self.GetY("train").astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x7)
+Omitted Generics (x5)
 Unannotated (x2)">                            self.GetYhat("train").round(0).astype(int),</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-precise" title="No Anys on this line!">                    ).alias("logloss_train"),</span>
@@ -1115,7 +1090,7 @@ Unimported (x3)">                        metrics.log_loss(</span>
 Omitted Generics (x4)">                            self.GetY("test").astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x7)
+Omitted Generics (x5)
 Unannotated (x2)">                            self.GetYhat("test").round(0).astype(int),</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-precise" title="No Anys on this line!">                    ).alias("logloss_test"),</span>
@@ -1127,7 +1102,7 @@ Unimported (x3)">                        metrics.roc_auc_score(</span>
 Omitted Generics (x4)">                            self.GetY("train").astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x7)
+Omitted Generics (x5)
 Unannotated (x2)">                            self.GetYhat("train").round(0).astype(int),</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-precise" title="No Anys on this line!">                    ).alias("auc_train"),</span>
@@ -1139,7 +1114,7 @@ Unimported (x3)">                        metrics.roc_auc_score(</span>
 Omitted Generics (x4)">                            self.GetY("test").astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x7)
+Omitted Generics (x5)
 Unannotated (x2)">                            self.GetYhat("test").round(0).astype(int),</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-precise" title="No Anys on this line!">                    ).alias("auc_test"),</span>
@@ -1151,7 +1126,7 @@ Unimported (x3)">                        metrics.precision_score(</span>
 Omitted Generics (x4)">                            self.GetY("train").astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x7)
+Omitted Generics (x5)
 Unannotated (x2)">                            self.GetYhat("train").round(0).astype(int),</span>
 <span class="line-precise" title="No Anys on this line!">                            zero_division=0,</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
@@ -1164,7 +1139,7 @@ Unimported (x3)">                        metrics.precision_score(</span>
 Omitted Generics (x4)">                            self.GetY("test").astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x7)
+Omitted Generics (x5)
 Unannotated (x2)">                            self.GetYhat("test").round(0).astype(int),</span>
 <span class="line-precise" title="No Anys on this line!">                            zero_division=0,</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
@@ -1178,7 +1153,7 @@ Omitted Generics (x28)
 Unannotated (x3)">                            self.GetY("train").replace(0, -1).astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x43)
+Omitted Generics (x41)
 Unannotated (x11)">                            self.GetYhat("train").round(0).replace(0, -1).astype(int),</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-precise" title="No Anys on this line!">                    ).alias("mcc_train"),</span>
@@ -1191,7 +1166,7 @@ Omitted Generics (x28)
 Unannotated (x3)">                            self.GetY("test").replace(0, -1).astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x43)
+Omitted Generics (x41)
 Unannotated (x11)">                            self.GetYhat("test").round(0).replace(0, -1).astype(int),</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-precise" title="No Anys on this line!">                    ).alias("mcc_test"),</span>
@@ -1203,7 +1178,7 @@ Unimported (x3)">                        metrics.roc_curve(</span>
 Omitted Generics (x4)">                            self.GetY("train").astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x7)
+Omitted Generics (x5)
 Unannotated (x2)">                            self.GetYhat("train").round(0).astype(int),</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-precise" title="No Anys on this line!">                    ).alias("roc_curve_train"),</span>
@@ -1215,7 +1190,7 @@ Unimported (x3)">                        metrics.roc_curve(</span>
 Omitted Generics (x4)">                            self.GetY("test").astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x7)
+Omitted Generics (x5)
 Unannotated (x2)">                            self.GetYhat("test").round(0).astype(int),</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-precise" title="No Anys on this line!">                    ).alias("roc_curve_test"),</span>
@@ -1227,7 +1202,7 @@ Unimported (x3)">                        metrics.precision_recall_curve(</span>
 Omitted Generics (x4)">                            self.GetY("train").astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x7)
+Omitted Generics (x5)
 Unannotated (x2)">                            self.GetYhat("train").round(0).astype(int),</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-precise" title="No Anys on this line!">                    ).alias("pr_curve_train"),</span>
@@ -1239,7 +1214,7 @@ Unimported (x3)">                        metrics.precision_recall_curve(</span>
 Omitted Generics (x4)">                            self.GetY("test").astype(int),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x7)
+Omitted Generics (x5)
 Unannotated (x2)">                            self.GetYhat("test").round(0).astype(int),</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-precise" title="No Anys on this line!">                    ).alias("pr_curve_test"),</span>
@@ -1262,10 +1237,9 @@ Unannotated (x2)">                            self.GetYhat("test").round(0).asty
 <span class="line-precise" title="No Anys on this line!">            f"cv={f'fold-{self.fold_n}' if self.fold_n is not None else 'none'})"</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">    def get(self, attr: str) -&gt; Any:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Returns the value of the attribute.</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">    def get(self, attr: str) -&gt; pd.DataFrame | pd.Series | str | float:</span>
+<span class="line-empty" title="No Anys on this line!">        """Return the value of the attribute.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>
@@ -1282,20 +1256,22 @@ Explicit (x2)">        return self.results.select(attr).collect().item(0, 0)</sp
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">    def _fit_standardization(</span>
-<span class="line-empty" title="No Anys on this line!">        self, X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]</span>
+<span class="line-empty" title="No Anys on this line!">        self, X: pd.Series | pl.Series | pd.DataFrame | pl.DataFrame | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">    ) -&gt; None:</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-empty" title="No Anys on this line!">        Fits a StandardScaler to the input data.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>
-<span class="line-empty" title="No Anys on this line!">        X : Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]</span>
+<span class="line-empty" title="No Anys on this line!">        X : pd.Series | pl.Series | pd.DataFrame | pl.DataFrame | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">            The data to standardize.</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x6)">        col_dtype = get_column_dtype(X)</span>
 <span class="line-precise" title="No Anys on this line!">        if col_dtype not in ["continuous"]:</span>
-<span class="line-precise" title="No Anys on this line!">            exit(f"X must be a continuous variable. Got {col_dtype} instead.")</span>
+<span class="line-precise" title="No Anys on this line!">            import sys</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">            sys.exit(f"X must be a continuous variable. Got {col_dtype} instead.")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)
@@ -1314,7 +1290,7 @@ Explicit (x2)">        if isinstance(X, pd.Series):</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x11)
 Explicit (x4)
-Unannotated (x1)">            X = X.to_numpy().reshape(-1, 1) if X.shape[1] == 1 else X  # type: ignore</span>
+Unannotated (x1)">            X = X.to_numpy().reshape(-1, 1) if X.shape[1] == 1 else X</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # fit normalized data</span>
 <span class="line-any" title="Any Types on this line: 
@@ -1326,14 +1302,14 @@ Explicit (x1)">        self.scaler.fit(X.to_numpy())</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">    def standardize(</span>
-<span class="line-empty" title="No Anys on this line!">        self, X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]</span>
-<span class="line-empty" title="No Anys on this line!">    ) -&gt; Union[pd.Series, pd.DataFrame]:</span>
+<span class="line-empty" title="No Anys on this line!">        self, X: pd.Series | pl.Series | pd.DataFrame | pl.DataFrame | pl.LazyFrame</span>
+<span class="line-empty" title="No Anys on this line!">    ) -&gt; pd.DataFrame | pd.Series:</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-empty" title="No Anys on this line!">        Standardizes the input data.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>
-<span class="line-empty" title="No Anys on this line!">        X : Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]</span>
+<span class="line-empty" title="No Anys on this line!">        X : pd.Series | pl.Series | pd.DataFrame | pl.DataFrame | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">            The data to standardize.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Returns</span>
@@ -1400,7 +1376,7 @@ Unimported (x3)">                self.scaler.transform(</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x22)
 Explicit (x10)">                    np.array(X.to_numpy()).reshape(-1, 1) if X.shape[1] == 1 else X</span>
-<span class="line-empty" title="No Anys on this line!">                ),  # type: ignore</span>
+<span class="line-empty" title="No Anys on this line!">                ),</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">                index=X.index,</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -1412,19 +1388,19 @@ Omitted Generics (x2)">                columns=X.columns,</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">    def predict(</span>
 <span class="line-empty" title="No Anys on this line!">        self,</span>
-<span class="line-empty" title="No Anys on this line!">        X: Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame],</span>
-<span class="line-precise" title="No Anys on this line!">        name: Optional[str] = None,</span>
-<span class="line-empty" title="No Anys on this line!">    ) -&gt; Union[pd.Series, pd.DataFrame]:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Predicts the target variable using the input data. If the univariate analysis</span>
-<span class="line-empty" title="No Anys on this line!">        found a better normalization method than the unadjusted data, the input data</span>
-<span class="line-empty" title="No Anys on this line!">        will be normalized before prediction.</span>
+<span class="line-empty" title="No Anys on this line!">        X: pd.Series | pl.Series | pd.DataFrame | pl.DataFrame | pl.LazyFrame,</span>
+<span class="line-precise" title="No Anys on this line!">        name: str | None = None,</span>
+<span class="line-empty" title="No Anys on this line!">    ) -&gt; pd.DataFrame | pd.Series:</span>
+<span class="line-empty" title="No Anys on this line!">        """Predict the target variable using the input data.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">        If the univariate analysis found a better normalization method than the</span>
+<span class="line-empty" title="No Anys on this line!">        unadjusted data, the input data will be normalized before prediction.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>
-<span class="line-empty" title="No Anys on this line!">        X : Union[pd.Series, pl.Series, pd.DataFrame, pl.DataFrame, pl.LazyFrame]</span>
+<span class="line-empty" title="No Anys on this line!">        X : pd.Series | pl.Series | pd.DataFrame | pl.DataFrame | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">            The data to predict.</span>
-<span class="line-empty" title="No Anys on this line!">        name : Optional[str], optional</span>
+<span class="line-empty" title="No Anys on this line!">        name : str | None, optional</span>
 <span class="line-empty" title="No Anys on this line!">            The name of the column to use for the predicted target variable. If None,</span>
 <span class="line-empty" title="No Anys on this line!">            the name of the target variable from the univariate analysis with "_hat"</span>
 <span class="line-empty" title="No Anys on this line!">            will be used.</span>
@@ -1473,15 +1449,14 @@ Explicit (x2)">                    f"X must be a pandas or polars Series or Data
 Omitted Generics (x113)
 Explicit (x2)">        return pd.Series(</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x3)">            self.model.predict(X),</span>
+Unimported (x3)">            self.model.predict(X),</span>
 <span class="line-precise" title="No Anys on this line!">            name=self.target_col + "_hat" if name is None else name,</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def GetX(</span>
 <span class="line-precise" title="No Anys on this line!">        self, train_test: str = "train", return_type: str = "pd"</span>
-<span class="line-empty" title="No Anys on this line!">    ) -&gt; Union[pd.DataFrame, pl.DataFrame]:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Returns the input data for the specified train or test set.</span>
+<span class="line-empty" title="No Anys on this line!">    ) -&gt; pd.DataFrame | pl.LazyFrame:</span>
+<span class="line-empty" title="No Anys on this line!">        """Return the input data for the specified train or test set.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>
@@ -1492,7 +1467,7 @@ Explicit (x3)">            self.model.predict(X),</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Returns</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
-<span class="line-empty" title="No Anys on this line!">        Union[pd.DataFrame, pl.DataFrame]</span>
+<span class="line-empty" title="No Anys on this line!">        pd.DataFrame | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">            The input data for the specified train or test set.</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-precise" title="No Anys on this line!">        if train_test == "train":</span>
@@ -1512,8 +1487,7 @@ Omitted Generics (x3)">                to_pd_df(self.X_test) if return_type == "
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">    def GetY(self, train_test: str = "train", return_type: str = "pd") -&gt; pd.Series:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Returns the target variable for the specified train or test set.</span>
+<span class="line-empty" title="No Anys on this line!">        """Return the target variable for the specified train or test set.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>
@@ -1547,9 +1521,8 @@ Omitted Generics (x6)">                else to_pl_s(self.y_test.collect().to_ser
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">    def GetYhat(</span>
 <span class="line-precise" title="No Anys on this line!">        self, train_test: str = "train", return_type: str = "pd"</span>
-<span class="line-empty" title="No Anys on this line!">    ) -&gt; Union[pd.Series, pd.DataFrame]:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Returns the predicted target variable for the specified train or test set.</span>
+<span class="line-empty" title="No Anys on this line!">    ) -&gt; pd.DataFrame | pd.Series:</span>
+<span class="line-empty" title="No Anys on this line!">        """Return the predicted target variable for the specified train or test set.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>
@@ -1560,7 +1533,7 @@ Omitted Generics (x1)">    def GetYhat(</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Returns</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
-<span class="line-empty" title="No Anys on this line!">        Union[pd.Series, pd.DataFrame]</span>
+<span class="line-empty" title="No Anys on this line!">        pd.DataFrame | pd.Series</span>
 <span class="line-empty" title="No Anys on this line!">            The predicted target variable for the specified train or test set.</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-precise" title="No Anys on this line!">        if train_test == "train":</span>

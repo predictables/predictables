@@ -41,8 +41,6 @@
 <span id="L31" class="lineno"><a class="lineno" href="#L31">31</a></span>
 <span id="L32" class="lineno"><a class="lineno" href="#L32">32</a></span>
 <span id="L33" class="lineno"><a class="lineno" href="#L33">33</a></span>
-<span id="L34" class="lineno"><a class="lineno" href="#L34">34</a></span>
-<span id="L35" class="lineno"><a class="lineno" href="#L35">35</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
@@ -81,11 +79,9 @@ Unimported (x1)">    shap_sum = np.abs(shap_values).mean(axis=0)</span>
 <span class="line-precise" title="Any Types on this line: 
 Omitted Generics (x48)
 Explicit (x4)
-Unannotated (x2)">    feature_importance_df = pd.DataFrame(</span>
+Unannotated (x2)">    return pd.DataFrame(</span>
 <span class="line-precise" title="No Anys on this line!">        {"feature": X.columns, "shap_importance": shap_sum}</span>
 <span class="line-precise" title="No Anys on this line!">    ).sort_values(by="shap_importance", ascending=False)</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    return feature_importance_df</span>
 </pre></td>
 </tr></tbody>
 </table>

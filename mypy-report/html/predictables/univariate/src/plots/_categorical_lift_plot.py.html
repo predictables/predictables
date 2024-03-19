@@ -249,21 +249,12 @@
 <span id="L239" class="lineno"><a class="lineno" href="#L239">239</a></span>
 <span id="L240" class="lineno"><a class="lineno" href="#L240">240</a></span>
 <span id="L241" class="lineno"><a class="lineno" href="#L241">241</a></span>
-<span id="L242" class="lineno"><a class="lineno" href="#L242">242</a></span>
-<span id="L243" class="lineno"><a class="lineno" href="#L243">243</a></span>
-<span id="L244" class="lineno"><a class="lineno" href="#L244">244</a></span>
-<span id="L245" class="lineno"><a class="lineno" href="#L245">245</a></span>
-<span id="L246" class="lineno"><a class="lineno" href="#L246">246</a></span>
-<span id="L247" class="lineno"><a class="lineno" href="#L247">247</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Tuple, Union</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import matplotlib.pyplot as plt</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-any" title="No Anys on this line!">import plotly.graph_objects as go</span>
-<span class="line-precise" title="No Anys on this line!">from matplotlib.axes import Axes</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from predictables.univariate.src.plots.util import plot_label</span>
 <span class="line-precise" title="No Anys on this line!">from predictables.util import get_column_dtype</span>
@@ -278,12 +269,11 @@ Unimported (x1)">def categorical_lift_plot(</span>
 <span class="line-empty" title="No Anys on this line!">    feature_name: str,</span>
 <span class="line-empty" title="No Anys on this line!">    target_name: str,</span>
 <span class="line-precise" title="No Anys on this line!">    backend: str = "matplotlib",</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Union[Axes, None] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    figsize: Tuple[int, int] = (7, 7),</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    figsize: tuple[int, int] = (7, 7),</span>
 <span class="line-empty" title="No Anys on this line!">    **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Union[Axes, go.Figure, None]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plots the lift chart for a given categorical feature and target.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes | go.Figure | None:</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot the lift chart for a given categorical feature and target.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -300,14 +290,14 @@ Unimported (x1)">def categorical_lift_plot(</span>
 <span class="line-empty" title="No Anys on this line!">    ax : matplotlib axes object, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The axes on which to plot the lift chart. If None, a new figure and axes</span>
 <span class="line-empty" title="No Anys on this line!">        will be created.</span>
-<span class="line-empty" title="No Anys on this line!">    figsize : Tuple[int, int], optional</span>
+<span class="line-empty" title="No Anys on this line!">    figsize : tuple[int, int], optional</span>
 <span class="line-empty" title="No Anys on this line!">        The size of the figure to create if ax is None.</span>
 <span class="line-empty" title="No Anys on this line!">    **kwargs</span>
 <span class="line-empty" title="No Anys on this line!">        Additional keyword arguments to pass to the plotting function.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
 <span class="line-empty" title="No Anys on this line!">    -------</span>
-<span class="line-empty" title="No Anys on this line!">    Union[Axes, go.Figure, None]</span>
+<span class="line-empty" title="No Anys on this line!">    plt.Axes | go.Figure | None</span>
 <span class="line-empty" title="No Anys on this line!">        The axes or figure containing the lift chart.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-precise" title="No Anys on this line!">    if backend == "matplotlib":</span>
@@ -347,12 +337,12 @@ Omitted Generics (x2)">def plot_cat_lift_plot(</span>
 <span class="line-empty" title="No Anys on this line!">    target: pd.Series,</span>
 <span class="line-empty" title="No Anys on this line!">    feature_name: str,</span>
 <span class="line-empty" title="No Anys on this line!">    target_name: str,</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Union[Axes, None] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    figsize: Tuple[int, int] = (7, 7),</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Union[Axes, None]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plots the lift chart for a given categorical feature and target. Returns a</span>
-<span class="line-empty" title="No Anys on this line!">    matplotlib axes object.</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    figsize: tuple[int, int] = (7, 7),</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes | None:</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot the lift chart for a given categorical feature and target.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Returns a matplotlib axes object.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -417,8 +407,8 @@ Omitted Generics (x1)">                xy=(i, lift),</span>
 <span class="line-precise" title="No Anys on this line!">                textcoords="offset points",</span>
 <span class="line-precise" title="No Anys on this line!">                ha="center",</span>
 <span class="line-precise" title="No Anys on this line!">                va="bottom",</span>
-<span class="line-precise" title="No Anys on this line!">                font=dict(size=14 * (figsize[0] / 8)),</span>
-<span class="line-precise" title="No Anys on this line!">                bbox=dict(boxstyle="round", facecolor="white", alpha=0.9),</span>
+<span class="line-precise" title="No Anys on this line!">                font={"size": 14 * (figsize[0] / 8)},</span>
+<span class="line-precise" title="No Anys on this line!">                bbox={"boxstyle": "round", "facecolor": "white", "alpha": 0.9},</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-empty" title="No Anys on this line!">        else:</span>
 <span class="line-any" title="Any Types on this line: 
@@ -430,8 +420,8 @@ Unannotated (x1)">            ax.annotate(</span>
 <span class="line-precise" title="No Anys on this line!">                textcoords="offset points",</span>
 <span class="line-precise" title="No Anys on this line!">                ha="center",</span>
 <span class="line-precise" title="No Anys on this line!">                va="bottom",</span>
-<span class="line-precise" title="No Anys on this line!">                font=dict(size=14 * (figsize[0] / 8)),</span>
-<span class="line-precise" title="No Anys on this line!">                bbox=dict(boxstyle="round", facecolor="white", alpha=0.9),</span>
+<span class="line-precise" title="No Anys on this line!">                font={"size": 14 * (figsize[0] / 8)},</span>
+<span class="line-precise" title="No Anys on this line!">                bbox={"boxstyle": "round", "facecolor": "white", "alpha": 0.9},</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)">    return ax</span>
@@ -446,8 +436,7 @@ Unimported (x1)">def plotly_cat_lift_plot(</span>
 <span class="line-empty" title="No Anys on this line!">    target_name: str,</span>
 <span class="line-precise" title="No Anys on this line!">    alpha: float = 0.5,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; go.Figure:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plots the lift chart for a given categorical feature and target using Plotly.</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot the lift chart for a given categorical feature and target using Plotly.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -492,27 +481,25 @@ Omitted Generics (x1)">            y=lift_data["lift"],</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x3)">    fig.add_hline(</span>
-<span class="line-precise" title="No Anys on this line!">        y=1, line=dict(color="black", dash="dash"), annotation_text="Baseline"</span>
+<span class="line-precise" title="No Anys on this line!">        y=1, line={"color": "black", "dash": "dash"}, annotation_text="Baseline"</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">    annotations = [</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">        dict(</span>
+<span class="line-empty" title="No Anys on this line!">        {</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x2)">            x=row[feature_name],</span>
+Omitted Generics (x2)">            "x": row[feature_name],</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x2)">            y=row["lift"],</span>
+Omitted Generics (x2)">            "y": row["lift"],</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x2)">            text=f"{row['lift']:.2f}",</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">            font=dict(family="Arial", size=16, color="black"),</span>
-<span class="line-precise" title="No Anys on this line!">            showarrow=False,</span>
-<span class="line-precise" title="No Anys on this line!">            bgcolor="white",</span>
-<span class="line-precise" title="No Anys on this line!">            bordercolor="black",</span>
-<span class="line-precise" title="No Anys on this line!">            borderwidth=1,</span>
-<span class="line-precise" title="No Anys on this line!">            borderpad=4,</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
+Omitted Generics (x2)">            "text": f"{row['lift']:.2f}",</span>
+<span class="line-precise" title="No Anys on this line!">            "font": {"family": "Arial", "size": 16, "color": "black"},</span>
+<span class="line-precise" title="No Anys on this line!">            "showarrow": False,</span>
+<span class="line-precise" title="No Anys on this line!">            "bgcolor": "white",</span>
+<span class="line-precise" title="No Anys on this line!">            "bordercolor": "black",</span>
+<span class="line-precise" title="No Anys on this line!">            "borderwidth": 1,</span>
+<span class="line-precise" title="No Anys on this line!">            "borderpad": 4,</span>
+<span class="line-empty" title="No Anys on this line!">        }</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x3)">        for _, row in lift_data.iterrows()</span>
 <span class="line-empty" title="No Anys on this line!">    ]</span>
@@ -533,8 +520,7 @@ Unimported (x1)">    return fig</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">def calculate_lift(feature: pd.Series, target: pd.Series) -&gt; pd.DataFrame:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Calculates the lift for a given feature and target.</span>
+<span class="line-empty" title="No Anys on this line!">    """Calculate the lift for a given feature and target.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>

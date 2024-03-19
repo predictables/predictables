@@ -100,12 +100,8 @@
 <span id="L90" class="lineno"><a class="lineno" href="#L90">90</a></span>
 <span id="L91" class="lineno"><a class="lineno" href="#L91">91</a></span>
 <span id="L92" class="lineno"><a class="lineno" href="#L92">92</a></span>
-<span id="L93" class="lineno"><a class="lineno" href="#L93">93</a></span>
-<span id="L94" class="lineno"><a class="lineno" href="#L94">94</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import List</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
@@ -122,8 +118,8 @@
 <span class="line-precise" title="Any Types on this line: 
 Explicit (x6)
 Omitted Generics (x2)">@pytest.fixture</span>
-<span class="line-precise" title="No Anys on this line!">def features_list() -&gt; List[str]:</span>
-<span class="line-precise" title="No Anys on this line!">    return ["feature_" + str(i) for i in range(1, 101)]  # List of 100 features</span>
+<span class="line-precise" title="No Anys on this line!">def features_list() -&gt; list[str]:</span>
+<span class="line-precise" title="No Anys on this line!">    return ["feature_" + str(i) for i in range(1, 101)]  # list of 100 features</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"># Parameterized test for basic functionality</span>

@@ -388,22 +388,14 @@
 <span id="L378" class="lineno"><a class="lineno" href="#L378">378</a></span>
 <span id="L379" class="lineno"><a class="lineno" href="#L379">379</a></span>
 <span id="L380" class="lineno"><a class="lineno" href="#L380">380</a></span>
-<span id="L381" class="lineno"><a class="lineno" href="#L381">381</a></span>
-<span id="L382" class="lineno"><a class="lineno" href="#L382">382</a></span>
-<span id="L383" class="lineno"><a class="lineno" href="#L383">383</a></span>
-<span id="L384" class="lineno"><a class="lineno" href="#L384">384</a></span>
-<span id="L385" class="lineno"><a class="lineno" href="#L385">385</a></span>
-<span id="L386" class="lineno"><a class="lineno" href="#L386">386</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Optional, Tuple, Union</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import matplotlib.pyplot as plt</span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
-<span class="line-precise" title="No Anys on this line!">from matplotlib.axes import Axes</span>
 <span class="line-any" title="No Anys on this line!">from scipy.spatial.distance import jensenshannon as js_divergence</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from predictables.univariate.src.plots.util import binary_color, plot_label</span>
@@ -413,29 +405,29 @@
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x9)
 Unannotated (x1)">def cdf_plot(</span>
-<span class="line-empty" title="No Anys on this line!">    x: Union[pl.Series, pd.Series, np.ndarray],</span>
-<span class="line-empty" title="No Anys on this line!">    plot_by: Union[pl.Series, pd.Series, np.ndarray],</span>
-<span class="line-empty" title="No Anys on this line!">    cv_folds: Union[pl.Series, pd.Series, np.ndarray],</span>
-<span class="line-precise" title="No Anys on this line!">    x_label: Optional[str] = None,</span>
+<span class="line-empty" title="No Anys on this line!">    x: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-empty" title="No Anys on this line!">    plot_by: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-empty" title="No Anys on this line!">    cv_folds: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-precise" title="No Anys on this line!">    x_label: str | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    y_label: str = "Empirical Cumulative Distribution Function",</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Optional[Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    figsize: Tuple[int, int] = (7, 7),</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    figsize: tuple[int, int] = (7, 7),</span>
 <span class="line-precise" title="No Anys on this line!">    backend: str = "matplotlib",</span>
 <span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
 <span class="line-empty" title="No Anys on this line!">    **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Axes:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plots the empirical CDF of the given data for each level in `plot_by` and each fold</span>
-<span class="line-empty" title="No Anys on this line!">    in `cv_folds`. This plot is meant to show a "distribution" of possible CDF plots</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot the empirical CDF of the given data for each level in `plot_by` and each fold in `cv_folds`.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    This plot is meant to show a "distribution" of possible CDF plots</span>
 <span class="line-empty" title="No Anys on this line!">    that could have been pulled from the real distribution.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    x : Union[pl.Series, pd.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    x : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        The data to plot the CDF from.</span>
-<span class="line-empty" title="No Anys on this line!">    plot_by : Union[pl.Series, pd.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    plot_by : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        The data to plot the CDF from.</span>
-<span class="line-empty" title="No Anys on this line!">    cv_folds : Union[pl.Series, pd.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    cv_folds : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        Cross-validation folds used to plot a distribution of CDFs</span>
 <span class="line-empty" title="No Anys on this line!">    x_label : str, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The label of the x-axis.</span>
@@ -443,7 +435,7 @@ Unannotated (x1)">def cdf_plot(</span>
 <span class="line-empty" title="No Anys on this line!">        The label of the y-axis.</span>
 <span class="line-empty" title="No Anys on this line!">    ax : Axes, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The axes to plot the CDF on, by default None.</span>
-<span class="line-empty" title="No Anys on this line!">    figsize : Tuple[int, int], optional</span>
+<span class="line-empty" title="No Anys on this line!">    figsize : tuple[int, int], optional</span>
 <span class="line-empty" title="No Anys on this line!">        The size of the figure, by default (7, 7).</span>
 <span class="line-empty" title="No Anys on this line!">    backend : str, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The plotting backend to use, by default "matplotlib".</span>
@@ -488,18 +480,18 @@ Unannotated (x1)">            **kwargs,</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x9)
 Unannotated (x1)">def cdf_plot_matplotlib(</span>
-<span class="line-empty" title="No Anys on this line!">    x: Union[pl.Series, pd.Series, np.ndarray],</span>
-<span class="line-empty" title="No Anys on this line!">    plot_by: Union[pl.Series, pd.Series, np.ndarray],</span>
-<span class="line-empty" title="No Anys on this line!">    cv_folds: Union[pl.Series, pd.Series, np.ndarray],</span>
-<span class="line-precise" title="No Anys on this line!">    x_label: Union[str, None] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    y_label: Union[str, None] = "Empirical Cumulative Distribution Function",</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Union[Axes, None] = None,</span>
+<span class="line-empty" title="No Anys on this line!">    x: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-empty" title="No Anys on this line!">    plot_by: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-empty" title="No Anys on this line!">    cv_folds: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-precise" title="No Anys on this line!">    x_label: str | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    y_label: str | None = "Empirical Cumulative Distribution Function",</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
 <span class="line-empty" title="No Anys on this line!">    **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Axes:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plots the empirical CDF of the given data for each level in `plot_by` and each</span>
-<span class="line-empty" title="No Anys on this line!">    fold in `cv_folds`. This plot is meant to show a "distribution" of possible CDF</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot the empirical CDF of the given data for each level in `plot_by` and each fold in `cv_folds.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    This plot is meant to show a "distribution" of possible CDF</span>
 <span class="line-empty" title="No Anys on this line!">    plots that could have been pulled from the real distribution. This plot is</span>
 <span class="line-empty" title="No Anys on this line!">    rendered using matplotlib.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -589,12 +581,10 @@ Explicit (x3)">    ax0.axhline(0, color="black", linestyle="--", linewidth=1, la
 <span class="line-any" title="Any Types on this line: 
 Explicit (x3)">    ax0.axhline(1, color="black", linestyle="--", linewidth=1, label="_nolegend_")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
+<span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">    title = create_title(_name, plot_by.name if plot_by.name is not None else "plot_by")</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x3)
-Unannotated (x1)">    ax0.set_title(title)</span>
+Explicit (x3)">    ax0.set_title(title)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x2)">    plt.legend(</span>
@@ -612,22 +602,23 @@ Explicit (x1)">    return ax0</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x6)
 Unannotated (x1)">def cdf_plot_matplotlib_levels(</span>
-<span class="line-empty" title="No Anys on this line!">    x: Union[pl.Series, pd.Series, np.ndarray],</span>
-<span class="line-empty" title="No Anys on this line!">    plot_by: Union[pl.Series, pd.Series, np.ndarray],</span>
-<span class="line-precise" title="No Anys on this line!">    x_label: Optional[Union[str, None]] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    y_label: Optional[str] = "Empirical Cumulative Distribution Function",</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Optional[Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    figsize: Optional[Tuple[int, int]] = (7, 7),</span>
+<span class="line-empty" title="No Anys on this line!">    x: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-empty" title="No Anys on this line!">    plot_by: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-precise" title="No Anys on this line!">    x_label: str | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    y_label: str | None = "Empirical Cumulative Distribution Function",</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    figsize: tuple[int, int] = (7, 7),</span>
 <span class="line-empty" title="No Anys on this line!">    **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Axes:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plots the empirical CDF of the given data.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot the empirical CDF of the given data.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    Parameters</span>
+<span class="line-empty" title="No Anys on this line!">    Parameter</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    x : Union[pl.Series, pd.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    x</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        The data to plot the CDF from.</span>
-<span class="line-empty" title="No Anys on this line!">    plot_by : Union[pl.Series, pd.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    plot_by : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        The data to plot the CDF from.</span>
 <span class="line-empty" title="No Anys on this line!">    x_label : str, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The label of the x-axis.</span>
@@ -635,7 +626,7 @@ Unannotated (x1)">def cdf_plot_matplotlib_levels(</span>
 <span class="line-empty" title="No Anys on this line!">        The label of the y-axis.</span>
 <span class="line-empty" title="No Anys on this line!">    ax : Axes, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The axes to plot the CDF on, by default None.</span>
-<span class="line-empty" title="No Anys on this line!">    figsize : Tuple[int, int], optional</span>
+<span class="line-empty" title="No Anys on this line!">    figsize : tuple[int, int], optional</span>
 <span class="line-empty" title="No Anys on this line!">        The size of the figure, by default (7, 7).</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
@@ -689,28 +680,27 @@ Explicit (x1)">    return ax_</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x9)
 Unannotated (x1)">def cdf_plot_matplotlib_levels_cv(</span>
-<span class="line-empty" title="No Anys on this line!">    x: Union[pl.Series, pd.Series, np.ndarray],</span>
-<span class="line-empty" title="No Anys on this line!">    plot_by: Union[pl.Series, pd.Series, np.ndarray],</span>
-<span class="line-empty" title="No Anys on this line!">    cv_folds: Union[pl.Series, pd.Series, np.ndarray],</span>
-<span class="line-precise" title="No Anys on this line!">    x_label: Optional[str] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    y_label: Optional[str] = "Empirical Cumulative Distribution Function",</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Optional[Axes] = None,</span>
+<span class="line-empty" title="No Anys on this line!">    x: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-empty" title="No Anys on this line!">    plot_by: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-empty" title="No Anys on this line!">    cv_folds: pd.Series | pl.Series | np.ndarray,</span>
+<span class="line-precise" title="No Anys on this line!">    x_label: str | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    y_label: str | None = "Empirical Cumulative Distribution Function",</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
 <span class="line-empty" title="No Anys on this line!">    **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Axes:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plots the empirical CDF of the given data for each level in `plot_by`</span>
-<span class="line-empty" title="No Anys on this line!">    and each fold in `cv_folds`. This plot is meant to show a "distribution"</span>
-<span class="line-empty" title="No Anys on this line!">    of possible CDF plots that could have been pulled from the real</span>
-<span class="line-empty" title="No Anys on this line!">    distribution.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot the empirical CDF of the given data for each level in `plot_by` and each fold in `cv_folds`.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    This plot is meant to show a "distribution" of possible CDF plots that could</span>
+<span class="line-empty" title="No Anys on this line!">    have been pulled from the real distribution.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    x : Union[pl.Series, pd.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    x : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        The data to plot the CDF from.</span>
-<span class="line-empty" title="No Anys on this line!">    plot_by : Union[pl.Series, pd.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    plot_by : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        The data to plot the CDF from.</span>
-<span class="line-empty" title="No Anys on this line!">    cv_folds : Union[pl.Series, pd.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    cv_folds : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        Cross-validation folds used to plot a distribution of CDFs</span>
 <span class="line-empty" title="No Anys on this line!">    x_label : str, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The label of the x-axis.</span>
@@ -796,18 +786,15 @@ Explicit (x1)">    return ax_</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x6)">def jenson_shannon_divergence(</span>
-<span class="line-empty" title="No Anys on this line!">    x: Union[pl.Series, pd.Series, np.ndarray],</span>
-<span class="line-empty" title="No Anys on this line!">    plot_by: Union[pl.Series, pd.Series, np.ndarray],</span>
+<span class="line-empty" title="No Anys on this line!">    x: pd.Series | pl.Series | np.ndarray, plot_by: pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; float:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Calculates the Jenson-Shannon divergence between `x` conditional on each</span>
-<span class="line-empty" title="No Anys on this line!">    level of `plot_by`.</span>
+<span class="line-empty" title="No Anys on this line!">    """Calculate the Jenson-Shannon divergence between `x` conditional on each level of `plot_by`.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    x : Union[pl.Series, pd.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    x : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        The data to calculate the Jenson-Shannon divergence from.</span>
-<span class="line-empty" title="No Anys on this line!">    plot_by : Union[pl.Series, pd.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    plot_by : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        The levels used to split the `x` data, and which form the different</span>
 <span class="line-empty" title="No Anys on this line!">        compared distributions.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -834,8 +821,7 @@ Omitted Generics (x6)">    x1 = x[plot_by == pb_test[1]]</span>
 Unimported (x2)">    return js_divergence(x0, x1)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">def create_title(feature_name: str, target_name: str):</span>
+<span class="line-precise" title="No Anys on this line!">def create_title(feature_name: str, target_name: str) -&gt; str:</span>
 <span class="line-empty" title="No Anys on this line!">    return (</span>
 <span class="line-precise" title="No Anys on this line!">        f"Empirical CDF of {plot_label(feature_name)} conditioned on "</span>
 <span class="line-precise" title="No Anys on this line!">        f"{plot_label(target_name)}"</span>
@@ -858,13 +844,12 @@ Unannotated (x1)">def create_title(feature_name: str, target_name: str):</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x4)">def calculate_cdf(x: Union[pl.Series, pd.Series, np.ndarray]) -&gt; pd.Series:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Calculates the empirical CDF from the given data.</span>
+Omitted Generics (x4)">def calculate_cdf(x: pd.Series | pl.Series | np.ndarray) -&gt; pd.Series:</span>
+<span class="line-empty" title="No Anys on this line!">    """Calculate the empirical CDF from the given data.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    x : Union[pl.Series, pd.Series, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    x : pd.Series | pl.Series | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        The data to calculate the CDF from.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>

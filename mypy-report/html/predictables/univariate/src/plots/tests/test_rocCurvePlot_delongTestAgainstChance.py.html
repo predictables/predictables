@@ -231,20 +231,16 @@
 <span id="L221" class="lineno"><a class="lineno" href="#L221">221</a></span>
 <span id="L222" class="lineno"><a class="lineno" href="#L222">222</a></span>
 <span id="L223" class="lineno"><a class="lineno" href="#L223">223</a></span>
-<span id="L224" class="lineno"><a class="lineno" href="#L224">224</a></span>
-<span id="L225" class="lineno"><a class="lineno" href="#L225">225</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import logging</span>
 <span class="line-precise" title="No Anys on this line!">import os</span>
-<span class="line-precise" title="No Anys on this line!">from typing import Tuple</span>
-<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import pytest</span>
 <span class="line-precise" title="No Anys on this line!">from dotenv import load_dotenv</span>
-<span class="line-any" title="No Anys on this line!">from sklearn.metrics import roc_auc_score  # type: ignore</span>
+<span class="line-any" title="No Anys on this line!">from sklearn.metrics import roc_auc_score</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from predictables.univariate.src.plots._roc_curve_plot import (</span>
 <span class="line-empty" title="No Anys on this line!">    _delong_test_against_chance,</span>
@@ -270,7 +266,7 @@ Explicit (x1)">    return pd.read_parquet("cancerdf.parquet")</span>
 Explicit (x6)
 Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x3)">def sample_data() -&gt; Tuple[pd.Series, pd.Series, pd.Series]:</span>
+Omitted Generics (x3)">def sample_data() -&gt; tuple[pd.Series, pd.Series, pd.Series]:</span>
 <span class="line-empty" title="No Anys on this line!">    """Generate sample data for testing."""</span>
 <span class="line-precise" title="No Anys on this line!">    rg = np.random.default_rng(42)  # Ensure reproducibility</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -294,7 +290,7 @@ Explicit (x3)">    return y, pd.Series(yhat_proba), fold</span>
 Explicit (x6)
 Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x3)">def sample_variance(sample_data: Tuple[pd.Series, pd.Series, pd.Series]) -&gt; float:</span>
+Omitted Generics (x3)">def sample_variance(sample_data: tuple[pd.Series, pd.Series, pd.Series]) -&gt; float:</span>
 <span class="line-empty" title="No Anys on this line!">    """Calculate the variance of the AUC for the sample data."""</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x6)">    y, yhat_proba, fold = sample_data</span>
@@ -315,7 +311,7 @@ Explicit (x6)
 Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x3)
-Unannotated (x1)">def sample_variance_bootstrap(sample_data: Tuple[pd.Series, pd.Series, pd.Series]):</span>
+Unannotated (x1)">def sample_variance_bootstrap(sample_data: tuple[pd.Series, pd.Series, pd.Series]):</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x5)">    y, yhat_proba, _ = sample_data</span>
 <span class="line-precise" title="No Anys on this line!">    rg = np.random.default_rng(42)</span>

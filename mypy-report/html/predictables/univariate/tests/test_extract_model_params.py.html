@@ -203,12 +203,11 @@
 <span id="L193" class="lineno"><a class="lineno" href="#L193">193</a></span>
 <span id="L194" class="lineno"><a class="lineno" href="#L194">194</a></span>
 <span id="L195" class="lineno"><a class="lineno" href="#L195">195</a></span>
-<span id="L196" class="lineno"><a class="lineno" href="#L196">196</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
 <span class="line-precise" title="No Anys on this line!">import pytest</span>
-<span class="line-any" title="No Anys on this line!">from scipy.stats import norm  # type: ignore</span>
+<span class="line-any" title="No Anys on this line!">from scipy.stats import norm</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="Any Types on this line: 
@@ -230,10 +229,9 @@ Explicit (x6)
 Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-any" title="No Anys on this line!">def noise():</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    np.random.seed(0)</span>
+Unannotated (x3)">    rv = np.random.Generator(np.random.PCG64(12345))</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)
-Unimported (x1)">    return norm.rvs(size=500)</span>
+Unannotated (x3)">    return rv.normal(0, 1, 500)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="Any Types on this line: 
@@ -244,7 +242,6 @@ Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x12)
 Unimported (x1)">        pl.DataFrame({"X0": range(500)})</span>
-<span class="line-empty" title="No Anys on this line!">        # .lazy()</span>
 <span class="line-empty" title="No Anys on this line!">        .with_columns(</span>
 <span class="line-empty" title="No Anys on this line!">            [</span>
 <span class="line-any" title="Any Types on this line: 
@@ -298,7 +295,7 @@ Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)
-Omitted Generics (x1)
+Omitted Generics (x5)
 Unimported (x1)">    return fit_sm_logistic_regression(</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x9)
@@ -375,7 +372,7 @@ Omitted Generics (x2)">    return abs(a - b) &lt; tol</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x12)
+Unannotated (x3)
 Unimported (x1)">    result = extract_model_params_sm_OLS(sm_linear_model)</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)">    assert is_close(</span>
@@ -431,7 +428,7 @@ Unannotated (x10)">    ), f"Expected model degrees of freedom close to {sm_linea
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x12)
+Unannotated (x3)
 Unimported (x1)">    result = extract_model_params_sm_GLM(sm_logistic_model)</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)">    assert is_close(</span>
@@ -487,7 +484,7 @@ Unannotated (x10)">    ), f"Expected model degrees of freedom close to {sm_logis
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x5)
+Unannotated (x3)
 Unimported (x1)">    result = extract_model_params_sk_LogisticRegression(sk_logistic_model)</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)">    assert is_close(</span>
@@ -503,7 +500,7 @@ Unannotated (x9)">    ), f"Expected fitted coeficient close to {logistic_coef}, 
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x5)
+Unannotated (x3)
 Unimported (x1)">    result = extract_model_params_sk_LinearRegression(sk_linear_model)</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)">    assert is_close(</span>

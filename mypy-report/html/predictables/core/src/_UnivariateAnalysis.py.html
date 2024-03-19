@@ -691,21 +691,10 @@
 <span id="L681" class="lineno"><a class="lineno" href="#L681">681</a></span>
 <span id="L682" class="lineno"><a class="lineno" href="#L682">682</a></span>
 <span id="L683" class="lineno"><a class="lineno" href="#L683">683</a></span>
-<span id="L684" class="lineno"><a class="lineno" href="#L684">684</a></span>
-<span id="L685" class="lineno"><a class="lineno" href="#L685">685</a></span>
-<span id="L686" class="lineno"><a class="lineno" href="#L686">686</a></span>
-<span id="L687" class="lineno"><a class="lineno" href="#L687">687</a></span>
-<span id="L688" class="lineno"><a class="lineno" href="#L688">688</a></span>
-<span id="L689" class="lineno"><a class="lineno" href="#L689">689</a></span>
-<span id="L690" class="lineno"><a class="lineno" href="#L690">690</a></span>
-<span id="L691" class="lineno"><a class="lineno" href="#L691">691</a></span>
-<span id="L692" class="lineno"><a class="lineno" href="#L692">692</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import datetime</span>
-<span class="line-precise" title="No Anys on this line!">import os</span>
-<span class="line-precise" title="No Anys on this line!">from typing import List, Optional, Union</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
@@ -767,9 +756,9 @@ Explicit (x1)">        pl.when(pl.col(col) &lt; 1)</span>
 <span class="line-empty" title="No Anys on this line!">        Validation dataset used for evaluating feature performance.</span>
 <span class="line-empty" title="No Anys on this line!">    target_column_name : str</span>
 <span class="line-empty" title="No Anys on this line!">        Name of the target variable in the dataset.</span>
-<span class="line-empty" title="No Anys on this line!">    feature_column_names : List[str]</span>
-<span class="line-empty" title="No Anys on this line!">        List of names of the features to be analyzed.</span>
-<span class="line-empty" title="No Anys on this line!">    cv_column_name : Optional[str]</span>
+<span class="line-empty" title="No Anys on this line!">    feature_column_names : list[str]</span>
+<span class="line-empty" title="No Anys on this line!">        list of names of the features to be analyzed.</span>
+<span class="line-empty" title="No Anys on this line!">    cv_column_name : str | None</span>
 <span class="line-empty" title="No Anys on this line!">        Name of the column used for cross-validation splitting. Defaults to "cv" if not provided.</span>
 <span class="line-empty" title="No Anys on this line!">    cv_folds : Optional[pd.Series]</span>
 <span class="line-empty" title="No Anys on this line!">        Series containing cross-validation fold identifiers for each row in the dataset. If not provided,</span>
@@ -851,10 +840,10 @@ Omitted Generics (x2)">    cv_folds: pd.Series</span>
 <span class="line-empty" title="No Anys on this line!">        df_train: pl.LazyFrame,</span>
 <span class="line-empty" title="No Anys on this line!">        df_val: pl.LazyFrame,</span>
 <span class="line-empty" title="No Anys on this line!">        target_column_name: str,</span>
-<span class="line-empty" title="No Anys on this line!">        feature_column_names: List[str],</span>
+<span class="line-empty" title="No Anys on this line!">        feature_column_names: list[str],</span>
 <span class="line-empty" title="No Anys on this line!">        time_series_validation: bool,</span>
-<span class="line-precise" title="No Anys on this line!">        cv_column_name: Optional[str] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        cv_folds: Optional[pl.Series] = None,</span>
+<span class="line-precise" title="No Anys on this line!">        cv_column_name: str | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        cv_folds: pl.Series | None = None,</span>
 <span class="line-empty" title="No Anys on this line!">    ):</span>
 <span class="line-empty" title="No Anys on this line!">        """Initialize the UnivariateAnalysis class.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -871,14 +860,14 @@ Omitted Generics (x2)">    cv_folds: pd.Series</span>
 <span class="line-empty" title="No Anys on this line!">            The validation dataset used for evaluating feature performance.</span>
 <span class="line-empty" title="No Anys on this line!">        target_column_name : str</span>
 <span class="line-empty" title="No Anys on this line!">            The name of the target variable in the dataset.</span>
-<span class="line-empty" title="No Anys on this line!">        feature_column_names : List[str]</span>
+<span class="line-empty" title="No Anys on this line!">        feature_column_names : list[str]</span>
 <span class="line-empty" title="No Anys on this line!">            A list of names of the features to be analyzed.</span>
 <span class="line-empty" title="No Anys on this line!">        time_series_validation : bool</span>
 <span class="line-empty" title="No Anys on this line!">            Indicates whether to use a time series validation strategy for feature evaluation.</span>
-<span class="line-empty" title="No Anys on this line!">        cv_column_name : Optional[str], optional</span>
+<span class="line-empty" title="No Anys on this line!">        cv_column_name : str | None, optional</span>
 <span class="line-empty" title="No Anys on this line!">            The name of the column used for cross-validation splitting, by default None. If None,</span>
 <span class="line-empty" title="No Anys on this line!">            a default column name "cv" is assumed.</span>
-<span class="line-empty" title="No Anys on this line!">        cv_folds : Optional[pl.Series], optional</span>
+<span class="line-empty" title="No Anys on this line!">        cv_folds : pl.Series | None, optional</span>
 <span class="line-empty" title="No Anys on this line!">            A series containing cross-validation fold identifiers for each row in the dataset. If None,</span>
 <span class="line-empty" title="No Anys on this line!">            it is assumed that the `cv_column_name` in `df_train` is used, by default None.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -944,7 +933,7 @@ Explicit (x1)">                setattr(</span>
 <span class="line-precise" title="No Anys on this line!">                    self,</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x1)">                    obj_name,</span>
-<span class="line-any" title="Any Types on this line: 
+<span class="line-precise" title="Any Types on this line: 
 Unannotated (x1)">                    Univariate(</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x6)
@@ -971,7 +960,7 @@ Explicit (x1)">                setattr(</span>
 <span class="line-precise" title="No Anys on this line!">                    self,</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x1)">                    obj_name,</span>
-<span class="line-any" title="Any Types on this line: 
+<span class="line-precise" title="Any Types on this line: 
 Unannotated (x1)">                    Univariate(</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x3)
@@ -1051,7 +1040,7 @@ Omitted Generics (x1)">                    else f"log1p_{col}"</span>
 Explicit (x1)">                setattr(</span>
 <span class="line-precise" title="No Anys on this line!">                    self,</span>
 <span class="line-precise" title="No Anys on this line!">                    transformed_obj_name,</span>
-<span class="line-any" title="Any Types on this line: 
+<span class="line-precise" title="Any Types on this line: 
 Unannotated (x1)">                    Univariate(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x6)">                        self.df.filter(</span>
@@ -1082,7 +1071,7 @@ Omitted Generics (x1)">        self.feature_column_names = self._feature_list</s
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def _sort_features_by_ua(</span>
 <span class="line-precise" title="No Anys on this line!">        self, return_pd: bool = False</span>
-<span class="line-empty" title="No Anys on this line!">    ) -&gt; Union[pl.LazyFrame, pd.DataFrame]:</span>
+<span class="line-empty" title="No Anys on this line!">    ) -&gt; pd.DataFrame | pl.LazyFrame:</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-empty" title="No Anys on this line!">        Sorts features based on their average performance metrics in univariate analysis.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -1094,7 +1083,7 @@ Omitted Generics (x1)">        self.feature_column_names = self._feature_list</s
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Returns</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
-<span class="line-empty" title="No Anys on this line!">        Union[pl.LazyFrame, pd.DataFrame]</span>
+<span class="line-empty" title="No Anys on this line!">        pd.DataFrame | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">            Sorted features based on average performance metrics. The format of the return</span>
 <span class="line-empty" title="No Anys on this line!">            value depends on the `return_pd` parameter.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -1158,19 +1147,16 @@ Explicit (x1)">                return df</span>
 <span class="line-precise" title="No Anys on this line!">                "No valid Univariate analysis results found for any feature."</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">    def get_features(self):</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">        dbg.msg("Getting features - UA0002")  # debug only</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        return self._feature_list</span>
+<span class="line-precise" title="No Anys on this line!">    def get_features(self) -&gt; list[str]:</span>
+<span class="line-empty" title="No Anys on this line!">        """Return a list of feature names that have been analyzed."""</span>
+<span class="line-precise" title="No Anys on this line!">        dbg.msg("Getting features - UA0002")  # debug only</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">        return self._feature_list</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def _get_file_stem(</span>
-<span class="line-empty" title="No Anys on this line!">        self,</span>
-<span class="line-precise" title="No Anys on this line!">        filename: Optional[str] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        default: str = "Univariate Analysis Report",</span>
+<span class="line-precise" title="No Anys on this line!">        self, filename: str | None = None, default: str = "Univariate Analysis Report"</span>
 <span class="line-empty" title="No Anys on this line!">    ) -&gt; str:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Helper function to get the file stem from a filename.</span>
+<span class="line-empty" title="No Anys on this line!">        """Generate the file stem from a filename.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>
@@ -1201,13 +1187,8 @@ Unannotated (x1)">        return self._feature_list</span>
 <span class="line-empty" title="No Anys on this line!">        &gt;&gt;&gt; _get_file_stem(None, "Univariate Analysis Report")</span>
 <span class="line-empty" title="No Anys on this line!">        "Univariate Analysis Report"</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-precise" title="No Anys on this line!">        dbg.msg("Getting file stem - UA0003")</span>
 <span class="line-precise" title="No Anys on this line!">        if filename is not None:</span>
-<span class="line-precise" title="No Anys on this line!">            dbg.msg(</span>
-<span class="line-precise" title="No Anys on this line!">                f"Filename ({filename}) was passed to _get_file_stem - UA0004"</span>
-<span class="line-empty" title="No Anys on this line!">            )  # debug only</span>
-<span class="line-precise" title="Any Types on this line: 
-Omitted Generics (x6)">            file_stem, _ = os.path.splitext(filename)</span>
+<span class="line-precise" title="No Anys on this line!">            file_stem = filename.split(".")[0]</span>
 <span class="line-precise" title="No Anys on this line!">            dbg.msg(</span>
 <span class="line-precise" title="No Anys on this line!">                f"File stem ({file_stem}) was extracted from filename ({filename}) "</span>
 <span class="line-empty" title="No Anys on this line!">                "and should not have an extension - UA0005"</span>
@@ -1218,12 +1199,12 @@ Omitted Generics (x6)">            file_stem, _ = os.path.splitext(filename)</sp
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def _rpt_filename(</span>
 <span class="line-empty" title="No Anys on this line!">        self,</span>
-<span class="line-precise" title="No Anys on this line!">        file_stem: Optional[str] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        start_num: Optional[int] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        end_num: Optional[int] = None,</span>
+<span class="line-precise" title="No Anys on this line!">        file_stem: str | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        start_num: int | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        end_num: int | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">        default: str = "Univariate Analysis Report",</span>
 <span class="line-empty" title="No Anys on this line!">    ) -&gt; str:</span>
-<span class="line-empty" title="No Anys on this line!">        """Helper function to get the file name from a filename."""</span>
+<span class="line-empty" title="No Anys on this line!">        """Generate the file name from a filename."""</span>
 <span class="line-precise" title="No Anys on this line!">        if file_stem is not None and (start_num is None or end_num is None):</span>
 <span class="line-precise" title="No Anys on this line!">            return file_stem + ".pdf"</span>
 <span class="line-precise" title="No Anys on this line!">        if start_num is not None and end_num is not None:</span>
@@ -1240,8 +1221,8 @@ Omitted Generics (x6)">            file_stem, _ = os.path.splitext(filename)</sp
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def _segment_features(</span>
-<span class="line-empty" title="No Anys on this line!">        self, features: List[str], max_per_file: int</span>
-<span class="line-empty" title="No Anys on this line!">    ) -&gt; List[Segment]:</span>
+<span class="line-empty" title="No Anys on this line!">        self, features: list[str], max_per_file: int</span>
+<span class="line-empty" title="No Anys on this line!">    ) -&gt; list[Segment]:</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-empty" title="No Anys on this line!">        Segments features into chunks for report generation.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -1286,24 +1267,20 @@ Omitted Generics (x6)">            file_stem, _ = os.path.splitext(filename)</sp
 Explicit (x14)
 Omitted Generics (x2)">        ua = getattr(self, fmt_col_name(feature))</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x3)">        return ua._add_to_report(rpt)</span>
+Explicit (x3)">        return ua._add_to_report(rpt)  # noqa: SLF001</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x2)
-Unannotated (x1)">    def _generate_segment_report(</span>
-<span class="line-empty" title="No Anys on this line!">        self, segment: dict, filestem_: str, margins_: List[float]</span>
-<span class="line-empty" title="No Anys on this line!">    ):</span>
-<span class="line-empty" title="No Anys on this line!">        """Generates a report for a specific segment of features."""</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)">    def _generate_segment_report(</span>
+<span class="line-empty" title="No Anys on this line!">        self, segment: dict, filestem_: str, margins_: list[float]</span>
+<span class="line-empty" title="No Anys on this line!">    ) -&gt; None:</span>
+<span class="line-empty" title="No Anys on this line!">        """Generate a report for a specific segment of features."""</span>
 <span class="line-precise" title="No Anys on this line!">        filename_ = self._rpt_filename(</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x6)">            filestem_, segment["file_num_start"], segment["file_num_end"]</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
+<span class="line-precise" title="No Anys on this line!">        rpt = self._rpt_title_page(filename_, margins_)</span>
+<span class="line-precise" title="No Anys on this line!">        rpt = self._rpt_overview_page(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">        rpt = self._rpt_title_page(filename_, margins_)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        rpt = self._rpt_overview_page(</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)
 Omitted Generics (x6)">            rpt, segment["file_num_start"], segment["file_num_end"]</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -1319,20 +1296,17 @@ Omitted Generics (x2)">                f" to {segment['file_num_end']}"</span>
 <span class="line-empty" title="No Anys on this line!">            ),</span>
 <span class="line-empty" title="No Anys on this line!">        ):</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)
 Omitted Generics (x1)">            rpt = self._add_to_report(rpt, feature=feature)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">        rpt.build()</span>
+<span class="line-precise" title="No Anys on this line!">        rpt.build()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def build_report(</span>
 <span class="line-empty" title="No Anys on this line!">        self,</span>
-<span class="line-precise" title="No Anys on this line!">        filename: Optional[str] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        margins: Optional[List[float]] = None,</span>
+<span class="line-precise" title="No Anys on this line!">        filename: str | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        margins: list[float] | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">        max_per_file: int = 25,</span>
 <span class="line-empty" title="No Anys on this line!">    ) -&gt; None:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Builds a report for the univariate analysis.</span>
+<span class="line-empty" title="No Anys on this line!">        """Build a report for the univariate analysis.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>
@@ -1356,8 +1330,7 @@ Explicit (x1)
 Error (x1)">        features = (</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x2)
-Error (x4)
-Omitted Generics (x1)">            self._sort_features_by_ua()</span>
+Error (x4)">            self._sort_features_by_ua()</span>
 <span class="line-precise" title="No Anys on this line!">            .select("Feature")</span>
 <span class="line-empty" title="No Anys on this line!">            .collect()</span>
 <span class="line-empty" title="No Anys on this line!">            .to_series()</span>
@@ -1379,10 +1352,8 @@ Omitted Generics (x4)">        for segment in tqdm(</span>
 <span class="line-empty" title="No Anys on this line!">            # Setup filename and initial report pages for each segment</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x5)">            fn = self._rpt_filename(filestem_, segment.start + 1, segment.end)</span>
+<span class="line-precise" title="No Anys on this line!">            rpt = self._rpt_title_page(fn, margins_)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">            rpt = self._rpt_title_page(fn, margins_)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)
 Omitted Generics (x4)">            rpt = self._rpt_overview_page(rpt, segment.start, segment.end)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">            # Process each feature within the current segment</span>
@@ -1390,18 +1361,15 @@ Omitted Generics (x4)">            rpt = self._rpt_overview_page(rpt, segment.st
 Omitted Generics (x3)">            for feature_name in segment.features:</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x15)
-Omitted Generics (x3)
-Unannotated (x2)">                rpt = getattr(self, fmt_col_name(feature_name))._add_to_report(rpt)</span>
+Omitted Generics (x3)">                rpt = getattr(self, fmt_col_name(feature_name))._add_to_report(rpt)  # noqa: SLF001</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">            # Finalize the current segment's report</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">            rpt.build()</span>
-<span class="line-precise" title="No Anys on this line!">            i += 1</span>
+<span class="line-precise" title="No Anys on this line!">            rpt.build()</span>
+<span class="line-precise" title="No Anys on this line!">            i += 1  # noqa: SIM113 (if I do this I can't use i in the tqdm description)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def _rpt_overview_page(self, rpt: Report, first_idx: int, last_idx: int) -&gt; Report:</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Error (x2)
-Omitted Generics (x1)">        overview_df = self._sort_features_by_ua().slice(</span>
+Error (x2)">        overview_df = self._sort_features_by_ua().slice(</span>
 <span class="line-precise" title="No Anys on this line!">            first_idx, last_idx - first_idx + 1</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -1485,13 +1453,12 @@ Explicit (x2)">            .table(formatted_df.collect().to_pandas().set_index("
 <span class="line-empty" title="No Anys on this line!">            .page_break()</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    def _rpt_title_page(</span>
+<span class="line-precise" title="No Anys on this line!">    def _rpt_title_page(</span>
 <span class="line-empty" title="No Anys on this line!">        self,</span>
-<span class="line-precise" title="No Anys on this line!">        filename: Optional[str] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        margins: Optional[List[float]] = None,</span>
+<span class="line-precise" title="No Anys on this line!">        filename: str | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        margins: list[float] | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">        date_of_report: datetime.datetime = current_date,</span>
-<span class="line-empty" title="No Anys on this line!">    ):</span>
+<span class="line-empty" title="No Anys on this line!">    ) -&gt; Report:</span>
 <span class="line-precise" title="Any Types on this line: 
 Omitted Generics (x1)">        rpt = Report(</span>
 <span class="line-precise" title="No Anys on this line!">            filename if filename is not None else "univariate_report.pdf",</span>

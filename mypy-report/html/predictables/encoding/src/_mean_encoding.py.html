@@ -224,38 +224,56 @@
 <span id="L214" class="lineno"><a class="lineno" href="#L214">214</a></span>
 <span id="L215" class="lineno"><a class="lineno" href="#L215">215</a></span>
 <span id="L216" class="lineno"><a class="lineno" href="#L216">216</a></span>
+<span id="L217" class="lineno"><a class="lineno" href="#L217">217</a></span>
+<span id="L218" class="lineno"><a class="lineno" href="#L218">218</a></span>
+<span id="L219" class="lineno"><a class="lineno" href="#L219">219</a></span>
+<span id="L220" class="lineno"><a class="lineno" href="#L220">220</a></span>
+<span id="L221" class="lineno"><a class="lineno" href="#L221">221</a></span>
+<span id="L222" class="lineno"><a class="lineno" href="#L222">222</a></span>
+<span id="L223" class="lineno"><a class="lineno" href="#L223">223</a></span>
+<span id="L224" class="lineno"><a class="lineno" href="#L224">224</a></span>
+<span id="L225" class="lineno"><a class="lineno" href="#L225">225</a></span>
+<span id="L226" class="lineno"><a class="lineno" href="#L226">226</a></span>
+<span id="L227" class="lineno"><a class="lineno" href="#L227">227</a></span>
+<span id="L228" class="lineno"><a class="lineno" href="#L228">228</a></span>
+<span id="L229" class="lineno"><a class="lineno" href="#L229">229</a></span>
+<span id="L230" class="lineno"><a class="lineno" href="#L230">230</a></span>
+<span id="L231" class="lineno"><a class="lineno" href="#L231">231</a></span>
+<span id="L232" class="lineno"><a class="lineno" href="#L232">232</a></span>
+<span id="L233" class="lineno"><a class="lineno" href="#L233">233</a></span>
+<span id="L234" class="lineno"><a class="lineno" href="#L234">234</a></span>
+<span id="L235" class="lineno"><a class="lineno" href="#L235">235</a></span>
+<span id="L236" class="lineno"><a class="lineno" href="#L236">236</a></span>
+<span id="L237" class="lineno"><a class="lineno" href="#L237">237</a></span>
+<span id="L238" class="lineno"><a class="lineno" href="#L238">238</a></span>
+<span id="L239" class="lineno"><a class="lineno" href="#L239">239</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import List</span>
-<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from predictables.util import to_pl_lf, tqdm</span>
+<span class="line-precise" title="No Anys on this line!">from predictables.util import tqdm</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">def mean_encode_df(</span>
 <span class="line-empty" title="No Anys on this line!">    df: pl.DataFrame,</span>
-<span class="line-empty" title="No Anys on this line!">    cat_cols: List[str],</span>
+<span class="line-empty" title="No Anys on this line!">    cat_cols: list[str],</span>
 <span class="line-empty" title="No Anys on this line!">    col1: str,</span>
 <span class="line-empty" title="No Anys on this line!">    col2: str,</span>
 <span class="line-empty" title="No Anys on this line!">    date_col: str,</span>
 <span class="line-precise" title="No Anys on this line!">    date_offset: int = 1,</span>
-<span class="line-precise" title="No Anys on this line!">    drop_cols: bool = True,</span>
-<span class="line-precise" title="No Anys on this line!">    drop_mean_ratio: bool = True,</span>
-<span class="line-precise" title="No Anys on this line!">    keep_cat_col: bool = True,</span>
+<span class="line-precise" title="No Anys on this line!">    drop_cols: bool = True,  # noqa: ARG001</span>
+<span class="line-precise" title="No Anys on this line!">    drop_mean_ratio: bool = True,  # noqa: ARG001</span>
+<span class="line-precise" title="No Anys on this line!">    keep_cat_col: bool = True,  # noqa: ARG001</span>
 <span class="line-precise" title="No Anys on this line!">    laplace_alpha: int = 0,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pl.DataFrame:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Mean-encode a list of categorical columns in a dataframe using lazy evaluation</span>
-<span class="line-empty" title="No Anys on this line!">    and window functions. Calculate running sums of `col1` and `col2` up to but not</span>
-<span class="line-empty" title="No Anys on this line!">    including the date in each row.</span>
+<span class="line-empty" title="No Anys on this line!">    """Mean-encode a list of categorical columns in a dataframe using lazy evaluation and window functions.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Calculate running sums of `col1` and `col2` up to but not including the date in each row.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
 <span class="line-empty" title="No Anys on this line!">    df : pl.DataFrame</span>
 <span class="line-empty" title="No Anys on this line!">        The dataframe to mean-encode.</span>
-<span class="line-empty" title="No Anys on this line!">    cat_cols : List[str]</span>
+<span class="line-empty" title="No Anys on this line!">    cat_cols : list[str]</span>
 <span class="line-empty" title="No Anys on this line!">        The list of categorical columns to mean-encode.</span>
 <span class="line-empty" title="No Anys on this line!">    col1 : str</span>
 <span class="line-empty" title="No Anys on this line!">        The name of the first column to use for mean encoding.</span>
@@ -300,14 +318,14 @@ Omitted Generics (x1)">            c,</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">def mean_encode_df2(</span>
 <span class="line-empty" title="No Anys on this line!">    df: pl.DataFrame,</span>
-<span class="line-empty" title="No Anys on this line!">    cat_cols: List[str],</span>
+<span class="line-empty" title="No Anys on this line!">    cat_cols: list[str],</span>
 <span class="line-empty" title="No Anys on this line!">    col1: str,</span>
 <span class="line-empty" title="No Anys on this line!">    col2: str,</span>
 <span class="line-empty" title="No Anys on this line!">    date_col: str,</span>
 <span class="line-precise" title="No Anys on this line!">    date_offset: int = 1,</span>
-<span class="line-precise" title="No Anys on this line!">    drop_cols: bool = True,</span>
-<span class="line-precise" title="No Anys on this line!">    drop_mean_ratio: bool = True,</span>
-<span class="line-precise" title="No Anys on this line!">    keep_cat_col: bool = True,</span>
+<span class="line-precise" title="No Anys on this line!">    drop_cols: bool = True,  # noqa: ARG001</span>
+<span class="line-precise" title="No Anys on this line!">    drop_mean_ratio: bool = True,  # noqa: ARG001</span>
+<span class="line-precise" title="No Anys on this line!">    keep_cat_col: bool = True,  # noqa: ARG001</span>
 <span class="line-precise" title="No Anys on this line!">    laplace_alpha: int = 0,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pl.DataFrame:</span>
 <span class="line-any" title="Any Types on this line: 
@@ -341,10 +359,38 @@ Omitted Generics (x1)">            c,</span>
 <span class="line-precise" title="No Anys on this line!">    keep_cat_col: bool = True,</span>
 <span class="line-precise" title="No Anys on this line!">    laplace_alpha: int = 0,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pl.DataFrame:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Perform mean encoding on a categorical column using lazy evaluation and window</span>
-<span class="line-empty" title="No Anys on this line!">    functions. Calculate running sums of `col1` and `col2` up to but not including</span>
-<span class="line-empty" title="No Anys on this line!">    the date in each row.</span>
+<span class="line-empty" title="No Anys on this line!">    """Perform mean encoding on a categorical column using lazy evaluation and window functions.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Calculate running sums of `col1` and `col2` up to but not including the</span>
+<span class="line-empty" title="No Anys on this line!">    date in each row.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Parameters</span>
+<span class="line-empty" title="No Anys on this line!">    ----------</span>
+<span class="line-empty" title="No Anys on this line!">    df : pl.DataFrame</span>
+<span class="line-empty" title="No Anys on this line!">        The dataframe to mean-encode.</span>
+<span class="line-empty" title="No Anys on this line!">    cat_col : str</span>
+<span class="line-empty" title="No Anys on this line!">        The name of the categorical column to mean-encode.</span>
+<span class="line-empty" title="No Anys on this line!">    col1 : str</span>
+<span class="line-empty" title="No Anys on this line!">        The name of the numerator column to use for mean encoding.</span>
+<span class="line-empty" title="No Anys on this line!">    col2 : str</span>
+<span class="line-empty" title="No Anys on this line!">        The name of the denominator column to use for mean encoding.</span>
+<span class="line-empty" title="No Anys on this line!">    date_col : str</span>
+<span class="line-empty" title="No Anys on this line!">        The name of the date column to use for mean encoding.</span>
+<span class="line-empty" title="No Anys on this line!">    date_offset : int, optional</span>
+<span class="line-empty" title="No Anys on this line!">        The number of days to offset the date column. Default is 1.</span>
+<span class="line-empty" title="No Anys on this line!">    drop_cols : bool, optional</span>
+<span class="line-empty" title="No Anys on this line!">        Whether to drop the intermediate columns. Default is True.</span>
+<span class="line-empty" title="No Anys on this line!">    drop_mean_ratio : bool, optional</span>
+<span class="line-empty" title="No Anys on this line!">        Whether to drop the mean ratio column. Default is True.</span>
+<span class="line-empty" title="No Anys on this line!">    keep_cat_col : bool, optional</span>
+<span class="line-empty" title="No Anys on this line!">        Whether to keep the original categorical column. Default is True.</span>
+<span class="line-empty" title="No Anys on this line!">    laplace_alpha : int, optional</span>
+<span class="line-empty" title="No Anys on this line!">        The Laplace smoothing parameter. Default is 0.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Returns</span>
+<span class="line-empty" title="No Anys on this line!">    -------</span>
+<span class="line-empty" title="No Anys on this line!">    pl.DataFrame</span>
+<span class="line-empty" title="No Anys on this line!">        The mean-encoded dataframe.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-empty" title="No Anys on this line!">    # Get the number of unique features in the categorical column</span>
 <span class="line-precise" title="No Anys on this line!">    n_cats = df.select(pl.col(cat_col)).n_unique()</span>

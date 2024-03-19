@@ -33,14 +33,16 @@
 <span id="L23" class="lineno"><a class="lineno" href="#L23">23</a></span>
 <span id="L24" class="lineno"><a class="lineno" href="#L24">24</a></span>
 <span id="L25" class="lineno"><a class="lineno" href="#L25">25</a></span>
+<span id="L26" class="lineno"><a class="lineno" href="#L26">26</a></span>
 </pre></td>
-<td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">import polars as pl</span>
+<td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
+<span class="line-precise" title="No Anys on this line!">import polars as pl</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">def remove_missing_rows(df, *columns):</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Remove rows from a Polars DataFrame where any of the specified columns contain</span>
-<span class="line-empty" title="No Anys on this line!">    missing values.</span>
+<span class="line-precise" title="No Anys on this line!">def remove_missing_rows(</span>
+<span class="line-empty" title="No Anys on this line!">    df: pl.DataFrame | pl.LazyFrame, *columns: list[str]</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; pl.DataFrame | pl.LazyFrame:</span>
+<span class="line-empty" title="No Anys on this line!">    """Remove rows from a Polars DataFrame where any of the specified columns contain missing values.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -55,13 +57,11 @@
 <span class="line-empty" title="No Anys on this line!">        A lazy Polars DataFrame with rows removed where specified columns contain</span>
 <span class="line-empty" title="No Anys on this line!">        missing values.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">    for col in columns:</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x8)">        df = df.filter(pl.col(col).is_not_null())</span>
+<span class="line-precise" title="No Anys on this line!">    for col in columns:</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Explicit (x3)">        df = df.filter(pl.col(col).is_not_null())</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    return df</span>
+<span class="line-precise" title="No Anys on this line!">    return df</span>
 </pre></td>
 </tr></tbody>
 </table>

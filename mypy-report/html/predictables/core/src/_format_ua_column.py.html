@@ -29,15 +29,12 @@
 <span id="L19" class="lineno"><a class="lineno" href="#L19">19</a></span>
 <span id="L20" class="lineno"><a class="lineno" href="#L20">20</a></span>
 <span id="L21" class="lineno"><a class="lineno" href="#L21">21</a></span>
-<span id="L22" class="lineno"><a class="lineno" href="#L22">22</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">import polars as pl</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">def results_tbl_expr(col, formatted_name, formatting_str) -&gt; pl.Expr:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Create an expression to format a column in a results table.</span>
+<span class="line-precise" title="No Anys on this line!">def results_tbl_expr(col: pl.Expr, formatted_name: str, formatting_str: str) -&gt; pl.Expr:</span>
+<span class="line-empty" title="No Anys on this line!">    """Create an expression to format a column in a results table.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -53,8 +50,7 @@ Unannotated (x3)">def results_tbl_expr(col, formatted_name, formatting_str) -&gt
 <span class="line-empty" title="No Anys on this line!">    pl.Expr</span>
 <span class="line-empty" title="No Anys on this line!">        The formatted column expression.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">    return pl.format(formatting_str, pl.col(col)).cast(pl.Utf8).alias(formatted_name)</span>
+<span class="line-imprecise" title="No Anys on this line!">    return pl.format(formatting_str, pl.col(col)).cast(pl.Utf8).alias(formatted_name)</span>
 </pre></td>
 </tr></tbody>
 </table>

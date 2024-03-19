@@ -56,17 +56,13 @@
 <span id="L46" class="lineno"><a class="lineno" href="#L46">46</a></span>
 <span id="L47" class="lineno"><a class="lineno" href="#L47">47</a></span>
 <span id="L48" class="lineno"><a class="lineno" href="#L48">48</a></span>
-<span id="L49" class="lineno"><a class="lineno" href="#L49">49</a></span>
-<span id="L50" class="lineno"><a class="lineno" href="#L50">50</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Union</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
-<span class="line-any" title="No Anys on this line!">from sklearn.linear_model import LogisticRegression  # type: ignore</span>
+<span class="line-any" title="No Anys on this line!">from sklearn.linear_model import LogisticRegression</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from predictables.util import to_pd_df, to_pd_s</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -74,19 +70,19 @@
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x5)
 Unimported (x1)">def fit_sk_logistic_regression(</span>
-<span class="line-empty" title="No Anys on this line!">    X: Union[np.ndarray, pd.DataFrame, pl.DataFrame, pl.LazyFrame],</span>
-<span class="line-empty" title="No Anys on this line!">    y: Union[np.ndarray, pd.Series, pl.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    X: np.ndarray | pd.DataFrame | pl.DataFrame | pl.LazyFrame,</span>
+<span class="line-empty" title="No Anys on this line!">    y: np.ndarray | pd.Series | pl.Series,</span>
 <span class="line-precise" title="No Anys on this line!">    fit_intercept: bool = False,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; LogisticRegression:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Fit a logistic regression model using the scikit-learn library. Used in the</span>
-<span class="line-empty" title="No Anys on this line!">    univariate analysis to fit a simple model to each variable.</span>
+<span class="line-empty" title="No Anys on this line!">    """Fit a logistic regression model using the scikit-learn library.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Used in the univariate analysis to fit a simple model to each variable.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    X : Union[np.ndarray, pd.DataFrame, pl.DataFrame, pl.LazyFrame]</span>
+<span class="line-empty" title="No Anys on this line!">    X : np.ndarray | pd.DataFrame | pl.DataFrame | pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">        The independent variables</span>
-<span class="line-empty" title="No Anys on this line!">    y : Union[np.ndarray, pd.Series, pl.Series]</span>
+<span class="line-empty" title="No Anys on this line!">    y : np.ndarray | pd.Series | pl.Series</span>
 <span class="line-empty" title="No Anys on this line!">        The dependent variable. Should be a 1D array.</span>
 <span class="line-empty" title="No Anys on this line!">    fit_intercept : bool, optional</span>
 <span class="line-empty" title="No Anys on this line!">        Whether to fit an intercept in the model, by default False. I think this is</span>
@@ -109,12 +105,11 @@ Omitted Generics (x41)
 Explicit (x4)
 Unannotated (x2)">        else pd.DataFrame(X)</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
+<span class="line-precise" title="No Anys on this line!">    y_ = (</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)
-Explicit (x1)">    y_ = (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Explicit (x2)
-Omitted Generics (x13)">        to_pd_s(y).reset_index(drop=True).values.ravel()</span>
+Explicit (x3)
+Omitted Generics (x15)
+Unannotated (x1)">        to_pd_s(y).reset_index(drop=True).to_numpy().ravel()</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x116)
 Explicit (x2)
@@ -126,9 +121,8 @@ Explicit (x2)">        else pd.Series(y)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x4)">    return LogisticRegression(fit_intercept=fit_intercept).fit(</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x5)
-Explicit (x1)">        X_.reset_index(drop=True), y_</span>
+<span class="line-precise" title="Any Types on this line: 
+Omitted Generics (x3)">        X_.reset_index(drop=True), y_</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 </pre></td>
 </tr></tbody>

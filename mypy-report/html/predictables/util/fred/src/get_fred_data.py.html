@@ -49,8 +49,16 @@
 <span id="L39" class="lineno"><a class="lineno" href="#L39">39</a></span>
 <span id="L40" class="lineno"><a class="lineno" href="#L40">40</a></span>
 <span id="L41" class="lineno"><a class="lineno" href="#L41">41</a></span>
+<span id="L42" class="lineno"><a class="lineno" href="#L42">42</a></span>
+<span id="L43" class="lineno"><a class="lineno" href="#L43">43</a></span>
+<span id="L44" class="lineno"><a class="lineno" href="#L44">44</a></span>
+<span id="L45" class="lineno"><a class="lineno" href="#L45">45</a></span>
 </pre></td>
-<td class="table-code"><pre><span class="line-any" title="No Anys on this line!">import fredapi</span>
+<td class="table-code"><pre><span class="line-empty" title="No Anys on this line!">"""Get data from FRED and return as a pandas DataFrame."""</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="No Anys on this line!">import fredapi</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-any" title="No Anys on this line!">from _api_keys import get_fred_api_key</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -61,7 +69,7 @@ Unimported (x6)">Fred = fredapi.Fred(api_key=get_fred_api_key())</span>
 <span class="line-precise" title="No Anys on this line!">def get_fred_data(</span>
 <span class="line-empty" title="No Anys on this line!">    series_id: str,</span>
 <span class="line-precise" title="No Anys on this line!">    start_date: str = "2016-01-01",</span>
-<span class="line-precise" title="No Anys on this line!">    end_date: str = None,</span>
+<span class="line-precise" title="No Anys on this line!">    end_date: str | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    frequency: str = "d",</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pd.DataFrame:</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
@@ -85,7 +93,8 @@ Unimported (x6)">Fred = fredapi.Fred(api_key=get_fred_api_key())</span>
 <span class="line-empty" title="No Anys on this line!">        The data from FRED as a pandas DataFrame.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-precise" title="No Anys on this line!">    if end_date is None:</span>
-<span class="line-unanalyzed" title="No Anys on this line!">        end_date = pd.Timestamp.today().strftime("%Y-%m-%d")</span>
+<span class="line-precise" title="Any Types on this line: 
+Omitted Generics (x1)">        end_date = pd.Timestamp.today().strftime("%Y-%m-%d")</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x3)">    return Fred.get_series(</span>
 <span class="line-precise" title="No Anys on this line!">        series_id,</span>

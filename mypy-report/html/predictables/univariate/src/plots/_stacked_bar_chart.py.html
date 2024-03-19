@@ -209,7 +209,6 @@
 <span id="L199" class="lineno"><a class="lineno" href="#L199">199</a></span>
 <span id="L200" class="lineno"><a class="lineno" href="#L200">200</a></span>
 <span id="L201" class="lineno"><a class="lineno" href="#L201">201</a></span>
-<span id="L202" class="lineno"><a class="lineno" href="#L202">202</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -222,11 +221,11 @@
 <span class="line-precise" title="No Anys on this line!">from .util import plot_label, rotate_x_lab</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Error (x2)
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)
 Unimported (x1)">def stacked_bar_chart(</span>
-<span class="line-empty" title="No Anys on this line!">    feature: [pl.Series, pd.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    target: [pl.Series, pd.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    feature: pl.Series | pd.Series,</span>
+<span class="line-empty" title="No Anys on this line!">    target: pl.Series | pd.Series,</span>
 <span class="line-precise" title="No Anys on this line!">    backend: str = "matplotlib",</span>
 <span class="line-precise" title="No Anys on this line!">    y_offset: float = 0.035,</span>
 <span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
@@ -237,11 +236,11 @@ Unimported (x1)">def stacked_bar_chart(</span>
 <span class="line-precise" title="No Anys on this line!">    facecolor: str = "white",</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes | go.Figure:</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Error (x1)">    params = {</span>
-<span class="line-any" title="Any Types on this line: 
-Error (x1)">        "feature": feature,</span>
-<span class="line-any" title="Any Types on this line: 
-Error (x1)">        "target": target,</span>
+Omitted Generics (x1)">    params = {</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">        "feature": feature,</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">        "target": target,</span>
 <span class="line-precise" title="No Anys on this line!">        "y_offset": y_offset,</span>
 <span class="line-precise" title="No Anys on this line!">        "ax": ax,</span>
 <span class="line-precise" title="No Anys on this line!">        "figsize": figsize,</span>
@@ -251,47 +250,42 @@ Error (x1)">        "target": target,</span>
 <span class="line-precise" title="No Anys on this line!">        "facecolor": facecolor,</span>
 <span class="line-empty" title="No Anys on this line!">    }</span>
 <span class="line-precise" title="No Anys on this line!">    if backend == "matplotlib":</span>
-<span class="line-any" title="Any Types on this line: 
+<span class="line-imprecise" title="Any Types on this line: 
 Unimported (x2)
-Error (x3)
-Unannotated (x1)">        return plot_stacked_bar_chart(**params, ax=ax, figsize=figsize)</span>
+Omitted Generics (x3)">        return plot_stacked_bar_chart(**params, ax=ax, figsize=figsize)</span>
 <span class="line-precise" title="No Anys on this line!">    elif backend == "plotly":</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x2)
-Omitted Generics (x2)
-Error (x1)">        return plotly_stacked_bar_chart(**params, bar_width=bar_width)</span>
+Omitted Generics (x3)">        return plotly_stacked_bar_chart(**params, bar_width=bar_width)</span>
 <span class="line-empty" title="No Anys on this line!">    else:</span>
 <span class="line-precise" title="No Anys on this line!">        raise ValueError(f"Unknown backend: {backend}")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Error (x2)
-Unannotated (x1)
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)
 Unimported (x1)">def plot_stacked_bar_chart(</span>
-<span class="line-empty" title="No Anys on this line!">    feature: [pl.Series, pd.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    target: [pl.Series, pd.Series],</span>
+<span class="line-empty" title="No Anys on this line!">    feature: pl.Series | pd.Series,</span>
+<span class="line-empty" title="No Anys on this line!">    target: pl.Series | pd.Series,</span>
 <span class="line-precise" title="No Anys on this line!">    y_offset: float = 0.035,</span>
-<span class="line-precise" title="No Anys on this line!">    ax=None,</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    figsize: tuple[float, float] = (7, 7),</span>
 <span class="line-precise" title="No Anys on this line!">    alpha: float = 0.8,</span>
 <span class="line-precise" title="No Anys on this line!">    bar_width: float = 0.8,</span>
 <span class="line-precise" title="No Anys on this line!">    fontsize: int = 16,</span>
 <span class="line-precise" title="No Anys on this line!">    facecolor: str = "white",</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes | go.Figure:</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    if ax is None:</span>
+<span class="line-precise" title="No Anys on this line!">    if ax is None:</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x4)
-Unannotated (x2)">        _, ax = plt.subplots(figsize=figsize)</span>
+Unannotated (x1)">        _, ax = plt.subplots(figsize=figsize)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Assume fitted is a DataFrame containing the feature and target</span>
 <span class="line-any" title="Any Types on this line: 
 Error (x4)
-Omitted Generics (x29)">    ct = pd.crosstab(feature, target, normalize="index").sort_values(0)</span>
+Omitted Generics (x22)">    ct = pd.crosstab(feature, target, normalize="index").sort_values(0)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
 Error (x2)">    n = len(ct.index)</span>
-<span class="line-precise" title="No Anys on this line!">    bar_width = bar_width</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x14)
 Omitted Generics (x4)">    indices = np.arange(n)</span>
@@ -303,42 +297,45 @@ Explicit (x2)">    bottoms = np.zeros(n)</span>
 <span class="line-any" title="Any Types on this line: 
 Error (x3)">    for col in ct.columns:</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
-Explicit (x1)
+Explicit (x3)
+Unannotated (x2)
 Error (x4)">        ax.bar(indices, ct[col], bottom=bottoms, label=col, alpha=alpha)</span>
 <span class="line-any" title="Any Types on this line: 
 Error (x5)">        bottoms += ct[col].to_numpy()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # get the feature/target names</span>
-<span class="line-any" title="Any Types on this line: 
-Error (x4)">    feature_name = feature if isinstance(feature, str) else feature.name</span>
-<span class="line-any" title="Any Types on this line: 
-Error (x4)">    target_name = target if isinstance(target, str) else target.name</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x3)">    feature_name = feature if isinstance(feature, str) else feature.name</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x3)">    target_name = target if isinstance(target, str) else target.name</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # For each bar in each container</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">    for bar in ax.patches:</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Explicit (x3)">    for bar in ax.patches:</span>
 <span class="line-empty" title="No Anys on this line!">        # Get the y position and height of the bar</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x8)">        y = bar.get_y() + bar.get_height()</span>
+Error (x6)
+Explicit (x2)">        y = bar.get_y() + bar.get_height()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Get the remaining portion of the bar not covered by the annotation</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">        y2 = 1 - y</span>
+Error (x3)">        y2 = 1 - y</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Get the width of the bar and find the center</span>
 <span class="line-empty" title="No Anys on this line!">        # then shift the x position by the width</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x5)">        x_value = bar.get_x() + bar_width / 2</span>
+Error (x4)
+Explicit (x1)">        x_value = bar.get_x() + bar_width / 2</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x6)">        if abs(y - 1) &gt; 1e-6:  # Tolerance to account for float arithmetic</span>
+Error (x6)">        if abs(y - 1) &gt; 1e-6:  # Tolerance to account for float arithmetic</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">            ax.annotate(</span>
+Explicit (x3)
+Unannotated (x1)">            ax.annotate(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                f"{y*100:.1f}%",</span>
+Error (x2)">                f"{y*100:.1f}%",</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">                xy=(x_value, y - y_offset),</span>
+Error (x3)">                xy=(x_value, y - y_offset),</span>
 <span class="line-precise" title="No Anys on this line!">                textcoords="data",</span>
 <span class="line-precise" title="No Anys on this line!">                va="center",</span>
 <span class="line-precise" title="No Anys on this line!">                ha="center",</span>
@@ -352,11 +349,12 @@ Unannotated (x3)">                xy=(x_value, y - y_offset),</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">            ax.annotate(</span>
+Explicit (x3)
+Unannotated (x1)">            ax.annotate(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                f"{y2*100:.1f}%",</span>
+Error (x2)">                f"{y2*100:.1f}%",</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">                xy=(x_value, 1 - y_offset),</span>
+Error (x1)">                xy=(x_value, 1 - y_offset),</span>
 <span class="line-precise" title="No Anys on this line!">                textcoords="data",</span>
 <span class="line-precise" title="No Anys on this line!">                va="center",</span>
 <span class="line-precise" title="No Anys on this line!">                ha="center",</span>
@@ -370,43 +368,51 @@ Unannotated (x1)">                xy=(x_value, 1 - y_offset),</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Set x and y labels</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">    ax.set_ylabel("Count")</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Explicit (x3)
+Unannotated (x1)">    ax.set_ylabel("Count")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Set y ticks to percentage</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x6)
+Explicit (x3)">    yticks = ax.get_yticks()</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Explicit (x3)
+Unannotated (x1)
+Omitted Generics (x2)">    ax.set_yticks(yticks)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">    yticks = ax.get_yticks()</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">    ax.set_yticks(yticks)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x6)">    ax.set_yticklabels([f"{y:.1%}" for y in yticks])</span>
+Explicit (x6)
+Unannotated (x1)
+Omitted Generics (x2)">    ax.set_yticklabels([f"{y:.1%}" for y in yticks])</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Set title</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">    ax.set_title(</span>
-<span class="line-any" title="Any Types on this line: 
-Error (x2)">        f"Distribution of [{plot_label(feature_name)}] by[{plot_label(target_name)}]"</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Explicit (x3)
+Unannotated (x1)">    ax.set_title(</span>
+<span class="line-precise" title="No Anys on this line!">        f"Distribution of [{plot_label(feature_name)}] by[{plot_label(target_name)}]"</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-imprecise" title="Any Types on this line: 
+Explicit (x3)
+Unannotated (x1)">    ax.set_xticks(indices)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
-Explicit (x1)">    ax.set_xticks(indices)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
+Explicit (x3)
+Unannotated (x1)
 Error (x2)">    ax.set_xticklabels(ct.index)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">    ax.legend(fontsize=fontsize)</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Explicit (x3)
+Unannotated (x4)">    ax.legend(fontsize=fontsize)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">    ax = rotate_x_lab(ax)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x5)">    ax.figure.canvas.draw()</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x4)">    ax.figure.tight_layout()</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Explicit (x1)">    ax = rotate_x_lab(ax)</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Error (x2)
+Unannotated (x2)">    ax.figure.canvas.draw()</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Error (x1)">    ax.figure.tight_layout()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    return ax</span>
+<span class="line-precise" title="No Anys on this line!">    return ax</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 

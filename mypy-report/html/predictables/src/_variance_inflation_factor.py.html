@@ -139,36 +139,29 @@
 <span id="L129" class="lineno"><a class="lineno" href="#L129">129</a></span>
 <span id="L130" class="lineno"><a class="lineno" href="#L130">130</a></span>
 <span id="L131" class="lineno"><a class="lineno" href="#L131">131</a></span>
-<span id="L132" class="lineno"><a class="lineno" href="#L132">132</a></span>
-<span id="L133" class="lineno"><a class="lineno" href="#L133">133</a></span>
-<span id="L134" class="lineno"><a class="lineno" href="#L134">134</a></span>
-<span id="L135" class="lineno"><a class="lineno" href="#L135">135</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Union</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
-<span class="line-any" title="No Anys on this line!">from statsmodels.stats.outliers_influence import variance_inflation_factor  # type: ignore</span>
+<span class="line-any" title="No Anys on this line!">from statsmodels.stats.outliers_influence import variance_inflation_factor</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from predictables.util import to_pd_df, tqdm</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">def _vif_i(</span>
-<span class="line-empty" title="No Anys on this line!">    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame, np.ndarray],</span>
-<span class="line-empty" title="No Anys on this line!">    col_i: Union[int, str],</span>
+<span class="line-empty" title="No Anys on this line!">    data: pd.DataFrame | pl.DataFrame | pl.LazyFrame | np.ndarray, col_i: int | str</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; float:</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-empty" title="No Anys on this line!">    Return the Variance Inflation Factor (VIF) Score for a given feature.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    data : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    data : pd.DataFrame | pl.DataFrame | pl.LazyFrame | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        The data to calculate the VIF score for. Will be converted to a numpy array.</span>
-<span class="line-empty" title="No Anys on this line!">    col_i : Union[int, str]</span>
+<span class="line-empty" title="No Anys on this line!">    col_i : int | str</span>
 <span class="line-empty" title="No Anys on this line!">        Either an integer or string representing the column/column index of the</span>
 <span class="line-empty" title="No Anys on this line!">        feature to calculate the VIF score for.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -230,7 +223,7 @@ Omitted Generics (x2)">    return variance_inflation_factor(exog, col_idx)</span
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">def _vif(</span>
-<span class="line-empty" title="No Anys on this line!">    data: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame, np.ndarray],</span>
+<span class="line-empty" title="No Anys on this line!">    data: pd.DataFrame | pl.DataFrame | pl.LazyFrame | np.ndarray,</span>
 <span class="line-precise" title="No Anys on this line!">    show_progress: bool = True,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pd.DataFrame:</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
@@ -258,7 +251,7 @@ Omitted Generics (x2)">def _vif(</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    data : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame, np.ndarray]</span>
+<span class="line-empty" title="No Anys on this line!">    data : pd.DataFrame | pl.DataFrame | pl.LazyFrame | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">        The data to calculate the VIF scores for. Will be converted to a numpy array.</span>
 <span class="line-empty" title="No Anys on this line!">    show_progress : bool, optional</span>
 <span class="line-empty" title="No Anys on this line!">        Whether to show a progress bar, by default True</span>
@@ -309,7 +302,7 @@ Omitted Generics (x3)">        column.append(i)</span>
 Omitted Generics (x5)">        vif_score.append(_vif_i(data, i))</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Return the VIF scores as a dataframe</span>
-<span class="line-precise" title="No Anys on this line!">    df = (</span>
+<span class="line-empty" title="No Anys on this line!">    return (</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x52)
 Explicit (x4)
@@ -317,7 +310,6 @@ Unannotated (x2)">        pd.DataFrame({"feature": column, "vif_score": vif_scor
 <span class="line-precise" title="No Anys on this line!">        .sort_values(by="vif_score", ascending=False)</span>
 <span class="line-precise" title="No Anys on this line!">        .reset_index(drop=True)</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
-<span class="line-precise" title="No Anys on this line!">    return df</span>
 </pre></td>
 </tr></tbody>
 </table>

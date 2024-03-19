@@ -41,6 +41,8 @@
 <span id="L31" class="lineno"><a class="lineno" href="#L31">31</a></span>
 <span id="L32" class="lineno"><a class="lineno" href="#L32">32</a></span>
 <span id="L33" class="lineno"><a class="lineno" href="#L33">33</a></span>
+<span id="L34" class="lineno"><a class="lineno" href="#L34">34</a></span>
+<span id="L35" class="lineno"><a class="lineno" href="#L35">35</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -55,7 +57,7 @@
 Omitted Generics (x3)
 Unannotated (x1)">def quintile_lift_page(</span>
 <span class="line-empty" title="No Anys on this line!">    rpt: Report,</span>
-<span class="line-empty" title="No Anys on this line!">    X: pd.Series,  # noqa: N803 # X is standard machine learning notation</span>
+<span class="line-empty" title="No Anys on this line!">    X: pd.Series,  # -- X is standard machine learning notation</span>
 <span class="line-empty" title="No Anys on this line!">    y: pd.Series,</span>
 <span class="line-empty" title="No Anys on this line!">    cv: pd.Series,</span>
 <span class="line-empty" title="No Anys on this line!">    **kwargs,</span>
@@ -70,11 +72,14 @@ Unannotated (x2)">    ax = _get_plot(X, y, cv, **kwargs)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x3)
-Unannotated (x1)">def _get_plot(X: pd.Series, y: pd.Series, cv: pd.Series, **kwargs) -&gt; plt.Axes:  # noqa: N803 # X is standard machine learning notation</span>
+Unannotated (x1)">def _get_plot(</span>
+<span class="line-empty" title="No Anys on this line!">    X: pd.Series, y: pd.Series, cv: pd.Series, **kwargs</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:  # -- X is standard machine learning notation</span>
 <span class="line-empty" title="No Anys on this line!">    """Get the quintile lift plot."""</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x4)
-Omitted Generics (x6)">    return quintile_lift_plot(X, y, cv, **kwargs)</span>
+Unimported (x2)
+Omitted Generics (x6)
+Unannotated (x2)">    return quintile_lift_plot(X, y, cv, **kwargs)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">def _save_plot(ax: plt.Axes | None = None, filename: str = "temp_plot.png") -&gt; None:</span>

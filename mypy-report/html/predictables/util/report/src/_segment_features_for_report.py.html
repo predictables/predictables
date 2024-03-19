@@ -209,15 +209,11 @@
 <span id="L199" class="lineno"><a class="lineno" href="#L199">199</a></span>
 <span id="L200" class="lineno"><a class="lineno" href="#L200">200</a></span>
 <span id="L201" class="lineno"><a class="lineno" href="#L201">201</a></span>
-<span id="L202" class="lineno"><a class="lineno" href="#L202">202</a></span>
-<span id="L203" class="lineno"><a class="lineno" href="#L203">203</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import logging</span>
 <span class="line-precise" title="No Anys on this line!">from dataclasses import dataclass</span>
-<span class="line-precise" title="No Anys on this line!">from typing import List, Optional, Union</span>
-<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
@@ -232,12 +228,12 @@ Omitted Generics (x8)">class Segment:</span>
 <span class="line-precise" title="No Anys on this line!">    file_num_start: int</span>
 <span class="line-precise" title="No Anys on this line!">    file_num_end: int</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x8)">    features: Union[pd.Series, pl.Series, np.ndarray, list]</span>
+Omitted Generics (x8)">    features: pd.Series | pl.Series | np.ndarray | list</span>
 <span class="line-precise" title="No Anys on this line!">    max_features: int  # for validation</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    idx_start: Optional[int] = None</span>
-<span class="line-precise" title="No Anys on this line!">    idx_end: Optional[int] = None</span>
-<span class="line-precise" title="No Anys on this line!">    n_features: Optional[int] = None</span>
+<span class="line-precise" title="No Anys on this line!">    idx_start: int | None = None</span>
+<span class="line-precise" title="No Anys on this line!">    idx_end: int | None = None</span>
+<span class="line-precise" title="No Anys on this line!">    n_features: int | None = None</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def __post_init__(self) -&gt; None:</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -352,21 +348,21 @@ Omitted Generics (x4)">            self.n_features = len(self.features)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">def segment_features_for_report(</span>
-<span class="line-empty" title="No Anys on this line!">    features: List[str], max_per_segment: int</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; List[Segment]:</span>
+<span class="line-empty" title="No Anys on this line!">    features: list[str], max_per_segment: int</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; list[Segment]:</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-empty" title="No Anys on this line!">    Segments the features into segments of size max_per_segment.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    features : List[str]</span>
+<span class="line-empty" title="No Anys on this line!">    features : list[str]</span>
 <span class="line-empty" title="No Anys on this line!">        The list of features to segment.</span>
 <span class="line-empty" title="No Anys on this line!">    max_per_segment : int</span>
 <span class="line-empty" title="No Anys on this line!">        The maximum number of features to include in each segment.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
 <span class="line-empty" title="No Anys on this line!">    -------</span>
-<span class="line-empty" title="No Anys on this line!">    List[Segment]</span>
+<span class="line-empty" title="No Anys on this line!">    list[Segment]</span>
 <span class="line-empty" title="No Anys on this line!">        The list of the segmented features.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Examples</span>

@@ -94,9 +94,6 @@
 <span id="L84" class="lineno"><a class="lineno" href="#L84">84</a></span>
 <span id="L85" class="lineno"><a class="lineno" href="#L85">85</a></span>
 <span id="L86" class="lineno"><a class="lineno" href="#L86">86</a></span>
-<span id="L87" class="lineno"><a class="lineno" href="#L87">87</a></span>
-<span id="L88" class="lineno"><a class="lineno" href="#L88">88</a></span>
-<span id="L89" class="lineno"><a class="lineno" href="#L89">89</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from unittest.mock import patch</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -107,7 +104,7 @@
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">@patch("predictables.util.src._load_env.load_dotenv")</span>
 <span class="line-precise" title="No Anys on this line!">@patch("predictables.util.src._load_env.dotenv_values")</span>
-<span class="line-any" title="No Anys on this line!">def test_load_env(mock_dotenv_values, mock_load_dotenv):  # noqa: ANN001</span>
+<span class="line-any" title="No Anys on this line!">def test_load_env(mock_dotenv_values, mock_load_dotenv):</span>
 <span class="line-empty" title="No Anys on this line!">    # Test when .env file is loaded successfully</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x2)">    mock_load_dotenv.return_value = True</span>
@@ -133,7 +130,7 @@ Omitted Generics (x4)">    assert load_env() == {}, f"Expected: { {} }, " f"Actu
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">@patch("predictables.util.src._load_env.load_dotenv")</span>
 <span class="line-precise" title="No Anys on this line!">@patch("predictables.util.src._load_env.dotenv_values")</span>
-<span class="line-any" title="No Anys on this line!">def test_load_env_empty_file(mock_dotenv_values, mock_load_dotenv):  # noqa: ANN001</span>
+<span class="line-any" title="No Anys on this line!">def test_load_env_empty_file(mock_dotenv_values, mock_load_dotenv):</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x2)">    mock_load_dotenv.return_value = True</span>
 <span class="line-any" title="Any Types on this line: 
@@ -145,7 +142,7 @@ Omitted Generics (x4)">    assert load_env() == {}, "Expected: {}, Actual: {}".f
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">@patch("predictables.util.src._load_env.load_dotenv")</span>
 <span class="line-precise" title="No Anys on this line!">@patch("predictables.util.src._load_env.dotenv_values")</span>
-<span class="line-any" title="No Anys on this line!">def test_load_env_invalid_format(mock_dotenv_values, mock_load_dotenv):  # noqa: ANN001</span>
+<span class="line-any" title="No Anys on this line!">def test_load_env_invalid_format(mock_dotenv_values, mock_load_dotenv):</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x2)">    mock_load_dotenv.return_value = True</span>
 <span class="line-any" title="Any Types on this line: 
@@ -161,7 +158,7 @@ Omitted Generics (x2)">        load_env()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">@patch("predictables.util.src._load_env.load_dotenv")</span>
 <span class="line-precise" title="No Anys on this line!">@patch("predictables.util.src._load_env.dotenv_values")</span>
-<span class="line-any" title="No Anys on this line!">def test_load_env_special_characters(mock_dotenv_values, mock_load_dotenv):  # noqa: ANN001</span>
+<span class="line-any" title="No Anys on this line!">def test_load_env_special_characters(mock_dotenv_values, mock_load_dotenv):</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x2)">    mock_load_dotenv.return_value = True</span>
 <span class="line-any" title="Any Types on this line: 
@@ -177,7 +174,7 @@ Omitted Generics (x2)">        {"VAR": "val$ue#1"}, load_env()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">@patch("predictables.util.src._load_env.load_dotenv")</span>
 <span class="line-precise" title="No Anys on this line!">@patch("predictables.util.src._load_env.dotenv_values")</span>
-<span class="line-any" title="No Anys on this line!">def test_load_env_large_values(mock_dotenv_values, mock_load_dotenv):  # noqa: ANN001</span>
+<span class="line-any" title="No Anys on this line!">def test_load_env_large_values(mock_dotenv_values, mock_load_dotenv):</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x2)">    mock_load_dotenv.return_value = True</span>
 <span class="line-any" title="Any Types on this line: 
@@ -195,10 +192,7 @@ Omitted Generics (x2)">        {"VAR": large_value}, load_env()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">@patch("predictables.util.src._load_env.load_dotenv")</span>
 <span class="line-precise" title="No Anys on this line!">@patch("predictables.util.src._load_env.dotenv_values")</span>
-<span class="line-any" title="No Anys on this line!">def test_load_env_large_number_of_variables(</span>
-<span class="line-empty" title="No Anys on this line!">    mock_dotenv_values,  # noqa: ANN001</span>
-<span class="line-empty" title="No Anys on this line!">    mock_load_dotenv,  # noqa: ANN001</span>
-<span class="line-empty" title="No Anys on this line!">):</span>
+<span class="line-any" title="No Anys on this line!">def test_load_env_large_number_of_variables(mock_dotenv_values, mock_load_dotenv):</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x2)">    mock_load_dotenv.return_value = True</span>
 <span class="line-any" title="Any Types on this line: 
@@ -219,7 +213,7 @@ Omitted Generics (x2)">        large_number_of_variables, load_env()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">@patch("predictables.util.src._load_env.load_dotenv")</span>
 <span class="line-precise" title="No Anys on this line!">@patch("predictables.util.src._load_env.dotenv_values")</span>
-<span class="line-any" title="No Anys on this line!">def test_load_env_non_string_keys_values(mock_dotenv_values, mock_load_dotenv):  # noqa: ANN001</span>
+<span class="line-any" title="No Anys on this line!">def test_load_env_non_string_keys_values(mock_dotenv_values, mock_load_dotenv):</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x2)">    mock_load_dotenv.return_value = True</span>
 <span class="line-any" title="Any Types on this line: 

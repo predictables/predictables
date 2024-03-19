@@ -25,8 +25,10 @@
 <span id="L15" class="lineno"><a class="lineno" href="#L15">15</a></span>
 <span id="L16" class="lineno"><a class="lineno" href="#L16">16</a></span>
 <span id="L17" class="lineno"><a class="lineno" href="#L17">17</a></span>
+<span id="L18" class="lineno"><a class="lineno" href="#L18">18</a></span>
 </pre></td>
-<td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from dataclasses import dataclass</span>
+<td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
+<span class="line-precise" title="No Anys on this line!">from dataclasses import dataclass</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -34,18 +36,18 @@
 <span class="line-precise" title="Any Types on this line: 
 Omitted Generics (x6)">@dataclass</span>
 <span class="line-precise" title="No Anys on this line!">class BaseLookup:</span>
-<span class="line-precise" title="No Anys on this line!">    name: str = None</span>
-<span class="line-precise" title="No Anys on this line!">    description: str = None</span>
-<span class="line-precise" title="No Anys on this line!">    id_column: str = None</span>
-<span class="line-precise" title="No Anys on this line!">    df: pd.DataFrame = None</span>
+<span class="line-precise" title="No Anys on this line!">    name: str | None = None</span>
+<span class="line-precise" title="No Anys on this line!">    description: str | None = None</span>
+<span class="line-precise" title="No Anys on this line!">    id_column: str | None = None</span>
+<span class="line-precise" title="No Anys on this line!">    df: pd.DataFrame | None = None</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">    def join_id(self, df):</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x5)">        return df.merge(self.df, on=self.id_column, how="left")</span>
+<span class="line-precise" title="No Anys on this line!">    def join_id(self, df: pd.DataFrame) -&gt; pd.DataFrame:</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x5)">        return df.merge(self.df, on=self.id_column, how="left")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">    def join_name(self, df):</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x5)">        return df.merge(self.df, on=self.name, how="left")</span>
+<span class="line-precise" title="No Anys on this line!">    def join_name(self, df: pd.DataFrame) -&gt; pd.DataFrame:</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x5)">        return df.merge(self.df, on=self.name, how="left")</span>
 </pre></td>
 </tr></tbody>
 </table>

@@ -775,7 +775,6 @@
 <span id="L765" class="lineno"><a class="lineno" href="#L765">765</a></span>
 <span id="L766" class="lineno"><a class="lineno" href="#L766">766</a></span>
 <span id="L767" class="lineno"><a class="lineno" href="#L767">767</a></span>
-<span id="L768" class="lineno"><a class="lineno" href="#L768">768</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -784,8 +783,7 @@
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
-<span class="line-precise" title="No Anys on this line!">from matplotlib.axes import Axes</span>
-<span class="line-any" title="No Anys on this line!">from sklearn.preprocessing import MinMaxScaler, StandardScaler  # type: ignore</span>
+<span class="line-any" title="No Anys on this line!">from sklearn.preprocessing import MinMaxScaler, StandardScaler</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from predictables.univariate._BaseModel import Model</span>
 <span class="line-precise" title="No Anys on this line!">from predictables.univariate.src._get_data import _get_data</span>
@@ -889,16 +887,17 @@ Omitted Generics (x2)">    x: pd.Series | None</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">    folds: pd.Series | None</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    normalization_obj: Optional[Union[MinMaxScaler, StandardScaler]]</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x4)">    normalization_obj: MinMaxScaler | StandardScaler</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">    def __init__(</span>
 <span class="line-empty" title="No Anys on this line!">        self,</span>
-<span class="line-empty" title="No Anys on this line!">        df_: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],</span>
-<span class="line-empty" title="No Anys on this line!">        df_val_: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],</span>
+<span class="line-empty" title="No Anys on this line!">        df_: pd.DataFrame | pl.DataFrame | pl.LazyFrame,</span>
+<span class="line-empty" title="No Anys on this line!">        df_val_: pd.DataFrame | pl.DataFrame | pl.LazyFrame,</span>
 <span class="line-precise" title="No Anys on this line!">        fold_col_: str = "cv",</span>
-<span class="line-precise" title="No Anys on this line!">        feature_col_: Optional[str] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        target_col_: Optional[str] = None,</span>
+<span class="line-precise" title="No Anys on this line!">        feature_col_: str | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        target_col_: str | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">        time_series_validation: bool = True,</span>
 <span class="line-precise" title="No Anys on this line!">        skewness_threshold: float = 0.5,</span>
 <span class="line-empty" title="No Anys on this line!">        **kwargs,</span>
@@ -1202,7 +1201,7 @@ Explicit (x1)">                        to_pd_df(self.df_val.with_columns(pl.lit(
 Omitted Generics (x2)">            cv = df["cv"]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">        X = (  # noqa: N806 (X is traditional for features in ML)</span>
+Omitted Generics (x1)">        X = (  # (X is traditional for features in ML)</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">            df.loc[:, self.feature_name]</span>
 <span class="line-precise" title="No Anys on this line!">            if df is not None</span>
@@ -1272,18 +1271,19 @@ Unannotated (x1)">            **kwargs,</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
+Omitted Generics (x3)
 Unannotated (x1)">    def plot_roc_curve(</span>
 <span class="line-empty" title="No Anys on this line!">        self,</span>
-<span class="line-precise" title="No Anys on this line!">        y: Optional[Union[pd.Series, pl.Series]] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        yhat: Optional[Union[pd.Series, pl.Series]] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        cv: Optional[Union[pd.Series, pl.Series]] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        coef: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        se: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        pvalues: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        ax: Optional[Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        figsize: Optional[Tuple[float, float]] = None,</span>
+<span class="line-precise" title="No Anys on this line!">        y: pd.Series | pl.Series | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        yhat: pd.Series | pl.Series | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        cv: pd.Series | pl.Series | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        coef: float | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        se: float | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        pvalues: float | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        ax: plt.Axes | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        figsize: tuple[float, float] | None = None,</span>
 <span class="line-empty" title="No Anys on this line!">        **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">    ) -&gt; Axes:</span>
+<span class="line-empty" title="No Anys on this line!">    ) -&gt; plt.Axes:</span>
 <span class="line-empty" title="No Anys on this line!">        """Plot the ROC curve for the target variable in total and for each fold."""</span>
 <span class="line-precise" title="No Anys on this line!">        if ax is None:</span>
 <span class="line-any" title="Any Types on this line: 
@@ -1293,8 +1293,10 @@ Unannotated (x2)">            _, ax0 = plt.subplots(figsize=self.figsize if figs
 <span class="line-any" title="Any Types on this line: 
 Explicit (x1)">            ax0 = ax</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        if cv is None:</span>
-<span class="line-precise" title="No Anys on this line!">            cv = (</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">        if cv is None:</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">            cv = (</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x7)">                to_pd_s(self.cv)</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -1304,32 +1306,32 @@ Omitted Generics (x6)">                else to_pd_s(self.df.select(self.fold_col
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-empty" title="No Anys on this line!">        else:</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x6)">            cv = to_pd_s(cv)</span>
+Omitted Generics (x8)">            cv = to_pd_s(cv)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
+<span class="line-imprecise" title="Any Types on this line: 
 Unimported (x2)
-Omitted Generics (x3)
-Explicit (x1)">        ax0 = roc_curve_plot(</span>
+Omitted Generics (x3)">        return roc_curve_plot(</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x14)">            to_pd_s(self.GetY("train")) if y is None else to_pd_s(y),</span>
+Omitted Generics (x16)">            to_pd_s(self.GetY("train")) if y is None else to_pd_s(y),</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x14)">            to_pd_s(self.GetYhat("train")) if yhat is None else to_pd_s(yhat),</span>
-<span class="line-precise" title="No Anys on this line!">            cv,</span>
+Omitted Generics (x16)">            to_pd_s(self.GetYhat("train")) if yhat is None else to_pd_s(yhat),</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">            cv,</span>
 <span class="line-precise" title="No Anys on this line!">            self.time_series_validation,</span>
 <span class="line-empty" title="No Anys on this line!">            (</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Error (x2)">                to_pd_df(self.agg_results).loc["Ave.", "coef"].to_numpy()  # type: ignore</span>
+Error (x2)">                to_pd_df(self.agg_results).loc["Ave.", "coef"].to_numpy()</span>
 <span class="line-precise" title="No Anys on this line!">                if coef is None</span>
 <span class="line-precise" title="No Anys on this line!">                else coef</span>
 <span class="line-empty" title="No Anys on this line!">            ),</span>
 <span class="line-empty" title="No Anys on this line!">            (</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Error (x2)">                to_pd_df(self.agg_results).loc["Ave.", "coef"].to_numpy()  # type: ignore</span>
+Error (x2)">                to_pd_df(self.agg_results).loc["Ave.", "coef"].to_numpy()</span>
 <span class="line-precise" title="No Anys on this line!">                if se is None</span>
 <span class="line-precise" title="No Anys on this line!">                else se</span>
 <span class="line-empty" title="No Anys on this line!">            ),</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x2)">            self.get("pvalues") if pvalues is None else pvalues,</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)">            self.get("pvalues") if pvalues is None else pvalues,</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x1)">            ax=ax0,</span>
 <span class="line-any" title="Any Types on this line: 
@@ -1337,20 +1339,18 @@ Unannotated (x1)">            figsize=self.figsize if figsize is None else figsi
 <span class="line-imprecise" title="Any Types on this line: 
 Unannotated (x1)">            **kwargs,</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">        return ax0</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">    def plot_density(</span>
 <span class="line-empty" title="No Anys on this line!">        self,</span>
 <span class="line-precise" title="No Anys on this line!">        data: str = "train",</span>
-<span class="line-precise" title="No Anys on this line!">        ax: Optional[Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        figsize: Optional[Tuple[float, float]] = None,</span>
+<span class="line-precise" title="No Anys on this line!">        ax: plt.Axes | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        figsize: tuple[float, float] | None = None,</span>
 <span class="line-empty" title="No Anys on this line!">        **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">    ) -&gt; Axes:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Plots the density of the feature at each level of the larget variable, both</span>
-<span class="line-empty" title="No Anys on this line!">        in total and for each fold.</span>
+<span class="line-empty" title="No Anys on this line!">    ) -&gt; plt.Axes:</span>
+<span class="line-empty" title="No Anys on this line!">        """Plot the density of the feature at each level of the larget variable.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">        Plots both in total and for each fold.</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x9)">        X, y, cv = self._plot_data(data)</span>
@@ -1364,9 +1364,8 @@ Unannotated (x2)">            _, ax0 = plt.subplots(figsize=self.figsize if figs
 <span class="line-any" title="Any Types on this line: 
 Explicit (x1)">            ax0 = ax</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x3)
-Explicit (x1)">        ax0 = density_plot(</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x3)">        return density_plot(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">            X,</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -1386,19 +1385,17 @@ Unannotated (x1)">            figsize=self.figsize if figsize is None else figsi
 <span class="line-imprecise" title="Any Types on this line: 
 Unannotated (x1)">            **kwargs,</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">        return ax0</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">    def plot_quintile_lift(</span>
 <span class="line-empty" title="No Anys on this line!">        self,</span>
 <span class="line-precise" title="No Anys on this line!">        data: str = "train",</span>
-<span class="line-precise" title="No Anys on this line!">        ax: Optional[Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">        figsize: Optional[Tuple[float, float]] = None,</span>
+<span class="line-precise" title="No Anys on this line!">        ax: plt.Axes | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">        figsize: tuple[float, float] | None = None,</span>
 <span class="line-empty" title="No Anys on this line!">        **kwargs,</span>
-<span class="line-empty" title="No Anys on this line!">    ) -&gt; Axes:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Plots the quintile lift for the target variable in total and for each fold.</span>
+<span class="line-empty" title="No Anys on this line!">    ) -&gt; plt.Axes:</span>
+<span class="line-empty" title="No Anys on this line!">        """Plot the quintile lift for the target variable in total and for each fold.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Quintile lift is a grouped bar plot with each quintile of the feature on the</span>
 <span class="line-empty" title="No Anys on this line!">        x-axis and the mean target value for each quintile on the y-axis. There are</span>
 <span class="line-empty" title="No Anys on this line!">        bars for both the actual target value and the predicted target value.</span>
@@ -1417,7 +1414,7 @@ Unannotated (x1)">    def plot_quintile_lift(</span>
 <span class="line-empty" title="No Anys on this line!">        ax : Axes, optional</span>
 <span class="line-empty" title="No Anys on this line!">            The axes to plot on, by default None. If None, a new figure and axes</span>
 <span class="line-empty" title="No Anys on this line!">            will be created.</span>
-<span class="line-empty" title="No Anys on this line!">        figsize : Tuple[float, float], optional</span>
+<span class="line-empty" title="No Anys on this line!">        figsize : tuple[float, float], optional</span>
 <span class="line-empty" title="No Anys on this line!">            The size of the figure, by default None. If None, the default figure</span>
 <span class="line-empty" title="No Anys on this line!">            size will be used.</span>
 <span class="line-empty" title="No Anys on this line!">        **kwargs</span>
@@ -1467,8 +1464,7 @@ Omitted Generics (x1)">        yhat_polars = pl.Series(yhat)</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x2)
 Omitted Generics (x3)
-Unannotated (x1)
-Explicit (x1)">        ax0 = quintile_lift_plot(</span>
+Unannotated (x1)">        return quintile_lift_plot(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">            X,</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -1481,54 +1477,58 @@ Unannotated (x1)">            figsize=self.figsize if figsize is None else figsi
 <span class="line-imprecise" title="Any Types on this line: 
 Unannotated (x1)">            **kwargs,</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">        return ax0</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">    def _add_to_report(self, rpt: Optional[Report] = None, **kwargs):</span>
+Unannotated (x1)">    def _add_to_report(self, rpt: Report | None = None, **kwargs) -&gt; Report:</span>
 <span class="line-precise" title="No Anys on this line!">        if rpt is None:</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)
 Unannotated (x1)">            rpt = Report(**kwargs)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">        def density():</span>
+<span class="line-precise" title="No Anys on this line!">        def density() -&gt; plt.Axes:</span>
+<span class="line-empty" title="No Anys on this line!">            """Plot the kernel density for the feature variable."""</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">            return self.plot_density(</span>
+Unannotated (x1)">            return self.plot_density(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                data="train", feature_name=self.feature_name, figsize=self.figsize</span>
+Unannotated (x1)">                data="train", feature_name=self.feature_name, figsize=self.figsize</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">        def cdf():</span>
+<span class="line-precise" title="No Anys on this line!">        def cdf() -&gt; plt.Axes:</span>
+<span class="line-empty" title="No Anys on this line!">            """Plot the empirical cumulative distribution function."""</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">            return self.plot_cdf(data="train", figsize=self.figsize)</span>
+Unannotated (x2)">            return self.plot_cdf(data="train", figsize=self.figsize)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">        def roc():</span>
+<span class="line-precise" title="No Anys on this line!">        def roc() -&gt; plt.Axes:</span>
+<span class="line-empty" title="No Anys on this line!">            """Plot the ROC curve for the target variable in total and for each fold."""</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">            return self.plot_roc_curve(</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                y=self.GetY("train"),</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                yhat=self.GetYhat("train"),</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x10)">                cv=self.df.select(self.fold_col).collect().to_pandas()[self.fold_col],  # type: ignore</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">                time_series_validation=self.time_series_validation,</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                coef=self.get("coef"),</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                se=self.get("se"),</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">                pvalues=self.get("pvalues"),</span>
+Omitted Generics (x3)
+Unannotated (x1)">            return self.plot_roc_curve(</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)">                y=self.GetY("train"),</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)">                yhat=self.GetYhat("train"),</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)
+Explicit (x2)">                cv=self.df.select(self.fold_col).collect().to_pandas()[self.fold_col],</span>
+<span class="line-precise" title="No Anys on this line!">                time_series_validation=self.time_series_validation,</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)">                coef=self.get("coef"),</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)">                se=self.get("se"),</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)">                pvalues=self.get("pvalues"),</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">                figsize=self.figsize,</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">        def quintile():</span>
+<span class="line-precise" title="No Anys on this line!">        def quintile() -&gt; plt.Axes:</span>
+<span class="line-empty" title="No Anys on this line!">            """Plot the quintile lift for the target variable in total and for each fold."""</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">            return self.plot_quintile_lift(data="test", figsize=self.figsize)</span>
+Unannotated (x2)">            return self.plot_quintile_lift(data="test", figsize=self.figsize)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">        rpt = (</span>
-<span class="line-precise" title="No Anys on this line!">            rpt.h2("Univariate Report")</span>
+<span class="line-precise" title="Any Types on this line: 
+Unimported (x1)">            rpt.h2("Univariate Report")</span>
 <span class="line-precise" title="No Anys on this line!">            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - Results")</span>
 <span class="line-precise" title="No Anys on this line!">            .spacer(0.5)</span>
 <span class="line-precise" title="No Anys on this line!">            .table(self.get_results())</span>
@@ -1537,12 +1537,12 @@ Unannotated (x3)">            return self.plot_quintile_lift(data="test", figsiz
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        try:</span>
 <span class="line-precise" title="No Anys on this line!">            rpt = (</span>
-<span class="line-precise" title="No Anys on this line!">                rpt.h2("Univariate Report")</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x3)">                rpt.h2("Univariate Report")</span>
 <span class="line-empty" title="No Anys on this line!">                .h3(</span>
 <span class="line-precise" title="No Anys on this line!">                    f"{plot_label(self.feature_name, incl_bracket=False)} - Kernel Density Plot"</span>
 <span class="line-empty" title="No Anys on this line!">                )</span>
-<span class="line-precise" title="Any Types on this line: 
-Unannotated (x1)">                .plot(density)</span>
+<span class="line-precise" title="No Anys on this line!">                .plot(density)</span>
 <span class="line-precise" title="No Anys on this line!">                .spacer(0.125)</span>
 <span class="line-empty" title="No Anys on this line!">                .caption(</span>
 <span class="line-precise" title="No Anys on this line!">                    "This plot shows the Gaussian kernel density for each level of the "</span>
@@ -1558,7 +1558,7 @@ Unannotated (x1)">                .plot(density)</span>
 <span class="line-empty" title="No Anys on this line!">                    "level show the mean/median ratio to help understand differences in "</span>
 <span class="line-empty" title="No Anys on this line!">                    "skewness between the levels of the target variable."</span>
 <span class="line-empty" title="No Anys on this line!">                )</span>
-<span class="line-empty" title="No Anys on this line!">                # TODO: Add in a table for the t-test results (Issue #62 on GitHub)</span>
+<span class="line-empty" title="No Anys on this line!">                # TODO(&lt;aaweaver-actuary&gt;): Add in a table for the t-test results (Issue #62 on GitHub)  # noqa: TD003</span>
 <span class="line-empty" title="No Anys on this line!">                .page_break()</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-precise" title="No Anys on this line!">        except np.linalg.LinAlgError as err:</span>
@@ -1580,13 +1580,13 @@ Unannotated (x1)">                .plot(density)</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        return (</span>
-<span class="line-precise" title="No Anys on this line!">            rpt.h2("Univariate Report")</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x9)">            rpt.h2("Univariate Report")</span>
 <span class="line-empty" title="No Anys on this line!">            .h3(</span>
 <span class="line-precise" title="No Anys on this line!">                f"{plot_label(self.feature_name, incl_bracket=False)} "</span>
 <span class="line-empty" title="No Anys on this line!">                "- Empirical CDF Plot"</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-precise" title="Any Types on this line: 
-Unannotated (x1)">            .plot(cdf)</span>
+<span class="line-precise" title="No Anys on this line!">            .plot(cdf)</span>
 <span class="line-precise" title="No Anys on this line!">            .spacer(0.125)</span>
 <span class="line-empty" title="No Anys on this line!">            .caption(</span>
 <span class="line-precise" title="No Anys on this line!">                "This plot shows the empirical cumulative distribution function for "</span>
@@ -1601,8 +1601,7 @@ Unannotated (x1)">            .plot(cdf)</span>
 <span class="line-empty" title="No Anys on this line!">            .page_break()</span>
 <span class="line-precise" title="No Anys on this line!">            .h2("Univariate Report")</span>
 <span class="line-precise" title="No Anys on this line!">            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - ROC Curve")</span>
-<span class="line-precise" title="Any Types on this line: 
-Unannotated (x1)">            .plot(roc)</span>
+<span class="line-precise" title="No Anys on this line!">            .plot(roc)</span>
 <span class="line-precise" title="No Anys on this line!">            .spacer(0.125)</span>
 <span class="line-empty" title="No Anys on this line!">            .caption(</span>
 <span class="line-precise" title="No Anys on this line!">                "This plot shows the receiver operating characteristic (ROC) curve "</span>
@@ -1630,8 +1629,7 @@ Unannotated (x1)">            .plot(roc)</span>
 <span class="line-empty" title="No Anys on this line!">            .page_break()</span>
 <span class="line-precise" title="No Anys on this line!">            .h2("Univariate Report")</span>
 <span class="line-precise" title="No Anys on this line!">            .h3(f"{plot_label(self.feature_name, incl_bracket=False)} - Quintile Lift")</span>
-<span class="line-precise" title="Any Types on this line: 
-Unannotated (x1)">            .plot(quintile)</span>
+<span class="line-precise" title="No Anys on this line!">            .plot(quintile)</span>
 <span class="line-precise" title="No Anys on this line!">            .spacer(0.125)</span>
 <span class="line-empty" title="No Anys on this line!">            .caption(</span>
 <span class="line-precise" title="No Anys on this line!">                "The quintile lift plot is meant to show the power of the single "</span>
@@ -1642,8 +1640,7 @@ Unannotated (x1)">            .plot(quintile)</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def get_results(self, use_formatting: bool = True) -&gt; pd.DataFrame:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Returns the self.results attribute, formatted for the univariate report.</span>
+<span class="line-empty" title="No Anys on this line!">        """Return the self.results attribute, formatted for the univariate report.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>

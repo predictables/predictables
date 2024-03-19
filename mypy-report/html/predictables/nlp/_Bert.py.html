@@ -205,23 +205,11 @@
 <span id="L195" class="lineno"><a class="lineno" href="#L195">195</a></span>
 <span id="L196" class="lineno"><a class="lineno" href="#L196">196</a></span>
 <span id="L197" class="lineno"><a class="lineno" href="#L197">197</a></span>
-<span id="L198" class="lineno"><a class="lineno" href="#L198">198</a></span>
-<span id="L199" class="lineno"><a class="lineno" href="#L199">199</a></span>
-<span id="L200" class="lineno"><a class="lineno" href="#L200">200</a></span>
-<span id="L201" class="lineno"><a class="lineno" href="#L201">201</a></span>
-<span id="L202" class="lineno"><a class="lineno" href="#L202">202</a></span>
-<span id="L203" class="lineno"><a class="lineno" href="#L203">203</a></span>
-<span id="L204" class="lineno"><a class="lineno" href="#L204">204</a></span>
-<span id="L205" class="lineno"><a class="lineno" href="#L205">205</a></span>
-<span id="L206" class="lineno"><a class="lineno" href="#L206">206</a></span>
-<span id="L207" class="lineno"><a class="lineno" href="#L207">207</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">import os</span>
-<span class="line-precise" title="No Anys on this line!">from typing import Optional, Union</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">from transformers import BertTokenizer  # type: ignore</span>
+<span class="line-precise" title="No Anys on this line!">from pathlib import Path</span>
+<span class="line-any" title="No Anys on this line!">from transformers import BertTokenizer</span>
 <span class="line-any" title="No Anys on this line!">from transformers import BertModel, BertTokenizerFast</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">default_folder = "/sas/data/project/EG/ActShared/SmallBusiness/aw/bert/bert-cased"</span>
@@ -236,12 +224,11 @@ Omitted Generics (x1)">    def __init__(</span>
 <span class="line-precise" title="No Anys on this line!">        null_symbol: str = "[MASK]",</span>
 <span class="line-precise" title="No Anys on this line!">        padding_symbol: str = "[PAD]",</span>
 <span class="line-precise" title="No Anys on this line!">        use_fast_tokenizer: bool = True,</span>
-<span class="line-precise" title="No Anys on this line!">        truncation: Union[bool, str] = True,</span>
-<span class="line-precise" title="No Anys on this line!">        padding: Union[bool, str] = True,</span>
-<span class="line-precise" title="No Anys on this line!">        text: Optional[Union[str, list]] = None,</span>
+<span class="line-precise" title="No Anys on this line!">        truncation: bool | str = True,</span>
+<span class="line-precise" title="No Anys on this line!">        padding: bool | str = True,</span>
+<span class="line-precise" title="No Anys on this line!">        text: str | list | None = None,</span>
 <span class="line-empty" title="No Anys on this line!">    ):</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Initializes the BERT model and tokenizer for generating embeddings.</span>
+<span class="line-empty" title="No Anys on this line!">        """Initialize the BERT model and tokenizer for generating embeddings.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>
@@ -258,9 +245,9 @@ Omitted Generics (x1)">    def __init__(</span>
 <span class="line-empty" title="No Anys on this line!">            Whether to use the fast tokenizer or not. The default is True. Use the</span>
 <span class="line-empty" title="No Anys on this line!">            slow tokenizer if you need to tokenize text longer than 512 tokens. The</span>
 <span class="line-empty" title="No Anys on this line!">            fast tokenizer is limited to 512 tokens.</span>
-<span class="line-empty" title="No Anys on this line!">        truncation : Union[bool, str]</span>
+<span class="line-empty" title="No Anys on this line!">        truncation : bool | str</span>
 <span class="line-empty" title="No Anys on this line!">            Whether to truncate text to 512 tokens. The default is True.</span>
-<span class="line-empty" title="No Anys on this line!">        padding : Union[bool, str]</span>
+<span class="line-empty" title="No Anys on this line!">        padding : bool | str</span>
 <span class="line-empty" title="No Anys on this line!">            Whether to pad text to 512 tokens. The default is True.</span>
 <span class="line-empty" title="No Anys on this line!">        text : Union[str, list]</span>
 <span class="line-empty" title="No Anys on this line!">            A string or list of strings to add to the BERT model. The default is None.</span>
@@ -291,8 +278,6 @@ Omitted Generics (x1)">    def __init__(</span>
 <span class="line-empty" title="No Anys on this line!">        text : list</span>
 <span class="line-empty" title="No Anys on this line!">            A list of text strings, each of which is individually tokenized and</span>
 <span class="line-empty" title="No Anys on this line!">            embedded.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-precise" title="No Anys on this line!">        self.folder = bert_folder</span>
 <span class="line-precise" title="No Anys on this line!">        self.model_name = bert_model_name</span>
@@ -310,18 +295,19 @@ Unimported (x4)">            self.tokenizer = BertTokenizer.from_pretrained(</sp
 <span class="line-precise" title="No Anys on this line!">                self.folder, truncation=truncation, padding=padding</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        self.model_path = os.path.join(self.folder, self.model_name)</span>
+<span class="line-precise" title="Any Types on this line: 
+Explicit (x1)">        self.model_path = Path(self.folder) / self.model_name</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x4)">        self.model = BertModel.from_pretrained(</span>
-<span class="line-precise" title="No Anys on this line!">            self.model_path, config=os.path.join(self.folder, "config.json")</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">            self.model_path, config=self.tokenizer.config</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">        self.text = text</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def _pad(self, string: str) -&gt; str:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Pads a string to the maximum length of 512 tokens.</span>
+<span class="line-empty" title="No Anys on this line!">        """Pad a string to the maximum length of 512 tokens.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>
@@ -343,9 +329,8 @@ Omitted Generics (x2)">        self.text = text</span>
 <span class="line-precise" title="No Anys on this line!">        return string</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">    def add(self, text: Union[list, str]) -&gt; None:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Adds text to the BERT model.</span>
+Omitted Generics (x1)">    def add(self, text: list | str) -&gt; None:</span>
+<span class="line-empty" title="No Anys on this line!">        """Add text to the BERT model.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>
@@ -385,8 +370,7 @@ Unimported (x2)">        return self.tokenizer(text, return_tensors="pt")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">    def embeddings(self, masked_string: str, pad: bool = True) -&gt; dict:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Generates embeddings for a string using the BERT model.</span>
+<span class="line-empty" title="No Anys on this line!">        """Generate embeddings for a string using the BERT model.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>
@@ -412,8 +396,7 @@ Omitted Generics (x4)">        return self.model(**self.tokens(masked_string))</
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">    def get_embeddings(self, masked_string: str, pad: bool = True) -&gt; list:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Generates embeddings for a string using the BERT model.</span>
+<span class="line-empty" title="No Anys on this line!">        """Generate embeddings for a string using the BERT model.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>
@@ -438,9 +421,7 @@ Omitted Generics (x6)">        outputs = self.embeddings(masked_string)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # get embeddings</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x4)">        embeddings = outputs["last_hidden_state"]</span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x1)">        return embeddings</span>
+Omitted Generics (x3)">        return outputs["last_hidden_state"]</span>
 </pre></td>
 </tr></tbody>
 </table>

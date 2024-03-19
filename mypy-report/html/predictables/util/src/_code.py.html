@@ -200,19 +200,17 @@
 <span id="L190" class="lineno"><a class="lineno" href="#L190">190</a></span>
 <span id="L191" class="lineno"><a class="lineno" href="#L191">191</a></span>
 <span id="L192" class="lineno"><a class="lineno" href="#L192">192</a></span>
-<span id="L193" class="lineno"><a class="lineno" href="#L193">193</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">import os</span>
+<span class="line-precise" title="No Anys on this line!">from pathlib import Path</span>
 <span class="line-precise" title="No Anys on this line!">import re</span>
-<span class="line-precise" title="No Anys on this line!">from typing import Optional</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">def read_file_code(filepath: str) -&gt; str:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Takes a file path and returns the code as a string. Assumes that the file uses</span>
-<span class="line-empty" title="No Anys on this line!">    consistent indentation (spaces or tabs).</span>
+<span class="line-empty" title="No Anys on this line!">    """Take a file path and returns the code as a string.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Assumes that the file uses consistent indentation (spaces or tabs).</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -235,29 +233,31 @@
 <span class="line-empty" title="No Anys on this line!">    &gt;&gt;&gt; print(read_file_code("predictables/util/src/_code.py"))  # doctest: skip</span>
 <span class="line-empty" title="No Anys on this line!">    # Path: predictables/util/src/_code.py</span>
 <span class="line-empty" title="No Anys on this line!">    import os</span>
-<span class="line-empty" title="No Anys on this line!">    from typing import Optional</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    def read_file_code(filepath: str) -&gt; str:</span>
 <span class="line-empty" title="No Anys on this line!">        ...(other code)...</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-precise" title="No Anys on this line!">    if not os.path.exists(filepath):</span>
+<span class="line-precise" title="No Anys on this line!">    import os</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="Any Types on this line: 
+Explicit (x1)">    if not Path(filepath).exists():</span>
 <span class="line-precise" title="Any Types on this line: 
 Omitted Generics (x2)">        if os.environ.get("PYTEST_CURRENT_TEST"):</span>
 <span class="line-precise" title="No Anys on this line!">            return "PYTEST_FILE_NOT_FOUND"</span>
 <span class="line-empty" title="No Anys on this line!">        else:</span>
 <span class="line-precise" title="No Anys on this line!">            raise FileNotFoundError(f"File {filepath} not found.")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="Any Types on this line: 
-Unimported (x7)
-Explicit (x1)">    with open(filepath, "r") as f:</span>
-<span class="line-precise" title="No Anys on this line!">        code = f.read()</span>
-<span class="line-precise" title="No Anys on this line!">    return code</span>
+<span class="line-any" title="Any Types on this line: 
+Error (x2)
+Explicit (x2)">    with Path.open(filepath, "r") as f:</span>
+<span class="line-any" title="Any Types on this line: 
+Error (x3)">        return f.read()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">def get_functions_from_file(filepath: str) -&gt; list:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Takes a file path and returns a list of functions in that file.</span>
+<span class="line-empty" title="No Anys on this line!">    """Take a file path and returns a list of functions in that file.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Assumes that the file uses consistent indentation (spaces or tabs).</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
@@ -292,8 +292,8 @@ Omitted Generics (x1)">def get_functions_from_file(filepath: str) -&gt; list:</s
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">def get_function_docstring(function_name: str, filepath: str) -&gt; str:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Takes a function name and file path and returns the docstring as a string.</span>
+<span class="line-empty" title="No Anys on this line!">    """Take a function name and file path and returns the docstring as a string.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Assumes that the file uses consistent indentation (spaces or tabs).</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
@@ -372,11 +372,11 @@ Omitted Generics (x8)">        return next(g for g in match.groups() if g is not
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">def get_files_from_folder(folder_path: str, file_type: Optional[str] = None) -&gt; list:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Takes a folder path and returns a list of files in that folder. If a file</span>
-<span class="line-empty" title="No Anys on this line!">    type is specified, only files of that type will be returned, otherwise all</span>
-<span class="line-empty" title="No Anys on this line!">    files will be returned.</span>
+Omitted Generics (x1)">def get_files_from_folder(folder_path: str, file_type: str | None = None) -&gt; list:</span>
+<span class="line-empty" title="No Anys on this line!">    """Take a folder path and returns a list of files in that folder.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    If a file type is specified, only files of that type will be returned,</span>
+<span class="line-empty" title="No Anys on this line!">    otherwise all files will be returned.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -397,11 +397,12 @@ Omitted Generics (x1)">def get_files_from_folder(folder_path: str, file_type: Op
 <span class="line-empty" title="No Anys on this line!">    &gt;&gt;&gt; get_files_from_folder("predictables/util/src")</span>
 <span class="line-empty" title="No Anys on this line!">    ['_code.py', 'not_a_python_file.txt', ...(other files)...] # doctest: +ELLIPSIS</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-precise" title="No Anys on this line!">    files = []</span>
-<span class="line-precise" title="No Anys on this line!">    for file in os.listdir(folder_path):</span>
-<span class="line-precise" title="No Anys on this line!">        if file_type is None or file.endswith(f".{file_type}"):</span>
-<span class="line-precise" title="No Anys on this line!">            files.append(file)</span>
-<span class="line-precise" title="No Anys on this line!">    return files</span>
+<span class="line-empty" title="No Anys on this line!">    return [</span>
+<span class="line-precise" title="No Anys on this line!">        f</span>
+<span class="line-precise" title="Any Types on this line: 
+Explicit (x1)">        for f in Path(folder_path).iterdir()</span>
+<span class="line-precise" title="No Anys on this line!">        if (file_type is None) or (f.suffix == f".{file_type}")</span>
+<span class="line-empty" title="No Anys on this line!">    ]</span>
 </pre></td>
 </tr></tbody>
 </table>

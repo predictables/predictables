@@ -206,8 +206,6 @@
 <span id="L196" class="lineno"><a class="lineno" href="#L196">196</a></span>
 <span id="L197" class="lineno"><a class="lineno" href="#L197">197</a></span>
 <span id="L198" class="lineno"><a class="lineno" href="#L198">198</a></span>
-<span id="L199" class="lineno"><a class="lineno" href="#L199">199</a></span>
-<span id="L200" class="lineno"><a class="lineno" href="#L200">200</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">import polars as pl</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -226,29 +224,31 @@ Unannotated (x1)">        self._numrator_col = None</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">        self._denominator_col = None</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">    def x_col(*args, **kwargs):</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x1)">    def x_col(*args, **kwargs) -&gt; "DynamicRollingMean":</span>
+<span class="line-empty" title="No Anys on this line!">        """Set the column to use as the numerator in the rolling mean calculation.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Warning</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
 <span class="line-empty" title="No Anys on this line!">        This method is not implemented for `DynamicRollingMean`. Use</span>
 <span class="line-empty" title="No Anys on this line!">        `numerator_col` and `denominator_col` instead.</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        raise NotImplementedError(</span>
-<span class="line-any" title="No Anys on this line!">            "This method is not implemented for `DynamicRollingMean`. "</span>
+<span class="line-precise" title="No Anys on this line!">        raise NotImplementedError(</span>
+<span class="line-precise" title="No Anys on this line!">            "This method is not implemented for `DynamicRollingMean`. "</span>
 <span class="line-empty" title="No Anys on this line!">            "Use `numerator_col` and `denominator_col` instead."</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">    def x_name(*args, **kwargs):</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x1)">    def x_name(*args, **kwargs) -&gt; "DynamicRollingMean":</span>
+<span class="line-empty" title="No Anys on this line!">        """Set the name of the column to use as the numerator in the rolling mean calculation.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Warning</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
 <span class="line-empty" title="No Anys on this line!">        This method is not implemented for `DynamicRollingMean`. Use</span>
 <span class="line-empty" title="No Anys on this line!">        `numerator_col` and `denominator_col` instead.</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        raise NotImplementedError(</span>
-<span class="line-any" title="No Anys on this line!">            "This method is not implemented for `DynamicRollingMean`. "</span>
+<span class="line-precise" title="No Anys on this line!">        raise NotImplementedError(</span>
+<span class="line-precise" title="No Anys on this line!">            "This method is not implemented for `DynamicRollingMean`. "</span>
 <span class="line-empty" title="No Anys on this line!">            "Use `numerator_col` and `denominator_col` instead."</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -272,7 +272,7 @@ Unannotated (x1)">        raise NotImplementedError(</span>
 <span class="line-empty" title="No Anys on this line!">        # Define an inside function to use the validate_column decorator</span>
 <span class="line-empty" title="No Anys on this line!">        # @validate_column(self._lf, x_col)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        def _set_numerator_col(self, numerator_col: str) -&gt; "DynamicRollingSum":</span>
+Unannotated (x1)">        def _set_numerator_col(self, numerator_col: str) -&gt; "DynamicRollingSum":  # noqa: ANN001</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x2)">            self.numerator_col = numerator_col</span>
 <span class="line-any" title="Any Types on this line: 
@@ -312,9 +312,7 @@ Unannotated (x1)">        self._denominator_col = denominator_col</span>
 <span class="line-precise" title="No Anys on this line!">        return self</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def build_numerator_col(self) -&gt; None:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Build the numerator column for the rolling mean calculation, and return</span>
-<span class="line-empty" title="No Anys on this line!">        the `LazyFrame` with the numerator column built.</span>
+<span class="line-empty" title="No Anys on this line!">        """Build the numerator column for the rolling mean calculation, and return the `LazyFrame` with the numerator column built.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>
@@ -407,9 +405,7 @@ Unannotated (x10)">            self._lf.join(den_lf, on=self._index_col, how="le
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def run(self) -&gt; pl.LazyFrame:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Run the rolling mean calculation on the `LazyFrame` and return the</span>
-<span class="line-empty" title="No Anys on this line!">        result.</span>
+<span class="line-empty" title="No Anys on this line!">        """Run the rolling mean calculation on the `LazyFrame` and return the result.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Returns</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>

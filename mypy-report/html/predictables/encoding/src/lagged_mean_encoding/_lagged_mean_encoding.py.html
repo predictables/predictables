@@ -1,12 +1,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link rel="stylesheet" type="text/css" href="../../../mypy-html.css">
+<link rel="stylesheet" type="text/css" href="../../../../../mypy-html.css">
 </head>
 <body>
-<h2>predictables.src._outliers</h2>
+<h2>predictables.encoding.src.lagged_mean_encoding._lagged_mean_encoding</h2>
 <table>
-<caption>predictables/src/_outliers.py</caption>
+<caption>predictables/encoding/src/lagged_mean_encoding/_lagged_mean_encoding.py</caption>
 <tbody><tr>
 <td class="table-lines"><pre><span id="L1" class="lineno"><a class="lineno" href="#L1">1</a></span>
 <span id="L2" class="lineno"><a class="lineno" href="#L2">2</a></span>
@@ -100,105 +100,104 @@
 <span id="L90" class="lineno"><a class="lineno" href="#L90">90</a></span>
 <span id="L91" class="lineno"><a class="lineno" href="#L91">91</a></span>
 </pre></td>
-<td class="table-code"><pre><span class="line-empty" title="No Anys on this line!">"""Implement the Box-Cox transformation.</span>
+<td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">The Box-Cox transformation is a power transformation of the data that is</span>
-<span class="line-empty" title="No Anys on this line!">intended to stabilize the variance of the data, and in particular to lessen</span>
-<span class="line-empty" title="No Anys on this line!">the impact of outliers on the data. It depends on a parameter lambda, which</span>
-<span class="line-empty" title="No Anys on this line!">is chosen to minimize the variance of the data. The Box-Cox transformation</span>
-<span class="line-empty" title="No Anys on this line!">is defined as:</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">(y^{lambda} - 1) / lambda, if lambda != 0</span>
-<span class="line-empty" title="No Anys on this line!">log(y), if lambda == 0</span>
-<span class="line-empty" title="No Anys on this line!">"""</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
-<span class="line-any" title="No Anys on this line!">from sklearn.preprocessing import PowerTransformer</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">def _calc_box_cox_transform(df: pl.LazyFrame, column: str, lambda_: float) -&gt; pl.Series:</span>
-<span class="line-empty" title="No Anys on this line!">    """Calculate the Box-Cox transformation of a Series.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    This is a helper function for the Box-Cox transformation, and is not</span>
-<span class="line-empty" title="No Anys on this line!">    intended to be called directly.</span>
+<span class="line-precise" title="No Anys on this line!">def lagged_mean_encoding(</span>
+<span class="line-empty" title="No Anys on this line!">    lazy_frame: pl.DataFrame,</span>
+<span class="line-empty" title="No Anys on this line!">    date_column: str,</span>
+<span class="line-empty" title="No Anys on this line!">    categorical_columns: list[str],</span>
+<span class="line-empty" title="No Anys on this line!">    numerator_column: str,</span>
+<span class="line-empty" title="No Anys on this line!">    denominator_column: str,</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; pl.Expr:</span>
+<span class="line-empty" title="No Anys on this line!">    """</span>
+<span class="line-empty" title="No Anys on this line!">    Adds a column to the lazyframe that represents an average ratio from the rolling year prior</span>
+<span class="line-empty" title="No Anys on this line!">    to the date in the date column. The average ratio is calculated by summing the numerator and</span>
+<span class="line-empty" title="No Anys on this line!">    denominator columns, subject to the categorical columns, and dividing the two.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    df : pl.LazyFrame</span>
-<span class="line-empty" title="No Anys on this line!">        The DataFrame containing the Series to transform.</span>
-<span class="line-empty" title="No Anys on this line!">    column : str</span>
-<span class="line-empty" title="No Anys on this line!">        The name of the Series to transform.</span>
-<span class="line-empty" title="No Anys on this line!">    lambda_ : float</span>
-<span class="line-empty" title="No Anys on this line!">        The parameter lambda of the Box-Cox transformation.</span>
+<span class="line-empty" title="No Anys on this line!">    lazy_frame : pl.DataFrame</span>
+<span class="line-empty" title="No Anys on this line!">        The lazyframe to be processed.</span>
+<span class="line-empty" title="No Anys on this line!">    date_column : str</span>
+<span class="line-empty" title="No Anys on this line!">        The name of the date column.</span>
+<span class="line-empty" title="No Anys on this line!">    categorical_columns : list[str]</span>
+<span class="line-empty" title="No Anys on this line!">        The list of names of the categorical columns.</span>
+<span class="line-empty" title="No Anys on this line!">    numerator_column : str</span>
+<span class="line-empty" title="No Anys on this line!">        The name of the numerator column.</span>
+<span class="line-empty" title="No Anys on this line!">    denominator_column : str</span>
+<span class="line-empty" title="No Anys on this line!">        The name of the denominator column.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
 <span class="line-empty" title="No Anys on this line!">    -------</span>
-<span class="line-empty" title="No Anys on this line!">    pl.LazyFrame</span>
-<span class="line-empty" title="No Anys on this line!">        The DataFrame with the transformed Series added.</span>
+<span class="line-empty" title="No Anys on this line!">    pl.Expr</span>
+<span class="line-empty" title="No Anys on this line!">        Polars expression to add the calculated column to the lazyframe.</span>
+<span class="line-empty" title="No Anys on this line!">    :return: Polars expression to add the calculated column to the lazyframe.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    # Calculate the Box-Cox transformation</span>
-<span class="line-precise" title="No Anys on this line!">    if lambda_ == 0:</span>
-<span class="line-precise" title="No Anys on this line!">        df = df.with_columns([pl.col(column).log().alias(f"{column}_box_cox")])</span>
-<span class="line-empty" title="No Anys on this line!">    else:</span>
-<span class="line-precise" title="No Anys on this line!">        df = df.with_columns(</span>
+<span class="line-empty" title="No Anys on this line!">    # Step 1: Filter rows based on date to include only the rolling year prior</span>
 <span class="line-any" title="Any Types on this line: 
-Error (x3)">            [((pl.col(column).pow(lambda_)) - 1) / lambda_.alias(f"{column}_box_cox")]</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
+Unannotated (x5)">    filtered_frame = filter_rolling_year_prior(lazy_frame, date_column)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    return df</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">def _box_cox_transform(</span>
-<span class="line-empty" title="No Anys on this line!">    data: pd.DataFrame | pl.DataFrame | pl.LazyFrame, column: str</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; tuple[pl.LazyFrame, float]:</span>
-<span class="line-empty" title="No Anys on this line!">    """Calculate the Box-Cox transformation of the given data.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    The Box-Cox transformation is a power transformation of the data that</span>
-<span class="line-empty" title="No Anys on this line!">    is intended to stabilize the variance of the data, and in particular to</span>
-<span class="line-empty" title="No Anys on this line!">    lessen the impact of outliers on the data. It depends on a parameter</span>
-<span class="line-empty" title="No Anys on this line!">    lambda, which is estimated to minimize the variance of the data. The</span>
-<span class="line-empty" title="No Anys on this line!">    Box-Cox transformation is defined as:</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    (y^{lambda} - 1) / lambda, if lambda != 0</span>
-<span class="line-empty" title="No Anys on this line!">    log(y), if lambda == 0</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    Parameters</span>
-<span class="line-empty" title="No Anys on this line!">    ----------</span>
-<span class="line-empty" title="No Anys on this line!">    data : Union[pd.DataFrame,</span>
-<span class="line-empty" title="No Anys on this line!">                 pl.DataFrame,</span>
-<span class="line-empty" title="No Anys on this line!">                 pl.LazyFrame]</span>
-<span class="line-empty" title="No Anys on this line!">        The data to transform.</span>
-<span class="line-empty" title="No Anys on this line!">    column : str</span>
-<span class="line-empty" title="No Anys on this line!">        The name of the column to transform.</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    Returns</span>
-<span class="line-empty" title="No Anys on this line!">    -------</span>
-<span class="line-empty" title="No Anys on this line!">    pl.LazyFrame</span>
-<span class="line-empty" title="No Anys on this line!">        The DataFrame with the transformed column added.</span>
-<span class="line-empty" title="No Anys on this line!">    float</span>
-<span class="line-empty" title="No Anys on this line!">        The estimated lambda parameter.</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    # Get the column from the DataFrame</span>
-<span class="line-precise" title="Any Types on this line: 
-Omitted Generics (x39)
-Explicit (x4)
-Unannotated (x2)">    if isinstance(data, pd.DataFrame):</span>
-<span class="line-precise" title="Any Types on this line: 
-Explicit (x2)">        df = pl.from_pandas(data)</span>
-<span class="line-precise" title="Any Types on this line: 
-Unimported (x2)">    elif isinstance(data, (pl.DataFrame, pl.LazyFrame)):</span>
-<span class="line-precise" title="No Anys on this line!">        df = data</span>
-<span class="line-empty" title="No Anys on this line!">    else:</span>
-<span class="line-unanalyzed" title="No Anys on this line!">        raise TypeError("data must be a DataFrame or LazyFrame")</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    # Calculate the Box-Cox transformation</span>
+<span class="line-empty" title="No Anys on this line!">    # Step 2: Group by categorical columns and date, then sum the numerator and denominator</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x3)">    box_cox = PowerTransformer(method="box-cox", standardize=False)</span>
+Unannotated (x8)">    grouped_frame = group_and_sum(</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x3)">    box_cox.fit(df[[column]])</span>
+Unannotated (x1)">        filtered_frame,</span>
+<span class="line-precise" title="No Anys on this line!">        categorical_columns,</span>
+<span class="line-precise" title="No Anys on this line!">        date_column,</span>
+<span class="line-precise" title="No Anys on this line!">        numerator_column,</span>
+<span class="line-precise" title="No Anys on this line!">        denominator_column,</span>
+<span class="line-empty" title="No Anys on this line!">    )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    # Step 3: Calculate the rolling average ratio for each category</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x8)">    rolling_avg_ratio = calculate_rolling_average_ratio(</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x1)">        grouped_frame,</span>
+<span class="line-precise" title="No Anys on this line!">        categorical_columns,</span>
+<span class="line-precise" title="No Anys on this line!">        date_column,</span>
+<span class="line-precise" title="No Anys on this line!">        numerator_column,</span>
+<span class="line-precise" title="No Anys on this line!">        denominator_column,</span>
+<span class="line-empty" title="No Anys on this line!">    )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    # Step 4: Merge the rolling average ratio back into the original lazyframe</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x6)">    return merge_back_to_lazyframe(</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x1)">        lazy_frame, rolling_avg_ratio, categorical_columns, date_column</span>
+<span class="line-empty" title="No Anys on this line!">    )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"># Placeholder for filtering rows based on date</span>
+<span class="line-any" title="No Anys on this line!">def filter_rolling_year_prior(lazy_frame, date_column):</span>
+<span class="line-any" title="No Anys on this line!">    pass</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"># Placeholder for grouping and summing</span>
+<span class="line-any" title="No Anys on this line!">def group_and_sum(</span>
+<span class="line-empty" title="No Anys on this line!">    lazy_frame, categorical_columns, date_column, numerator_column, denominator_column</span>
+<span class="line-empty" title="No Anys on this line!">):</span>
+<span class="line-any" title="No Anys on this line!">    pass</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"># Placeholder for calculating rolling average ratio</span>
+<span class="line-any" title="No Anys on this line!">def calculate_rolling_average_ratio(</span>
+<span class="line-empty" title="No Anys on this line!">    grouped_frame,</span>
+<span class="line-empty" title="No Anys on this line!">    categorical_columns,</span>
+<span class="line-empty" title="No Anys on this line!">    date_column,</span>
+<span class="line-empty" title="No Anys on this line!">    numerator_column,</span>
+<span class="line-empty" title="No Anys on this line!">    denominator_column,</span>
+<span class="line-empty" title="No Anys on this line!">):</span>
+<span class="line-any" title="No Anys on this line!">    pass</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"># Placeholder for merging back to the original lazyframe</span>
+<span class="line-any" title="No Anys on this line!">def merge_back_to_lazyframe(</span>
+<span class="line-empty" title="No Anys on this line!">    original_frame, modified_frame, categorical_columns, date_column</span>
+<span class="line-empty" title="No Anys on this line!">):</span>
+<span class="line-any" title="No Anys on this line!">    pass</span>
 </pre></td>
 </tr></tbody>
 </table>
