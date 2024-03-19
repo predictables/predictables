@@ -1,3 +1,7 @@
+"""Get data from FRED and return as a pandas DataFrame."""
+
+from __future__ import annotations
+
 import fredapi
 import pandas as pd
 from _api_keys import get_fred_api_key
@@ -8,7 +12,7 @@ Fred = fredapi.Fred(api_key=get_fred_api_key())
 def get_fred_data(
     series_id: str,
     start_date: str = "2016-01-01",
-    end_date: str = None,
+    end_date: str | None = None,
     frequency: str = "d",
 ) -> pd.DataFrame:
     """

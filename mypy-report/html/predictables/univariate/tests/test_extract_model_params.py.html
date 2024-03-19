@@ -386,7 +386,7 @@ Unannotated (x9)">    ), f"Expected fitted coeficient close to {linear_coef}, go
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)">    assert is_close(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x6)">        result.pvalues.values, sm_linear_model.pvalues.values</span>
+Unannotated (x8)">        result.pvalues.to_numpy(), sm_linear_model.pvalues.to_numpy()</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x10)">    ), f"Expected pvalues close to {sm_linear_model.pvalues}, got {result.pvalues}"</span>
 <span class="line-any" title="Any Types on this line: 
@@ -398,21 +398,21 @@ Unannotated (x10)">    ), f"Expected AIC close to {sm_linear_model.aic}, got {re
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)">    assert is_close(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x6)">        result.se.values, sm_linear_model.bse.values</span>
+Unannotated (x8)">        result.se.to_numpy(), sm_linear_model.bse.to_numpy()</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x10)">    ), f"Expected SE close to {sm_linear_model.bse}, got {result.se}"</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)">    assert is_close(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x9)">        result.lower_ci, sm_linear_model.conf_int().values.ravel()[0]</span>
+Unannotated (x10)">        result.lower_ci, sm_linear_model.conf_int().to_numpy().ravel()[0]</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x15)">    ), f"Expected lower confidence interval close to {sm_linear_model.conf_int().values.ravel()[0]}, got {result.lower_ci}"</span>
+Unannotated (x16)">    ), f"Expected lower confidence interval close to {sm_linear_model.conf_int().to_numpy().ravel()[0]}, got {result.lower_ci}"</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)">    assert is_close(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x9)">        result.upper_ci, sm_linear_model.conf_int().values.ravel()[1]</span>
+Unannotated (x10)">        result.upper_ci, sm_linear_model.conf_int().to_numpy().ravel()[1]</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x15)">    ), f"Expected upper confidence interval close to {sm_linear_model.conf_int().values.ravel()[1]}, got {result.upper_ci}"</span>
+Unannotated (x16)">    ), f"Expected upper confidence interval close to {sm_linear_model.conf_int().to_numpy().ravel()[1]}, got {result.upper_ci}"</span>
 <span class="line-empty" title="No Anys on this line!">    assert (</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)">        result.n == sm_linear_model.nobs</span>
@@ -442,7 +442,7 @@ Unannotated (x9)">    ), f"Expected fitted coeficient close to {logistic_coef}, 
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)">    assert is_close(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x6)">        result.pvalues.values, sm_logistic_model.pvalues.values</span>
+Unannotated (x8)">        result.pvalues.to_numpy(), sm_logistic_model.pvalues.to_numpy()</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x10)">    ), f"Expected pvalues close to {sm_logistic_model.pvalues}, got {result.pvalues}"</span>
 <span class="line-any" title="Any Types on this line: 
@@ -454,21 +454,21 @@ Unannotated (x10)">    ), f"Expected AIC close to {sm_logistic_model.aic}, got {
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)">    assert is_close(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x6)">        result.se.values, sm_logistic_model.bse.values</span>
+Unannotated (x8)">        result.se.to_numpy(), sm_logistic_model.bse.to_numpy()</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x10)">    ), f"Expected SE close to {sm_logistic_model.bse}, got {result.se}"</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)">    assert is_close(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x9)">        result.lower_ci, sm_logistic_model.conf_int().values.ravel()[0]</span>
+Unannotated (x10)">        result.lower_ci, sm_logistic_model.conf_int().to_numpy().ravel()[0]</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x15)">    ), f"Expected lower confidence interval close to {sm_logistic_model.conf_int().values.ravel()[0]}, got {result.lower_ci}"</span>
+Unannotated (x16)">    ), f"Expected lower confidence interval close to {sm_logistic_model.conf_int().to_numpy().ravel()[0]}, got {result.lower_ci}"</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)">    assert is_close(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x9)">        result.upper_ci, sm_logistic_model.conf_int().values.ravel()[1]</span>
+Unannotated (x10)">        result.upper_ci, sm_logistic_model.conf_int().to_numpy().ravel()[1]</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x15)">    ), f"Expected upper confidence interval close to {sm_logistic_model.conf_int().values.ravel()[1]}, got {result.upper_ci}"</span>
+Unannotated (x16)">    ), f"Expected upper confidence interval close to {sm_logistic_model.conf_int().to_numpy().ravel()[1]}, got {result.upper_ci}"</span>
 <span class="line-empty" title="No Anys on this line!">    assert (</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)">        result.n == sm_logistic_model.nobs</span>

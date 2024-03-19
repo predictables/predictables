@@ -904,7 +904,7 @@ Explicit (x5)">            pl.lit(self.model.bse.iloc[0]).alias("se")</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-precise" title="No Anys on this line!">        self.results = self.results.with_columns(</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x7)">            pl.lit(self.model.conf_int()[0].values[0]).alias("lower_ci")</span>
+Explicit (x8)">            pl.lit(self.model.conf_int()[0].to_numpy()[0]).alias("lower_ci")</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-precise" title="No Anys on this line!">        self.results = self.results.with_columns(</span>
 <span class="line-any" title="Any Types on this line: 
@@ -1160,16 +1160,17 @@ Omitted Generics (x1)">            X = to_pd_df(X)</span>
 Omitted Generics (x114)
 Explicit (x2)">        if isinstance(X, pd.Series):</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x9)
-Explicit (x3)
-Error (x2)">            X = X.values.reshape(-1, 1) if X.shape[1] == 1 else X  # type: ignore</span>
+Omitted Generics (x11)
+Explicit (x4)
+Unannotated (x1)">            X = X.to_numpy().reshape(-1, 1) if X.shape[1] == 1 else X</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # fit normalized data</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x3)">        self.scaler = StandardScaler()</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x3)
-Omitted Generics (x3)">        self.scaler.fit(X.values)</span>
+Omitted Generics (x5)
+Explicit (x1)">        self.scaler.fit(X.to_numpy())</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">    def standardize(</span>
@@ -1239,8 +1240,8 @@ Unannotated (x2)">            return pd.DataFrame(</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x3)">                self.scaler.transform(</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x16)
-Explicit (x13)">                    np.array(X.values).reshape(-1, 1) if X.shape[1] == 1 else X</span>
+Omitted Generics (x22)
+Explicit (x10)">                    np.array(X.to_numpy()).reshape(-1, 1) if X.shape[1] == 1 else X</span>
 <span class="line-empty" title="No Anys on this line!">                ),  # type: ignore</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">                index=X.index,</span>

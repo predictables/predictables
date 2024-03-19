@@ -412,11 +412,11 @@ Unannotated (x3)">    folds = df["cv"]</span>
 Unannotated (x2)
 Unimported (x1)">    clf_total = LogisticRegression()</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x9)">    clf_total.fit(X.values.reshape(-1, 1), y)</span>
+Unannotated (x10)">    clf_total.fit(X.to_numpy().reshape(-1, 1), y)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Predict probabilities</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x10)">    yhat_proba = clf_total.predict_proba(X.values.reshape(-1, 1))[:, 1]</span>
+Unannotated (x11)">    yhat_proba = clf_total.predict_proba(X.to_numpy().reshape(-1, 1))[:, 1]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # ROC AUC</span>
 <span class="line-any" title="Any Types on this line: 
@@ -437,9 +437,9 @@ Unannotated (x4)">        idx_val = folds == fold</span>
 Unannotated (x2)
 Unimported (x1)">        clf = LogisticRegression()</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x13)">        clf.fit(X[idx_train].values.reshape(-1, 1), y[idx_train])</span>
+Unannotated (x14)">        clf.fit(X[idx_train].to_numpy().reshape(-1, 1), y[idx_train])</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x12)">        yhat_proba_val = clf.predict_proba(X[idx_val].values.reshape(-1, 1))[:, 1]</span>
+Unannotated (x13)">        yhat_proba_val = clf.predict_proba(X[idx_val].to_numpy().reshape(-1, 1))[:, 1]</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x6)
 Unimported (x1)">        auc_val = roc_auc_score(y[idx_val], yhat_proba_val)</span>
@@ -491,11 +491,11 @@ Unannotated (x3)">    folds = df["cv"]</span>
 Unannotated (x2)
 Unimported (x1)">    clf_total = LogisticRegression()</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x9)">    clf_total.fit(X.values.reshape(-1, 1), y)</span>
+Unannotated (x10)">    clf_total.fit(X.to_numpy().reshape(-1, 1), y)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Predict probabilities</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x10)">    yhat_proba = clf_total.predict_proba(X.values.reshape(-1, 1))[:, 1]</span>
+Unannotated (x11)">    yhat_proba = clf_total.predict_proba(X.to_numpy().reshape(-1, 1))[:, 1]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)

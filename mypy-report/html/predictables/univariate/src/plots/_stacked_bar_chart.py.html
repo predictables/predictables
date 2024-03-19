@@ -307,7 +307,7 @@ Unannotated (x3)
 Explicit (x1)
 Error (x4)">        ax.bar(indices, ct[col], bottom=bottoms, label=col, alpha=alpha)</span>
 <span class="line-any" title="Any Types on this line: 
-Error (x4)">        bottoms += ct[col].values</span>
+Error (x5)">        bottoms += ct[col].to_numpy()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # get the feature/target names</span>
 <span class="line-any" title="Any Types on this line: 
@@ -343,12 +343,12 @@ Unannotated (x3)">                xy=(x_value, y - y_offset),</span>
 <span class="line-precise" title="No Anys on this line!">                va="center",</span>
 <span class="line-precise" title="No Anys on this line!">                ha="center",</span>
 <span class="line-precise" title="No Anys on this line!">                fontsize=fontsize,</span>
-<span class="line-precise" title="No Anys on this line!">                bbox=dict(</span>
-<span class="line-precise" title="No Anys on this line!">                    facecolor=facecolor,</span>
-<span class="line-precise" title="No Anys on this line!">                    edgecolor="black",</span>
-<span class="line-precise" title="No Anys on this line!">                    alpha=0.9,</span>
-<span class="line-precise" title="No Anys on this line!">                    boxstyle="round,pad=0.2",</span>
-<span class="line-empty" title="No Anys on this line!">                ),</span>
+<span class="line-empty" title="No Anys on this line!">                bbox={</span>
+<span class="line-precise" title="No Anys on this line!">                    "facecolor": facecolor,</span>
+<span class="line-precise" title="No Anys on this line!">                    "edgecolor": "black",</span>
+<span class="line-precise" title="No Anys on this line!">                    "alpha": 0.9,</span>
+<span class="line-precise" title="No Anys on this line!">                    "boxstyle": "round,pad=0.2",</span>
+<span class="line-empty" title="No Anys on this line!">                },</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
@@ -361,12 +361,12 @@ Unannotated (x1)">                xy=(x_value, 1 - y_offset),</span>
 <span class="line-precise" title="No Anys on this line!">                va="center",</span>
 <span class="line-precise" title="No Anys on this line!">                ha="center",</span>
 <span class="line-precise" title="No Anys on this line!">                fontsize=fontsize,</span>
-<span class="line-precise" title="No Anys on this line!">                bbox=dict(</span>
-<span class="line-precise" title="No Anys on this line!">                    facecolor=facecolor,</span>
-<span class="line-precise" title="No Anys on this line!">                    edgecolor="black",</span>
-<span class="line-precise" title="No Anys on this line!">                    alpha=0.9,</span>
-<span class="line-precise" title="No Anys on this line!">                    boxstyle="round,pad=0.2",</span>
-<span class="line-empty" title="No Anys on this line!">                ),</span>
+<span class="line-empty" title="No Anys on this line!">                bbox={</span>
+<span class="line-precise" title="No Anys on this line!">                    "facecolor": facecolor,</span>
+<span class="line-precise" title="No Anys on this line!">                    "edgecolor": "black",</span>
+<span class="line-precise" title="No Anys on this line!">                    "alpha": 0.9,</span>
+<span class="line-precise" title="No Anys on this line!">                    "boxstyle": "round,pad=0.2",</span>
+<span class="line-empty" title="No Anys on this line!">                },</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Set x and y labels</span>
@@ -468,7 +468,7 @@ Explicit (x1)">                    y=y_value / 2 + bottoms[i],</span>
 <span class="line-any" title="Any Types on this line: 
 Error (x1)">                    text=f"{y_value:.1%}",</span>
 <span class="line-precise" title="No Anys on this line!">                    showarrow=False,</span>
-<span class="line-precise" title="No Anys on this line!">                    font=dict(size=fontsize),</span>
+<span class="line-precise" title="No Anys on this line!">                    font={"size": fontsize},</span>
 <span class="line-precise" title="No Anys on this line!">                    bgcolor=facecolor,</span>
 <span class="line-precise" title="No Anys on this line!">                    opacity=0.8,</span>
 <span class="line-empty" title="No Anys on this line!">                )</span>
@@ -482,20 +482,19 @@ Unimported (x3)">    fig.update_layout(</span>
 <span class="line-precise" title="No Anys on this line!">        barmode="stack",</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">        title=f"Distribution of {feature} by {target}",</span>
+<span class="line-empty" title="No Anys on this line!">        xaxis={</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Error (x1)">        xaxis=dict(</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">            title=feature,</span>
-<span class="line-precise" title="No Anys on this line!">            tickmode="array",</span>
+Omitted Generics (x1)">            "title": feature,</span>
+<span class="line-precise" title="No Anys on this line!">            "tickmode": "array",</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x13)
 Omitted Generics (x4)
-Error (x2)">            tickvals=np.arange(len(ct.index)),</span>
+Error (x2)">            "tickvals": np.arange(len(ct.index)),</span>
 <span class="line-any" title="Any Types on this line: 
-Error (x2)">            ticktext=ct.index,</span>
-<span class="line-empty" title="No Anys on this line!">        ),</span>
-<span class="line-precise" title="No Anys on this line!">        yaxis=dict(title="Percentage", tickformat=".1%"),</span>
-<span class="line-precise" title="No Anys on this line!">        legend=dict(font=dict(size=fontsize), title="Legend"),</span>
+Error (x2)">            "ticktext": ct.index,</span>
+<span class="line-empty" title="No Anys on this line!">        },</span>
+<span class="line-precise" title="No Anys on this line!">        yaxis={"title": "Percentage", "tickformat": ".1%"},</span>
+<span class="line-precise" title="No Anys on this line!">        legend={"font": {"size": fontsize}, "title": "Legend"},</span>
 <span class="line-precise" title="No Anys on this line!">        plot_bgcolor="rgba(0,0,0,0)",  # Set transparent background color</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>

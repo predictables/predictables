@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import Enum
 
 import pandas as pd
@@ -84,7 +86,7 @@ class DataType(Enum):
     def __repr__(self) -> str:
         return self.name
 
-    def __eq__(self, other: str | DataType) -> bool:
+    def __eq__(self, other: str | "DataType") -> bool:
         if isinstance(other, str):
             return self.name == other
         elif isinstance(other, DataType):
@@ -92,7 +94,7 @@ class DataType(Enum):
         else:
             return False
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: "DataType") -> bool:
         return not self.__eq__(other)
 
     def __hash__(self) -> int:
@@ -245,14 +247,18 @@ class DataType(Enum):
             max_diff_eq_1 = max_diff == 1
 
         if dtype in numeric_dtypes:
-            if n_unique <= 2:  # noqa: PLR2004 - 2 is not magic -- it's the number of unique values in a binary column
+            if (
+                n_unique <= 2
+            ):  # - 2 is not magic -- it's the number of unique values in a binary column
                 return DataType.BINARY
             elif max_diff_eq_1:
                 return DataType.CATEGORICAL
             else:
                 return DataType.CONTINUOUS
         elif dtype in categorical_dtypes:
-            return DataType.BINARY if n_unique <= 2 else DataType.CATEGORICAL  # noqa: PLR2004 - 2 is not magic -- it's the number of unique values in a binary column
+            return (
+                DataType.BINARY if n_unique <= 2 else DataType.CATEGORICAL
+            )  # - 2 is not magic -- it's the number of unique values in a binary column
         elif dtype in date_dtypes:
             return DataType.DATE
         else:

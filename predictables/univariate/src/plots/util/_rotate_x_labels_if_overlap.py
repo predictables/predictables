@@ -60,10 +60,10 @@ def rotate_x_labels_if_overlap(ax: plt.Axes) -> plt.Axes:
     #         if ax.figure is not None:
     #             ax.figure.canvas.draw()
     """
-    return rotate_x_labels_if_overlap_V2(ax)
+    return rotate_x_labels_if_overlap_v2(ax)
 
 
-def rotate_x_labels_if_overlap_V2(ax: plt.Axes) -> plt.Axes:
+def rotate_x_labels_if_overlap_v2(ax: plt.Axes) -> plt.Axes:
     """
     Rotates the x-axis tick labels of a given Matplotlib axis if they overlap.
 
@@ -77,7 +77,7 @@ def rotate_x_labels_if_overlap_V2(ax: plt.Axes) -> plt.Axes:
     matplotlib.axes.Axes
         The same Matplotlib axis object with potentially rotated x-axis tick labels.
     """
-    d.msg("Entering rotate_x_labels_if_overlap_V2")
+    d.msg("Entering rotate_x_labels_if_overlap_v2")
 
     rotation_angle = _calculate_rotation_angle(ax)
     if rotation_angle > 0:
@@ -89,14 +89,12 @@ def rotate_x_labels_if_overlap_V2(ax: plt.Axes) -> plt.Axes:
     for label in ax.xaxis.get_ticklabels():
         label.set_horizontalalignment("right")
 
-    d.msg("Exiting rotate_x_labels_if_overlap_V2")
+    d.msg("Exiting rotate_x_labels_if_overlap_v2")
     return ax
 
 
 def _calculate_rotation_angle(ax: plt.Axes) -> int:
-    """
-    Determines if there's overlap between x-axis tick labels and calculates
-    the necessary rotation angle.
+    """Determine if there's overlap between x-axis tick labels and calculate the necessary rotation angle.
 
     Parameters
     ----------
@@ -134,7 +132,7 @@ def _calculate_rotation_angle(ax: plt.Axes) -> int:
                 )
                 if d.turned_on:
                     (
-                        ax.get_figure().savefig(f"overlap_{d.uuid}.png")  # type: ignore
+                        ax.get_figure().savefig(f"overlap_{d.uuid}.png")
                         if ax is not None
                         else d.msg("No figure to save...")
                     )
@@ -144,7 +142,7 @@ def _calculate_rotation_angle(ax: plt.Axes) -> int:
                     f"Overlap found when rotation_angle={rotation_angle}, breaking..."
                 )
                 break
-            else:
+
                 d.msg(
                     f"No overlap found between {label_i.get_text()} "
                     f"and {label_j.get_text()} "
@@ -164,8 +162,7 @@ def _calculate_rotation_angle(ax: plt.Axes) -> int:
 
 
 def _get_bbox(label: plt.Text, ax: plt.Axes) -> Bbox:
-    """
-    Returns the bounding box of a given x-axis tick label.
+    """Return the bounding box of a given x-axis tick label.
 
     Parameters
     ----------

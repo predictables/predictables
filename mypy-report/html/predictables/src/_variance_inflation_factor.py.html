@@ -186,13 +186,15 @@ Unannotated (x2)">    if isinstance(data, pd.DataFrame):</span>
 <span class="line-precise" title="No Anys on this line!">            data.columns.tolist().index(col_i) if isinstance(col_i, str) else col_i</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x4)">        exog = to_pd_df(data).values</span>
+Omitted Generics (x6)
+Explicit (x1)">        exog = to_pd_df(data).to_numpy()</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)
 Unimported (x1)">    elif isinstance(data, pl.DataFrame):</span>
 <span class="line-precise" title="No Anys on this line!">        col_idx = data.columns.index(col_i) if isinstance(col_i, str) else col_i</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x4)">        exog = to_pd_df(data).values</span>
+Omitted Generics (x6)
+Explicit (x1)">        exog = to_pd_df(data).to_numpy()</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)
 Unimported (x1)">    elif isinstance(data, pl.LazyFrame):</span>
@@ -200,7 +202,8 @@ Unimported (x1)">    elif isinstance(data, pl.LazyFrame):</span>
 <span class="line-precise" title="No Anys on this line!">            data.collect().columns.index(col_i) if isinstance(col_i, str) else col_i</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x4)">        exog = to_pd_df(data).values</span>
+Omitted Generics (x6)
+Explicit (x1)">        exog = to_pd_df(data).to_numpy()</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x4)
 Explicit (x3)">    elif isinstance(data, np.ndarray):</span>

@@ -192,12 +192,12 @@ Explicit (x2)">    return pl.from_pandas(pd_series_y())</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="No Anys on this line!">def np_X():</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">    return pd_df_X().values</span>
+Unannotated (x4)">    return pd_df_X().to_numpy()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="No Anys on this line!">def np_y():</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x5)">    return pd_series_y().values.ravel()</span>
+Unannotated (x6)">    return pd_series_y().to_numpy().ravel()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">@pytest.mark.parametrize(</span>

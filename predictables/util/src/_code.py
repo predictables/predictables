@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-import os
+from pathlib import Path
 import re
-from typing import Optional
 
 
 def read_file_code(filepath: str) -> str:
-    """
-    Takes a file path and returns the code as a string. Assumes that the file uses
-    consistent indentation (spaces or tabs).
+    """Take a file path and returns the code as a string.
+
+    Assumes that the file uses consistent indentation (spaces or tabs).
 
     Parameters
     ----------
@@ -36,20 +35,21 @@ def read_file_code(filepath: str) -> str:
     def read_file_code(filepath: str) -> str:
         ...(other code)...
     """
-    if not os.path.exists(filepath):
+    import os
+
+    if not Path(filepath).exists():
         if os.environ.get("PYTEST_CURRENT_TEST"):
             return "PYTEST_FILE_NOT_FOUND"
         else:
             raise FileNotFoundError(f"File {filepath} not found.")
 
-    with open(filepath, "r") as f:
-        code = f.read()
-    return code
+    with Path.open(filepath, "r") as f:
+        return f.read()
 
 
 def get_functions_from_file(filepath: str) -> list:
-    """
-    Takes a file path and returns a list of functions in that file.
+    """Take a file path and returns a list of functions in that file.
+
     Assumes that the file uses consistent indentation (spaces or tabs).
 
     Parameters
@@ -84,8 +84,8 @@ def get_functions_from_file(filepath: str) -> list:
 
 
 def get_function_docstring(function_name: str, filepath: str) -> str:
-    """
-    Takes a function name and file path and returns the docstring as a string.
+    """Take a function name and file path and returns the docstring as a string.
+
     Assumes that the file uses consistent indentation (spaces or tabs).
 
     Parameters
@@ -161,11 +161,11 @@ def get_function_docstring(function_name: str, filepath: str) -> str:
         return ""
 
 
-def get_files_from_folder(folder_path: str, file_type: Optional[str] = None) -> list:
-    """
-    Takes a folder path and returns a list of files in that folder. If a file
-    type is specified, only files of that type will be returned, otherwise all
-    files will be returned.
+def get_files_from_folder(folder_path: str, file_type: str | None = None) -> list:
+    """Take a folder path and returns a list of files in that folder.
+
+    If a file type is specified, only files of that type will be returned,
+    otherwise all files will be returned.
 
     Parameters
     ----------
@@ -186,8 +186,8 @@ def get_files_from_folder(folder_path: str, file_type: Optional[str] = None) -> 
     >>> get_files_from_folder("predictables/util/src")
     ['_code.py', 'not_a_python_file.txt', ...(other files)...] # doctest: +ELLIPSIS
     """
-    files = []
-    for file in os.listdir(folder_path):
-        if file_type is None or file.endswith(f".{file_type}"):
-            files.append(file)
-    return files
+    return [
+        f
+        for f in Path(folder_path).iterdir()
+        if (file_type is None) or (f.suffix == f".{file_type}")
+    ]

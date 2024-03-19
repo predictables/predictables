@@ -394,7 +394,6 @@
 <span id="L384" class="lineno"><a class="lineno" href="#L384">384</a></span>
 <span id="L385" class="lineno"><a class="lineno" href="#L385">385</a></span>
 <span id="L386" class="lineno"><a class="lineno" href="#L386">386</a></span>
-<span id="L387" class="lineno"><a class="lineno" href="#L387">387</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -662,18 +661,19 @@ Omitted Generics (x2)">    _plotby_name = plot_by.name if plot_by.name is not No
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # For each level of plot_by, plot the cdf of x, conditional on plot_by</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)
-Omitted Generics (x18)">    for level in plot_by.drop_duplicates().sort_values().values:</span>
+Explicit (x2)
+Omitted Generics (x20)
+Unannotated (x1)">    for level in plot_by.drop_duplicates().sort_values().to_numpy():</span>
 <span class="line-precise" title="No Anys on this line!">        label = plot_label(_plotby_name)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        label += f" = {level}"</span>
+Explicit (x1)">        label += f" = {level}"</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x8)
-Unannotated (x2)">        x_cdf = calculate_cdf(x[plot_by == level])</span>
+Explicit (x2)">        x_cdf = calculate_cdf(x[plot_by == level])</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x2)
-Unannotated (x4)
-Explicit (x2)">        ax_ = x_cdf.plot.line(ax=ax_, label=label, color=binary_color(level), **kwargs)</span>
+Unannotated (x3)
+Explicit (x3)">        ax_ = x_cdf.plot.line(ax=ax_, label=label, color=binary_color(level), **kwargs)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    if x_label is not None:</span>
 <span class="line-any" title="Any Types on this line: 
@@ -744,30 +744,32 @@ Explicit (x1)">        ax_ = ax</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # For each level of plot_by, plot the cdf of x, conditional on plot_by</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)
-Omitted Generics (x18)">    for level in plot_by.drop_duplicates().sort_values().values:</span>
+Explicit (x2)
+Omitted Generics (x20)
+Unannotated (x1)">    for level in plot_by.drop_duplicates().sort_values().to_numpy():</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">        if cv_folds is not None:</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)
-Omitted Generics (x18)">            for fold in cv_folds.drop_duplicates().sort_values().values:</span>
+Explicit (x2)
+Omitted Generics (x20)
+Unannotated (x1)">            for fold in cv_folds.drop_duplicates().sort_values().to_numpy():</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x6)">                x_cdf = calculate_cdf(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x8)">                    filter_by_cv_fold(</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x4)
-Unannotated (x1)">                        x, fold, cv_folds, time_series_validation, "test"</span>
+Explicit (x1)">                        x, fold, cv_folds, time_series_validation, "test"</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)
+Explicit (x2)
 Omitted Generics (x7)">                    )[(to_pd_s(plot_by) == level)]</span>
 <span class="line-empty" title="No Anys on this line!">                )</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x1)
 Explicit (x1)">                ax_ = x_cdf.plot(</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x1)
-Unannotated (x2)">                    kind="line", ax=ax_, color=binary_color(level), **kwargs</span>
+Explicit (x2)
+Unannotated (x1)">                    kind="line", ax=ax_, color=binary_color(level), **kwargs</span>
 <span class="line-empty" title="No Anys on this line!">                )</span>
 <span class="line-empty" title="No Anys on this line!">        else:</span>
 <span class="line-unanalyzed" title="No Anys on this line!">            return ax_</span>
@@ -885,11 +887,10 @@ Omitted Generics (x1)">    if x.isna().any():</span>
 <span class="line-precise" title="No Anys on this line!">        raise ValueError("The array must not contain NaNs.")</span>
 <span class="line-empty" title="No Anys on this line!">    # Can't contain infs:</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x6)">    if get_column_dtype(x) == "continuous":</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Explicit (x6)
-Omitted Generics (x5)">        if np.isinf(x.values).any():</span>
-<span class="line-precise" title="No Anys on this line!">            raise ValueError("The array must not contain infs.")</span>
+Omitted Generics (x11)
+Explicit (x1)
+Unannotated (x1)">    if get_column_dtype(x) == "continuous" and np.isinf(x.to_numpy()).any():</span>
+<span class="line-precise" title="No Anys on this line!">        raise ValueError("The array must not contain infs.")</span>
 <span class="line-empty" title="No Anys on this line!">    # Can't contain non-numeric values:</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x3)

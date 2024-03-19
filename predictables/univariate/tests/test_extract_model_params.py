@@ -1,7 +1,7 @@
 import numpy as np
 import polars as pl
 import pytest
-from scipy.stats import norm  # type: ignore
+from scipy.stats import norm
 
 
 @pytest.fixture
@@ -16,15 +16,14 @@ def linear_coef():
 
 @pytest.fixture
 def noise():
-    np.random.seed(0)
-    return norm.rvs(size=500)
+    rv = np.random.Generator(np.random.PCG64(12345))
+    return rv.normal(0, 1, 500)
 
 
 @pytest.fixture
 def df(noise, logistic_coef, linear_coef):
     return (
         pl.DataFrame({"X0": range(500)})
-        # .lazy()
         .with_columns(
             [
                 pl.Series(noise).alias("epsilon"),

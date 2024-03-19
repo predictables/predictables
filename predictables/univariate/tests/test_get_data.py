@@ -1,6 +1,6 @@
 import pandas.testing as pdt
 import pytest
-
+import pandas as pd
 from predictables.univariate.src._get_data import (
     _filter_df_for_cv,
     _filter_df_for_cv_test,
@@ -20,20 +20,18 @@ def sample_dataframe():
 @pytest.fixture
 def sample_val_dataframe():
     # Create a sample validation dataframe for testing
-    df_val = pd.DataFrame({"data": ["F", "G", "H", "I", "J"]})
-    return df_val
+    return pd.DataFrame({"data": ["F", "G", "H", "I", "J"]})
 
 
 @pytest.fixture
-def sample_total_dataframe(df, df_val):
+def sample_total_dataframe(df_val):
     # Create a sample total dataframe for testing
-    df_total = pd.DataFrame(
+    return pd.DataFrame(
         {
             "fold_col": [1, 2, 3, 3, 4, 5] + ([-42] * df_val.shape[0]),
             "data": ["A", "B", "C", "c1", "D", "E", "F", "G", "H", "I", "J"],
         }
     )
-    return df_total
 
 
 def test_filter_df_for_cv_train_valid_input(sample_dataframe):
@@ -86,8 +84,6 @@ def test_filter_df_for_cv_valid_input(sample_dataframe, data, fold_col, values):
     output = _filter_df_for_cv(
         sample_dataframe, fold, "fold_col", data, time_series_validation=False
     ).reset_index(drop=True)
-    print(f"\n\noutput:\n=======================\n{output}")
-    print(f"\n\nexpected_output:\n=======================\n{expected_output}")
     (
         pdt.assert_frame_equal(output, expected_output),
         f"Expected {expected_output}, got {output}",

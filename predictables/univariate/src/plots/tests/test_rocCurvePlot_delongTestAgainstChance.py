@@ -28,13 +28,12 @@ def cancer():
 @pytest.fixture
 def sample_data() -> Tuple[pd.Series, pd.Series, pd.Series]:
     """Generate sample data for testing."""
-    np.random.seed(42)  # Ensure reproducibility
-    yhat_proba_logits = pd.Series(np.random.rand(100))
+    rg = np.random.default_rng(42)  # Ensure reproducibility
+    yhat_proba_logits = pd.Series(rg.random(100))
     yhat_proba = 1 / (1 + np.exp(-yhat_proba_logits))  # Convert to probabilities
-    y = pd.Series(
-        np.random.binomial(1, yhat_proba, size=100)
-    )  # Simulate binary outcomes
-    fold = pd.Series(np.random.choice([1, 2, 3, 4, 5], size=100))
+    y = pd.Series(rg.binomial(1, yhat_proba, size=100))
+
+    fold = pd.Series(rg.choice([1, 2, 3, 4, 5], size=100))
     return y, pd.Series(yhat_proba), fold
 
 
@@ -51,9 +50,8 @@ def sample_variance(sample_data: Tuple[pd.Series, pd.Series, pd.Series]) -> floa
 @pytest.fixture
 def sample_variance_bootstrap(sample_data: Tuple[pd.Series, pd.Series, pd.Series]):
     y, yhat_proba, _ = sample_data
-    idx = np.array(
-        [np.random.choice(len(y), len(y), replace=True) for _ in range(2500)]
-    )
+    rg = np.random.default_rng(42)
+    idx = np.array([rg.choice(len(y), len(y), replace=True) for _ in range(2500)])
 
     # Turn y and yhat from a pd.Series (vector) to a np.array (matrix) of shape (n, 2500)
     y = pd.Series([y[i] for i in idx])
@@ -70,12 +68,12 @@ def sample_variance_bootstrap(sample_data: Tuple[pd.Series, pd.Series, pd.Series
 @pytest.fixture
 def large_sample_data():
     """Generate larger sample data for testing."""
-    np.random.seed(42)
+    rg = np.random.default_rng(42)
     size = 100000  # Increase the size for a more realistic test case
-    yhat_proba_logits = pd.Series(np.random.rand(size))
+    yhat_proba_logits = pd.Series(rg.random(size))
     yhat_proba = 1 / (1 + np.exp(-yhat_proba_logits))
-    y = pd.Series(np.random.binomial(1, yhat_proba, size=size))
-    fold = pd.Series(np.random.choice([1, 2, 3, 4, 5], size=size))
+    y = pd.Series(rg.binomial(1, yhat_proba, size=size))
+    fold = pd.Series(rg.choice([1, 2, 3, 4, 5], size=size))
     return y, yhat_proba, fold
 
 
@@ -83,8 +81,11 @@ def test_delong_test_against_chance_basic(sample_data):
     """Test basic functionality of the DeLong test."""
     y, yhat_proba, fold = sample_data
     z_stat, p_value = _delong_test_against_chance(y, yhat_proba, fold, False)
-    assert (
-        isinstance(z_stat, float) and isinstance(p_value, float)
+    assert isinstance(
+        z_stat, float
+    ), f"Z-statistic {z_stat} and p-value {p_value} should be floats, not {type(z_stat)} and {type(p_value)}."
+    assert isinstance(
+        p_value, float
     ), f"Z-statistic {z_stat} and p-value {p_value} should be floats, not {type(z_stat)} and {type(p_value)}."
 
 
@@ -140,7 +141,7 @@ def test_delong_test_against_chance_known_values(cancer):
 
 def test_delong_test_gives_significant_estimate(cancer):
     """Test the DeLong test with (almost) cancer dataset I know is significant."""
-    from sklearn.linear_model import LogisticRegression  # type: ignore
+    from sklearn.linear_model import LogisticRegression  # type: ignore[import-untyped]
 
     df = cancer
     X = df["comp_1"]
@@ -162,10 +163,10 @@ def test_delong_test_gives_significant_estimate(cancer):
 
 def test_delong_test_random_prediction():
     """Test the DeLong test with random predictions."""
-    np.random.seed(42)
-    y = pd.Series(np.random.binomial(1, 0.5, 10000))
-    yhat_proba = pd.Series(np.random.rand(10000))
-    fold = pd.Series(np.random.choice([1, 2, 3, 4, 5], 10000))
+    rg = np.random.default_rng(42)
+    y = pd.Series(rg.binomial(1, 0.5, 10000))
+    yhat_proba = pd.Series(rg.random(10000))
+    fold = pd.Series(rg.choice([1, 2, 3, 4, 5], 10000))
 
     z_stat, p_value = _delong_test_against_chance(y, yhat_proba, fold, False)
     assert (
@@ -198,11 +199,11 @@ def test_delong_test_invalid_inputs():
 @pytest.mark.parametrize("p", [(0.25,), (0.5,), (0.75,)])
 def test_delong_test_cross_validation_consistency(n_folds, p):
     """Test consistency of DeLong test results across cross-validation splits."""
-    from sklearn.model_selection import KFold  # type: ignore
+    from sklearn.model_selection import KFold  # type: ignore[import-untyped]
 
-    np.random.seed(42)
-    y = pd.Series(np.random.binomial(1, p[0], 10000))
-    yhat_proba = pd.Series(np.random.rand(10000))
+    rg = np.random.default_rng(42)
+    y = pd.Series(rg.binomial(1, p[0], 10000))
+    yhat_proba = pd.Series(rg.random(10000))
     kf = KFold(n_splits=n_folds[0], shuffle=True, random_state=42)
 
     z_stats = []

@@ -192,7 +192,6 @@ def density_plot_mpl(
         and not isinstance(x_min, float)
         and not isinstance(x_min, int)
     ):
-        print(f"x_min: {x_min}")
         raise ValueError(f"x_min must be a float or int, but got {type(x_min)}.")
 
     if (
@@ -200,7 +199,6 @@ def density_plot_mpl(
         and not isinstance(x_max, float)
         and not isinstance(x_max, int)
     ):
-        print(f"x_max: {x_max}")
         raise ValueError(f"x_max must be a float or int, but got {type(x_max)}.")
 
     if not isinstance(grid_bins, int):

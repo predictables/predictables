@@ -333,7 +333,7 @@ def _make_quintiles(modeled_target: pd.Series | pl.Series) -> pd.Series:
             )
             + 1
         )
-        if len(modeled_target.unique()) < 5  # noqa: PLR2004 (5 is based off of quintiles)
+        if len(modeled_target.unique()) < 5  # (5 is based off of quintiles)
         else pd.qcut(modeled_target, 5, labels=False, duplicates="drop") + 1
     )
 

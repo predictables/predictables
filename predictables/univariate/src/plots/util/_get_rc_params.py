@@ -4,8 +4,7 @@ from typing import Any, Dict
 
 
 def get_rc_params() -> Dict[str, Any]:
-    """
-    Returns a dictionary of Matplotlib RC parameters for customizing plot styles.
+    """Return a dictionary of Matplotlib RC parameters for customizing plot styles.
 
     The function returns a dictionary of Matplotlib RC parameters that can be used to
     customize the style of Matplotlib plots. The parameters include font sizes, tick
@@ -23,6 +22,6 @@ def get_rc_params() -> Dict[str, Any]:
         "xtick.labelsize": 14,
         "ytick.labelsize": 14,
         "figure.titlesize": 16,
-        "figure.figsize": (7, 7),  # type: ignore
+        "figure.figsize": (7, 7),
         "figure.dpi": 150,
     }

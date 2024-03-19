@@ -358,7 +358,7 @@ Omitted Generics (x4)">        if isinstance(text, list):</span>
 Omitted Generics (x4)">            self.text = text if self.text is None else self.text</span>
 <span class="line-precise" title="No Anys on this line!">        elif isinstance(text, str):</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x4)">            self.text = [text] if self.text is None else [self.text] + [text]</span>
+Omitted Generics (x3)">            self.text = [text] if self.text is None else [self.text, text]</span>
 <span class="line-empty" title="No Anys on this line!">        else:</span>
 <span class="line-unanalyzed" title="No Anys on this line!">            raise ValueError(</span>
 <span class="line-unanalyzed" title="No Anys on this line!">                "`text` must be a string or a list of strings. Please try again."</span>

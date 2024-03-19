@@ -1,10 +1,12 @@
+"""Get unemployment data from FRED and save to parquet files."""
+
 from __future__ import annotations
 
 from typing import Optional
 
 import pandas as pd
-from _api_keys import get_fred_api_key  # type: ignore
-from fredapi import Fred  # type: ignore
+from _api_keys import get_fred_api_key
+from fredapi import Fred
 
 from predictables.util.src._tqdm_func import tqdm
 
@@ -47,7 +49,8 @@ def get_fred_data(
     )
 
 
-def fred_unemployment_data():
+def fred_unemployment_data() -> None:
+    """Get unemployment data from FRED and save to parquet files."""
     unemployment = pd.read_parquet("./fred_unemployment.parquet")
     state_unemployment_list = []
     state_series = (

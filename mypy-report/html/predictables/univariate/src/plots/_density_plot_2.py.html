@@ -804,6 +804,10 @@
 <span id="L794" class="lineno"><a class="lineno" href="#L794">794</a></span>
 <span id="L795" class="lineno"><a class="lineno" href="#L795">795</a></span>
 <span id="L796" class="lineno"><a class="lineno" href="#L796">796</a></span>
+<span id="L797" class="lineno"><a class="lineno" href="#L797">797</a></span>
+<span id="L798" class="lineno"><a class="lineno" href="#L798">798</a></span>
+<span id="L799" class="lineno"><a class="lineno" href="#L799">799</a></span>
+<span id="L800" class="lineno"><a class="lineno" href="#L800">800</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -1020,7 +1024,6 @@ Explicit (x2)">            f"cv_label must be a pandas or polars Series, but got
 <span class="line-precise" title="No Anys on this line!">        and not isinstance(x_min, float)</span>
 <span class="line-precise" title="No Anys on this line!">        and not isinstance(x_min, int)</span>
 <span class="line-empty" title="No Anys on this line!">    ):</span>
-<span class="line-precise" title="No Anys on this line!">        print(f"x_min: {x_min}")</span>
 <span class="line-unanalyzed" title="No Anys on this line!">        raise ValueError(f"x_min must be a float or int, but got {type(x_min)}.")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    if (</span>
@@ -1028,7 +1031,6 @@ Explicit (x2)">            f"cv_label must be a pandas or polars Series, but got
 <span class="line-precise" title="No Anys on this line!">        and not isinstance(x_max, float)</span>
 <span class="line-precise" title="No Anys on this line!">        and not isinstance(x_max, int)</span>
 <span class="line-empty" title="No Anys on this line!">    ):</span>
-<span class="line-precise" title="No Anys on this line!">        print(f"x_max: {x_max}")</span>
 <span class="line-unanalyzed" title="No Anys on this line!">        raise ValueError(f"x_max must be a float or int, but got {type(x_max)}.")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    if not isinstance(grid_bins, int):</span>
@@ -1100,12 +1102,12 @@ Unannotated (x1)">        significance_statement,</span>
 <span class="line-precise" title="No Anys on this line!">        ha="left",</span>
 <span class="line-precise" title="No Anys on this line!">        va="center",</span>
 <span class="line-precise" title="No Anys on this line!">        fontsize=24 * (figsize[0] / 16),</span>
-<span class="line-precise" title="No Anys on this line!">        bbox=dict(</span>
-<span class="line-precise" title="No Anys on this line!">            boxstyle="round,pad=0.3",</span>
-<span class="line-precise" title="No Anys on this line!">            edgecolor="lightgrey",</span>
-<span class="line-precise" title="No Anys on this line!">            facecolor="white",</span>
-<span class="line-precise" title="No Anys on this line!">            alpha=0.5,</span>
-<span class="line-empty" title="No Anys on this line!">        ),</span>
+<span class="line-empty" title="No Anys on this line!">        bbox={</span>
+<span class="line-precise" title="No Anys on this line!">            "boxstyle": "round,pad=0.3",</span>
+<span class="line-precise" title="No Anys on this line!">            "edgecolor": "lightgrey",</span>
+<span class="line-precise" title="No Anys on this line!">            "facecolor": "white",</span>
+<span class="line-precise" title="No Anys on this line!">            "alpha": 0.5,</span>
+<span class="line-empty" title="No Anys on this line!">        },</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Add a title reflecting the t-test results</span>
@@ -1790,8 +1792,8 @@ Unannotated (x1)">    ax.axvline(median1, color="orange", linestyle="dotted", li
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Define annotation position and arrow properties based on mean0 and mean1</span>
 <span class="line-precise" title="No Anys on this line!">    pos0, pos1 = ("right", "left") if mean0 &lt; mean1 else ("left", "right")</span>
-<span class="line-precise" title="No Anys on this line!">    arrowprops0 = dict(arrowstyle="-&gt;", lw=1)</span>
-<span class="line-precise" title="No Anys on this line!">    arrowprops1 = dict(arrowstyle="-&gt;", lw=1)</span>
+<span class="line-precise" title="No Anys on this line!">    arrowprops0 = {"arrowstyle": "-&gt;", "lw": 1}</span>
+<span class="line-precise" title="No Anys on this line!">    arrowprops1 = {"arrowstyle": "-&gt;", "lw": 1}</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Extract the figure size</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -1814,10 +1816,12 @@ Omitted Generics (x1)">        f"{target.name}=0\n===========\nMean / Median =\n
 Explicit (x3)
 Omitted Generics (x2)
 Error (x1)">        fontsize=24 * (figsize[0] / 16),</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Unannotated (x2)">        bbox=dict(</span>
-<span class="line-precise" title="No Anys on this line!">            boxstyle="round,pad=0.3", edgecolor="black", facecolor="blue", alpha=0.2</span>
-<span class="line-empty" title="No Anys on this line!">        ),</span>
+<span class="line-empty" title="No Anys on this line!">        bbox={</span>
+<span class="line-precise" title="No Anys on this line!">            "boxstyle": "round,pad=0.3",</span>
+<span class="line-precise" title="No Anys on this line!">            "edgecolor": "black",</span>
+<span class="line-precise" title="No Anys on this line!">            "facecolor": "blue",</span>
+<span class="line-precise" title="No Anys on this line!">            "alpha": 0.2,</span>
+<span class="line-empty" title="No Anys on this line!">        },</span>
 <span class="line-precise" title="No Anys on this line!">        arrowprops=arrowprops0,</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -1837,10 +1841,12 @@ Omitted Generics (x1)">        f"{target.name}=1\n===========\nMean / Median =\n
 Explicit (x3)
 Omitted Generics (x2)
 Error (x1)">        fontsize=24 * (figsize[0] / 16),</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Unannotated (x2)">        bbox=dict(</span>
-<span class="line-precise" title="No Anys on this line!">            boxstyle="round,pad=0.3", edgecolor="black", facecolor="orange", alpha=0.2</span>
-<span class="line-empty" title="No Anys on this line!">        ),</span>
+<span class="line-empty" title="No Anys on this line!">        bbox={</span>
+<span class="line-precise" title="No Anys on this line!">            "boxstyle": "round,pad=0.3",</span>
+<span class="line-precise" title="No Anys on this line!">            "edgecolor": "black",</span>
+<span class="line-precise" title="No Anys on this line!">            "facecolor": "orange",</span>
+<span class="line-precise" title="No Anys on this line!">            "alpha": 0.2,</span>
+<span class="line-empty" title="No Anys on this line!">        },</span>
 <span class="line-precise" title="No Anys on this line!">        arrowprops=arrowprops1,</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>

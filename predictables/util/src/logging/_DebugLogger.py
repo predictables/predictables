@@ -57,7 +57,7 @@ class DebugLogger(_logging.Logger):
     def _init_log(self) -> None:
         """Initialize the logging module."""
         _logging.basicConfig(filename=self.filename, level=_logging.DEBUG)
-        _logging.debug(f"Debugging UUID: {self.uuid}")  # noqa: G004
+        _logging.debug(f"Debugging UUID: {self.uuid}")
 
     def debug_(self, message: str) -> None:
         """Log a debug message with the unique identifier.
@@ -68,7 +68,7 @@ class DebugLogger(_logging.Logger):
             The debug message to log.
         """
         if self.turned_on:
-            _logging.debug(f"{self._default_message_prefix()} - {message}")  # noqa: G004
+            _logging.debug(f"{self._default_message_prefix()} - {message}")
 
     def msg(self, message: str) -> None:
         """Alias for the debug method."""

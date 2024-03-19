@@ -2,9 +2,7 @@ from dotenv import dotenv_values, load_dotenv
 
 
 def load_env() -> dict:
-    """
-    Load environment variables from a .env file in the root of the
-    project.
+    """Load environment variables from a .env file in the root of the project.
 
     Parameters
     ----------

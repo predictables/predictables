@@ -275,7 +275,7 @@ class UnivariateAnalysis:
             if skewness > 0.5:
                 # Considered to be right-skewed, so add a log-transformed
                 # version of the feature
-                print(f"Feature {col} is right-skewed: skewness = {skewness}")
+                print(f"Feature {col} is right-skewed: skewness = {skewness}")  # noqa: T201
                 self.df = self.df.with_columns(
                     [
                         pl.col(col)
@@ -320,7 +320,7 @@ class UnivariateAnalysis:
         self.feature_column_names = self._feature_list
 
     def _sort_features_by_ua(
-        self, return_pd: bool = False, dbg_print: bool = False
+        self, return_pd: bool = False
     ) -> Union[pl.LazyFrame, pd.DataFrame]:
         """
         Sorts features based on their average performance metrics in univariate analysis.
@@ -330,8 +330,6 @@ class UnivariateAnalysis:
         return_pd : bool, optional
             If True, returns a pandas DataFrame. Otherwise, returns a Polars LazyFrame.
             The default is False.
-        dbg_print : bool, optional
-            If True, prints debug information. The default is False.
 
         Returns
         -------
@@ -348,13 +346,9 @@ class UnivariateAnalysis:
 
         for col in self.feature_column_names:
             obj_name = fmt_col_name(col)
-            if dbg_print:
-                print(f"\nobj_name: {obj_name}")
             if hasattr(self, obj_name):
                 try:
                     ua = getattr(self, obj_name)
-                    if dbg_print:
-                        print(f"{ua.results.head().collect()}")
                     total_df.append(
                         ua.results.select(
                             [
@@ -379,9 +373,9 @@ class UnivariateAnalysis:
                         )
                     )
                 except Exception as e:
-                    print(f"Error processing results for feature {col}: {e}")
+                    print(f"Error processing results for feature {col}: {e}")  # noqa: T201
             else:
-                print(f"Univariate object not found for feature {col}")
+                print(f"Univariate object not found for feature {col}")  # noqa: T201
 
         if total_df:
             df = pl.concat(total_df).sort("AUC", descending=True)

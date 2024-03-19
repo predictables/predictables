@@ -339,13 +339,8 @@
 <span id="L329" class="lineno"><a class="lineno" href="#L329">329</a></span>
 <span id="L330" class="lineno"><a class="lineno" href="#L330">330</a></span>
 <span id="L331" class="lineno"><a class="lineno" href="#L331">331</a></span>
-<span id="L332" class="lineno"><a class="lineno" href="#L332">332</a></span>
-<span id="L333" class="lineno"><a class="lineno" href="#L333">333</a></span>
-<span id="L334" class="lineno"><a class="lineno" href="#L334">334</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">from typing import Union</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
@@ -361,16 +356,16 @@ Omitted Generics (x3)">dbg = DebugLogger(working_file="_cv_filter.py")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x3)">def filter_df_by_cv_fold(</span>
-<span class="line-empty" title="No Anys on this line!">    df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],</span>
+<span class="line-empty" title="No Anys on this line!">    df: pd.DataFrame | pl.DataFrame | pl.LazyFrame,</span>
 <span class="line-empty" title="No Anys on this line!">    f: int,</span>
-<span class="line-empty" title="No Anys on this line!">    folds: Union[pd.Series, pl.Series, np.ndarray],</span>
+<span class="line-empty" title="No Anys on this line!">    folds: pd.Series | pl.Series | np.ndarray,</span>
 <span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
 <span class="line-precise" title="No Anys on this line!">    train_test: str = "train",</span>
 <span class="line-precise" title="No Anys on this line!">    return_type: str = "pd",</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Union[pd.DataFrame, pl.LazyFrame]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Filter a dataframe based on cross-validation fold. Returns a dataframe</span>
-<span class="line-empty" title="No Anys on this line!">    filtered for the given fold.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; pd.DataFrame | pl.LazyFrame:</span>
+<span class="line-empty" title="No Anys on this line!">    """Filter a dataframe based on cross-validation fold.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Returns a dataframe filtered for the given fold.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -429,16 +424,16 @@ Omitted Generics (x6)">            df.loc[cv_filter(f, folds, time_series_valida
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x7)">def filter_by_cv_fold(</span>
-<span class="line-empty" title="No Anys on this line!">    s: Union[pd.Series, pl.Series, np.ndarray],</span>
+<span class="line-empty" title="No Anys on this line!">    s: pd.Series | pl.Series | np.ndarray,</span>
 <span class="line-empty" title="No Anys on this line!">    f: int,</span>
-<span class="line-empty" title="No Anys on this line!">    folds: Union[pd.Series, pl.Series, np.ndarray],</span>
+<span class="line-empty" title="No Anys on this line!">    folds: pd.Series | pl.Series | np.ndarray,</span>
 <span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
 <span class="line-precise" title="No Anys on this line!">    train_test: str = "train",</span>
 <span class="line-precise" title="No Anys on this line!">    return_type: str = "pd",</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Union[pd.Series, pl.Series]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Filter data based on cross-validation fold. Returns a series filtered</span>
-<span class="line-empty" title="No Anys on this line!">    for the given fold.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; pd.Series | pl.Series:</span>
+<span class="line-empty" title="No Anys on this line!">    """Filter data based on cross-validation fold.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Returns a series filtered for the given fold.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -478,13 +473,9 @@ Omitted Generics (x13)">        s_ = to_pd_s(s).reset_index(drop=True)</span>
 <span class="line-empty" title="No Anys on this line!">        # filter based on cross-validation fold</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x10)
-Error (x2)">        idx = cv_filter(f, folds_, time_series_validation, train_test, "pd").values</span>
+Explicit (x3)">        idx = cv_filter(f, folds_, time_series_validation, train_test, "pd").to_numpy()</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Error (x2)
-Omitted Generics (x2)">        print(f"\nidx.shape: {idx.shape}\n")</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x4)
-Error (x1)">        return s_[idx]</span>
+Omitted Generics (x4)">        return s_[idx]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    elif return_type in ["pl", "polars", "pl.Series"]:</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -508,11 +499,11 @@ Omitted Generics (x8)">        return s_[cv_filter(f, folds_, time_series_valida
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x4)">def cv_filter(</span>
 <span class="line-empty" title="No Anys on this line!">    fold: int,</span>
-<span class="line-empty" title="No Anys on this line!">    fold_col: Union[pd.Series, pl.Series, np.ndarray],</span>
+<span class="line-empty" title="No Anys on this line!">    fold_col: pd.Series | pl.Series | np.ndarray,</span>
 <span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = True,</span>
 <span class="line-precise" title="No Anys on this line!">    train_test: str = "train",</span>
 <span class="line-precise" title="No Anys on this line!">    return_type: str = "pd",</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Union[pd.Series, pl.Series]:</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; pd.Series | pl.Series:</span>
 <span class="line-empty" title="No Anys on this line!">    """Filter data based on cross-validation fold."""</span>
 <span class="line-empty" title="No Anys on this line!">    return (</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -526,14 +517,14 @@ Omitted Generics (x8)">        else _cv_filter_no_ts(fold, fold_col, train_test,
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x4)">def _cv_filter_no_ts(</span>
 <span class="line-empty" title="No Anys on this line!">    fold: int,</span>
-<span class="line-empty" title="No Anys on this line!">    fold_col: Union[pd.Series, pl.Series, np.ndarray],</span>
+<span class="line-empty" title="No Anys on this line!">    fold_col: pd.Series | pl.Series | np.ndarray,</span>
 <span class="line-empty" title="No Anys on this line!">    train_test: str,</span>
 <span class="line-empty" title="No Anys on this line!">    return_type: str,</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Union[pd.Series, pl.Series]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Filter data based on cross-validation fold. This is a helper function</span>
-<span class="line-empty" title="No Anys on this line!">    for cv_filter, and is used when the cross-validation is not based on a</span>
-<span class="line-empty" title="No Anys on this line!">    time series.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; pd.Series | pl.Series:</span>
+<span class="line-empty" title="No Anys on this line!">    """Filter data based on cross-validation fold.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    This is a helper function for cv_filter, and is used when the</span>
+<span class="line-empty" title="No Anys on this line!">    cross-validation is not based on a time series.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -596,16 +587,16 @@ Omitted Generics (x2)">            else pd_fold_col.eq(fold)</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x4)">def _cv_filter_ts(</span>
 <span class="line-empty" title="No Anys on this line!">    fold: int,</span>
-<span class="line-empty" title="No Anys on this line!">    fold_col: Union[pd.Series, pl.Series, np.ndarray],</span>
+<span class="line-empty" title="No Anys on this line!">    fold_col: pd.Series | pl.Series | np.ndarray,</span>
 <span class="line-empty" title="No Anys on this line!">    train_test: str,</span>
 <span class="line-empty" title="No Anys on this line!">    return_type: str,</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Union[pd.Series, pl.Series]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Fiter data based on cross-validation fold. This is a helper function for</span>
-<span class="line-empty" title="No Anys on this line!">    cv_filter, and is used when the cross-validation is based on a time series. In</span>
-<span class="line-empty" title="No Anys on this line!">    the case of a time series, you filter the data based on whether the fold is</span>
-<span class="line-empty" title="No Anys on this line!">    less than or equal to the given fold label -- fold labels are assigned to the</span>
-<span class="line-empty" title="No Anys on this line!">    data based on a date or time column.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; pd.Series | pl.Series:</span>
+<span class="line-empty" title="No Anys on this line!">    """Fiter data based on cross-validation fold.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    This is a helper function for cv_filter, and is used when the cross-validation is</span>
+<span class="line-empty" title="No Anys on this line!">    based on a time series. In the case of a time series, you filter the data based</span>
+<span class="line-empty" title="No Anys on this line!">    on whether the fold is less than or equal to the given fold label -- fold labels</span>
+<span class="line-empty" title="No Anys on this line!">    are assigned to the data based on a date or time column.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -643,13 +634,13 @@ Omitted Generics (x8)">        else _cv_filter_ts_pd(fold, fold_col, train_test)
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x4)">def _cv_filter_ts_pd(</span>
-<span class="line-empty" title="No Anys on this line!">    fold: int, fold_col: Union[pd.Series, pl.Series, np.ndarray], train_test: str</span>
+<span class="line-empty" title="No Anys on this line!">    fold: int, fold_col: pd.Series | pl.Series | np.ndarray, train_test: str</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pd.Series:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Fiter data based on cross-validation fold. This is a helper function for</span>
-<span class="line-empty" title="No Anys on this line!">    cv_filter, and is used when the cross-validation is based on a time series. In</span>
-<span class="line-empty" title="No Anys on this line!">    the case of a time series, you filter the data based on whether the fold is</span>
-<span class="line-empty" title="No Anys on this line!">    less than or equal to the given fold label -- fold labels are assigned to the</span>
+<span class="line-empty" title="No Anys on this line!">    """Fiter data based on cross-validation fold.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    This is a helper function for cv_filter, and is used when the cross-validation is based</span>
+<span class="line-empty" title="No Anys on this line!">    on a time series. In the case of a time series, you filter the data based on whether the</span>
+<span class="line-empty" title="No Anys on this line!">    fold is less than or equal to the given fold label -- fold labels are assigned to the</span>
 <span class="line-empty" title="No Anys on this line!">    data based on a date or time column.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
@@ -688,13 +679,13 @@ Omitted Generics (x2)">    return_val_test = pd_fold_col.eq(fold).reset_index(dr
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x3)">def _cv_filter_ts_pl(</span>
-<span class="line-empty" title="No Anys on this line!">    fold: int, fold_col: Union[pd.Series, pl.Series, np.ndarray], train_test: str</span>
+<span class="line-empty" title="No Anys on this line!">    fold: int, fold_col: pd.Series | pl.Series | np.ndarray, train_test: str</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pl.Series:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Fiter data based on cross-validation fold. This is a helper function for</span>
-<span class="line-empty" title="No Anys on this line!">    cv_filter, and is used when the cross-validation is based on a time series. In</span>
-<span class="line-empty" title="No Anys on this line!">    the case of a time series, you filter the data based on whether the fold is</span>
-<span class="line-empty" title="No Anys on this line!">    less than or equal to the given fold label -- fold labels are assigned to the</span>
+<span class="line-empty" title="No Anys on this line!">    """Fiter data based on cross-validation fold.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    This is a helper function for cv_filter, and is used when the cross-validation is based</span>
+<span class="line-empty" title="No Anys on this line!">    on a time series. In the case of a time series, you filter the data based on whether the</span>
+<span class="line-empty" title="No Anys on this line!">    fold is less than or equal to the given fold label -- fold labels are assigned to the</span>
 <span class="line-empty" title="No Anys on this line!">    data based on a date or time column.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>

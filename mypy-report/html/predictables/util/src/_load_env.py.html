@@ -56,17 +56,13 @@
 <span id="L46" class="lineno"><a class="lineno" href="#L46">46</a></span>
 <span id="L47" class="lineno"><a class="lineno" href="#L47">47</a></span>
 <span id="L48" class="lineno"><a class="lineno" href="#L48">48</a></span>
-<span id="L49" class="lineno"><a class="lineno" href="#L49">49</a></span>
-<span id="L50" class="lineno"><a class="lineno" href="#L50">50</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from dotenv import dotenv_values, load_dotenv</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">def load_env() -&gt; dict:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Load environment variables from a .env file in the root of the</span>
-<span class="line-empty" title="No Anys on this line!">    project.</span>
+<span class="line-empty" title="No Anys on this line!">    """Load environment variables from a .env file in the root of the project.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -86,7 +82,7 @@ Omitted Generics (x2)">def load_env() -&gt; dict:</span>
 <span class="line-precise" title="No Anys on this line!">        env_vars = dotenv_values()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Check that all keys are valid</span>
-<span class="line-precise" title="No Anys on this line!">        for key in env_vars.keys():</span>
+<span class="line-precise" title="No Anys on this line!">        for key in env_vars:</span>
 <span class="line-precise" title="No Anys on this line!">            if not isinstance(key, str):</span>
 <span class="line-unanalyzed" title="No Anys on this line!">                raise ValueError(</span>
 <span class="line-unanalyzed" title="No Anys on this line!">                    f"Invalid environment variable key: {key}. Key must be a string."</span>

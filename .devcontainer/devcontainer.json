@@ -21,15 +21,16 @@
       ]
     },
     "settings": {
-      "terminal.integrated.shell.linux": "/bin/zsh",
       "workbench.panel.defaultLocation": "bottom",
       "workbench.colorTheme": "GitHub Dark High Contrast",
       "editor.fontFamily": "Ubuntu Mono derivative Powerline",
       "editor.formatOnSave": true,
       "editor.formatOnType": true,
       "editor.formatOnPaste": true,
-      "editor.defaultFormatter": "charliermarsh.ruff"
+      "editor.defaultFormatter": "charliermarsh.ruff",
+      "terminal.integrated.shell.linux": "/bin/zsh",
+      "terminal.integrated.fontFamily": "Ubuntu Mono derivative Powerline"
     }
   },
-  "postAttachCommand": "install_dotfiles $HOME .zshrc .zsh_aliases && exec zsh && install_dotfiles /app .ruff.toml .prettierrc .mypy.ini .isort.toml .flake8"
+  "postAttachCommand": "install_dotfiles $HOME .zshrc .zsh_aliases .p10k.zsh && exec zsh && install_dotfiles /app .ruff.toml .prettierrc .mypy.ini .flake8"
 }

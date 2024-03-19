@@ -1,4 +1,3 @@
-# noqa: INP001
 """Test the informedness function.
 
 This module contains tests for the informedness function in the

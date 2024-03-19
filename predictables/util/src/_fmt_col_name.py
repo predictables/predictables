@@ -2,11 +2,10 @@ import re
 
 
 def fmt_col_name(col_name: str) -> str:
-    """
-    Formats a column name to be used as an attribute name within the
-    UnivariateAnalysis class. Removes non-alphanumeric characters, replaces
-    spaces and special characters with underscores, and ensures the resulting
-    string does not end with an underscore.
+    """Format a column name to be used as an attribute name within the UnivariateAnalysis class.
+
+    Removes non-alphanumeric characters, replaces spaces and special characters with
+    underscores, and ensures the resulting string does not end with an underscore.
 
     Parameters
     ----------

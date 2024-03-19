@@ -7,7 +7,7 @@ import polars as pl
 from predictables.util.src._to_pd import to_pd_s
 
 
-def get_column_dtype(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> str:
+def get_column_dtype(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> str:  # noqa: PLR0911
     """Return the dtype of a series as a string.
 
     The dtype is determined by checking the series against a set of rules.
@@ -121,7 +121,7 @@ def is_binary_integer(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> b
             .drop_duplicates()
             .sort_values()
         )
-        return s.shape[0] == 2  # noqa: PLR2004
+        return s.shape[0] == 2
     else:
         return False
 
@@ -163,7 +163,7 @@ def is_categorical_integer(
         return False
 
 
-def is_datetime(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool:
+def is_datetime(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool:  # noqa: PLR0911
     """Return True if the series is a datetime, False otherwise.
 
     Parameters
@@ -244,19 +244,19 @@ def is_binary(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool:
     if is_numeric(s):
         return is_binary_integer(s)
     elif isinstance(s, pl.Series):
-        return s.n_unique() == 2  # noqa: PLR2004
+        return s.n_unique() == 2
     elif isinstance(s, pd.Series):
-        return s.nunique() == 2  # noqa: PLR2004
+        return s.nunique() == 2
     elif isinstance(s, np.ndarray):
-        return np.unique(s).shape[0] == 2  # noqa: PLR2004
+        return np.unique(s).shape[0] == 2
     elif isinstance(s, (list, tuple)):
-        return len(set(s)) == 2  # noqa: PLR2004
+        return len(set(s)) == 2
     else:
         try:
             try:
-                out = to_pd_s(s).nunique() == 2  # noqa: PLR2004
+                out = to_pd_s(s).nunique() == 2
             except Exception:
-                out = pd.Series(s).nunique() == 2  # noqa: PLR2004
+                out = pd.Series(s).nunique() == 2
 
         except Exception:
             out = False
@@ -280,9 +280,7 @@ def is_categorical(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool
         True if the series is categorical, False otherwise.
     """
     # Common sources of false positives: dates, binary integers
-    if is_datetime(s):
-        return False
-    elif is_numeric(s) and is_binary_integer(s):
+    if is_datetime(s) or is_numeric(s) and is_binary_integer(s):
         return False
 
     if is_numeric(s):
@@ -292,7 +290,7 @@ def is_categorical(s: pl.Series | pd.Series | np.ndarray | list | tuple) -> bool
             try:
                 out = to_pd_s(s).nunique() > 2
             except Exception:
-                out = pd.Series(s).nunique() > 2  # noqa: PLR2004
+                out = pd.Series(s).nunique() > 2
         except Exception:
             out = False
         return out

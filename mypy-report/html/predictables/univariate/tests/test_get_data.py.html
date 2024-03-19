@@ -282,14 +282,10 @@
 <span id="L272" class="lineno"><a class="lineno" href="#L272">272</a></span>
 <span id="L273" class="lineno"><a class="lineno" href="#L273">273</a></span>
 <span id="L274" class="lineno"><a class="lineno" href="#L274">274</a></span>
-<span id="L275" class="lineno"><a class="lineno" href="#L275">275</a></span>
-<span id="L276" class="lineno"><a class="lineno" href="#L276">276</a></span>
-<span id="L277" class="lineno"><a class="lineno" href="#L277">277</a></span>
-<span id="L278" class="lineno"><a class="lineno" href="#L278">278</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">import pandas.testing as pdt</span>
 <span class="line-precise" title="No Anys on this line!">import pytest</span>
-<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">from predictables.univariate.src._get_data import (</span>
 <span class="line-empty" title="No Anys on this line!">    _filter_df_for_cv,</span>
 <span class="line-empty" title="No Anys on this line!">    _filter_df_for_cv_test,</span>
@@ -304,8 +300,9 @@ Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-any" title="No Anys on this line!">def sample_dataframe():</span>
 <span class="line-empty" title="No Anys on this line!">    # Create a sample dataframe for testing</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)
-Error (x1)">    return pd.DataFrame(</span>
+Unannotated (x3)
+Omitted Generics (x39)
+Explicit (x4)">    return pd.DataFrame(</span>
 <span class="line-any" title="No Anys on this line!">        {"fold_col": [1, 2, 3, 3, 4, 5], "data": ["A", "B", "C", "c1", "D", "E"]}</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -317,27 +314,25 @@ Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-empty" title="No Anys on this line!">    # Create a sample validation dataframe for testing</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x3)
-Error (x1)">    df_val = pd.DataFrame({"data": ["F", "G", "H", "I", "J"]})</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    return df_val</span>
+Omitted Generics (x39)
+Explicit (x4)">    return pd.DataFrame({"data": ["F", "G", "H", "I", "J"]})</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="Any Types on this line: 
 Explicit (x6)
 Omitted Generics (x2)">@pytest.fixture</span>
-<span class="line-any" title="No Anys on this line!">def sample_total_dataframe(df, df_val):</span>
+<span class="line-any" title="No Anys on this line!">def sample_total_dataframe(df_val):</span>
 <span class="line-empty" title="No Anys on this line!">    # Create a sample total dataframe for testing</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x3)
-Error (x1)">    df_total = pd.DataFrame(</span>
+Omitted Generics (x39)
+Explicit (x4)">    return pd.DataFrame(</span>
 <span class="line-empty" title="No Anys on this line!">        {</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x6)">            "fold_col": [1, 2, 3, 3, 4, 5] + ([-42] * df_val.shape[0]),</span>
 <span class="line-any" title="No Anys on this line!">            "data": ["A", "B", "C", "c1", "D", "E", "F", "G", "H", "I", "J"],</span>
 <span class="line-empty" title="No Anys on this line!">        }</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    return df_total</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="No Anys on this line!">def test_filter_df_for_cv_train_valid_input(sample_dataframe):</span>
@@ -347,8 +342,9 @@ Unannotated (x1)">    fold = 3</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">    fold_col = "fold_col"</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
-Error (x1)">    expected_output = pd.DataFrame(</span>
+Unannotated (x4)
+Omitted Generics (x39)
+Explicit (x4)">    expected_output = pd.DataFrame(</span>
 <span class="line-any" title="No Anys on this line!">        {"fold_col": [1, 2, 4, 5], "data": ["A", "B", "D", "E"]}</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -372,8 +368,9 @@ Unannotated (x1)">    fold = 3</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">    fold_col = "fold_col"</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
-Error (x1)">    expected_output = pd.DataFrame({"fold_col": [3, 3], "data": ["C", "c1"]})</span>
+Unannotated (x4)
+Omitted Generics (x39)
+Explicit (x4)">    expected_output = pd.DataFrame({"fold_col": [3, 3], "data": ["C", "c1"]})</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x7)">    output = _filter_df_for_cv_test(sample_dataframe, fold, fold_col).reset_index(</span>
@@ -400,8 +397,9 @@ Unannotated (x8)">        f"Expected {expected_output}, got {output}",</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">    fold = 3</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
-Error (x1)">    expected_output = pd.DataFrame(</span>
+Unannotated (x4)
+Omitted Generics (x39)
+Explicit (x4)">    expected_output = pd.DataFrame(</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x9)">        {"fold_col": [int(x) for x in fold_col.split()], "data": values.split()}</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
@@ -411,10 +409,6 @@ Unannotated (x4)">    output = _filter_df_for_cv(</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x3)">        sample_dataframe, fold, "fold_col", data, time_series_validation=False</span>
 <span class="line-any" title="No Anys on this line!">    ).reset_index(drop=True)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x6)">    print(f"\n\noutput:\n=======================\n{output}")</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x6)">    print(f"\n\nexpected_output:\n=======================\n{expected_output}")</span>
 <span class="line-empty" title="No Anys on this line!">    (</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x3)">        pdt.assert_frame_equal(output, expected_output),</span>
@@ -576,8 +570,9 @@ Unannotated (x15)">    ), f"Expected the error to be {msg} for [{fold}]/[{fold_c
 <span class="line-any" title="No Anys on this line!">def test_filter_df_for_train_test_all(sample_dataframe, sample_val_dataframe):</span>
 <span class="line-empty" title="No Anys on this line!">    # Test with data='all'</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
-Error (x1)">    expected_output = pd.DataFrame(</span>
+Unannotated (x4)
+Omitted Generics (x39)
+Explicit (x4)">    expected_output = pd.DataFrame(</span>
 <span class="line-empty" title="No Anys on this line!">        {</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x6)">            "fold_col": [1, 2, 3, 3, 4, 5] + ([-42] * sample_val_dataframe.shape[0]),</span>
@@ -600,8 +595,9 @@ Unannotated (x8)">        f"Expected {expected_output}, got {output}",</span>
 <span class="line-any" title="No Anys on this line!">def test_filter_df_for_train_test_train(sample_dataframe, sample_val_dataframe):</span>
 <span class="line-empty" title="No Anys on this line!">    # Test with data='train'</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
-Error (x1)">    expected_output = pd.DataFrame(</span>
+Unannotated (x4)
+Omitted Generics (x39)
+Explicit (x4)">    expected_output = pd.DataFrame(</span>
 <span class="line-any" title="No Anys on this line!">        {"fold_col": [1, 2, 3, 3, 4, 5], "data": ["A", "B", "C", "c1", "D", "E"]}</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-any" title="Any Types on this line: 
@@ -620,8 +616,9 @@ Unannotated (x8)">        f"Expected {expected_output}, got {output}",</span>
 <span class="line-any" title="No Anys on this line!">def test_filter_df_for_train_test_test(sample_dataframe, sample_val_dataframe):</span>
 <span class="line-empty" title="No Anys on this line!">    # Test with data='test'</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
-Error (x1)">    expected_output = pd.DataFrame({"data": ["F", "G", "H", "I", "J"]})</span>
+Unannotated (x4)
+Omitted Generics (x39)
+Explicit (x4)">    expected_output = pd.DataFrame({"data": ["F", "G", "H", "I", "J"]})</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x2)">    output = _filter_df_for_train_test(</span>
 <span class="line-any" title="Any Types on this line: 

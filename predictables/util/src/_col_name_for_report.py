@@ -4,9 +4,10 @@ from predictables.util.src._fmt_col_name import fmt_col_name
 
 
 def col_name_for_report(col_name: str) -> str:
-    """
-    Formats a column name to be used as a title in a report. Replaces underscores
-    with spaces and capitalizes the first letter of each word.
+    """Format a column name to be used as a title in a report.
+
+    Replaces underscores with spaces and capitalizes the first letter
+    of each word.
 
     Parameters
     ----------

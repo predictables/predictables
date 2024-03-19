@@ -700,12 +700,6 @@
 <span id="L690" class="lineno"><a class="lineno" href="#L690">690</a></span>
 <span id="L691" class="lineno"><a class="lineno" href="#L691">691</a></span>
 <span id="L692" class="lineno"><a class="lineno" href="#L692">692</a></span>
-<span id="L693" class="lineno"><a class="lineno" href="#L693">693</a></span>
-<span id="L694" class="lineno"><a class="lineno" href="#L694">694</a></span>
-<span id="L695" class="lineno"><a class="lineno" href="#L695">695</a></span>
-<span id="L696" class="lineno"><a class="lineno" href="#L696">696</a></span>
-<span id="L697" class="lineno"><a class="lineno" href="#L697">697</a></span>
-<span id="L698" class="lineno"><a class="lineno" href="#L698">698</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -971,7 +965,7 @@ Omitted Generics (x1)">                        col,</span>
 <span class="line-precise" title="No Anys on this line!">                        time_series_validation=self.time_series_validation,</span>
 <span class="line-empty" title="No Anys on this line!">                    ),</span>
 <span class="line-empty" title="No Anys on this line!">                )</span>
-<span class="line-precise" title="No Anys on this line!">            elif col_type == "categorical" or col_type == "binary":</span>
+<span class="line-precise" title="No Anys on this line!">            elif col_type in ("categorical", "binary"):</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x1)">                setattr(</span>
 <span class="line-precise" title="No Anys on this line!">                    self,</span>
@@ -1023,7 +1017,7 @@ Explicit (x2)">            if skewness &gt; 0.5:</span>
 <span class="line-empty" title="No Anys on this line!">                # version of the feature</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x1)
-Explicit (x1)">                print(f"Feature {col} is right-skewed: skewness = {skewness}")</span>
+Explicit (x1)">                print(f"Feature {col} is right-skewed: skewness = {skewness}")  # noqa: T201</span>
 <span class="line-precise" title="No Anys on this line!">                self.df = self.df.with_columns(</span>
 <span class="line-empty" title="No Anys on this line!">                    [</span>
 <span class="line-any" title="Any Types on this line: 
@@ -1087,7 +1081,7 @@ Omitted Generics (x3)">        self._feature_list = feature_list + transformed_c
 Omitted Generics (x1)">        self.feature_column_names = self._feature_list</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def _sort_features_by_ua(</span>
-<span class="line-precise" title="No Anys on this line!">        self, return_pd: bool = False, dbg_print: bool = False</span>
+<span class="line-precise" title="No Anys on this line!">        self, return_pd: bool = False</span>
 <span class="line-empty" title="No Anys on this line!">    ) -&gt; Union[pl.LazyFrame, pd.DataFrame]:</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-empty" title="No Anys on this line!">        Sorts features based on their average performance metrics in univariate analysis.</span>
@@ -1097,8 +1091,6 @@ Omitted Generics (x1)">        self.feature_column_names = self._feature_list</s
 <span class="line-empty" title="No Anys on this line!">        return_pd : bool, optional</span>
 <span class="line-empty" title="No Anys on this line!">            If True, returns a pandas DataFrame. Otherwise, returns a Polars LazyFrame.</span>
 <span class="line-empty" title="No Anys on this line!">            The default is False.</span>
-<span class="line-empty" title="No Anys on this line!">        dbg_print : bool, optional</span>
-<span class="line-empty" title="No Anys on this line!">            If True, prints debug information. The default is False.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Returns</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
@@ -1115,16 +1107,11 @@ Omitted Generics (x1)">        self.feature_column_names = self._feature_list</s
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">        for col in self.feature_column_names:</span>
 <span class="line-precise" title="No Anys on this line!">            obj_name = fmt_col_name(col)</span>
-<span class="line-precise" title="No Anys on this line!">            if dbg_print:</span>
-<span class="line-precise" title="No Anys on this line!">                print(f"\nobj_name: {obj_name}")</span>
 <span class="line-precise" title="No Anys on this line!">            if hasattr(self, obj_name):</span>
 <span class="line-empty" title="No Anys on this line!">                try:</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x14)
 Omitted Generics (x2)">                    ua = getattr(self, obj_name)</span>
-<span class="line-precise" title="No Anys on this line!">                    if dbg_print:</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x6)">                        print(f"{ua.results.head().collect()}")</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x2)">                    total_df.append(</span>
 <span class="line-any" title="Any Types on this line: 
@@ -1152,9 +1139,9 @@ Explicit (x1)">                                (</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-empty" title="No Anys on this line!">                    )</span>
 <span class="line-precise" title="No Anys on this line!">                except Exception as e:</span>
-<span class="line-precise" title="No Anys on this line!">                    print(f"Error processing results for feature {col}: {e}")</span>
+<span class="line-precise" title="No Anys on this line!">                    print(f"Error processing results for feature {col}: {e}")  # noqa: T201</span>
 <span class="line-empty" title="No Anys on this line!">            else:</span>
-<span class="line-precise" title="No Anys on this line!">                print(f"Univariate object not found for feature {col}")</span>
+<span class="line-precise" title="No Anys on this line!">                print(f"Univariate object not found for feature {col}")  # noqa: T201</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x1)">        if total_df:</span>

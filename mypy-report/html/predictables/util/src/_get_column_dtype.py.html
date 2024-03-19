@@ -365,14 +365,6 @@
 <span id="L355" class="lineno"><a class="lineno" href="#L355">355</a></span>
 <span id="L356" class="lineno"><a class="lineno" href="#L356">356</a></span>
 <span id="L357" class="lineno"><a class="lineno" href="#L357">357</a></span>
-<span id="L358" class="lineno"><a class="lineno" href="#L358">358</a></span>
-<span id="L359" class="lineno"><a class="lineno" href="#L359">359</a></span>
-<span id="L360" class="lineno"><a class="lineno" href="#L360">360</a></span>
-<span id="L361" class="lineno"><a class="lineno" href="#L361">361</a></span>
-<span id="L362" class="lineno"><a class="lineno" href="#L362">362</a></span>
-<span id="L363" class="lineno"><a class="lineno" href="#L363">363</a></span>
-<span id="L364" class="lineno"><a class="lineno" href="#L364">364</a></span>
-<span id="L365" class="lineno"><a class="lineno" href="#L365">365</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -384,7 +376,7 @@
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x5)">def get_column_dtype(s: pl.Series | pd.Series | np.ndarray | list | tuple) -&gt; str:</span>
+Omitted Generics (x5)">def get_column_dtype(s: pl.Series | pd.Series | np.ndarray | list | tuple) -&gt; str:  # noqa: PLR0911</span>
 <span class="line-empty" title="No Anys on this line!">    """Return the dtype of a series as a string.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    The dtype is determined by checking the series against a set of rules.</span>
@@ -519,7 +511,7 @@ Omitted Generics (x26)">            to_pd_s(s)</span>
 <span class="line-empty" title="No Anys on this line!">            .sort_values()</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x3)">        return s.shape[0] == 2  # noqa: PLR2004</span>
+Omitted Generics (x3)">        return s.shape[0] == 2</span>
 <span class="line-empty" title="No Anys on this line!">    else:</span>
 <span class="line-precise" title="No Anys on this line!">        return False</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -567,7 +559,7 @@ Unannotated (x2)">        return all_diffs.min() == 1 and all_diffs.max() == 1</
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x5)">def is_datetime(s: pl.Series | pd.Series | np.ndarray | list | tuple) -&gt; bool:</span>
+Omitted Generics (x5)">def is_datetime(s: pl.Series | pd.Series | np.ndarray | list | tuple) -&gt; bool:  # noqa: PLR0911</span>
 <span class="line-empty" title="No Anys on this line!">    """Return True if the series is a datetime, False otherwise.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
@@ -588,16 +580,11 @@ Unimported (x2)">    if isinstance(s, pl.Series):</span>
 Omitted Generics (x10)">        if is_numeric(s) or is_integer(s):</span>
 <span class="line-precise" title="No Anys on this line!">            return False</span>
 <span class="line-empty" title="No Anys on this line!">        elif (</span>
-<span class="line-precise" title="No Anys on this line!">            (s.dtype == pl.datatypes.Datetime)</span>
-<span class="line-precise" title="No Anys on this line!">            or (s.dtype == pl.datatypes.Date)</span>
-<span class="line-precise" title="No Anys on this line!">            or (s.dtype == pl.datatypes.Time)</span>
-<span class="line-precise" title="No Anys on this line!">            or (s.dtype == pl.datatypes.Duration)</span>
+<span class="line-precise" title="No Anys on this line!">            s.dtype in (pl.datatypes.Datetime, pl.datatypes.Date, pl.datatypes.Time, pl.datatypes.Duration)</span>
 <span class="line-empty" title="No Anys on this line!">        ):</span>
 <span class="line-precise" title="No Anys on this line!">            return True</span>
 <span class="line-empty" title="No Anys on this line!">        elif (</span>
-<span class="line-precise" title="No Anys on this line!">            (s.dtype == pl.datatypes.Object)</span>
-<span class="line-precise" title="No Anys on this line!">            or (s.dtype == pl.datatypes.Utf8)</span>
-<span class="line-precise" title="No Anys on this line!">            or (s.dtype == pl.datatypes.Categorical)</span>
+<span class="line-precise" title="No Anys on this line!">            s.dtype in (pl.datatypes.Object, pl.datatypes.Utf8, pl.datatypes.Categorical)</span>
 <span class="line-empty" title="No Anys on this line!">        ):</span>
 <span class="line-empty" title="No Anys on this line!">            try:</span>
 <span class="line-any" title="Any Types on this line: 
@@ -671,30 +658,30 @@ Omitted Generics (x10)">        return is_binary_integer(s)</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x5)
 Unimported (x2)">    elif isinstance(s, pl.Series):</span>
-<span class="line-precise" title="No Anys on this line!">        return s.n_unique() == 2  # noqa: PLR2004</span>
+<span class="line-precise" title="No Anys on this line!">        return s.n_unique() == 2</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x118)
 Explicit (x2)">    elif isinstance(s, pd.Series):</span>
-<span class="line-precise" title="No Anys on this line!">        return s.nunique() == 2  # noqa: PLR2004</span>
+<span class="line-precise" title="No Anys on this line!">        return s.nunique() == 2</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x7)
 Explicit (x3)">    elif isinstance(s, np.ndarray):</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x5)
-Explicit (x1)">        return np.unique(s).shape[0] == 2  # noqa: PLR2004</span>
+Explicit (x1)">        return np.unique(s).shape[0] == 2</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x8)">    elif isinstance(s, (list, tuple)):</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x6)">        return len(set(s)) == 2  # noqa: PLR2004</span>
+Omitted Generics (x6)">        return len(set(s)) == 2</span>
 <span class="line-empty" title="No Anys on this line!">    else:</span>
 <span class="line-empty" title="No Anys on this line!">        try:</span>
 <span class="line-empty" title="No Anys on this line!">            try:</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x7)">                out = to_pd_s(s).nunique() == 2  # noqa: PLR2004</span>
+Omitted Generics (x7)">                out = to_pd_s(s).nunique() == 2</span>
 <span class="line-precise" title="No Anys on this line!">            except Exception:</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x115)
-Explicit (x2)">                out = pd.Series(s).nunique() == 2  # noqa: PLR2004</span>
+Explicit (x2)">                out = pd.Series(s).nunique() == 2</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">        except Exception:</span>
 <span class="line-precise" title="No Anys on this line!">            out = False</span>
@@ -720,13 +707,8 @@ Omitted Generics (x5)">def is_categorical(s: pl.Series | pd.Series | np.ndarray 
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-empty" title="No Anys on this line!">    # Common sources of false positives: dates, binary integers</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x10)">    if is_datetime(s):</span>
+Omitted Generics (x30)">    if is_datetime(s) or is_numeric(s) and is_binary_integer(s):</span>
 <span class="line-precise" title="No Anys on this line!">        return False</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x10)">    elif is_numeric(s):</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x10)">        if is_binary_integer(s):</span>
-<span class="line-precise" title="No Anys on this line!">            return False</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x10)">    if is_numeric(s):</span>
@@ -740,7 +722,7 @@ Omitted Generics (x11)">                out = to_pd_s(s).nunique() &gt; 2</span>
 <span class="line-precise" title="No Anys on this line!">            except Exception:</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x119)
-Explicit (x2)">                out = pd.Series(s).nunique() &gt; 2  # noqa: PLR2004</span>
+Explicit (x2)">                out = pd.Series(s).nunique() &gt; 2</span>
 <span class="line-precise" title="No Anys on this line!">        except Exception:</span>
 <span class="line-precise" title="No Anys on this line!">            out = False</span>
 <span class="line-precise" title="No Anys on this line!">        return out</span>

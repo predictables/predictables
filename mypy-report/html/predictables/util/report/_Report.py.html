@@ -1247,14 +1247,13 @@
 <span id="L1237" class="lineno"><a class="lineno" href="#L1237">1237</a></span>
 <span id="L1238" class="lineno"><a class="lineno" href="#L1238">1238</a></span>
 <span id="L1239" class="lineno"><a class="lineno" href="#L1239">1239</a></span>
-<span id="L1240" class="lineno"><a class="lineno" href="#L1240">1240</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import copy</span>
 <span class="line-precise" title="No Anys on this line!">import datetime</span>
 <span class="line-precise" title="No Anys on this line!">import itertools</span>
-<span class="line-precise" title="No Anys on this line!">import os</span>
+<span class="line-precise" title="No Anys on this line!">from pathlib import Path</span>
 <span class="line-precise" title="No Anys on this line!">import typing</span>
 <span class="line-precise" title="No Anys on this line!">import uuid</span>
 <span class="line-precise" title="No Anys on this line!">import warnings</span>
@@ -2446,13 +2445,13 @@ Unimported (x1)">        if style is None:</span>
 Unimported (x3)">            style = create_table_style()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">        df = to_pd_df(df)</span>
-<span class="line-precise" title="No Anys on this line!">        data = [[""] + df.columns.tolist()] + [</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x4)
-Omitted Generics (x6)">            [df.index.tolist()[i]] + df.values.tolist()[i]</span>
+<span class="line-precise" title="No Anys on this line!">        data = [["", *df.columns.tolist()]] + [</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x5)
-Omitted Generics (x2)">            for i, _ in enumerate(df.values.tolist())</span>
+Omitted Generics (x8)">            [df.index.tolist()[i]] + df.to_numpy().tolist()[i]</span>
+<span class="line-any" title="Any Types on this line: 
+Explicit (x6)
+Omitted Generics (x4)">            for i, _ in enumerate(df.to_numpy().tolist())</span>
 <span class="line-empty" title="No Anys on this line!">        ]</span>
 <span class="line-any" title="Any Types on this line: 
 Unimported (x3)">        t = Table(data)</span>
@@ -2465,10 +2464,9 @@ Unimported (x3)">        self.elements.append(t)</span>
 <span class="line-precise" title="No Anys on this line!">        return self</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def build(self) -&gt; None:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Builds the pdf document and saves it to the filename specified in</span>
-<span class="line-empty" title="No Anys on this line!">        the constructor. This is the final command that must be called to</span>
-<span class="line-empty" title="No Anys on this line!">        generate the pdf document.</span>
+<span class="line-empty" title="No Anys on this line!">        """Build the pdf document and saves it to the filename specified in the constructor.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">        This is the final command that must be called to generate the pdf document.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
 <span class="line-empty" title="No Anys on this line!">        ----------</span>
@@ -2486,11 +2484,11 @@ Unimported (x4)">        self.doc.build(self.elements)</span>
 <span class="line-empty" title="No Anys on this line!">        # Remove temporary plot files</span>
 <span class="line-precise" title="No Anys on this line!">        for file in os.listdir():</span>
 <span class="line-precise" title="No Anys on this line!">            if file.startswith("temp_plot_"):</span>
-<span class="line-precise" title="No Anys on this line!">                os.remove(file)</span>
+<span class="line-precise" title="No Anys on this line!">                Path.unlink(file)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def title(self, text: str) -&gt; "Report":</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Sets the title metadata attribute of the pdf document.</span>
+<span class="line-empty" title="No Anys on this line!">        """Set the title metadata attribute of the pdf document.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Does not by itself make any visible changes to the document.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
@@ -2508,8 +2506,8 @@ Unimported (x2)">        self.doc.title = text</span>
 <span class="line-precise" title="No Anys on this line!">        return self</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def author(self, text: str) -&gt; "Report":</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Sets the author metadata attribute of the pdf document.</span>
+<span class="line-empty" title="No Anys on this line!">        """Set the author metadata attribute of the pdf document.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Does not by itself make any visible changes to the document.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
@@ -2527,8 +2525,8 @@ Unimported (x2)">        self.doc.author = text</span>
 <span class="line-precise" title="No Anys on this line!">        return self</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def subject(self, text: str) -&gt; "Report":</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Sets the subject metadata attribute of the pdf document.</span>
+<span class="line-empty" title="No Anys on this line!">        """Set the subject metadata attribute of the pdf document.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Does not by itself make any visible changes to the document.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
@@ -2540,14 +2538,14 @@ Unimported (x2)">        self.doc.author = text</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
 <span class="line-empty" title="No Anys on this line!">        Report</span>
 <span class="line-empty" title="No Anys on this line!">            The current Report object. This method should be called in a chain.</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x2)">        self.doc.subject = text</span>
-<span class="line-precise" title="No Anys on this line!">        return self</span>
+Unimported (x2)">        """</span>
+<span class="line-precise" title="No Anys on this line!">        self.doc.subject = text</span>
+<span class="line-empty" title="No Anys on this line!">        return self</span>
+<span class="line-precise" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    def date(self, date: datetime.date | None = None) -&gt; None:</span>
+<span class="line-empty" title="No Anys on this line!">        """Set the date metadata attribute of the pdf document.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    def date(self, date: datetime.date | None = None) -&gt; None:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Sets the date metadata attribute of the pdf document.</span>
 <span class="line-empty" title="No Anys on this line!">        Does not by itself make any visible changes to the document.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
@@ -2560,16 +2558,16 @@ Unimported (x2)">        self.doc.subject = text</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
 <span class="line-empty" title="No Anys on this line!">        Report</span>
 <span class="line-empty" title="No Anys on this line!">            The current Report object. This method should be called in a chain.</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
+<span class="line-precise" title="No Anys on this line!">        """</span>
 <span class="line-precise" title="No Anys on this line!">        if date is None:</span>
-<span class="line-precise" title="No Anys on this line!">            date = datetime.datetime.now()</span>
-<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">            date = datetime.datetime.now()</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x2)">        self.doc.date = date.strftime("%Y-%m-%d")</span>
+Unimported (x2)"></span>
+<span class="line-empty" title="No Anys on this line!">        self.doc.date = date.strftime("%Y-%m-%d")</span>
+<span class="line-precise" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    def date_(self, date: datetime.date | None = None) -&gt; str:</span>
+<span class="line-empty" title="No Anys on this line!">        """Alias `date`, and return the date added to the document metadata.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    def date_(self, date: datetime.date | None = None) -&gt; str:</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        Alias for `date`, it returns the date added to the document metadata.</span>
 <span class="line-empty" title="No Anys on this line!">        This allows you to ensure they are the same.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Parameters</span>
@@ -2582,12 +2580,12 @@ Unimported (x2)">        self.doc.date = date.strftime("%Y-%m-%d")</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
 <span class="line-empty" title="No Anys on this line!">        str</span>
 <span class="line-empty" title="No Anys on this line!">            The date added to the document metadata.</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-precise" title="No Anys on this line!">        self.date(date)</span>
+<span class="line-precise" title="No Anys on this line!">        """</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x2)">        return self.doc.date</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    def keywords(self, text: str) -&gt; "Report":</span>
+Unimported (x2)">        self.date(date)</span>
+<span class="line-empty" title="No Anys on this line!">        return self.doc.date</span>
+<span class="line-precise" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    def keywords(self, text: str) -&gt; "Report":</span>
 <span class="line-empty" title="No Anys on this line!">        """Set the keywords metadata attribute of the pdf document.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Does not by itself make any visible changes to the document.</span>
@@ -2601,10 +2599,10 @@ Unimported (x2)">        return self.doc.date</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
 <span class="line-empty" title="No Anys on this line!">        Report</span>
 <span class="line-empty" title="No Anys on this line!">            The current Report object. This method should be called in a chain.</span>
-<span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x2)">        self.doc.keywords = text</span>
-<span class="line-precise" title="No Anys on this line!">        return self</span>
+Unimported (x2)">        """</span>
+<span class="line-precise" title="No Anys on this line!">        self.doc.keywords = text</span>
+<span class="line-empty" title="No Anys on this line!">        return self</span>
 </pre></td>
 </tr></tbody>
 </table>

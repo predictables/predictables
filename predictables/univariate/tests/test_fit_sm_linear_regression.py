@@ -87,7 +87,7 @@ def test_fit_sm_linear_regression_type(X, y):
         (np_X(), np_y(), True),
     ],
 )
-def test_fit_sm_linear_regression_coef(X, y, is_np):
+def test_fit_sm_linear_regression_coef(X, y):
     regression_result = fit_sm_linear_regression(X, y)
     assert (
         np.round(regression_result.params.iloc[0], 3) == 0.512

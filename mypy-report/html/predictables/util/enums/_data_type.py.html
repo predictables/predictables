@@ -268,8 +268,15 @@
 <span id="L258" class="lineno"><a class="lineno" href="#L258">258</a></span>
 <span id="L259" class="lineno"><a class="lineno" href="#L259">259</a></span>
 <span id="L260" class="lineno"><a class="lineno" href="#L260">260</a></span>
+<span id="L261" class="lineno"><a class="lineno" href="#L261">261</a></span>
+<span id="L262" class="lineno"><a class="lineno" href="#L262">262</a></span>
+<span id="L263" class="lineno"><a class="lineno" href="#L263">263</a></span>
+<span id="L264" class="lineno"><a class="lineno" href="#L264">264</a></span>
+<span id="L265" class="lineno"><a class="lineno" href="#L265">265</a></span>
 </pre></td>
-<td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from enum import Enum</span>
+<td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">from enum import Enum</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
@@ -355,7 +362,7 @@
 <span class="line-precise" title="No Anys on this line!">    def __repr__(self) -&gt; str:</span>
 <span class="line-precise" title="No Anys on this line!">        return self.name</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    def __eq__(self, other: str | DataType) -&gt; bool:</span>
+<span class="line-precise" title="No Anys on this line!">    def __eq__(self, other: str | "DataType") -&gt; bool:</span>
 <span class="line-precise" title="No Anys on this line!">        if isinstance(other, str):</span>
 <span class="line-precise" title="No Anys on this line!">            return self.name == other</span>
 <span class="line-precise" title="No Anys on this line!">        elif isinstance(other, DataType):</span>
@@ -363,10 +370,8 @@
 <span class="line-empty" title="No Anys on this line!">        else:</span>
 <span class="line-unanalyzed" title="No Anys on this line!">            return False</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    def __ne__(self, other) -&gt; bool:</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        return not self.__eq__(other)</span>
+<span class="line-precise" title="No Anys on this line!">    def __ne__(self, other: "DataType") -&gt; bool:</span>
+<span class="line-precise" title="No Anys on this line!">        return not self.__eq__(other)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def __hash__(self) -&gt; int:</span>
 <span class="line-precise" title="No Anys on this line!">        return hash(self.name)</span>
@@ -461,13 +466,12 @@ Omitted Generics (x1)">        n_unique = len(unique)</span>
 <span class="line-empty" title="No Anys on this line!">        ]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">        max_diff_eq_1 = False</span>
-<span class="line-precise" title="No Anys on this line!">        if n_unique &gt; 1:</span>
-<span class="line-precise" title="No Anys on this line!">            if dtype in numeric_dtypes:</span>
+<span class="line-precise" title="No Anys on this line!">        if n_unique &gt; 1 and dtype in numeric_dtypes:</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x9)
-Unannotated (x1)">                max_diff = unique.diff().dropna().max()</span>
+Unannotated (x1)">            max_diff = unique.diff().dropna().max()</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x2)">                max_diff_eq_1 = max_diff == 1</span>
+Omitted Generics (x2)">            max_diff_eq_1 = max_diff == 1</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">        if dtype in numeric_dtypes:</span>
 <span class="line-precise" title="No Anys on this line!">            if n_unique &lt;= 2:</span>
@@ -526,14 +530,18 @@ Omitted Generics (x2)">                max_diff_eq_1 = max_diff == 1</span>
 <span class="line-precise" title="No Anys on this line!">            max_diff_eq_1 = max_diff == 1</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">        if dtype in numeric_dtypes:</span>
-<span class="line-precise" title="No Anys on this line!">            if n_unique &lt;= 2:  # noqa: PLR2004 - 2 is not magic -- it's the number of unique values in a binary column</span>
+<span class="line-empty" title="No Anys on this line!">            if (</span>
+<span class="line-precise" title="No Anys on this line!">                n_unique &lt;= 2</span>
+<span class="line-empty" title="No Anys on this line!">            ):  # - 2 is not magic -- it's the number of unique values in a binary column</span>
 <span class="line-precise" title="No Anys on this line!">                return DataType.BINARY</span>
 <span class="line-precise" title="No Anys on this line!">            elif max_diff_eq_1:</span>
 <span class="line-precise" title="No Anys on this line!">                return DataType.CATEGORICAL</span>
 <span class="line-empty" title="No Anys on this line!">            else:</span>
 <span class="line-precise" title="No Anys on this line!">                return DataType.CONTINUOUS</span>
 <span class="line-precise" title="No Anys on this line!">        elif dtype in categorical_dtypes:</span>
-<span class="line-precise" title="No Anys on this line!">            return DataType.BINARY if n_unique &lt;= 2 else DataType.CATEGORICAL  # noqa: PLR2004 - 2 is not magic -- it's the number of unique values in a binary column</span>
+<span class="line-empty" title="No Anys on this line!">            return (</span>
+<span class="line-precise" title="No Anys on this line!">                DataType.BINARY if n_unique &lt;= 2 else DataType.CATEGORICAL</span>
+<span class="line-empty" title="No Anys on this line!">            )  # - 2 is not magic -- it's the number of unique values in a binary column</span>
 <span class="line-precise" title="No Anys on this line!">        elif dtype in date_dtypes:</span>
 <span class="line-precise" title="No Anys on this line!">            return DataType.DATE</span>
 <span class="line-empty" title="No Anys on this line!">        else:</span>

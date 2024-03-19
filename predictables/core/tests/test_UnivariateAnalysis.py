@@ -59,7 +59,6 @@ def test_univariate_analysis_init(test_data):
 
     # Verify basic attributes
     assert ua.model_name == model_name, f"Expected {model_name}, got {ua.model_name}"
-    print(ua.df.columns)
     pd.testing.assert_frame_equal(
         to_pd_df(ua.df)
         .drop(columns=["log1p_worst_area", "log1p_pc1"])

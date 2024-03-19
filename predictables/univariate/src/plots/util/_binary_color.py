@@ -1,17 +1,15 @@
 from __future__ import annotations
 
-from typing import Union
-
 import numpy as np
 
 
-def binary_color(x: Union[int, float, str, bool]) -> str:
+def binary_color(x: float | str | bool) -> str:
     """
     Return a color for each value in x, based on whether it is 0 or 1.
 
     Parameters
     ----------
-    x : Union[int, float, str, bool]
+    x : float | str | bool
         The value to get the color for.
 
     Returns

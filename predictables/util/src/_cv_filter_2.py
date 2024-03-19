@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Union
-
 import numpy as np
 import pandas as pd
 import polars as pl
@@ -14,16 +12,16 @@ dbg = DebugLogger(working_file="_cv_filter.py")
 
 
 def filter_df_by_cv_fold(
-    df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+    df: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
     f: int,
-    folds: Union[pd.Series, pl.Series, np.ndarray],
+    folds: pd.Series | pl.Series | np.ndarray,
     time_series_validation: bool = True,
     train_test: str = "train",
     return_type: str = "pd",
-) -> Union[pd.DataFrame, pl.LazyFrame]:
-    """
-    Filter a dataframe based on cross-validation fold. Returns a dataframe
-    filtered for the given fold.
+) -> pd.DataFrame | pl.LazyFrame:
+    """Filter a dataframe based on cross-validation fold.
+
+    Returns a dataframe filtered for the given fold.
 
     Parameters
     ----------
@@ -70,16 +68,16 @@ def filter_df_by_cv_fold(
 
 
 def filter_by_cv_fold(
-    s: Union[pd.Series, pl.Series, np.ndarray],
+    s: pd.Series | pl.Series | np.ndarray,
     f: int,
-    folds: Union[pd.Series, pl.Series, np.ndarray],
+    folds: pd.Series | pl.Series | np.ndarray,
     time_series_validation: bool = True,
     train_test: str = "train",
     return_type: str = "pd",
-) -> Union[pd.Series, pl.Series]:
-    """
-    Filter data based on cross-validation fold. Returns a series filtered
-    for the given fold.
+) -> pd.Series | pl.Series:
+    """Filter data based on cross-validation fold.
+
+    Returns a series filtered for the given fold.
 
     Parameters
     ----------
@@ -116,7 +114,6 @@ def filter_by_cv_fold(
         s_ = to_pd_s(s).reset_index(drop=True)
         # filter based on cross-validation fold
         idx = cv_filter(f, folds_, time_series_validation, train_test, "pd").to_numpy()
-        print(f"\nidx.shape: {idx.shape}\n")
         return s_[idx]
 
     elif return_type in ["pl", "polars", "pl.Series"]:
@@ -134,11 +131,11 @@ def filter_by_cv_fold(
 
 def cv_filter(
     fold: int,
-    fold_col: Union[pd.Series, pl.Series, np.ndarray],
+    fold_col: pd.Series | pl.Series | np.ndarray,
     time_series_validation: bool = True,
     train_test: str = "train",
     return_type: str = "pd",
-) -> Union[pd.Series, pl.Series]:
+) -> pd.Series | pl.Series:
     """Filter data based on cross-validation fold."""
     return (
         _cv_filter_ts(fold, fold_col, train_test, return_type)
@@ -149,14 +146,14 @@ def cv_filter(
 
 def _cv_filter_no_ts(
     fold: int,
-    fold_col: Union[pd.Series, pl.Series, np.ndarray],
+    fold_col: pd.Series | pl.Series | np.ndarray,
     train_test: str,
     return_type: str,
-) -> Union[pd.Series, pl.Series]:
-    """
-    Filter data based on cross-validation fold. This is a helper function
-    for cv_filter, and is used when the cross-validation is not based on a
-    time series.
+) -> pd.Series | pl.Series:
+    """Filter data based on cross-validation fold.
+
+    This is a helper function for cv_filter, and is used when the
+    cross-validation is not based on a time series.
 
     Parameters
     ----------
@@ -209,16 +206,16 @@ def _cv_filter_no_ts(
 
 def _cv_filter_ts(
     fold: int,
-    fold_col: Union[pd.Series, pl.Series, np.ndarray],
+    fold_col: pd.Series | pl.Series | np.ndarray,
     train_test: str,
     return_type: str,
-) -> Union[pd.Series, pl.Series]:
-    """
-    Fiter data based on cross-validation fold. This is a helper function for
-    cv_filter, and is used when the cross-validation is based on a time series. In
-    the case of a time series, you filter the data based on whether the fold is
-    less than or equal to the given fold label -- fold labels are assigned to the
-    data based on a date or time column.
+) -> pd.Series | pl.Series:
+    """Fiter data based on cross-validation fold.
+
+    This is a helper function for cv_filter, and is used when the cross-validation is
+    based on a time series. In the case of a time series, you filter the data based
+    on whether the fold is less than or equal to the given fold label -- fold labels
+    are assigned to the data based on a date or time column.
 
     Parameters
     ----------
@@ -253,13 +250,13 @@ def _cv_filter_ts(
 
 
 def _cv_filter_ts_pd(
-    fold: int, fold_col: Union[pd.Series, pl.Series, np.ndarray], train_test: str
+    fold: int, fold_col: pd.Series | pl.Series | np.ndarray, train_test: str
 ) -> pd.Series:
-    """
-    Fiter data based on cross-validation fold. This is a helper function for
-    cv_filter, and is used when the cross-validation is based on a time series. In
-    the case of a time series, you filter the data based on whether the fold is
-    less than or equal to the given fold label -- fold labels are assigned to the
+    """Fiter data based on cross-validation fold.
+
+    This is a helper function for cv_filter, and is used when the cross-validation is based
+    on a time series. In the case of a time series, you filter the data based on whether the
+    fold is less than or equal to the given fold label -- fold labels are assigned to the
     data based on a date or time column.
 
     Parameters
@@ -294,13 +291,13 @@ def _cv_filter_ts_pd(
 
 
 def _cv_filter_ts_pl(
-    fold: int, fold_col: Union[pd.Series, pl.Series, np.ndarray], train_test: str
+    fold: int, fold_col: pd.Series | pl.Series | np.ndarray, train_test: str
 ) -> pl.Series:
-    """
-    Fiter data based on cross-validation fold. This is a helper function for
-    cv_filter, and is used when the cross-validation is based on a time series. In
-    the case of a time series, you filter the data based on whether the fold is
-    less than or equal to the given fold label -- fold labels are assigned to the
+    """Fiter data based on cross-validation fold.
+
+    This is a helper function for cv_filter, and is used when the cross-validation is based
+    on a time series. In the case of a time series, you filter the data based on whether the
+    fold is less than or equal to the given fold label -- fold labels are assigned to the
     data based on a date or time column.
 
     Parameters

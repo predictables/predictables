@@ -225,7 +225,6 @@
 <span id="L215" class="lineno"><a class="lineno" href="#L215">215</a></span>
 <span id="L216" class="lineno"><a class="lineno" href="#L216">216</a></span>
 <span id="L217" class="lineno"><a class="lineno" href="#L217">217</a></span>
-<span id="L218" class="lineno"><a class="lineno" href="#L218">218</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-empty" title="No Anys on this line!">"""</span>
 <span class="line-empty" title="No Anys on this line!">This module performs correlation matrix analysis on the data.</span>
@@ -284,13 +283,12 @@ Unimported (x2)">    if isinstance(data, pd.Series | pl.Series):</span>
 <span class="line-empty" title="No Anys on this line!">    # Check that if either a numpy array or list, that it is 2D</span>
 <span class="line-precise" title="Any Types on this line: 
 Explicit (x3)
-Omitted Generics (x2)">    elif isinstance(data, np.ndarray):</span>
+Omitted Generics (x2)">    if isinstance(data, np.ndarray):</span>
 <span class="line-unanalyzed" title="No Anys on this line!">        if len(data.shape) != 2:</span>
 <span class="line-unanalyzed" title="No Anys on this line!">            raise ValueError(f"Input data must be 2D, but is {len(data.shape)}D.")</span>
 <span class="line-precise" title="Any Types on this line: 
-Omitted Generics (x3)">    elif isinstance(data, list):</span>
-<span class="line-unanalyzed" title="No Anys on this line!">        if len(data) != 2:</span>
-<span class="line-unanalyzed" title="No Anys on this line!">            raise ValueError(f"Input data must be 2D, but is {len(data)}D.")</span>
+Omitted Generics (x3)">    elif isinstance(data, list) and len(data) != 2:</span>
+<span class="line-unanalyzed" title="No Anys on this line!">        raise ValueError(f"Input data must be 2D, but is {len(data)}D.")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # If data is a DataFrame, grab the column names</span>
 <span class="line-precise" title="Any Types on this line: 
