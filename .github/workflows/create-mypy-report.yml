@@ -34,21 +34,14 @@ jobs:
       - name: Activate virtual environment
         run: source .venv/bin/activate
       - name: Install dependencies
-        run: |
-        pip install -r requirements.txt
-        pip install mypy
-
+        run: pip install -r requirements.txt && pip install mypy
       - name: Run mypy & generate report (even if there are errors -- we want to see these errors)
-        run: |
-        mkdir -p $HOME/report_output
-        mypy --config-file ${{ env.CONFIG_FILE }} --xml-report $HOME/report_output/mypy_report.xml . || true
-
+        run: mkdir -p $HOME/report_output && mypy --config-file ${{ env.CONFIG_FILE }} --xml-report $HOME/report_output/mypy_report.xml . || true
       - name: Upload mypy report
         uses: actions/upload-artifact@v4
         with:
           name: mypy-report
           path: $HOME/report_output/mypy_report.xml
-
       - name: Download and store the mypy report
         uses: actions/download-artifact@v2
         with:
