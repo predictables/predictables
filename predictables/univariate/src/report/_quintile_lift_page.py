@@ -9,7 +9,7 @@ from predictables.util.report import Report
 
 def quintile_lift_page(
     rpt: Report,
-    X: pd.Series,  # noqa: N803 -- X is standard machine learning notation
+    X: pd.Series,  # -- X is standard machine learning notation
     y: pd.Series,
     cv: pd.Series,
     **kwargs,
@@ -20,7 +20,7 @@ def quintile_lift_page(
     return rpt.h2("Univariate Report").h3("Quintile Lift Plot")
 
 
-def _get_plot(X: pd.Series, y: pd.Series, cv: pd.Series, **kwargs) -> plt.Axes:  # noqa: N803 -- X is standard machine learning notation
+def _get_plot(X: pd.Series, y: pd.Series, cv: pd.Series, **kwargs) -> plt.Axes:  # -- X is standard machine learning notation
     """Get the quintile lift plot."""
     return quintile_lift_plot(X, y, cv, **kwargs)
 

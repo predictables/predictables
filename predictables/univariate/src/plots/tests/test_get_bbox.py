@@ -21,7 +21,10 @@ def test_get_bbox_with_valid_label():
         bbox, Bbox
     ), f"The returned object is not a Bbox instance: it is {bbox}, a {type(bbox)}."
     assert (
-        bbox.width > 0 and bbox.height > 0
+        bbox.width > 0
+    ), f"The Bbox should have positive width and height, but it is {bbox}, with width {bbox.width} and height {bbox.height}."
+    assert (
+        bbox.height > 0
     ), f"The Bbox should have positive width and height, but it is {bbox}, with width {bbox.width} and height {bbox.height}."
     plt.close(fig)
 
@@ -36,7 +39,10 @@ def test_get_bbox_with_invalid_label():
 
     # Assert that the returned bbox is the default empty bbox
     assert (
-        bbox.width == 0 and bbox.height == 0
+        bbox.width == 0
+    ), f"The Bbox should be empty for invalid labels, but it is {bbox}, with width {bbox.width} and height {bbox.height}."
+    assert (
+        bbox.height == 0
     ), f"The Bbox should be empty for invalid labels, but it is {bbox}, with width {bbox.width} and height {bbox.height}."
     plt.close(fig)
 
@@ -76,7 +82,10 @@ def test_get_bbox_with_various_text_and_styles(rotation, alignment, text):
         bbox, Bbox
     ), f"Expected a Bbox instance, but got {bbox}, a {type(bbox)}."
     assert (
-        bbox.width > 0 and bbox.height > 0
+        bbox.width > 0
+    ), f"Expected positive width and height, but got {bbox}, with width {bbox.width} and height {bbox.height}."
+    assert (
+        bbox.height > 0
     ), f"Expected positive width and height, but got {bbox}, with width {bbox.width} and height {bbox.height}."
     plt.close(fig)
 
@@ -96,6 +105,9 @@ def test_get_bbox_with_automatic_tick_labels(rotation):
         bbox, Bbox
     ), f"Expected a Bbox instance for automatic tick labels, but got {bbox}, a {type(bbox)}."
     assert (
-        bbox.width > 0 and bbox.height > 0
+        bbox.width > 0
+    ), f"Expected positive width and height for tick labels, but got {bbox}, with width {bbox.width} and height {bbox.height}."
+    assert (
+        bbox.height > 0
     ), f"Expected positive width and height for tick labels, but got {bbox}, with width {bbox.width} and height {bbox.height}."
     plt.close(fig)

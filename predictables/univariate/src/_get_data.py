@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List, Optional, Union
-
 import pandas as pd
 import polars as pl
 
@@ -9,24 +7,23 @@ from predictables.util import filter_df_by_cv_fold, get_unique, to_pd_df
 
 
 def _get_data(
-    df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
-    df_val: Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]],
+    df: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
+    df_val: pd.DataFrame | pl.DataFrame | pl.LazyFrame | None = None,
     element: str = "x",
     data: str = "train",
-    fold_n: Optional[int] = None,
+    fold_n: int | None = None,
     feature_col_name: str = "feature",
     target_col_name: str = "target",
     fold_col_name: str = "fold",
     time_series_validation: bool = True,
-) -> List[Union[int, float, str]]:
-    """
-    Helper function to get the requested data element.
+) -> int | float | str:
+    """Get the requested data element.
 
     Parameters
     ----------
-    df : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+    df : pd.DataFrame | pl.DataFrame | pl.LazyFrame
         The dataframe to get the data from.
-    df_val : Optional[Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]]
+    df_val : pd.DataFrame | pl.DataFrame | pl.LazyFrame | Non = None,
         The validation dataframe.
     element : str, optional
         What data element to get. Choices are "x", "y", or "fold"
@@ -51,7 +48,7 @@ def _get_data(
 
     Returns
     -------
-    List[Union[int, float, str]]
+    int | float | str
         The values for the requested column.
     """
     df_: pd.DataFrame = to_pd_df(df)
@@ -98,9 +95,9 @@ def _filter_df_for_cv(
     data: str = "all",
     time_series_validation: bool = True,
 ) -> pd.DataFrame:
-    """
-    Get the data for the requested fold. This means that we only return
-    rows having the cv label of the fold.
+    """Get the data for the requested fold.
+
+    This means that we only return rows having the cv label of the fold.
 
     Parameters
     ----------
@@ -152,19 +149,20 @@ def _filter_df_for_cv(
 
 
 def _filter_df_for_cv_train(
-    df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame],
+    df: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
     fold: int,
     fold_col: str,
     time_series_validation: bool = True,
     return_type: str = "pd",
-) -> Union[pd.DataFrame, pl.LazyFrame]:
-    """
-    Get the training data for the requested fold. This means that we exclude
-    all rows having the label of the fold, and return the remaining rows.
+) -> pd.DataFrame | pl.LazyFrame:
+    """Get the training data for the requested fold.
+
+    This means that we exclude all rows having the label of the fold,
+    and return the remaining rows.
 
     Parameters
     ----------
-    df : Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]
+    df : pd.DataFrame | pl.DataFrame | pl.LazyFrame
         The dataframe to get the data from.
     fold : int
         The fold number to get the training data for. Must be a named
@@ -180,7 +178,7 @@ def _filter_df_for_cv_train(
 
     Returns
     -------
-    Union[pd.DataFrame, pl.LazyFrame]
+    pd.DataFrame | pl.LazyFrame
         The training data for the requested fold.
 
     Raises
@@ -211,10 +209,10 @@ def _filter_df_for_cv_test(
     fold_col: str,
     time_series_validation: bool = True,
     return_type: str = "pd",
-) -> Union[pd.DataFrame, pl.LazyFrame]:
-    """
-    Get the testing/validation data for the requested fold. This means that
-    we only return rows having the cv label of the fold.
+) -> pd.DataFrame | pl.LazyFrame:
+    """Get the testing/validation data for the requested fold.
+
+    This means that we only return rows having the cv label of the fold.
 
     Parameters
     ----------
@@ -233,7 +231,7 @@ def _filter_df_for_cv_test(
 
     Returns
     -------
-    Union[pd.DataFrame, pl.LazyFrame]
+    pd.DataFrame | pl.LazyFrame
         The validation data for the requested fold.
 
     Raises
@@ -259,13 +257,11 @@ def _filter_df_for_cv_test(
 
 
 def _filter_df_for_train_test(
-    df: pd.DataFrame,
-    df_val: Optional[pd.DataFrame] = None,
-    data: str = "all",
-    time_series_validation: bool = True,
+    df: pd.DataFrame, df_val: pd.DataFrame | None = None, data: str = "all"
 ) -> pd.DataFrame:
-    """
-    Returns a dataframe representing the `data` string input -- one of:
+    """Return a dataframe representing the `data` string input.
+
+    String input should be one of:
         `all` - returns the concatenated [df, df_val] set
         `train` - returns df
         `test` - returns df_val

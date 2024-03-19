@@ -124,6 +124,9 @@
 <span id="L114" class="lineno"><a class="lineno" href="#L114">114</a></span>
 <span id="L115" class="lineno"><a class="lineno" href="#L115">115</a></span>
 <span id="L116" class="lineno"><a class="lineno" href="#L116">116</a></span>
+<span id="L117" class="lineno"><a class="lineno" href="#L117">117</a></span>
+<span id="L118" class="lineno"><a class="lineno" href="#L118">118</a></span>
+<span id="L119" class="lineno"><a class="lineno" href="#L119">119</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
@@ -138,11 +141,11 @@ Explicit (x6)
 Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-any" title="No Anys on this line!">def x_pd():</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    np.random.seed(42)</span>
+Unannotated (x2)">    rg = np.random.default_rng(42)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)
+Unannotated (x4)
 Omitted Generics (x113)
-Explicit (x3)">    return pd.Series(np.random.randn(100))</span>
+Explicit (x2)">    return pd.Series(rg.normal(0, 1, 100))</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="Any Types on this line: 
@@ -167,9 +170,11 @@ Explicit (x6)
 Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-any" title="No Anys on this line!">def cv_pd():</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)
+Unannotated (x2)">    rg = np.random.default_rng(42)</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x4)
 Omitted Generics (x113)
-Explicit (x6)">    return pd.Series(np.random.choice([0, 1, 2, 3], size=100))</span>
+Explicit (x2)">    return pd.Series(rg.choice([0, 1, 2, 3], size=100))</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="Any Types on this line: 
@@ -257,14 +262,17 @@ Unannotated (x8)">    ), f"Expected length of sd_smooth to be {grid_bins}, but g
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">@pytest.mark.parametrize("grid_bins", [10, 50, 100])</span>
 <span class="line-any" title="No Anys on this line!">def test_calculate_single_density_sd_edge_cases(grid_bins):</span>
+<span class="line-empty" title="No Anys on this line!">    """Test edge cases of the function."""</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
-Omitted Generics (x113)
-Explicit (x3)">    x = pd.Series(np.random.randn(10))</span>
+Unannotated (x2)">    rg = np.random.default_rng(42)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
+Unannotated (x5)
 Omitted Generics (x113)
-Explicit (x6)">    cv_fold = pd.Series(np.random.choice([0, 1], size=10))</span>
+Explicit (x2)">    x = pd.Series(rg.normal(0, 1, 10))</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x5)
+Omitted Generics (x113)
+Explicit (x2)">    cv_fold = pd.Series(rg.choice([0, 1], 10))</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x6)

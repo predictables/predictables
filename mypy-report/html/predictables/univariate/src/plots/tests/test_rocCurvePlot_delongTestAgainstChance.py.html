@@ -232,6 +232,7 @@
 <span id="L222" class="lineno"><a class="lineno" href="#L222">222</a></span>
 <span id="L223" class="lineno"><a class="lineno" href="#L223">223</a></span>
 <span id="L224" class="lineno"><a class="lineno" href="#L224">224</a></span>
+<span id="L225" class="lineno"><a class="lineno" href="#L225">225</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -271,21 +272,19 @@ Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x3)">def sample_data() -&gt; Tuple[pd.Series, pd.Series, pd.Series]:</span>
 <span class="line-empty" title="No Anys on this line!">    """Generate sample data for testing."""</span>
-<span class="line-precise" title="No Anys on this line!">    np.random.seed(42)  # Ensure reproducibility</span>
+<span class="line-precise" title="No Anys on this line!">    rg = np.random.default_rng(42)  # Ensure reproducibility</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x113)
-Explicit (x4)">    yhat_proba_logits = pd.Series(np.random.rand(100))</span>
+Explicit (x11)">    yhat_proba_logits = pd.Series(rg.random(100))</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x4)">    yhat_proba = 1 / (1 + np.exp(-yhat_proba_logits))  # Convert to probabilities</span>
-<span class="line-precise" title="Any Types on this line: 
-Omitted Generics (x113)
-Explicit (x2)">    y = pd.Series(</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Explicit (x3)">        np.random.binomial(1, yhat_proba, size=100)</span>
-<span class="line-empty" title="No Anys on this line!">    )  # Simulate binary outcomes</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x113)
-Explicit (x8)">    fold = pd.Series(np.random.choice([1, 2, 3, 4, 5], size=100))</span>
+Explicit (x5)">    y = pd.Series(rg.binomial(1, yhat_proba, size=100))</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x113)
+Explicit (x8)">    fold = pd.Series(rg.choice([1, 2, 3, 4, 5], size=100))</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x114)
 Explicit (x3)">    return y, pd.Series(yhat_proba), fold</span>
@@ -319,13 +318,10 @@ Omitted Generics (x3)
 Unannotated (x1)">def sample_variance_bootstrap(sample_data: Tuple[pd.Series, pd.Series, pd.Series]):</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x5)">    y, yhat_proba, _ = sample_data</span>
+<span class="line-precise" title="No Anys on this line!">    rg = np.random.default_rng(42)</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Explicit (x8)
-Omitted Generics (x8)">    idx = np.array(</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Explicit (x5)
-Omitted Generics (x2)">        [np.random.choice(len(y), len(y), replace=True) for _ in range(2500)]</span>
-<span class="line-empty" title="No Anys on this line!">    )</span>
+Explicit (x13)
+Omitted Generics (x10)">    idx = np.array([rg.choice(len(y), len(y), replace=True) for _ in range(2500)])</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Turn y and yhat from a pd.Series (vector) to a np.array (matrix) of shape (n, 2500)</span>
 <span class="line-any" title="Any Types on this line: 
@@ -356,23 +352,23 @@ Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-any" title="No Anys on this line!">def large_sample_data():</span>
 <span class="line-empty" title="No Anys on this line!">    """Generate larger sample data for testing."""</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    np.random.seed(42)</span>
+Unannotated (x2)">    rg = np.random.default_rng(42)</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">    size = 100000  # Increase the size for a more realistic test case</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x4)
+Unannotated (x6)
 Omitted Generics (x113)
-Explicit (x3)">    yhat_proba_logits = pd.Series(np.random.rand(size))</span>
+Explicit (x2)">    yhat_proba_logits = pd.Series(rg.random(size))</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x6)">    yhat_proba = 1 / (1 + np.exp(-yhat_proba_logits))</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x5)
+Unannotated (x7)
 Omitted Generics (x113)
-Explicit (x3)">    y = pd.Series(np.random.binomial(1, yhat_proba, size=size))</span>
+Explicit (x2)">    y = pd.Series(rg.binomial(1, yhat_proba, size=size))</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x4)
+Unannotated (x6)
 Omitted Generics (x113)
-Explicit (x6)">    fold = pd.Series(np.random.choice([1, 2, 3, 4, 5], size=size))</span>
+Explicit (x2)">    fold = pd.Series(rg.choice([1, 2, 3, 4, 5], size=size))</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x3)">    return y, yhat_proba, fold</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -384,11 +380,19 @@ Unannotated (x4)">    y, yhat_proba, fold = sample_data</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x6)
 Omitted Generics (x3)">    z_stat, p_value = _delong_test_against_chance(y, yhat_proba, fold, False)</span>
-<span class="line-empty" title="No Anys on this line!">    assert (</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x5)">        isinstance(z_stat, float) and isinstance(p_value, float)</span>
+Unannotated (x1)">    assert isinstance(</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x1)">        z_stat, float</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x16)
+Explicit (x4)">    ), f"Z-statistic {z_stat} and p-value {p_value} should be floats, not {type(z_stat)} and {type(p_value)}."</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x1)">    assert isinstance(</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x1)">        p_value, float</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x14)
 Explicit (x4)">    ), f"Z-statistic {z_stat} and p-value {p_value} should be floats, not {type(z_stat)} and {type(p_value)}."</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -475,7 +479,7 @@ Unannotated (x8)">    ), f"p-value {p_value} should be close to the one I calclu
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="No Anys on this line!">def test_delong_test_gives_significant_estimate(cancer):</span>
 <span class="line-empty" title="No Anys on this line!">    """Test the DeLong test with (almost) cancer dataset I know is significant."""</span>
-<span class="line-any" title="No Anys on this line!">    from sklearn.linear_model import LogisticRegression  # type: ignore</span>
+<span class="line-any" title="No Anys on this line!">    from sklearn.linear_model import LogisticRegression  # type: ignore[import-untyped]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x2)">    df = cancer</span>
@@ -509,19 +513,19 @@ Unannotated (x2)">        p_value &lt; 0.05</span>
 <span class="line-any" title="No Anys on this line!">def test_delong_test_random_prediction():</span>
 <span class="line-empty" title="No Anys on this line!">    """Test the DeLong test with random predictions."""</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    np.random.seed(42)</span>
+Unannotated (x2)">    rg = np.random.default_rng(42)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
+Unannotated (x5)
 Omitted Generics (x113)
-Explicit (x3)">    y = pd.Series(np.random.binomial(1, 0.5, 10000))</span>
+Explicit (x2)">    y = pd.Series(rg.binomial(1, 0.5, 10000))</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
+Unannotated (x5)
 Omitted Generics (x113)
-Explicit (x3)">    yhat_proba = pd.Series(np.random.rand(10000))</span>
+Explicit (x2)">    yhat_proba = pd.Series(rg.random(10000))</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
+Unannotated (x5)
 Omitted Generics (x113)
-Explicit (x6)">    fold = pd.Series(np.random.choice([1, 2, 3, 4, 5], 10000))</span>
+Explicit (x2)">    fold = pd.Series(rg.choice([1, 2, 3, 4, 5], 10000))</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x6)
@@ -586,18 +590,18 @@ Omitted Generics (x3)">        _delong_test_against_chance(y, yhat_proba, fold, 
 <span class="line-precise" title="No Anys on this line!">@pytest.mark.parametrize("p", [(0.25,), (0.5,), (0.75,)])</span>
 <span class="line-any" title="No Anys on this line!">def test_delong_test_cross_validation_consistency(n_folds, p):</span>
 <span class="line-empty" title="No Anys on this line!">    """Test consistency of DeLong test results across cross-validation splits."""</span>
-<span class="line-any" title="No Anys on this line!">    from sklearn.model_selection import KFold  # type: ignore</span>
+<span class="line-any" title="No Anys on this line!">    from sklearn.model_selection import KFold  # type: ignore[import-untyped]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    np.random.seed(42)</span>
+Unannotated (x2)">    rg = np.random.default_rng(42)</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x7)
+Omitted Generics (x113)
+Explicit (x2)">    y = pd.Series(rg.binomial(1, p[0], 10000))</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x5)
 Omitted Generics (x113)
-Explicit (x3)">    y = pd.Series(np.random.binomial(1, p[0], 10000))</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
-Omitted Generics (x113)
-Explicit (x3)">    yhat_proba = pd.Series(np.random.rand(10000))</span>
+Explicit (x2)">    yhat_proba = pd.Series(rg.random(10000))</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x4)
 Unimported (x1)">    kf = KFold(n_splits=n_folds[0], shuffle=True, random_state=42)</span>

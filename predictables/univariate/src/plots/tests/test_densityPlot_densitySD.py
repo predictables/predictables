@@ -10,8 +10,8 @@ from predictables.util import filter_by_cv_fold
 
 @pytest.fixture
 def x_pd():
-    np.random.seed(42)
-    return pd.Series(np.random.randn(100))
+    rg = np.random.default_rng(42)
+    return pd.Series(rg.normal(100))
 
 
 @pytest.fixture
@@ -26,7 +26,8 @@ def x_pl(x_pd):
 
 @pytest.fixture
 def by_pd():
-    return pd.Series(np.random.choice(["A", "B"], size=100))
+    rg = np.random.default_rng(42)
+    return pd.Series(rg.choice(["A", "B"], size=100))
 
 
 @pytest.fixture
@@ -41,7 +42,8 @@ def by_pl(by_pd):
 
 @pytest.fixture
 def cv_pd():
-    return pd.Series(np.random.choice([0, 1, 2, 3], size=100))
+    rg = np.random.default_rng(42)
+    return pd.Series(rg.choice([0, 1, 2, 3], size=100))
 
 
 @pytest.fixture

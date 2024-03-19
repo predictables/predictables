@@ -255,8 +255,6 @@
 <span id="L245" class="lineno"><a class="lineno" href="#L245">245</a></span>
 <span id="L246" class="lineno"><a class="lineno" href="#L246">246</a></span>
 <span id="L247" class="lineno"><a class="lineno" href="#L247">247</a></span>
-<span id="L248" class="lineno"><a class="lineno" href="#L248">248</a></span>
-<span id="L249" class="lineno"><a class="lineno" href="#L249">249</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -278,21 +276,18 @@ Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x3)">def sample_data() -&gt; Tuple[pd.Series, pd.Series, pd.Series]:</span>
 <span class="line-empty" title="No Anys on this line!">    """Generate sample data for testing."""</span>
-<span class="line-precise" title="No Anys on this line!">    np.random.seed(42)  # Ensure reproducibility</span>
+<span class="line-precise" title="No Anys on this line!">    rg = np.random.default_rng(42)</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x113)
-Explicit (x4)">    yhat_proba_logits = pd.Series(np.random.rand(100))</span>
+Explicit (x11)">    yhat_proba_logits = pd.Series(rg.random(100))</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x4)">    yhat_proba = 1 / (1 + np.exp(-yhat_proba_logits))  # Convert to probabilities</span>
-<span class="line-precise" title="Any Types on this line: 
-Omitted Generics (x113)
-Explicit (x2)">    y = pd.Series(</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Explicit (x3)">        np.random.binomial(1, yhat_proba, size=100)</span>
-<span class="line-empty" title="No Anys on this line!">    )  # Simulate binary outcomes</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x113)
-Explicit (x8)">    fold = pd.Series(np.random.choice([1, 2, 3, 4, 5], size=100))</span>
+Explicit (x5)">    y = pd.Series(rg.binomial(1, yhat_proba, size=100))  # Simulate binary outcomes</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x113)
+Explicit (x8)">    fold = pd.Series(rg.choice([1, 2, 3, 4, 5], size=100))</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x114)
 Explicit (x3)">    return y, pd.Series(yhat_proba), fold</span>
@@ -326,13 +321,10 @@ Omitted Generics (x3)
 Unannotated (x1)">def sample_variance_bootstrap(sample_data: Tuple[pd.Series, pd.Series, pd.Series]):</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x5)">    y, yhat_proba, _ = sample_data</span>
+<span class="line-precise" title="No Anys on this line!">    rg = np.random.default_rng(42)</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Explicit (x8)
-Omitted Generics (x8)">    idx = np.array(</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Explicit (x5)
-Omitted Generics (x2)">        [np.random.choice(len(y), len(y), replace=True) for _ in range(2500)]</span>
-<span class="line-empty" title="No Anys on this line!">    )</span>
+Explicit (x13)
+Omitted Generics (x10)">    idx = np.array([rg.choice(len(y), len(y), replace=True) for _ in range(2500)])</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Turn y and yhat from a pd.Series (vector) to a np.array (matrix) of shape (n, 2500)</span>
 <span class="line-any" title="Any Types on this line: 
@@ -363,23 +355,23 @@ Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-any" title="No Anys on this line!">def large_sample_data():</span>
 <span class="line-empty" title="No Anys on this line!">    """Generate larger sample data for testing."""</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    np.random.seed(42)</span>
+Unannotated (x2)">    rg = np.random.default_rng(42)</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">    size = 100000  # Increase the size for a more realistic test case</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x4)
+Unannotated (x6)
 Omitted Generics (x113)
-Explicit (x3)">    yhat_proba_logits = pd.Series(np.random.rand(size))</span>
+Explicit (x2)">    yhat_proba_logits = pd.Series(rg.random(size))</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x6)">    yhat_proba = 1 / (1 + np.exp(-yhat_proba_logits))</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x5)
+Unannotated (x7)
 Omitted Generics (x113)
-Explicit (x3)">    y = pd.Series(np.random.binomial(1, yhat_proba, size=size))</span>
+Explicit (x2)">    y = pd.Series(rg.binomial(1, yhat_proba, size=size))</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x4)
+Unannotated (x6)
 Omitted Generics (x113)
-Explicit (x6)">    fold = pd.Series(np.random.choice([1, 2, 3, 4, 5], size=size))</span>
+Explicit (x2)">    fold = pd.Series(rg.choice([1, 2, 3, 4, 5], size=size))</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x3)">    return y, yhat_proba, fold</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -642,17 +634,19 @@ Explicit (x2)">    ), f"Expected variance to be a float for (near-)perfect separ
 <span class="line-any" title="No Anys on this line!">def test_empirical_auc_variance_multi_fold():</span>
 <span class="line-empty" title="No Anys on this line!">    # Generate mock data</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
-Omitted Generics (x119)
-Explicit (x14)">    y = pd.Series(np.random.randint(0, 2, size=100))</span>
+Unannotated (x2)">    rg = np.random.default_rng(42)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
+Unannotated (x5)
 Omitted Generics (x113)
-Explicit (x3)">    yhat_proba = pd.Series(np.random.rand(100))</span>
+Explicit (x2)">    y = pd.Series(rg.integers(0, 2, 100))</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)
+Unannotated (x5)
 Omitted Generics (x113)
-Explicit (x6)">    fold = pd.Series(np.random.choice([0, 1, 2, 3, 4], size=100))</span>
+Explicit (x2)">    yhat_proba = pd.Series(rg.random(100))</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x5)
+Omitted Generics (x113)
+Explicit (x2)">    fold = pd.Series(rg.choice([1, 2, 3, 4, 5], 100))</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Call the function</span>
 <span class="line-any" title="Any Types on this line: 

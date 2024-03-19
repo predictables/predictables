@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import plotly.graph_objs as go  # type: ignore[import-untyped]
 import polars as pl
-from matplotlib.axes import Axes
 from scipy.stats import entropy as kl_divergence  # type: ignore[import-untyped]
 
 from predictables.util import to_pd_s
@@ -23,8 +22,7 @@ def quintile_lift_plot(
     figsize: tuple[float, float] | None = None,
     **kwargs,
 ) -> plt.Axes | go.Figure:
-    """
-    Plots the quintile lift for a given feature and target.
+    """Plot the quintile lift for a given feature and target.
 
     The function calculates the mean observed target and modeled target for each
     quintile of the modeled target, and plots them as a bar chart. The function
@@ -82,11 +80,10 @@ def quintile_lift_plot_matplotlib(
     feature: pd.Series | pl.Series,
     observed_target: pd.Series | pl.Series,
     modeled_target: pd.Series | pl.Series,
-    ax: Optional[Axes] = None,
+    ax: plt.Axes | None = None,
     figsize: tuple[int, int] = (7, 7),
-):
-    """
-    Plots the quintile lift for a given feature and target.
+) -> plt.Axes:
+    """Plot the quintile lift for a given feature and target.
 
     The function calculates the mean observed target and modeled target for each
     quintile of the modeled target, and plots them as a bar chart. The function
@@ -185,10 +182,8 @@ def quintile_lift_plot_plotly(
     feature: pd.Series | pl.Series,
     observed_target: pd.Series | pl.Series,
     modeled_target: pd.Series | pl.Series,
-    figsize: tuple[int, int] = (7, 7),
-):
-    """
-    Plots the quintile lift for a given feature and target.
+) -> go.Figure:
+    """Plot the quintile lift for a given feature and target.
 
     The function calculates the mean observed target and modeled target for each
     quintile of the modeled target, and plots them as a bar chart. The function
@@ -203,8 +198,6 @@ def quintile_lift_plot_plotly(
         A Pandas Series containing the observed target data.
     modeled_target : pd.Series | pl.Series,
         A Pandas Series containing the modeled target data.
-    figsize : tuple[int, int], optional
-        The figure size. Default is (15, 8).
 
     Returns
     -------

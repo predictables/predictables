@@ -22,9 +22,9 @@ from predictables.univariate.src.plots.util._get_significance_band import (
     ],
 )
 def test_get_significance_band(p_value, expected):
-    """
-    Test the get_significance_band function with various p_values to ensure
-    it returns the correct significance statement.
+    """Test the get_significance_band function with various p_values.
+
+    Done to ensure it always returns the correct significance statement.
     """
     # We'll use a generic statistic name as the function's behavior does not depend on it
     statistic = "test_statistic"
@@ -34,9 +34,9 @@ def test_get_significance_band(p_value, expected):
 # Negative p_value should raise an error
 @pytest.mark.parametrize("p_value", [(-0.01,), (-0.05,), (-0.10,)])
 def test_get_significance_band_negative_p_value(p_value):
-    """
-    Test the get_significance_band function with a negative p_value to ensure
-    it handles or rejects such input appropriately.
+    """Test the get_significance_band function with a negative p_value.
+
+    Test edge case to ensure it handles or rejects such input appropriately.
     """
     statistic = "test_statistic"
     with pytest.raises(ValueError) as err:

@@ -123,7 +123,7 @@ def test_different_lengths():
         _annotate_mean_median(
             pd.Series([1, 2, 3, 4, 5, 6]), pd.Series([0, 0, 1, 1, 0]), ax
         )
-        plt.close("all")
+    plt.close("all")
     assert "The feature and target variables must be the same length" in str(
         err.value
     ), (
@@ -143,7 +143,7 @@ def test_edge_cases(feature, target):
     fig, ax = plt.subplots()
     with pytest.raises(ValueError) as err:
         _annotate_mean_median(feature, target, ax)
-        plt.close("all")
+    plt.close("all")
     assert (
         "The feature and target series should not contain NaN or missing values"
         in str(err.value)

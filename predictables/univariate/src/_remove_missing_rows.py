@@ -1,10 +1,11 @@
+from __future__ import annotations
 import polars as pl
 
 
-def remove_missing_rows(df, *columns):
-    """
-    Remove rows from a Polars DataFrame where any of the specified columns contain
-    missing values.
+def remove_missing_rows(
+    df: pl.DataFrame | pl.LazyFrame, *columns: list[str]
+) -> pl.DataFrame | pl.LazyFrame:
+    """Remove rows from a Polars DataFrame where any of the specified columns contain missing values.
 
     Parameters
     ----------

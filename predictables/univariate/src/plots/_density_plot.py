@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 from functools import wraps
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import polars as pl
-from matplotlib.axes import Axes
-from scipy.stats import gaussian_kde, ttest_ind  # type: ignore
+from scipy.stats import gaussian_kde, ttest_ind
 
 from predictables.univariate.src.plots.util import binary_color, plot_label
 from predictables.util import (
@@ -20,33 +19,31 @@ from predictables.util import (
 
 
 def density_plot(
-    x: Union[pd.Series, pl.Series],
-    plot_by: Union[pd.Series, pl.Series],
-    cv_label: Union[pd.Series, pl.Series],
-    x_min: Optional[float] = None,
-    x_max: Optional[float] = None,
-    ax: Optional[Axes] = None,
+    x: pd.Series | pl.Series,
+    plot_by: pd.Series | pl.Series,
+    cv_label: pd.Series | pl.Series,
+    x_min: float | None = None,
+    x_max: float | None = None,
+    ax: plt.Axes | None = None,
     grid_bins: int = 200,
     cv_alpha: float = 0.5,
     cv_line_width: float = 0.5,
     t_test_alpha: float = 0.05,
-    figsize: Tuple[int, int] = (7, 7),
+    figsize: tuple[int, int] = (7, 7),
     call_legend: bool = True,
     backend: str = "matplotlib",
     time_series_validation: bool = True,
-) -> Axes:
-    """
-    Plot density function as well as cross-validation densities using the
-    specified backend.
+) -> plt.Axes:
+    """Plot density function as well as cross-validation densities using the specified backend.
 
     Parameters
     ----------
-    x : Union[pd.Series, pl.Series]
+    x : pd.Series | pl.Series
         The variable to plot the density of.
-    plot_by : Union[pd.Series, pl.Series]
+    plot_by : pd.Series | pl.Series
         The variable to group by. For a binary target, this is the target.
         The plot will generate a density for each level of the target.
-    cv_label : Union[pd.Series, pl.Series]
+    cv_label : pd.Series | pl.Series
         The cross-validation fold to group by. If None, no grouping is done.
         Defaults to None.
     x_min : float, optional
@@ -111,9 +108,8 @@ def density_plot(
         raise ValueError(f"Invalid backend {backend}.")
 
 
-def validate_density_plot_mpl(func: Callable):
-    """
-    Decorator to validate the inputs to the density plot functions.
+def validate_density_plot_mpl(func: Callable) -> Callable:
+    """Validate the inputs to the density plot functions with a decorator.
 
     Parameters
     ----------
@@ -133,20 +129,20 @@ def validate_density_plot_mpl(func: Callable):
 
     @wraps(func)
     def wrapper(
-        x: Union[pd.Series, pl.Series],
-        plot_by: Union[pd.Series, pl.Series],
-        cv_label: Union[pd.Series, pl.Series],
-        x_min: Optional[float] = None,
-        x_max: Optional[float] = None,
-        ax: Optional["plt.axes.Axes"] = None,
+        x: pd.Series | pl.Series,
+        plot_by: pd.Series | pl.Series,
+        cv_label: pd.Series | pl.Series,
+        x_min: float | None = None,
+        x_max: float | None = None,
+        ax: plt.Axes | None = None,
         grid_bins: int = 200,
         cv_alpha: float = 0.5,
         cv_line_width: float = 0.5,
         t_test_alpha: float = 0.05,
-        figsize: Tuple[int, int] = (7, 7),
+        figsize: tuple[int, int] = (7, 7),
         call_legend: bool = True,
         time_series_validation: bool = True,
-    ):
+    ) -> plt.Axes:
         # Input validations
         if not isinstance(x, (pd.Series, pl.Series)):
             raise ValueError(
@@ -163,13 +159,13 @@ def validate_density_plot_mpl(func: Callable):
                 f"`cv_label` must be a pandas or polars Series, but got {type(cv_label)}."
             )
 
-        def validate_float_int(value, arg_name):
+        def validate_float_int(value: float, arg_name: str) -> float:
             try:
                 # Attempt to convert the value to a float
                 return float(value)
-            except ValueError:
+            except ValueError as err:
                 # If conversion fails, raise an informative error
-                raise ValueError(
+                raise ValueError from err(
                     f"Argument `{arg_name}` must be convertible to float, but got value `{value}` of type `{type(value).__name__}`."
                 )
 
@@ -210,31 +206,31 @@ def validate_density_plot_mpl(func: Callable):
 
 @validate_density_plot_mpl
 def density_plot_mpl(
-    x: Union[pd.Series, pl.Series],
-    plot_by: Union[pd.Series, pl.Series],
-    cv_label: Union[pd.Series, pl.Series],
-    x_min: Optional[float] = None,
-    x_max: Optional[float] = None,
-    ax: Optional[Axes] = None,
-    grid_bins: int = 200,
+    x: pd.Series | pl.Series,
+    plot_by: pd.Series | pl.Series,
+    cv_label: pd.Series | pl.Series,
+    x_min: float | None = None,  # noqa: ARG001
+    x_max: float | None = None,  # noqa: ARG001
+    ax: plt.Axes | None = None,
+    grid_bins: int = 200,  # noqa: ARG001
     cv_alpha: float = 0.5,
     cv_line_width: float = 0.5,
     t_test_alpha: float = 0.05,
-    figsize: Tuple[int, int] = (7, 7),
+    figsize: tuple[int, int] = (7, 7),
     call_legend: bool = True,
     time_series_validation: bool = True,
-) -> Axes:
+) -> plt.Axes:
     """
     Plot density function as well as cross-validation densities.
 
     Parameters
     ----------
-    x : Union[pd.Series, pl.Series]
+    x : pd.Series | pl.Series
         The variable to plot the density of.
-    plot_by : Union[pd.Series, pl.Series]
+    plot_by : pd.Series | pl.Series
         The variable to group by. For a binary target, this is the target.
         The plot will generate a density for each level of the target.
-    cv_label : Union[pd.Series, pl.Series]
+    cv_label : pd.Series | pl.Series
         The cross-validation fold to group by. If None, no grouping is
         done. Defaults to None.
     x_min : float, optional
@@ -316,7 +312,7 @@ def density_plot_mpl(
     )
 
     # Set the x-axis label
-    ax0.set_xlabel(plot_label(x.name if x.name is not None else "Var", False))  # type: ignore
+    ax0.set_xlabel(plot_label(x.name if x.name is not None else "Var", False))
 
     # show gridlines
     ax0.grid(True)
@@ -328,7 +324,7 @@ def density_plot_mpl(
 
 
 def _significance_annotation(
-    significance_statement: str, ax0: plt.Axes, figsize: Tuple[int, int]
+    significance_statement: str, ax0: plt.Axes, figsize: tuple[int, int]
 ) -> plt.Axes:
     ax0.annotate(
         significance_statement,
@@ -372,9 +368,9 @@ def _get_title(x: pd.Series, plot_by: pd.Series, p: float, t_test_alpha: float) 
     # Add a title reflecting the t-test results
     title = (
         "Kernel Density Plot of "
-        f"{plot_label(x.name if x.name is not None else 'Var')}"  # type: ignore
+        f"{plot_label(x.name if x.name is not None else 'Var')}"
         " by "
-        f"{plot_label(plot_by.name if plot_by.name is not None else 'Groupby Var')}."  # type: ignore
+        f"{plot_label(plot_by.name if plot_by.name is not None else 'Groupby Var')}."
     )
     title += "\nDistributions by level are"
     title += " not " if p >= t_test_alpha else " "
@@ -383,19 +379,17 @@ def _get_title(x: pd.Series, plot_by: pd.Series, p: float, t_test_alpha: float) 
 
 
 def _density_t_test_binary_target(
-    x: Union[pd.Series, pl.Series],
-    plot_by: Union[pd.Series, pl.Series],
-    alpha: float = 0.05,
-):
-    """
-    Perform a t-test on the density of x by the levels of plot_by. This function
-    will be used only when the target variable is binary.
+    x: pd.Series | pl.Series, plot_by: pd.Series | pl.Series, alpha: float = 0.05
+) -> tuple[float, float, str]:
+    """Perform a t-test on the density of x by the levels of plot_by.
+
+    This function will be used only when the target variable is binary.
 
     Parameters
     ----------
-    x : Union[pd.Series, pl.Series]
+    x : pd.Series | pl.Series
         The variable to plot the density of.
-    plot_by : Union[pd.Series, pl.Series]
+    plot_by : pd.Series | pl.Series
         The variable to group by. For a binary target, this is the target.
         The plot will generate a density for each level of the target.
     alpha : float, optional
@@ -452,20 +446,20 @@ def _density_t_test_binary_target(
 
 def _plot_density_mpl(
     x: pd.Series,
-    x_min: Optional[float] = None,
-    x_max: Optional[float] = None,
-    ax: Optional[Axes] = None,
-    label: Union[str, None] = None,
+    x_min: float | None = None,
+    x_max: float | None = None,
+    ax: plt.Axes | None = None,
+    label: str | None = None,
     grid_bins: int = 200,
     line_width: float = 1,
-    line_color: Union[str, None] = None,
+    line_color: str | None = None,
     line_style: str = "-",
     alpha: float = 1,
     fill_under: bool = True,
     fill_alpha: float = 0.3,
-    figsize: Tuple[int, int] = (7, 7),
-    time_series_validation: bool = True,
-) -> Axes:
+    figsize: tuple[int, int] = (7, 7),
+    time_series_validation: bool = True,  # noqa: ARG001
+) -> plt.Axes:
     """
     Plot the density of x.
 
@@ -520,7 +514,7 @@ def _plot_density_mpl(
     x_grid = np.linspace(x_min, x_max, grid_bins)
 
     if label is None:
-        label = x.name if x.name is not None else "Var"  # type: ignore
+        label = x.name if x.name is not None else "Var"
 
     if fill_under:
         ax.plot(
@@ -549,22 +543,20 @@ def _plot_density_mpl(
 def density_by_mpl(
     x: pd.Series,
     by: pd.Series,
-    cv_fold: Optional[pd.Series] = None,
-    x_min: Optional[float] = None,
-    x_max: Optional[float] = None,
-    ax: Optional[Axes] = None,
-    use_labels: bool = True,
+    cv_fold: pd.Series | None = None,
+    x_min: float | None = None,
+    x_max: float | None = None,
+    ax: plt.Axes | None = None,
+    use_labels: bool = True,  # noqa: ARG001
     grid_bins: int = 200,
     line_width: float = 1.0,
     alpha: float = 1.0,
     fill_under: bool = True,
     fill_alpha: float = 0.3,
-    figsize: Tuple[int, int] = (7, 7),
+    figsize: tuple[int, int] = (7, 7),
     time_series_validation: bool = True,
-):
-    """
-    Plot the density of x by the levels of by, using matplotlib,
-    all on the same axss.
+) -> plt.Axes:
+    """Plot the density of x by the levels of by, using matplotlib, all on the same axss.
 
     Parameters
     ----------
@@ -638,44 +630,37 @@ def density_by_mpl(
             byname = by.name if by.name is not None else "Groupby Var"
             color_ = binary_color(level) if get_column_dtype(by) == "binary" else None
             color__ = color_ if color_ is not None else None
-            label = f"{plot_label(byname)} = {level}"  # type: ignore
-            _plot_density_mpl(
-                group,
-                label=label,
-                line_color=color__,
-                **params,  # type: ignore
-            )
+            label = f"{plot_label(byname)} = {level}"
+            _plot_density_mpl(group, label=label, line_color=color__, **params)
     # Otherwise, plot the density by CV fold
 
     else:
         for f in cv_fold.drop_duplicates().sort_values():  # loop over CV fold
             x_ = filter_by_cv_fold(x, f, cv_fold, time_series_validation, "test")
             by_ = filter_by_cv_fold(by, f, cv_fold, time_series_validation, "test")
-            for level, group in x_.groupby(by_):  # type: ignore
+            for level, group in x_.groupby(by_):
                 color_ = (
                     binary_color(level) if get_column_dtype(by) == "binary" else None
                 )
                 color__ = color_ if color_ is not None else None
                 _plot_density_mpl(
-                    group,
-                    label="_nolegend_",
-                    line_color=color__,
-                    **params,  # type: ignore
+                    group, label="_nolegend_", line_color=color__, **params
                 )
 
     return ax
 
 
 def calculate_density_sd(
-    x: Union[pd.Series, pl.Series, np.ndarray],
-    by: Union[pd.Series, pl.Series, np.ndarray],
-    cv_fold: Union[pd.Series, pl.Series, np.ndarray],
-    x_min: Optional[float] = None,
-    x_max: Optional[float] = None,
+    x: pd.Series | pl.Series | np.ndarray,
+    by: pd.Series | pl.Series | np.ndarray,
+    cv_fold: pd.Series | pl.Series | np.ndarray,
+    x_min: float | None = None,
+    x_max: float | None = None,
     grid_bins: int = 200,
     time_series_validation: bool = True,
-):
-    """
+) -> pd.Series:
+    """Calculate the SD of the KDE of `x` grouped by `by`.
+
     Calculates the standard deviation of the kernel density estimates (KDE) of `x`
     grouped by the levels of `by` across different cross-validation folds specified
     by `cv_fold`.
@@ -688,11 +673,11 @@ def calculate_density_sd(
 
     Parameters
     ----------
-    x : Union[pd.Series, pl.Series, np.ndarray]
+    x : pd.Series | pl.Series | np.ndarray
         The data series for which the density's standard deviation is computed.
-    by : Union[pd.Series, pl.Series, np.ndarray]
+    by : pd.Series | pl.Series | np.ndarray
         A series indicating the group of each observation in `x`.
-    cv_fold : Union[pd.Series, pl.Series, np.ndarray]
+    cv_fold : pd.Series | pl.Series | np.ndarray
         A series indicating the cross-validation fold of each observation in `x`.
         Unique values in `cv_fold` are treated as separate folds.
     x_min : float, optional
@@ -742,12 +727,12 @@ def calculate_density_sd(
     for f in cv_fold.drop_duplicates().sort_values():
         x_ = filter_by_cv_fold(x, f, cv_fold, time_series_validation, "test")
         by_ = filter_by_cv_fold(by, f, cv_fold, time_series_validation, "test")
-        for level, group in x_.groupby(by_):  # type: ignore
+        for level, group in x_.groupby(by_):
             density = gaussian_kde(group)
             sd[f"{f}_{level}"] = density(sd["x"])
 
     sd = sd.drop(columns=["x"])
-    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)  # type: ignore
+    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)
 
     # smooth the standard deviation (should not deviate much from one
     # x value to the next)
@@ -762,14 +747,12 @@ def calculate_density_sd(
 
 
 def _calculate_single_density_sd(
-    x: Union[pd.Series, pl.Series, np.ndarray],
-    cv_fold: Union[pd.Series, pl.Series, np.ndarray],
+    x: pd.Series | pl.Series | np.ndarray,
+    cv_fold: pd.Series | pl.Series | np.ndarray,
     grid_bins: int = 200,
     time_series_validation: bool = True,
 ) -> pd.Series:
-    """
-    Calculates the standard deviation of the density estimates of `x` across
-    different cross-validation folds.
+    """Calculate the standard deviation of the density estimates of `x` across different cross-validation folds.
 
     This function computes the kernel density estimate (KDE) of `x` for each unique
     value in `cv_fold`. It then calculates the standard deviation of these density
@@ -779,9 +762,9 @@ def _calculate_single_density_sd(
 
     Parameters
     ----------
-    x : Union[pd.Series, pl.Series, np.ndarray]
+    x : pd.Series | pl.Series | np.ndarray
         The data series for which the density's standard deviation is to be computed.
-    cv_fold : Union[pd.Series, pl.Series, np.ndarray]
+    cv_fold : pd.Series | pl.Series | np.ndarray
         A series indicating the cross-validation fold of each observation in `x`.
         Unique values in `cv_fold` are treated as separate folds.
     grid_bins : int, optional
@@ -823,7 +806,7 @@ def _calculate_single_density_sd(
         sd[f"{f}"] = density(sd["x"])
 
     sd = sd.drop(columns=["x"])
-    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)  # type: ignore
+    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)
 
     # smooth the standard deviation (should not deviate much from one
     # x value to the next)
@@ -834,24 +817,24 @@ def _calculate_single_density_sd(
     sd_smooth[len(sd_smooth) - 1] = np.mean(sd[-2:])
     sd_smooth[len(sd_smooth) - 2] = np.mean(sd[-3:])
 
-    return sd_smooth, sd  # type: ignore
+    return sd_smooth, sd
 
 
 def _plot_single_density_pm_standard_deviation(
     x: pd.Series,
-    cv_fold: Union[pd.Series, None] = None,
-    x_min: Optional[float] = None,
-    x_max: Optional[float] = None,
-    ax: Optional[Axes] = None,
-    label: Union[str, None] = None,
+    cv_fold: pd.Series | None = None,  # noqa: ARG001
+    x_min: float | None = None,
+    x_max: float | None = None,
+    ax: plt.Axes | None = None,
+    label: str | None = None,  # noqa: ARG001
     grid_bins: int = 200,
-    line_width: float = 0.5,
-    line_style: str = "-",
-    alpha: float = 0.5,
-    fill_alpha: float = 0.3,
-    figsize: Tuple[int, int] = (7, 7),
-    time_series_validation: bool = True,
-) -> Axes:
+    line_width: float = 0.5,  # noqa: ARG001
+    line_style: str = "-",  # noqa: ARG001
+    alpha: float = 0.5,  # noqa: ARG001
+    fill_alpha: float = 0.3,  # noqa: ARG001
+    figsize: tuple[int, int] = (7, 7),
+    time_series_validation: bool = True,  # noqa: ARG001
+) -> plt.Axes:
     """
     Plot the density of x.
 
@@ -919,9 +902,9 @@ def _plot_single_density_pm_standard_deviation(
 
 
 def _annotate_mean_median(
-    feature: Union[pd.Series, pl.Series, np.ndarray],
-    target: Union[pd.Series, pl.Series, np.ndarray],
-    ax: Optional[plt.Axes] = None,
+    feature: pd.Series | pl.Series | np.ndarray,
+    target: pd.Series | pl.Series | np.ndarray,
+    ax: plt.Axes | None = None,
 ) -> plt.Axes:
     """
     Annotates the mean and median of the feature variable for each target class.
@@ -937,9 +920,9 @@ def _annotate_mean_median(
 
     Parameters
     ----------
-    feature : Union[pd.Series, pl.Series, np.ndarray]
+    feature : pd.Series | pl.Series | np.ndarray
         The feature variable.
-    target : Union[pd.Series, pl.Series, np.ndarray]
+    target : pd.Series | pl.Series | np.ndarray
         The target variable.
     ax : plt.Axes, optional
         The axes to annotate. If None, a new figure and axes is created.
@@ -955,7 +938,7 @@ def _annotate_mean_median(
             "The feature and target variables must be the same length, "
             f"but got {len(feature)} and {len(target)}."
         )
-    elif (len(feature) == 0) | (len(target) == 0):
+    if (len(feature) == 0) | (len(target) == 0):
         raise ValueError(
             "The feature and target series should not contain NaN or missing values"
         )
@@ -963,7 +946,7 @@ def _annotate_mean_median(
     # Raise an error if either the feature or target contain NaNs
     if (
         isinstance(feature, pd.Series)
-        and feature.isnull().any()
+        and feature.isna().any()
         or isinstance(feature, pl.Series)
         and feature.is_null().any()
         or isinstance(feature, np.ndarray)
@@ -975,7 +958,7 @@ def _annotate_mean_median(
 
     if (
         isinstance(target, pd.Series)
-        and target.isnull().any()
+        and target.isna().any()
         or isinstance(target, pl.Series)
         and target.is_null().any()
         or isinstance(target, np.ndarray)
@@ -1011,7 +994,7 @@ def _annotate_mean_median(
     arrowprops1 = {"arrowstyle": "->", "lw": 1}
 
     # Extract the figure size
-    figsize = ax_.get_figure().get_size_inches()  # type: ignore
+    figsize = ax_.get_figure().get_size_inches()
 
     # Annotate for target=0
     ax_.annotate(

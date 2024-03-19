@@ -80,9 +80,9 @@
 <span class="line-empty" title="No Anys on this line!">    ],</span>
 <span class="line-empty" title="No Anys on this line!">)</span>
 <span class="line-any" title="No Anys on this line!">def test_get_significance_band(p_value, expected):</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Test the get_significance_band function with various p_values to ensure</span>
-<span class="line-empty" title="No Anys on this line!">    it returns the correct significance statement.</span>
+<span class="line-empty" title="No Anys on this line!">    """Test the get_significance_band function with various p_values.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Done to ensure it always returns the correct significance statement.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-empty" title="No Anys on this line!">    # We'll use a generic statistic name as the function's behavior does not depend on it</span>
 <span class="line-any" title="Any Types on this line: 
@@ -94,9 +94,9 @@ Unannotated (x5)">    assert get_significance_band(p_value, statistic) == expect
 <span class="line-empty" title="No Anys on this line!"># Negative p_value should raise an error</span>
 <span class="line-precise" title="No Anys on this line!">@pytest.mark.parametrize("p_value", [(-0.01,), (-0.05,), (-0.10,)])</span>
 <span class="line-any" title="No Anys on this line!">def test_get_significance_band_negative_p_value(p_value):</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Test the get_significance_band function with a negative p_value to ensure</span>
-<span class="line-empty" title="No Anys on this line!">    it handles or rejects such input appropriately.</span>
+<span class="line-empty" title="No Anys on this line!">    """Test the get_significance_band function with a negative p_value.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Test edge case to ensure it handles or rejects such input appropriately.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">    statistic = "test_statistic"</span>

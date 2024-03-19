@@ -1,11 +1,8 @@
 from __future__ import annotations
 
-from typing import Tuple, Union
-
 import matplotlib.pyplot as plt
 import pandas as pd
 import plotly.graph_objects as go
-from matplotlib.axes import Axes
 
 from predictables.univariate.src.plots.util import plot_label
 from predictables.util import get_column_dtype
@@ -17,12 +14,11 @@ def categorical_lift_plot(
     feature_name: str,
     target_name: str,
     backend: str = "matplotlib",
-    ax: Union[Axes, None] = None,
-    figsize: Tuple[int, int] = (7, 7),
+    ax: plt.Axes | None = None,
+    figsize: tuple[int, int] = (7, 7),
     **kwargs,
-) -> Union[Axes, go.Figure, None]:
-    """
-    Plots the lift chart for a given categorical feature and target.
+) -> plt.Axes | go.Figure | None:
+    """Plot the lift chart for a given categorical feature and target.
 
     Parameters
     ----------
@@ -39,14 +35,14 @@ def categorical_lift_plot(
     ax : matplotlib axes object, optional
         The axes on which to plot the lift chart. If None, a new figure and axes
         will be created.
-    figsize : Tuple[int, int], optional
+    figsize : tuple[int, int], optional
         The size of the figure to create if ax is None.
     **kwargs
         Additional keyword arguments to pass to the plotting function.
 
     Returns
     -------
-    Union[Axes, go.Figure, None]
+    plt.Axes | go.Figure | None
         The axes or figure containing the lift chart.
     """
     if backend == "matplotlib":
@@ -76,12 +72,12 @@ def plot_cat_lift_plot(
     target: pd.Series,
     feature_name: str,
     target_name: str,
-    ax: Union[Axes, None] = None,
-    figsize: Tuple[int, int] = (7, 7),
-) -> Union[Axes, None]:
-    """
-    Plots the lift chart for a given categorical feature and target. Returns a
-    matplotlib axes object.
+    ax: plt.Axes | None = None,
+    figsize: tuple[int, int] = (7, 7),
+) -> plt.Axes | None:
+    """Plot the lift chart for a given categorical feature and target.
+
+    Returns a matplotlib axes object.
 
     Parameters
     ----------
@@ -148,8 +144,7 @@ def plotly_cat_lift_plot(
     target_name: str,
     alpha: float = 0.5,
 ) -> go.Figure:
-    """
-    Plots the lift chart for a given categorical feature and target using Plotly.
+    """Plot the lift chart for a given categorical feature and target using Plotly.
 
     Parameters
     ----------
@@ -216,8 +211,7 @@ def plotly_cat_lift_plot(
 
 
 def calculate_lift(feature: pd.Series, target: pd.Series) -> pd.DataFrame:
-    """
-    Calculates the lift for a given feature and target.
+    """Calculate the lift for a given feature and target.
 
     Parameters
     ----------

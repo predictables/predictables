@@ -344,7 +344,7 @@ class Univariate(Model):
             )
             cv = df["cv"]
 
-        X = (  # noqa: N806 (X is traditional for features in ML)
+        X = (  # (X is traditional for features in ML)
             df.loc[:, self.feature_name]
             if df is not None
             else self.df.select(self.feature_name)

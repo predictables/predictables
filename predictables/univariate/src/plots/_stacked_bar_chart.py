@@ -10,8 +10,8 @@ from .util import plot_label, rotate_x_lab
 
 
 def stacked_bar_chart(
-    feature: [pl.Series, pd.Series],
-    target: [pl.Series, pd.Series],
+    feature: pl.Series | pd.Series,
+    target: pl.Series | pd.Series,
     backend: str = "matplotlib",
     y_offset: float = 0.035,
     ax: plt.Axes | None = None,
@@ -41,10 +41,10 @@ def stacked_bar_chart(
 
 
 def plot_stacked_bar_chart(
-    feature: [pl.Series, pd.Series],
-    target: [pl.Series, pd.Series],
+    feature: pl.Series | pd.Series,
+    target: pl.Series | pd.Series,
     y_offset: float = 0.035,
-    ax=None,
+    ax: plt.Axes | None = None,
     figsize: tuple[float, float] = (7, 7),
     alpha: float = 0.8,
     bar_width: float = 0.8,
@@ -58,7 +58,6 @@ def plot_stacked_bar_chart(
     ct = pd.crosstab(feature, target, normalize="index").sort_values(0)
 
     n = len(ct.index)
-    bar_width = bar_width
     indices = np.arange(n)
 
     bottoms = np.zeros(n)

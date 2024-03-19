@@ -1,46 +1,42 @@
 from __future__ import annotations
 
-from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import polars as pl
-from matplotlib.axes import Axes
-from scipy.stats import gaussian_kde, ttest_ind  # type: ignore
+from scipy.stats import gaussian_kde, ttest_ind
 
 from predictables.univariate.src.plots.util import binary_color, plot_label
 from predictables.util import filter_by_cv_fold, get_column_dtype, to_pd_s
 
 
 def density_plot(
-    x: Union[pd.Series, pl.Series],
-    plot_by: Union[pd.Series, pl.Series],
-    cv_label: Union[pd.Series, pl.Series],
-    x_min: Optional[float] = None,
-    x_max: Optional[float] = None,
-    ax: Optional[Axes] = None,
+    x: pd.Series | pl.Series,
+    plot_by: pd.Series | pl.Series,
+    cv_label: pd.Series | pl.Series,
+    x_min: float | None = None,
+    x_max: float | None = None,
+    ax: plt.Axes | None = None,
     grid_bins: int = 200,
     cv_alpha: float = 0.5,
     cv_line_width: float = 0.5,
     t_test_alpha: float = 0.05,
-    figsize: Tuple[int, int] = (7, 7),
+    figsize: tuple[int, int] = (7, 7),
     call_legend: bool = True,
     backend: str = "matplotlib",
     time_series_validation: bool = True,
-) -> Axes:
-    """
-    Plot density function as well as cross-validation densities using the
-    specified backend.
+) -> plt.Axes:
+    """Plot density function as well as cross-validation densities using the specified backend.
 
     Parameters
     ----------
-    x : Union[pd.Series, pl.Series]
+    x : pd.Series | pl.Series
         The variable to plot the density of.
-    plot_by : Union[pd.Series, pl.Series]
+    plot_by : pd.Series | pl.Series
         The variable to group by. For a binary target, this is the target.
         The plot will generate a density for each level of the target.
-    cv_label : Union[pd.Series, pl.Series]
+    cv_label : pd.Series | pl.Series
         The cross-validation fold to group by. If None, no grouping is done.
         Defaults to None.
     x_min : float, optional
@@ -106,31 +102,31 @@ def density_plot(
 
 
 def density_plot_mpl(
-    x: Union[pd.Series, pl.Series],
-    plot_by: Union[pd.Series, pl.Series],
-    cv_label: Union[pd.Series, pl.Series],
-    x_min: Optional[float] = None,
-    x_max: Optional[float] = None,
-    ax: Optional[Axes] = None,
+    x: pd.Series | pl.Series,
+    plot_by: pd.Series | pl.Series,
+    cv_label: pd.Series | pl.Series,
+    x_min: float | None = None,
+    x_max: float | None = None,
+    ax: plt.Axes | None = None,
     grid_bins: int = 200,
     cv_alpha: float = 0.5,
     cv_line_width: float = 0.5,
     t_test_alpha: float = 0.05,
-    figsize: Tuple[int, int] = (7, 7),
+    figsize: tuple[int, int] = (7, 7),
     call_legend: bool = True,
     time_series_validation: bool = True,
-) -> Axes:
+) -> plt.Axes:
     """
     Plot density function as well as cross-validation densities.
 
     Parameters
     ----------
-    x : Union[pd.Series, pl.Series]
+    x : pd.Series | pl.Series
         The variable to plot the density of.
-    plot_by : Union[pd.Series, pl.Series]
+    plot_by : pd.Series | pl.Series
         The variable to group by. For a binary target, this is the target.
         The plot will generate a density for each level of the target.
-    cv_label : Union[pd.Series, pl.Series]
+    cv_label : pd.Series | pl.Series
         The cross-validation fold to group by. If None, no grouping is
         done. Defaults to None.
     x_min : float, optional
@@ -257,9 +253,9 @@ def density_plot_mpl(
     # Add a title reflecting the t-test results
     title = (
         "Kernel Density Plot of "
-        f"{plot_label(x.name if x.name is not None else 'Var')}"  # type: ignore
+        f"{plot_label(x.name if x.name is not None else 'Var')}"
         " by "
-        f"{plot_label(plot_by.name if plot_by.name is not None else 'Groupby Var')}."  # type: ignore
+        f"{plot_label(plot_by.name if plot_by.name is not None else 'Groupby Var')}."
     )
     title += "\nDistributions by level are"
     title += " not " if p >= t_test_alpha else " "
@@ -268,7 +264,7 @@ def density_plot_mpl(
     ax0.set_title(title)
 
     # Set the x-axis label
-    ax0.set_xlabel(plot_label(x.name if x.name is not None else "Var", False))  # type: ignore
+    ax0.set_xlabel(plot_label(x.name if x.name is not None else "Var", False))
 
     if call_legend:
         plt.legend(fontsize=24 * (figsize[0] / 16))
@@ -277,19 +273,17 @@ def density_plot_mpl(
 
 
 def _density_t_test_binary_target(
-    x: Union[pd.Series, pl.Series],
-    plot_by: Union[pd.Series, pl.Series],
-    alpha: float = 0.05,
-):
-    """
-    Perform a t-test on the density of x by the levels of plot_by. This function
-    will be used only when the target variable is binary.
+    x: pd.Series | pl.Series, plot_by: pd.Series | pl.Series, alpha: float = 0.05
+) -> tuple[float, float, str]:
+    """Perform a t-test on the density of x by the levels of plot_by.
+
+    This function will be used only when the target variable is binary.
 
     Parameters
     ----------
-    x : Union[pd.Series, pl.Series]
+    x : pd.Series | pl.Series
         The variable to plot the density of.
-    plot_by : Union[pd.Series, pl.Series]
+    plot_by : pd.Series | pl.Series
         The variable to group by. For a binary target, this is the target.
         The plot will generate a density for each level of the target.
     alpha : float, optional
@@ -346,20 +340,19 @@ def _density_t_test_binary_target(
 
 def _plot_density_mpl(
     x: pd.Series,
-    x_min: Optional[float] = None,
-    x_max: Optional[float] = None,
-    ax: Optional[Axes] = None,
-    label: Union[str, None] = None,
+    x_min: float | None = None,
+    x_max: float | None = None,
+    ax: plt.Axes | None = None,
+    label: str | None = None,
     grid_bins: int = 200,
     line_width: float = 1,
-    line_color: Union[str, None] = None,
+    line_color: str | None = None,
     line_style: str = "-",
     alpha: float = 1,
     fill_under: bool = True,
     fill_alpha: float = 0.3,
-    figsize: Tuple[int, int] = (7, 7),
-    time_series_validation: bool = True,
-) -> Axes:
+    figsize: tuple[int, int] = (7, 7),
+) -> plt.Axes:
     """
     Plot the density of x.
 
@@ -414,7 +407,7 @@ def _plot_density_mpl(
     x_grid = np.linspace(x_min, x_max, grid_bins)
 
     if label is None:
-        label = x.name if x.name is not None else "Var"  # type: ignore
+        label = x.name if x.name is not None else "Var"
 
     if fill_under:
         ax.plot(
@@ -443,22 +436,21 @@ def _plot_density_mpl(
 def density_by_mpl(
     x: pd.Series,
     by: pd.Series,
-    cv_fold: Optional[pd.Series] = None,
-    x_min: Optional[float] = None,
-    x_max: Optional[float] = None,
-    ax: Optional[Axes] = None,
-    use_labels: bool = True,
+    cv_fold: pd.Series | None = None,
+    x_min: float | None = None,
+    x_max: float | None = None,
+    ax: plt.Axes | None = None,
     grid_bins: int = 200,
     line_width: float = 1.0,
     alpha: float = 1.0,
     fill_under: bool = True,
     fill_alpha: float = 0.3,
-    figsize: Tuple[int, int] = (7, 7),
+    figsize: tuple[int, int] = (7, 7),
     time_series_validation: bool = True,
-):
-    """
-    Plot the density of x by the levels of by, using matplotlib,
-    all on the same axss.
+) -> plt.Axes:
+    """Plot the density of x by the levels of by.
+
+    Uses matplotlib, plots all on the same axss.
 
     Parameters
     ----------
@@ -533,13 +525,8 @@ def density_by_mpl(
             byname = by.name if by.name is not None else "Groupby Var"
             color_ = binary_color(level) if get_column_dtype(by) == "binary" else None
             color__ = color_ if color_ is not None else None
-            label = f"{plot_label(byname)} = {level}"  # type: ignore
-            _plot_density_mpl(
-                group,
-                label=label,
-                line_color=color__,  # type: ignore
-                **params,  # type: ignore
-            )
+            label = f"{plot_label(byname)} = {level}"
+            _plot_density_mpl(group, label=label, line_color=color__, **params)
     # Otherwise, plot the density by CV fold
 
     else:
@@ -556,8 +543,8 @@ def density_by_mpl(
                 _plot_density_mpl(
                     group,
                     label="_nolegend_",  # don't label the plot if we're filling under
-                    line_color=color__,  # type: ignore
-                    **params,  # type: ignore
+                    line_color=color__,
+                    **params,
                 )
 
     return ax
@@ -566,12 +553,13 @@ def density_by_mpl(
 def calculate_density_sd(
     x: pd.Series,
     by: pd.Series,
-    cv_fold: Union[pd.Series, None] = None,
+    cv_fold: pd.Series | None = None,
     grid_bins: int = 200,
     time_series_validation: bool = True,
-):
-    """
-    Using the cross-validation folds, calculate the standard deviation of the
+) -> pd.Series:
+    """Calculate the standard deviation of the density of x by the levels of by.
+
+    Uses the cross-validation folds and calculates the standard deviation of the
     density of x by the levels of by.
     """
     if cv_fold is None:
@@ -588,7 +576,7 @@ def calculate_density_sd(
             sd[f"{f}_{level}"] = density(sd["x"])
 
     sd = sd.drop(columns=["x"])
-    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)  # type: ignore
+    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)
 
     # smooth the standard deviation (should not deviate much from one
     # x value to the next)
@@ -608,8 +596,9 @@ def _calculate_single_density_sd(
     grid_bins: int = 200,
     time_series_validation: bool = True,
 ) -> pd.Series:
-    """
-    Using the cross-validation folds, calculate the standard deviation of the
+    """Calculate the standard deviation of the density of x.
+
+    Uses the cross-validation folds and calculates the standard deviation of the
     density of x.
     """
     sd = pd.DataFrame(
@@ -621,7 +610,7 @@ def _calculate_single_density_sd(
         sd[f"{f}"] = density(sd["x"])
 
     sd = sd.drop(columns=["x"])
-    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)  # type: ignore
+    sd = sd.std(axis=1).iloc[:, 0] if len(sd.columns) == 1 else sd.std(axis=1)
 
     # smooth the standard deviation (should not deviate much from one
     # x value to the next)
@@ -632,24 +621,24 @@ def _calculate_single_density_sd(
     sd_smooth[len(sd_smooth) - 1] = np.mean(sd[-2:])
     sd_smooth[len(sd_smooth) - 2] = np.mean(sd[-3:])
 
-    return sd_smooth, sd  # type: ignore
+    return sd_smooth, sd
 
 
 def _plot_single_density_pm_standard_deviation(
     x: pd.Series,
-    cv_fold: Union[pd.Series, None] = None,
-    x_min: Optional[float] = None,
-    x_max: Optional[float] = None,
-    ax: Optional[Axes] = None,
-    label: Union[str, None] = None,
+    cv_fold: pd.Series | None = None,  # noqa: ARG001
+    x_min: float | None = None,
+    x_max: float | None = None,
+    ax: plt.Axes | None = None,
+    label: str | None = None,  # noqa: ARG001
     grid_bins: int = 200,
-    line_width: float = 0.5,
-    line_style: str = "-",
-    alpha: float = 0.5,
-    fill_alpha: float = 0.3,
-    figsize: Tuple[int, int] = (7, 7),
-    time_series_validation: bool = True,
-) -> Axes:
+    line_width: float = 0.5,  # noqa: ARG001
+    line_style: str = "-",  # noqa: ARG001
+    alpha: float = 0.5,  # noqa: ARG001
+    fill_alpha: float = 0.3,  # noqa: ARG001
+    figsize: tuple[int, int] = (7, 7),
+    time_series_validation: bool = True,  # noqa: ARG001
+) -> pl.Axes:
     """
     Plot the density of x.
 
@@ -757,7 +746,7 @@ def _annotate_mean_median(
     arrowprops1 = {"arrowstyle": "->", "lw": 1}
 
     # Extract the figure size
-    figsize = ax.get_figure().get_size_inches()  # type: ignore
+    figsize = ax.get_figure().get_size_inches()
 
     # Annotate for target=0
     ax.annotate(

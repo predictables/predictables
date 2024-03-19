@@ -142,6 +142,8 @@
 <span id="L132" class="lineno"><a class="lineno" href="#L132">132</a></span>
 <span id="L133" class="lineno"><a class="lineno" href="#L133">133</a></span>
 <span id="L134" class="lineno"><a class="lineno" href="#L134">134</a></span>
+<span id="L135" class="lineno"><a class="lineno" href="#L135">135</a></span>
+<span id="L136" class="lineno"><a class="lineno" href="#L136">136</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
@@ -158,11 +160,11 @@ Explicit (x6)
 Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-any" title="No Anys on this line!">def x_pd():</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    np.random.seed(42)</span>
+Unannotated (x2)">    rg = np.random.default_rng(42)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)
+Unannotated (x4)
 Omitted Generics (x113)
-Explicit (x3)">    return pd.Series(np.random.randn(100))</span>
+Explicit (x2)">    return pd.Series(rg.normal(100))</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="Any Types on this line: 
@@ -187,9 +189,11 @@ Explicit (x6)
 Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-any" title="No Anys on this line!">def by_pd():</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)
+Unannotated (x2)">    rg = np.random.default_rng(42)</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x4)
 Omitted Generics (x113)
-Explicit (x6)">    return pd.Series(np.random.choice(["A", "B"], size=100))</span>
+Explicit (x2)">    return pd.Series(rg.choice(["A", "B"], size=100))</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="Any Types on this line: 
@@ -214,9 +218,11 @@ Explicit (x6)
 Omitted Generics (x2)">@pytest.fixture</span>
 <span class="line-any" title="No Anys on this line!">def cv_pd():</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)
+Unannotated (x2)">    rg = np.random.default_rng(42)</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x4)
 Omitted Generics (x113)
-Explicit (x6)">    return pd.Series(np.random.choice([0, 1, 2, 3], size=100))</span>
+Explicit (x2)">    return pd.Series(rg.choice([0, 1, 2, 3], size=100))</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="Any Types on this line: 

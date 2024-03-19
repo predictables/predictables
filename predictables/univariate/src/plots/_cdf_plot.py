@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from typing import Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import polars as pl
-from matplotlib.axes import Axes
 from scipy.spatial.distance import jensenshannon as js_divergence
 
 from predictables.univariate.src.plots.util import binary_color, plot_label
@@ -14,29 +12,29 @@ from predictables.util import filter_by_cv_fold, get_column_dtype, to_pd_s
 
 
 def cdf_plot(
-    x: Union[pl.Series, pd.Series, np.ndarray],
-    plot_by: Union[pl.Series, pd.Series, np.ndarray],
-    cv_folds: Union[pl.Series, pd.Series, np.ndarray],
-    x_label: Optional[str] = None,
+    x: pd.Series | pl.Series | np.ndarray,
+    plot_by: pd.Series | pl.Series | np.ndarray,
+    cv_folds: pd.Series | pl.Series | np.ndarray,
+    x_label: str | None = None,
     y_label: str = "Empirical Cumulative Distribution Function",
-    ax: Optional[Axes] = None,
-    figsize: Tuple[int, int] = (7, 7),
+    ax: plt.Axes | None = None,
+    figsize: tuple[int, int] = (7, 7),
     backend: str = "matplotlib",
     time_series_validation: bool = True,
     **kwargs,
-) -> Axes:
-    """
-    Plots the empirical CDF of the given data for each level in `plot_by` and each fold
-    in `cv_folds`. This plot is meant to show a "distribution" of possible CDF plots
+) -> plt.Axes:
+    """Plot the empirical CDF of the given data for each level in `plot_by` and each fold in `cv_folds`.
+
+    This plot is meant to show a "distribution" of possible CDF plots
     that could have been pulled from the real distribution.
 
     Parameters
     ----------
-    x : Union[pl.Series, pd.Series, np.ndarray]
+    x : pd.Series | pl.Series | np.ndarray
         The data to plot the CDF from.
-    plot_by : Union[pl.Series, pd.Series, np.ndarray]
+    plot_by : pd.Series | pl.Series | np.ndarray
         The data to plot the CDF from.
-    cv_folds : Union[pl.Series, pd.Series, np.ndarray]
+    cv_folds : pd.Series | pl.Series | np.ndarray
         Cross-validation folds used to plot a distribution of CDFs
     x_label : str, optional
         The label of the x-axis.
@@ -44,7 +42,7 @@ def cdf_plot(
         The label of the y-axis.
     ax : Axes, optional
         The axes to plot the CDF on, by default None.
-    figsize : Tuple[int, int], optional
+    figsize : tuple[int, int], optional
         The size of the figure, by default (7, 7).
     backend : str, optional
         The plotting backend to use, by default "matplotlib".
@@ -77,18 +75,18 @@ def cdf_plot(
 
 
 def cdf_plot_matplotlib(
-    x: Union[pl.Series, pd.Series, np.ndarray],
-    plot_by: Union[pl.Series, pd.Series, np.ndarray],
-    cv_folds: Union[pl.Series, pd.Series, np.ndarray],
-    x_label: Union[str, None] = None,
-    y_label: Union[str, None] = "Empirical Cumulative Distribution Function",
-    ax: Union[Axes, None] = None,
+    x: pd.Series | pl.Series | np.ndarray,
+    plot_by: pd.Series | pl.Series | np.ndarray,
+    cv_folds: pd.Series | pl.Series | np.ndarray,
+    x_label: str | None = None,
+    y_label: str | None = "Empirical Cumulative Distribution Function",
+    ax: plt.Axes | None = None,
     time_series_validation: bool = True,
     **kwargs,
-) -> Axes:
-    """
-    Plots the empirical CDF of the given data for each level in `plot_by` and each
-    fold in `cv_folds`. This plot is meant to show a "distribution" of possible CDF
+) -> plt.Axes:
+    """Plot the empirical CDF of the given data for each level in `plot_by` and each fold in `cv_folds.
+
+    This plot is meant to show a "distribution" of possible CDF
     plots that could have been pulled from the real distribution. This plot is
     rendered using matplotlib.
 
@@ -165,22 +163,23 @@ def cdf_plot_matplotlib(
 
 
 def cdf_plot_matplotlib_levels(
-    x: Union[pl.Series, pd.Series, np.ndarray],
-    plot_by: Union[pl.Series, pd.Series, np.ndarray],
-    x_label: Optional[Union[str, None]] = None,
-    y_label: Optional[str] = "Empirical Cumulative Distribution Function",
-    ax: Optional[Axes] = None,
-    figsize: Optional[Tuple[int, int]] = (7, 7),
+    x: pd.Series | pl.Series | np.ndarray,
+    plot_by: pd.Series | pl.Series | np.ndarray,
+    x_label: str | None = None,
+    y_label: str | None = "Empirical Cumulative Distribution Function",
+    ax: plt.Axes | None = None,
+    figsize: tuple[int, int] = (7, 7),
     **kwargs,
-) -> Axes:
-    """
-    Plots the empirical CDF of the given data.
+) -> plt.Axes:
+    """Plot the empirical CDF of the given data.
 
-    Parameters
+    Parameter
     ----------
-    x : Union[pl.Series, pd.Series, np.ndarray]
+    x
+
+    : pd.Series | pl.Series | np.ndarray
         The data to plot the CDF from.
-    plot_by : Union[pl.Series, pd.Series, np.ndarray]
+    plot_by : pd.Series | pl.Series | np.ndarray
         The data to plot the CDF from.
     x_label : str, optional
         The label of the x-axis.
@@ -188,7 +187,7 @@ def cdf_plot_matplotlib_levels(
         The label of the y-axis.
     ax : Axes, optional
         The axes to plot the CDF on, by default None.
-    figsize : Tuple[int, int], optional
+    figsize : tuple[int, int], optional
         The size of the figure, by default (7, 7).
 
     Returns
@@ -222,28 +221,27 @@ def cdf_plot_matplotlib_levels(
 
 
 def cdf_plot_matplotlib_levels_cv(
-    x: Union[pl.Series, pd.Series, np.ndarray],
-    plot_by: Union[pl.Series, pd.Series, np.ndarray],
-    cv_folds: Union[pl.Series, pd.Series, np.ndarray],
-    x_label: Optional[str] = None,
-    y_label: Optional[str] = "Empirical Cumulative Distribution Function",
-    ax: Optional[Axes] = None,
+    x: pd.Series | pl.Series | np.ndarray,
+    plot_by: pd.Series | pl.Series | np.ndarray,
+    cv_folds: pd.Series | pl.Series | np.ndarray,
+    x_label: str | None = None,
+    y_label: str | None = "Empirical Cumulative Distribution Function",
+    ax: plt.Axes | None = None,
     time_series_validation: bool = True,
     **kwargs,
-) -> Axes:
-    """
-    Plots the empirical CDF of the given data for each level in `plot_by`
-    and each fold in `cv_folds`. This plot is meant to show a "distribution"
-    of possible CDF plots that could have been pulled from the real
-    distribution.
+) -> plt.Axes:
+    """Plot the empirical CDF of the given data for each level in `plot_by` and each fold in `cv_folds`.
+
+    This plot is meant to show a "distribution" of possible CDF plots that could
+    have been pulled from the real distribution.
 
     Parameters
     ----------
-    x : Union[pl.Series, pd.Series, np.ndarray]
+    x : pd.Series | pl.Series | np.ndarray
         The data to plot the CDF from.
-    plot_by : Union[pl.Series, pd.Series, np.ndarray]
+    plot_by : pd.Series | pl.Series | np.ndarray
         The data to plot the CDF from.
-    cv_folds : Union[pl.Series, pd.Series, np.ndarray]
+    cv_folds : pd.Series | pl.Series | np.ndarray
         Cross-validation folds used to plot a distribution of CDFs
     x_label : str, optional
         The label of the x-axis.
@@ -297,18 +295,15 @@ def cdf_plot_matplotlib_levels_cv(
 
 
 def jenson_shannon_divergence(
-    x: Union[pl.Series, pd.Series, np.ndarray],
-    plot_by: Union[pl.Series, pd.Series, np.ndarray],
+    x: pd.Series | pl.Series | np.ndarray, plot_by: pd.Series | pl.Series | np.ndarray
 ) -> float:
-    """
-    Calculates the Jenson-Shannon divergence between `x` conditional on each
-    level of `plot_by`.
+    """Calculate the Jenson-Shannon divergence between `x` conditional on each level of `plot_by`.
 
     Parameters
     ----------
-    x : Union[pl.Series, pd.Series, np.ndarray]
+    x : pd.Series | pl.Series | np.ndarray
         The data to calculate the Jenson-Shannon divergence from.
-    plot_by : Union[pl.Series, pd.Series, np.ndarray]
+    plot_by : pd.Series | pl.Series | np.ndarray
         The levels used to split the `x` data, and which form the different
         compared distributions.
 
@@ -328,7 +323,7 @@ def jenson_shannon_divergence(
     return js_divergence(x0, x1)
 
 
-def create_title(feature_name: str, target_name: str):
+def create_title(feature_name: str, target_name: str) -> str:
     return (
         f"Empirical CDF of {plot_label(feature_name)} conditioned on "
         f"{plot_label(target_name)}"
@@ -350,13 +345,12 @@ def js_divergence_annotation(jsd: float) -> str:
         return "The distributions are extremely different"
 
 
-def calculate_cdf(x: Union[pl.Series, pd.Series, np.ndarray]) -> pd.Series:
-    """
-    Calculates the empirical CDF from the given data.
+def calculate_cdf(x: pd.Series | pl.Series | np.ndarray) -> pd.Series:
+    """Calculate the empirical CDF from the given data.
 
     Parameters
     ----------
-    x : Union[pl.Series, pd.Series, np.ndarray]
+    x : pd.Series | pl.Series | np.ndarray
         The data to calculate the CDF from.
 
     Returns

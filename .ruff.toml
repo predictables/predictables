@@ -57,9 +57,13 @@ ignore = [
     "F403",
     "FIX002",
     "G004",
+    "N802",
+    "N803",
+    "N806",
     "N999",
     "PD901",
     "PLR0912",
+    "PLR0913",
     "PLR2004",
     "PT011",
     "PT017",
@@ -181,7 +185,7 @@ unfixable = ["F401"] # Disable fix for unused imports (`F401`).
 
 [lint.per-file-ignores]
 "__init__.py" = ["E402", "I001", "D104"]
-"**/{tests,docs,tools}/*" = ["E402","I001","D100", "D103", "ANN001", "ANN201", "PLR2004", "PGH003", "INP001", "N802", "N803", "N806", "PLR0913"]
+"**/{tests,docs,tools}/*" = ["E402","I001","D100", "D103", "ANN001", "ANN201", "PLR2004", "PGH003", "INP001"]
 "*.ipynb" = ["T201", "PLR2004", "ERA001"]
 
 [lint.extend-per-file-ignores]

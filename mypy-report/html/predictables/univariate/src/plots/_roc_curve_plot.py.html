@@ -1088,6 +1088,8 @@
 <span id="L1078" class="lineno"><a class="lineno" href="#L1078">1078</a></span>
 <span id="L1079" class="lineno"><a class="lineno" href="#L1079">1079</a></span>
 <span id="L1080" class="lineno"><a class="lineno" href="#L1080">1080</a></span>
+<span id="L1081" class="lineno"><a class="lineno" href="#L1081">1081</a></span>
+<span id="L1082" class="lineno"><a class="lineno" href="#L1082">1082</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -1166,7 +1168,7 @@ Unimported (x1)">def roc_curve_plot(</span>
 <span class="line-precise" title="No Anys on this line!">    if backend == "matplotlib":</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">        dbg.msg(f"point1: y: {y} | yhat_proba: {yhat_proba} | ROC_0001a")</span>
-<span class="line-any" title="Any Types on this line: 
+<span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x3)">        return roc_curve_plot_mpl(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">            y=y,</span>
@@ -1195,9 +1197,10 @@ Omitted Generics (x1)">            fold=fold,</span>
 Omitted Generics (x4)">def create_auc_data(</span>
 <span class="line-precise" title="No Anys on this line!">    y: pd.Series, yhat_proba: pd.Series, n_bins: int = 200</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; tuple[pd.Series, pd.Series]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Create the data for plotting an ROC curve. Calculates the false positive rate</span>
-<span class="line-empty" title="No Anys on this line!">    at each threshold and the true positive rate at each threshold.</span>
+<span class="line-empty" title="No Anys on this line!">    """Create the data for plotting an ROC curve.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Calculates the false positive rate at each threshold and the true</span>
+<span class="line-empty" title="No Anys on this line!">    positive rate at each threshold.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -1237,27 +1240,29 @@ Explicit (x2)">    tpr: pd.Series = pd.Series(np.interp(fpr, roc[0], roc[1]))</s
 Omitted Generics (x2)">    return fpr, tpr</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="No Anys on this line!">def roc_curve_plot_plotly():</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">    return plt.plot([1, 2, 3], [1, 2, 3])</span>
+Unimported (x1)">def roc_curve_plot_plotly() -&gt; go.Figure:</span>
+<span class="line-empty" title="No Anys on this line!">    """Return a sample plotly plot."""</span>
+<span class="line-precise" title="Any Types on this line: 
+Unannotated (x2)">    return plt.plot([1, 2, 3], [1, 2, 3])</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">def plot_individual_roc_curves(</span>
+Omitted Generics (x2)
+Unimported (x3)">def plot_individual_roc_curves(</span>
 <span class="line-empty" title="No Anys on this line!">    y: pd.Series,</span>
 <span class="line-empty" title="No Anys on this line!">    yhat_proba: pd.Series,</span>
 <span class="line-precise" title="No Anys on this line!">    curve_name: str = "ROC Curve",</span>
-<span class="line-precise" title="No Anys on this line!">    figax: Optional[Union[go.Figure, plt.Axes]] = None,</span>
+<span class="line-precise" title="No Anys on this line!">    figax: go.Figure | plt.Axes | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    n_bins: int = 200,</span>
 <span class="line-precise" title="No Anys on this line!">    alpha: float = 0.4,</span>
-<span class="line-precise" title="No Anys on this line!">    legendgroup: Optional[str] = None,</span>
+<span class="line-precise" title="No Anys on this line!">    legendgroup: str | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    figsize: tuple[int, int] = (7, 7),</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Optional[plt.Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    fig: Optional[go.Figure] = None,</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    fig: go.Figure | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    backend: str = "matplotlib",</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Union[go.Figure, plt.Axes]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plot the ROC curve for each fold.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; go.Figure | plt.Axes:</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot the ROC curve for each fold.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -1267,7 +1272,7 @@ Omitted Generics (x2)">def plot_individual_roc_curves(</span>
 <span class="line-empty" title="No Anys on this line!">        The predicted probabilities.</span>
 <span class="line-empty" title="No Anys on this line!">    curve_name : str, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The name of the curve to be plotted. If not provided, defaults to "ROC Curve".</span>
-<span class="line-empty" title="No Anys on this line!">    figax : Union[go.Figure, plt.Axes, None], optional</span>
+<span class="line-empty" title="No Anys on this line!">    figax : go.Figure | plt.Axes | None, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The plot. Will be ignored if either `fig` (in the case of plotly) or `ax`</span>
 <span class="line-empty" title="No Anys on this line!">        (in the case of matplotlib) is provided.</span>
 <span class="line-empty" title="No Anys on this line!">    n_bins : int, optional</span>
@@ -1275,7 +1280,7 @@ Omitted Generics (x2)">def plot_individual_roc_curves(</span>
 <span class="line-empty" title="No Anys on this line!">        more bins, the smoother the curve. Defaults to 200.</span>
 <span class="line-empty" title="No Anys on this line!">    alpha : float, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The opacity of the individual ROC curves.</span>
-<span class="line-empty" title="No Anys on this line!">    legendgroup : Union[str, None], optional</span>
+<span class="line-empty" title="No Anys on this line!">    legendgroup : str | None, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The legend group to use for the individual ROC curves. If None, no legend</span>
 <span class="line-empty" title="No Anys on this line!">        group is used.</span>
 <span class="line-empty" title="No Anys on this line!">    figsize : tuple[int, int], optional</span>
@@ -1297,7 +1302,7 @@ Omitted Generics (x2)">def plot_individual_roc_curves(</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
 <span class="line-empty" title="No Anys on this line!">    -------</span>
-<span class="line-empty" title="No Anys on this line!">    figax : Union[go.Figure, plt.Axes]</span>
+<span class="line-empty" title="No Anys on this line!">    figax : go.Figure | plt.Axes</span>
 <span class="line-empty" title="No Anys on this line!">        The plot.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -1307,7 +1312,8 @@ Omitted Generics (x10)">    fpr, tpr = create_auc_data(y, yhat_proba, n_bins)</s
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Handle the case where figax is an alias for either fig or ax</span>
 <span class="line-precise" title="No Anys on this line!">    if (backend == "matplotlib") and (ax is not None):</span>
-<span class="line-precise" title="No Anys on this line!">        figax = ax</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x1)">        figax = ax</span>
 <span class="line-precise" title="Any Types on this line: 
 Explicit (x1)
 Unannotated (x1)">        if isinstance(figax, plt.Axes):</span>
@@ -1318,22 +1324,20 @@ Omitted Generics (x2)">            RocCurveDisplay(fpr=fpr, tpr=tpr).plot(</span
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">            return figax</span>
-<span class="line-precise" title="No Anys on this line!">        elif figax is None:</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x4)
-Unannotated (x1)">            _, ax = plt.subplots(figsize=figsize)</span>
-<span class="line-any" title="Any Types on this line: 
-Unimported (x4)
-Omitted Generics (x2)">            RocCurveDisplay(fpr=fpr, tpr=tpr).plot(ax=ax, alpha=alpha, label=curve_name)</span>
+<span class="line-unanalyzed" title="No Anys on this line!">        elif figax is None:</span>
+<span class="line-unanalyzed" title="No Anys on this line!">            _, ax = plt.subplots(figsize=figsize)</span>
+<span class="line-unanalyzed" title="No Anys on this line!">            RocCurveDisplay(fpr=fpr, tpr=tpr).plot(ax=ax, alpha=alpha, label=curve_name)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">            return ax</span>
+<span class="line-unanalyzed" title="No Anys on this line!">            return ax</span>
 <span class="line-empty" title="No Anys on this line!">        else:</span>
-<span class="line-precise" title="No Anys on this line!">            raise TypeError(</span>
-<span class="line-precise" title="No Anys on this line!">                "figax must be a matplotlib.plt.Axes.plt.Axes object when using the "</span>
+<span class="line-unanalyzed" title="No Anys on this line!">            raise TypeError(</span>
+<span class="line-unanalyzed" title="No Anys on this line!">                "figax must be a matplotlib.plt.Axes.plt.Axes object when using the "</span>
 <span class="line-empty" title="No Anys on this line!">                "matplotlib backend"</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-precise" title="No Anys on this line!">    elif (backend == "plotly") and (fig is not None):</span>
-<span class="line-precise" title="No Anys on this line!">        figax = fig</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x1)">    elif (backend == "plotly") and (fig is not None):</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">        figax = fig</span>
 <span class="line-precise" title="No Anys on this line!">        params = {</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">            "x": fpr,</span>
@@ -1356,14 +1360,15 @@ Unannotated (x2)">            "hoverdata": pd.DataFrame({"fpr": fpr, "tpr": tpr}
 <span class="line-precise" title="No Anys on this line!">            params["legendgroup"] = legendgroup</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x2)">        if isinstance(figax, go.Figure):</span>
+Unimported (x3)">        if isinstance(figax, go.Figure):</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x3)">            figax.add_trace(go.Scatter(**params))</span>
-<span class="line-precise" title="No Anys on this line!">            return figax</span>
-<span class="line-precise" title="No Anys on this line!">        elif figax is None:</span>
+Unimported (x6)">            figax.add_trace(go.Scatter(**params))</span>
 <span class="line-any" title="Any Types on this line: 
-Unimported (x6)">            figax = go.Figure(go.Scatter(**params))</span>
-<span class="line-precise" title="No Anys on this line!">            return figax</span>
+Unimported (x1)">            return figax</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x1)">        elif figax is None:</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x6)">            return go.Figure(go.Scatter(**params))</span>
 <span class="line-empty" title="No Anys on this line!">        else:</span>
 <span class="line-precise" title="No Anys on this line!">            raise TypeError(</span>
 <span class="line-precise" title="No Anys on this line!">                "figax must be a plotly.graph_objects.Figure object when "</span>
@@ -1376,21 +1381,23 @@ Unimported (x6)">            figax = go.Figure(go.Scatter(**params))</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x3)">def plot_cv_roc_curves(</span>
+Omitted Generics (x3)
+Unimported (x3)">def plot_cv_roc_curves(</span>
 <span class="line-empty" title="No Anys on this line!">    y: pd.Series,</span>
 <span class="line-empty" title="No Anys on this line!">    yhat_proba: pd.Series,</span>
 <span class="line-empty" title="No Anys on this line!">    fold: pd.Series,</span>
 <span class="line-empty" title="No Anys on this line!">    time_series_validation: bool,</span>
-<span class="line-precise" title="No Anys on this line!">    figax: Optional[Union[go.Figure, plt.Axes, None]] = None,</span>
+<span class="line-precise" title="No Anys on this line!">    figax: go.Figure | plt.Axes | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    n_bins: int = 200,</span>
 <span class="line-precise" title="No Anys on this line!">    cv_alpha: float = 0.4,</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Optional[plt.Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    fig: Optional[go.Figure] = None,</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    fig: go.Figure | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    backend: str = "matplotlib",</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Union[go.Figure, plt.Axes]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plot the ROC curve for each fold. Filters the data for each fold label,</span>
-<span class="line-empty" title="No Anys on this line!">    then plots the ROC curve for a model trained on that fold.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; go.Figure | plt.Axes:</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot the ROC curve for each fold.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Filters the data for each fold label, then plots the ROC curve for a model</span>
+<span class="line-empty" title="No Anys on this line!">    trained on that fold.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -1403,7 +1410,7 @@ Omitted Generics (x3)">def plot_cv_roc_curves(</span>
 <span class="line-empty" title="No Anys on this line!">    time_series_validation : bool</span>
 <span class="line-empty" title="No Anys on this line!">        Whether the data has time series structure. If True, the data will be filtered</span>
 <span class="line-empty" title="No Anys on this line!">        by fold and time, otherwise it will be filtered by fold only.</span>
-<span class="line-empty" title="No Anys on this line!">    figax : Union[go.Figure, plt.Axes, None], optional</span>
+<span class="line-empty" title="No Anys on this line!">    figax : go.Figure, plt.Axes, None], optional</span>
 <span class="line-empty" title="No Anys on this line!">        The plot.</span>
 <span class="line-empty" title="No Anys on this line!">    n_bins : int, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The number of bins to use when calculating the ROC curve. Generally, the</span>
@@ -1421,16 +1428,21 @@ Omitted Generics (x3)">def plot_cv_roc_curves(</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
 <span class="line-empty" title="No Anys on this line!">    -------</span>
-<span class="line-empty" title="No Anys on this line!">    figax : Union[go.Figure, plt.Axes]</span>
+<span class="line-empty" title="No Anys on this line!">    figax : go.Figure, plt.Axes]</span>
 <span class="line-empty" title="No Anys on this line!">        The plot.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-precise" title="No Anys on this line!">    if (backend == "plotly") and (fig is not None):</span>
-<span class="line-precise" title="No Anys on this line!">        figax = fig</span>
-<span class="line-precise" title="No Anys on this line!">    elif (figax is None) and (ax is None):</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x1)">    if (backend == "plotly") and (fig is not None):</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">        figax = fig</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x1)">    elif (figax is None) and (ax is None):</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x4)
 Unannotated (x1)">        _, ax = plt.subplots()</span>
-<span class="line-precise" title="No Anys on this line!">        figax = ax</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Explicit (x1)
+Unimported (x1)">        figax = ax</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x2)
@@ -1442,7 +1454,8 @@ Explicit (x1)">        y_ = filter_by_cv_fold(y, f, fold, time_series_validation
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x11)
 Explicit (x1)">        yhat_ = filter_by_cv_fold(yhat_proba, f, fold, time_series_validation, "test")</span>
-<span class="line-any" title="Any Types on this line: 
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x5)
 Omitted Generics (x2)">        figax = plot_individual_roc_curves(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">            y=y_,</span>
@@ -1450,14 +1463,16 @@ Omitted Generics (x1)">            y=y_,</span>
 Omitted Generics (x1)">            yhat_proba=yhat_,</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x1)">            curve_name=f"Fold {f}",</span>
-<span class="line-precise" title="No Anys on this line!">            figax=figax,</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x1)">            figax=figax,</span>
 <span class="line-precise" title="No Anys on this line!">            n_bins=n_bins if n_bins is not None else 200,</span>
 <span class="line-precise" title="No Anys on this line!">            alpha=cv_alpha if cv_alpha is not None else 0.4,</span>
 <span class="line-precise" title="No Anys on this line!">            legendgroup="Folds",</span>
 <span class="line-precise" title="No Anys on this line!">            backend=backend if backend is not None else "matplotlib",</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    return figax</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x1)">    return figax</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -1576,23 +1591,25 @@ Omitted Generics (x3)">    tprs["mean-1"] = tprs["mean"] - tprs["se"]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x3)">def plot_roc_auc_curves_and_confidence_bands(</span>
+Omitted Generics (x3)
+Unimported (x3)">def plot_roc_auc_curves_and_confidence_bands(</span>
 <span class="line-empty" title="No Anys on this line!">    y: pd.Series,</span>
 <span class="line-empty" title="No Anys on this line!">    yhat_proba: pd.Series,</span>
 <span class="line-empty" title="No Anys on this line!">    fold: pd.Series,</span>
 <span class="line-empty" title="No Anys on this line!">    time_series_validation: bool,</span>
-<span class="line-precise" title="No Anys on this line!">    figax: Optional[Union[go.Figure, plt.Axes, None]] = None,</span>
+<span class="line-precise" title="No Anys on this line!">    figax: go.Figure | plt.Axes | None = None,</span>
 <span class="line-precise" title="No Anys on this line!">    n_bins: int = 200,</span>
 <span class="line-precise" title="No Anys on this line!">    cv_alpha: float = 0.4,</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Optional[plt.Axes] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    fig: Optional[go.Figure] = None,</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    fig: go.Figure | None = None,  # noqa: ARG001 (will eventually be used)</span>
 <span class="line-precise" title="No Anys on this line!">    figsize: tuple[int, int] = (7, 7),</span>
 <span class="line-precise" title="No Anys on this line!">    call_legend: bool = True,</span>
 <span class="line-precise" title="No Anys on this line!">    backend: str = "matplotlib",</span>
-<span class="line-empty" title="No Anys on this line!">) -&gt; Union[go.Figure, plt.Axes]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plot the ROC curve for each fold. Filters the data for each fold label,</span>
-<span class="line-empty" title="No Anys on this line!">    then plots the ROC curve for a model trained on that fold.</span>
+<span class="line-empty" title="No Anys on this line!">) -&gt; go.Figure | plt.Axes:</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot the ROC curve for each fold.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Filters the data for each fold label, then plots the ROC curve for a</span>
+<span class="line-empty" title="No Anys on this line!">    model trained on that fold.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -1605,7 +1622,7 @@ Omitted Generics (x3)">def plot_roc_auc_curves_and_confidence_bands(</span>
 <span class="line-empty" title="No Anys on this line!">    time_series_validation : bool</span>
 <span class="line-empty" title="No Anys on this line!">        Whether the data has time series structure. If True, the data will be filtered</span>
 <span class="line-empty" title="No Anys on this line!">        by fold and time, otherwise it will be filtered by fold only.</span>
-<span class="line-empty" title="No Anys on this line!">    figax : Union[go.Figure, plt.Axes, None], optional</span>
+<span class="line-empty" title="No Anys on this line!">    figax : go.Figure | plt.Axes | None, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The plot.</span>
 <span class="line-empty" title="No Anys on this line!">    n_bins : int, optional</span>
 <span class="line-empty" title="No Anys on this line!">        The number of bins to use when calculating the ROC curve. Generally, the</span>
@@ -1627,7 +1644,7 @@ Omitted Generics (x3)">def plot_roc_auc_curves_and_confidence_bands(</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Returns</span>
 <span class="line-empty" title="No Anys on this line!">    -------</span>
-<span class="line-empty" title="No Anys on this line!">    figax : Union[go.Figure, plt.Axes]</span>
+<span class="line-empty" title="No Anys on this line!">    figax : go.Figure, plt.Axes]</span>
 <span class="line-empty" title="No Anys on this line!">        The plot.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Raises</span>
@@ -1639,12 +1656,16 @@ Omitted Generics (x3)">def plot_roc_auc_curves_and_confidence_bands(</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-precise" title="No Anys on this line!">    if backend == "plotly":</span>
 <span class="line-precise" title="No Anys on this line!">        raise NotImplementedError("Plotly backend not implemented yet.")</span>
-<span class="line-precise" title="No Anys on this line!">    elif ax is not None:</span>
-<span class="line-precise" title="No Anys on this line!">        figax = ax</span>
-<span class="line-precise" title="No Anys on this line!">    elif figax is None:</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    if ax is not None:</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x1)">        figax = ax</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x1)">    elif figax is None:</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x4)
-Unannotated (x1)">        _, figax = plt.subplots(figsize=figsize)</span>
+Unannotated (x1)
+Unimported (x1)">        _, figax = plt.subplots(figsize=figsize)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    dbg.msg(</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -1662,7 +1683,8 @@ Omitted Generics (x1)">        fold,</span>
 <span class="line-precise" title="No Anys on this line!">        n_bins if n_bins is not None else 200,</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="Any Types on this line: 
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x1)
 Explicit (x1)
 Unannotated (x1)">    if isinstance(figax, plt.Axes):</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -1716,7 +1738,8 @@ Unannotated (x2)">        figax.plot(</span>
 <span class="line-precise" title="Any Types on this line: 
 Unannotated (x2)">        plt.legend()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    return figax</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x1)">    return figax</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -1727,9 +1750,9 @@ Omitted Generics (x3)">def delong_statistic_annotation_mpl(</span>
 <span class="line-empty" title="No Anys on this line!">    time_series_validation: bool,</span>
 <span class="line-empty" title="No Anys on this line!">    ax: plt.Axes,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Implement the DeLong test to compare the ROC AUC against the 45-degree</span>
-<span class="line-empty" title="No Anys on this line!">    line (AUC=0.5).</span>
+<span class="line-empty" title="No Anys on this line!">    """Implement the DeLong test.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Compares the ROC AUC against the 45-degree line (AUC=0.5).</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    The DeLong test uses the Central Limit Theorem (CLT) to approximate</span>
 <span class="line-empty" title="No Anys on this line!">    the distribution of the AUC as normal. The test computes the covariance</span>
@@ -1775,7 +1798,7 @@ Omitted Generics (x6)">    z, p = _delong_test_against_chance(y, yhat_proba, fol
 <span class="line-empty" title="No Anys on this line!">    # get the figure size from the plt.Axes object (used to scale the annotation)</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x6)
-Error (x2)">    figsize = ax.get_figure().get_size_inches()  # type: ignore</span>
+Error (x2)">    figsize = ax.get_figure().get_size_inches() if ax.get_figure() else (7, 7)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # add annotation</span>
 <span class="line-any" title="Any Types on this line: 
@@ -1784,7 +1807,7 @@ Unannotated (x1)">    ax.annotate(</span>
 <span class="line-precise" title="No Anys on this line!">        significance_message,</span>
 <span class="line-precise" title="No Anys on this line!">        xy=(0.6, 0.2),</span>
 <span class="line-precise" title="No Anys on this line!">        xycoords="plt.Axes fraction",</span>
-<span class="line-any" title="Any Types on this line: 
+<span class="line-imprecise" title="Any Types on this line: 
 Explicit (x3)
 Omitted Generics (x2)
 Error (x1)">        fontsize=24 * (figsize[0] / 16),</span>
@@ -1906,9 +1929,9 @@ Unannotated (x1)">    ax.annotate(</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">def auc(y: pd.Series, yhat: pd.Series) -&gt; float:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Compute the area under the ROC curve. Uses the stock implementation from</span>
-<span class="line-empty" title="No Anys on this line!">    scikit-learn.</span>
+<span class="line-empty" title="No Anys on this line!">    """Compute the area under the ROC curve.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Uses the stock implementation from scikit-learn.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -1930,8 +1953,8 @@ Omitted Generics (x2)">    return float(roc_auc_score(y, yhat))</span>
 <span class="line-precise" title="No Anys on this line!">def finalize_plot(</span>
 <span class="line-empty" title="No Anys on this line!">    ax: plt.Axes,</span>
 <span class="line-empty" title="No Anys on this line!">    figsize: tuple[int, int],</span>
-<span class="line-precise" title="No Anys on this line!">    auc: Optional[float] = None,</span>
-<span class="line-precise" title="No Anys on this line!">    auc_p_value: Optional[float] = None,</span>
+<span class="line-precise" title="No Anys on this line!">    auc: float | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    auc_p_value: float | None = None,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
 <span class="line-empty" title="No Anys on this line!">    Finalize the plot by adjusting the figure size and layout.</span>
@@ -1998,11 +2021,12 @@ Omitted Generics (x3)">def roc_curve_plot_mpl(</span>
 <span class="line-precise" title="No Anys on this line!">    figsize: tuple[int, int] = (7, 7),</span>
 <span class="line-precise" title="No Anys on this line!">    n_bins: int = 200,</span>
 <span class="line-precise" title="No Anys on this line!">    cv_alpha: float = 0.4,</span>
-<span class="line-precise" title="No Anys on this line!">    ax: Optional[plt.Axes] = None,</span>
+<span class="line-precise" title="No Anys on this line!">    ax: plt.Axes | None = None,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; plt.Axes:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Plot the ROC curve for each fold. Filters the data for each fold label,</span>
-<span class="line-empty" title="No Anys on this line!">    then plots the ROC curve for a model trained on that fold.</span>
+<span class="line-empty" title="No Anys on this line!">    """Plot the ROC curve for each fold.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    Filters the data for each fold label, then plots the ROC curve for a</span>
+<span class="line-empty" title="No Anys on this line!">    model trained on that fold.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -2054,6 +2078,7 @@ Unannotated (x1)">        _, ax0 = plt.subplots(figsize=figsize)</span>
 Explicit (x1)">        ax0 = ax</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
+Unimported (x4)
 Omitted Generics (x3)
 Explicit (x1)">    ax0 = plot_roc_auc_curves_and_confidence_bands(</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -2085,32 +2110,26 @@ Explicit (x1)">        ax=ax0,</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x1)">    ax0 = coefficient_annotation_mpl(</span>
-<span class="line-precise" title="No Anys on this line!">        coef=coef,</span>
-<span class="line-precise" title="No Anys on this line!">        std_error=se,</span>
-<span class="line-precise" title="No Anys on this line!">        pvalue=pvalue,</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x1)">        ax=ax0,</span>
-<span class="line-precise" title="No Anys on this line!">        figsize=figsize,  # type: ignore</span>
+Explicit (x1)">        coef=coef, std_error=se, pvalue=pvalue, ax=ax0, figsize=figsize</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x4)">    a = auc(y, yhat_proba)</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x6)">    _, p = _delong_test_against_chance(y, yhat_proba, fold, time_series_validation)</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x2)">    ax0 = finalize_plot(ax0, figsize=figsize, auc=a, auc_p_value=p)  # type: ignore</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">    return ax0</span>
+Explicit (x1)">    return finalize_plot(ax0, figsize=figsize, auc=a, auc_p_value=p)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)">def _compute_auc_variance(</span>
+Omitted Generics (x3)">def _compute_auc_variance(</span>
 <span class="line-empty" title="No Anys on this line!">    y: pd.Series,</span>
 <span class="line-empty" title="No Anys on this line!">    yhat: pd.Series,</span>
-<span class="line-empty" title="No Anys on this line!">    fold: Optional[pd.Series],</span>
-<span class="line-empty" title="No Anys on this line!">    time_series_validation: bool,</span>
+<span class="line-precise" title="No Anys on this line!">    fold: pd.Series | None = None,</span>
+<span class="line-precise" title="No Anys on this line!">    time_series_validation: bool = False,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; float:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
+<span class="line-empty" title="No Anys on this line!">    """Use _empirical_auc_variance instead for new code.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    This function is depricated. Use _empirical_auc_variance instead for new code. I am</span>
 <span class="line-empty" title="No Anys on this line!">    leaving it here for now to avoid breaking existing code, but will comment out the</span>
 <span class="line-empty" title="No Anys on this line!">    implementation and just return the empirical variance so that the tests pass.</span>
@@ -2160,10 +2179,11 @@ Omitted Generics (x2)">def _compute_auc_variance(</span>
 <span class="line-precise" title="Any Types on this line: 
 Explicit (x3)">    warning.warn(</span>
 <span class="line-precise" title="No Anys on this line!">        "This function is deprecated and will be removed in a future release. "</span>
-<span class="line-empty" title="No Anys on this line!">        "Use `_empirical_auc_variance` instead."</span>
+<span class="line-empty" title="No Anys on this line!">        "Use `_empirical_auc_variance` instead.",</span>
+<span class="line-precise" title="No Anys on this line!">        stacklevel=2,</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x5)">    return _empirical_auc_variance(y, yhat, fold, time_series_validation)  # type: ignore</span>
+Omitted Generics (x6)">    return _empirical_auc_variance(y, yhat, fold, time_series_validation)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -2176,10 +2196,10 @@ Omitted Generics (x3)">def _empirical_auc_variance(</span>
 <span class="line-precise" title="No Anys on this line!">    n_bootstraps: int = 1000,</span>
 <span class="line-precise" title="No Anys on this line!">    bagging_fraction: float = 0.8,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; float:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Compute the empirical variance of the AUC estimator. This is used in the</span>
-<span class="line-empty" title="No Anys on this line!">    computation of the DeLong test, and is calculated as the unbiased sample</span>
-<span class="line-empty" title="No Anys on this line!">    variance of the AUC estimator across the folds.</span>
+<span class="line-empty" title="No Anys on this line!">    """Compute the empirical variance of the AUC estimator.</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    This is used in the computation of the DeLong test, and is calculated</span>
+<span class="line-empty" title="No Anys on this line!">    as the unbiased sample variance of the AUC estimator across the folds.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    Parameters</span>
 <span class="line-empty" title="No Anys on this line!">    ----------</span>
@@ -2231,31 +2251,31 @@ Omitted Generics (x6)">            f"y must be a binary variable, but it is of t
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Unannotated (x2)
-Omitted Generics (x7)">    if to_pd_s(y).isnull().sum() &gt; 0:</span>
+Omitted Generics (x7)">    if to_pd_s(y).isna().sum() &gt; 0:</span>
 <span class="line-precise" title="No Anys on this line!">        raise ValueError(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Unannotated (x2)
-Omitted Generics (x1)">            f"y cannot contain missing values, but it contains {y.isnull().sum()} missing values."</span>
+Omitted Generics (x1)">            f"y cannot contain missing values, but it contains {y.isna().sum()} missing values."</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Unannotated (x2)
-Omitted Generics (x7)">    if to_pd_s(yhat_proba).isnull().sum() &gt; 0:</span>
+Omitted Generics (x7)">    if to_pd_s(yhat_proba).isna().sum() &gt; 0:</span>
 <span class="line-precise" title="No Anys on this line!">        raise ValueError(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Unannotated (x2)
-Omitted Generics (x1)">            f"yhat_proba cannot contain missing values, but it contains {yhat_proba.isnull().sum()} missing values."</span>
+Omitted Generics (x1)">            f"yhat_proba cannot contain missing values, but it contains {yhat_proba.isna().sum()} missing values."</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Unannotated (x2)
-Omitted Generics (x7)">    if to_pd_s(fold).isnull().sum() &gt; 0:</span>
+Omitted Generics (x7)">    if to_pd_s(fold).isna().sum() &gt; 0:</span>
 <span class="line-precise" title="No Anys on this line!">        raise ValueError(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Unannotated (x2)
-Omitted Generics (x1)">            f"fold cannot contain missing values, but it contains {fold.isnull().sum()} missing values."</span>
+Omitted Generics (x1)">            f"fold cannot contain missing values, but it contains {fold.isna().sum()} missing values."</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # If bootstrapping is enabled, compute the variance using bootstrapping</span>
-<span class="line-precise" title="No Anys on this line!">    elif use_bootstrap:</span>
+<span class="line-precise" title="No Anys on this line!">    if use_bootstrap:</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x8)
 Unannotated (x2)">        idx = y.reset_index(drop=True).index.to_series()</span>
@@ -2281,9 +2301,13 @@ Omitted Generics (x8)">        auc_ = np.array(</span>
 Unimported (x2)
 Explicit (x4)">            [roc_auc_score(y_[i], yhat_proba_[i]) for i in range(n_bootstraps)]</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
+<span class="line-precise" title="No Anys on this line!">        return float(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x7)
-Omitted Generics (x6)">        return np.var(auc_, ddof=1) * (1 - bagging_fraction) / bagging_fraction</span>
+Omitted Generics (x6)">            np.var(auc_, ddof=1) * (1 - bagging_fraction) / bagging_fraction</span>
+<span class="line-precise" title="No Anys on this line!">            if bagging_fraction != 0</span>
+<span class="line-precise" title="No Anys on this line!">            else 0</span>
+<span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Calculate unique folds</span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -2339,9 +2363,7 @@ Explicit (x1)">    return float(var_auc)</span>
 Omitted Generics (x3)">def _delong_test_against_chance(</span>
 <span class="line-empty" title="No Anys on this line!">    y: pd.Series, yhat_proba: pd.Series, fold: pd.Series, time_series_validation: bool</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; tuple[float, float]:</span>
-<span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-empty" title="No Anys on this line!">    Implement the DeLong test to compare the ROC AUC against the 45-degree</span>
-<span class="line-empty" title="No Anys on this line!">    line (AUC = 0.5).</span>
+<span class="line-empty" title="No Anys on this line!">    """Implement the DeLong test to compare the ROC AUC against the 45-degree line (AUC = 0.5).</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    The DeLong test uses the Central Limit Theorem (CLT) to approximate</span>
 <span class="line-empty" title="No Anys on this line!">    the distribution of the AUC as normal. The test computes the covariance</span>
@@ -2368,8 +2390,9 @@ Omitted Generics (x3)">def _delong_test_against_chance(</span>
 <span class="line-empty" title="No Anys on this line!">    p_value : float</span>
 <span class="line-empty" title="No Anys on this line!">        The p-value.</span>
 <span class="line-empty" title="No Anys on this line!">    """</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x7)">    if to_pd_s(yhat_proba).nunique() == 1:</span>
+<span class="line-any" title="Any Types on this line: 
+Omitted Generics (x7)
+Unannotated (x2)">    if yhat_proba.min() == yhat_proba.max():</span>
 <span class="line-precise" title="No Anys on this line!">        raise ValueError(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">            "yhat_proba must have more than one unique value, "</span>

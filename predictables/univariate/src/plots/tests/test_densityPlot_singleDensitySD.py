@@ -8,8 +8,8 @@ from predictables.univariate.src.plots._density_plot import _calculate_single_de
 
 @pytest.fixture
 def x_pd():
-    np.random.seed(42)
-    return pd.Series(np.random.randn(100))
+    rg = np.random.default_rng(42)
+    return pd.Series(rg.normal(0, 1, 100))
 
 
 @pytest.fixture
@@ -24,7 +24,8 @@ def x_pl(x_pd):
 
 @pytest.fixture
 def cv_pd():
-    return pd.Series(np.random.choice([0, 1, 2, 3], size=100))
+    rg = np.random.default_rng(42)
+    return pd.Series(rg.choice([0, 1, 2, 3], size=100))
 
 
 @pytest.fixture
@@ -82,8 +83,10 @@ def test_calculate_single_density_sd_basic(
 
 @pytest.mark.parametrize("grid_bins", [10, 50, 100])
 def test_calculate_single_density_sd_edge_cases(grid_bins):
-    x = pd.Series(np.random.randn(10))
-    cv_fold = pd.Series(np.random.choice([0, 1], size=10))
+    """Test edge cases of the function."""
+    rg = np.random.default_rng(42)
+    x = pd.Series(rg.normal(0, 1, 10))
+    cv_fold = pd.Series(rg.choice([0, 1], 10))
 
     sd_smooth, sd = _calculate_single_density_sd(x, cv_fold, grid_bins)
 

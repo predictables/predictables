@@ -43,9 +43,9 @@ from predictables.univariate.src.plots.util._binary_color import binary_color
     ],
 )
 def test_binary_color_valid(input_value, expected_color):
-    """
-    Test the binary_color function with valid inputs to ensure
-    it returns the correct color.
+    """Test the binary_color function with valid inputs.
+
+    Done to ensure it returns the correct color.
     """
     assert binary_color(input_value) == expected_color, (
         f"Expected {expected_color} for {input_value}, but got "
@@ -55,18 +55,18 @@ def test_binary_color_valid(input_value, expected_color):
 
 @pytest.mark.parametrize("invalid_value", [2, 100, 2.0, 100.0, 2.5, "a", None])
 def test_binary_color_invalid(invalid_value):
-    """
-    Test the binary_color function with invalid inputs to ensure
-    it raises ValueError.
+    """Test the binary_color function with invalid inputs.
+
+    Done to ensure it raises ValueError.
     """
     with pytest.raises(ValueError) as e:
         binary_color(invalid_value)
-        if isinstance(invalid_value, str):
-            assert f"Invalid value {invalid_value} for binary variable." in str(e.value)
-        else:
-            assert f"Invalid value {int(invalid_value)} for binary variable." in str(
-                e.value
-            )
+    if isinstance(invalid_value, str):
+        assert f"Invalid value {invalid_value} for binary variable." in str(e.value)
+    else:
+        assert f"Invalid value {int(invalid_value)} for binary variable." in str(
+            e.value
+        )
 
 
 @pytest.mark.parametrize("x", [0, 1, -1])

@@ -15,13 +15,11 @@ from predictables.util import get_unique
 @pytest.fixture
 def sample_data() -> Tuple[pd.Series, pd.Series, pd.Series]:
     """Generate sample data for testing."""
-    np.random.seed(42)  # Ensure reproducibility
-    yhat_proba_logits = pd.Series(np.random.rand(100))
+    rg = np.random.default_rng(42)
+    yhat_proba_logits = pd.Series(rg.random(100))
     yhat_proba = 1 / (1 + np.exp(-yhat_proba_logits))  # Convert to probabilities
-    y = pd.Series(
-        np.random.binomial(1, yhat_proba, size=100)
-    )  # Simulate binary outcomes
-    fold = pd.Series(np.random.choice([1, 2, 3, 4, 5], size=100))
+    y = pd.Series(rg.binomial(1, yhat_proba, size=100))  # Simulate binary outcomes
+    fold = pd.Series(rg.choice([1, 2, 3, 4, 5], size=100))
     return y, pd.Series(yhat_proba), fold
 
 
@@ -38,9 +36,8 @@ def sample_variance(sample_data: Tuple[pd.Series, pd.Series, pd.Series]) -> floa
 @pytest.fixture
 def sample_variance_bootstrap(sample_data: Tuple[pd.Series, pd.Series, pd.Series]):
     y, yhat_proba, _ = sample_data
-    idx = np.array(
-        [np.random.choice(len(y), len(y), replace=True) for _ in range(2500)]
-    )
+    rg = np.random.default_rng(42)
+    idx = np.array([rg.choice(len(y), len(y), replace=True) for _ in range(2500)])
 
     # Turn y and yhat from a pd.Series (vector) to a np.array (matrix) of shape (n, 2500)
     y_ = np.array([y.iloc[i] for i in idx])
@@ -57,12 +54,12 @@ def sample_variance_bootstrap(sample_data: Tuple[pd.Series, pd.Series, pd.Series
 @pytest.fixture
 def large_sample_data():
     """Generate larger sample data for testing."""
-    np.random.seed(42)
+    rg = np.random.default_rng(42)
     size = 100000  # Increase the size for a more realistic test case
-    yhat_proba_logits = pd.Series(np.random.rand(size))
+    yhat_proba_logits = pd.Series(rg.random(size))
     yhat_proba = 1 / (1 + np.exp(-yhat_proba_logits))
-    y = pd.Series(np.random.binomial(1, yhat_proba, size=size))
-    fold = pd.Series(np.random.choice([1, 2, 3, 4, 5], size=size))
+    y = pd.Series(rg.binomial(1, yhat_proba, size=size))
+    fold = pd.Series(rg.choice([1, 2, 3, 4, 5], size=size))
     return y, yhat_proba, fold
 
 
@@ -237,9 +234,10 @@ def test_perfect_separation(
 
 def test_empirical_auc_variance_multi_fold():
     # Generate mock data
-    y = pd.Series(np.random.randint(0, 2, size=100))
-    yhat_proba = pd.Series(np.random.rand(100))
-    fold = pd.Series(np.random.choice([0, 1, 2, 3, 4], size=100))
+    rg = np.random.default_rng(42)
+    y = pd.Series(rg.integers(0, 2, 100))
+    yhat_proba = pd.Series(rg.random(100))
+    fold = pd.Series(rg.choice([1, 2, 3, 4, 5], 100))
 
     # Call the function
     var_auc = _empirical_auc_variance(y, yhat_proba, fold, False)

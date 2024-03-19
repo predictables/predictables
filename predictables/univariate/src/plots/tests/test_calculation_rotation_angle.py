@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pytest
@@ -12,10 +13,10 @@ from predictables.util import DebugLogger
 def save(d):
     id = d.uuid
     d.msg(f"saving figure to ./tmp_img/{id!s}.png")
-    if os.path.exists("./tmp_img"):
+    if Path("./tmp_img").exists():
         plt.savefig(f"./tmp_img/{id!s}.png")
     else:
-        os.mkdir("./tmp_img")
+        Path("./tmp_img").mkdir()
         plt.savefig(f"./tmp_img/{id!s}.png")
 
 

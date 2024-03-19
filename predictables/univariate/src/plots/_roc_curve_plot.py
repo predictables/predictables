@@ -95,9 +95,10 @@ def roc_curve_plot(
 def create_auc_data(
     y: pd.Series, yhat_proba: pd.Series, n_bins: int = 200
 ) -> tuple[pd.Series, pd.Series]:
-    """
-    Create the data for plotting an ROC curve. Calculates the false positive rate
-    at each threshold and the true positive rate at each threshold.
+    """Create the data for plotting an ROC curve.
+
+    Calculates the false positive rate at each threshold and the true
+    positive rate at each threshold.
 
     Parameters
     ----------
@@ -128,7 +129,8 @@ def create_auc_data(
     return fpr, tpr
 
 
-def roc_curve_plot_plotly():
+def roc_curve_plot_plotly() -> go.Figure:
+    """Return a sample plotly plot."""
     return plt.plot([1, 2, 3], [1, 2, 3])
 
 
@@ -136,17 +138,16 @@ def plot_individual_roc_curves(
     y: pd.Series,
     yhat_proba: pd.Series,
     curve_name: str = "ROC Curve",
-    figax: Optional[Union[go.Figure, plt.Axes]] = None,
+    figax: go.Figure | plt.Axes | None = None,
     n_bins: int = 200,
     alpha: float = 0.4,
-    legendgroup: Optional[str] = None,
+    legendgroup: str | None = None,
     figsize: tuple[int, int] = (7, 7),
-    ax: Optional[plt.Axes] = None,
-    fig: Optional[go.Figure] = None,
+    ax: plt.Axes | None = None,
+    fig: go.Figure | None = None,
     backend: str = "matplotlib",
-) -> Union[go.Figure, plt.Axes]:
-    """
-    Plot the ROC curve for each fold.
+) -> go.Figure | plt.Axes:
+    """Plot the ROC curve for each fold.
 
     Parameters
     ----------
@@ -156,7 +157,7 @@ def plot_individual_roc_curves(
         The predicted probabilities.
     curve_name : str, optional
         The name of the curve to be plotted. If not provided, defaults to "ROC Curve".
-    figax : Union[go.Figure, plt.Axes, None], optional
+    figax : go.Figure | plt.Axes | None, optional
         The plot. Will be ignored if either `fig` (in the case of plotly) or `ax`
         (in the case of matplotlib) is provided.
     n_bins : int, optional
@@ -164,7 +165,7 @@ def plot_individual_roc_curves(
         more bins, the smoother the curve. Defaults to 200.
     alpha : float, optional
         The opacity of the individual ROC curves.
-    legendgroup : Union[str, None], optional
+    legendgroup : str | None, optional
         The legend group to use for the individual ROC curves. If None, no legend
         group is used.
     figsize : tuple[int, int], optional
@@ -186,7 +187,7 @@ def plot_individual_roc_curves(
 
     Returns
     -------
-    figax : Union[go.Figure, plt.Axes]
+    figax : go.Figure | plt.Axes
         The plot.
     """
     dbg.msg(f"point2: y: {y} | yhat_proba: {yhat_proba} | ROC_0001b")
@@ -233,8 +234,7 @@ def plot_individual_roc_curves(
             figax.add_trace(go.Scatter(**params))
             return figax
         elif figax is None:
-            figax = go.Figure(go.Scatter(**params))
-            return figax
+            return go.Figure(go.Scatter(**params))
         else:
             raise TypeError(
                 "figax must be a plotly.graph_objects.Figure object when "
@@ -251,16 +251,17 @@ def plot_cv_roc_curves(
     yhat_proba: pd.Series,
     fold: pd.Series,
     time_series_validation: bool,
-    figax: Optional[Union[go.Figure, plt.Axes, None]] = None,
+    figax: go.Figure | plt.Axes | None = None,
     n_bins: int = 200,
     cv_alpha: float = 0.4,
-    ax: Optional[plt.Axes] = None,
-    fig: Optional[go.Figure] = None,
+    ax: plt.Axes | None = None,
+    fig: go.Figure | None = None,
     backend: str = "matplotlib",
-) -> Union[go.Figure, plt.Axes]:
-    """
-    Plot the ROC curve for each fold. Filters the data for each fold label,
-    then plots the ROC curve for a model trained on that fold.
+) -> go.Figure | plt.Axes:
+    """Plot the ROC curve for each fold.
+
+    Filters the data for each fold label, then plots the ROC curve for a model
+    trained on that fold.
 
     Parameters
     ----------
@@ -273,7 +274,7 @@ def plot_cv_roc_curves(
     time_series_validation : bool
         Whether the data has time series structure. If True, the data will be filtered
         by fold and time, otherwise it will be filtered by fold only.
-    figax : Union[go.Figure, plt.Axes, None], optional
+    figax : go.Figure, plt.Axes, None], optional
         The plot.
     n_bins : int, optional
         The number of bins to use when calculating the ROC curve. Generally, the
@@ -291,7 +292,7 @@ def plot_cv_roc_curves(
 
     Returns
     -------
-    figax : Union[go.Figure, plt.Axes]
+    figax : go.Figure, plt.Axes]
         The plot.
     """
     if (backend == "plotly") and (fig is not None):
@@ -405,18 +406,19 @@ def plot_roc_auc_curves_and_confidence_bands(
     yhat_proba: pd.Series,
     fold: pd.Series,
     time_series_validation: bool,
-    figax: Optional[Union[go.Figure, plt.Axes, None]] = None,
+    figax: go.Figure | plt.Axes | None = None,
     n_bins: int = 200,
     cv_alpha: float = 0.4,
-    ax: Optional[plt.Axes] = None,
-    fig: Optional[go.Figure] = None,
+    ax: plt.Axes | None = None,
+    fig: go.Figure | None = None,  # noqa: ARG001 (will eventually be used)
     figsize: tuple[int, int] = (7, 7),
     call_legend: bool = True,
     backend: str = "matplotlib",
-) -> Union[go.Figure, plt.Axes]:
-    """
-    Plot the ROC curve for each fold. Filters the data for each fold label,
-    then plots the ROC curve for a model trained on that fold.
+) -> go.Figure | plt.Axes:
+    """Plot the ROC curve for each fold.
+
+    Filters the data for each fold label, then plots the ROC curve for a
+    model trained on that fold.
 
     Parameters
     ----------
@@ -429,7 +431,7 @@ def plot_roc_auc_curves_and_confidence_bands(
     time_series_validation : bool
         Whether the data has time series structure. If True, the data will be filtered
         by fold and time, otherwise it will be filtered by fold only.
-    figax : Union[go.Figure, plt.Axes, None], optional
+    figax : go.Figure | plt.Axes | None, optional
         The plot.
     n_bins : int, optional
         The number of bins to use when calculating the ROC curve. Generally, the
@@ -451,7 +453,7 @@ def plot_roc_auc_curves_and_confidence_bands(
 
     Returns
     -------
-    figax : Union[go.Figure, plt.Axes]
+    figax : go.Figure, plt.Axes]
         The plot.
 
     Raises
@@ -463,7 +465,8 @@ def plot_roc_auc_curves_and_confidence_bands(
     """
     if backend == "plotly":
         raise NotImplementedError("Plotly backend not implemented yet.")
-    elif ax is not None:
+
+    if ax is not None:
         figax = ax
     elif figax is None:
         _, figax = plt.subplots(figsize=figsize)
@@ -530,9 +533,9 @@ def delong_statistic_annotation_mpl(
     time_series_validation: bool,
     ax: plt.Axes,
 ) -> plt.Axes:
-    """
-    Implement the DeLong test to compare the ROC AUC against the 45-degree
-    line (AUC=0.5).
+    """Implement the DeLong test.
+
+    Compares the ROC AUC against the 45-degree line (AUC=0.5).
 
     The DeLong test uses the Central Limit Theorem (CLT) to approximate
     the distribution of the AUC as normal. The test computes the covariance
@@ -575,7 +578,7 @@ def delong_statistic_annotation_mpl(
     )
 
     # get the figure size from the plt.Axes object (used to scale the annotation)
-    figsize = ax.get_figure().get_size_inches()  # type: ignore
+    figsize = ax.get_figure().get_size_inches() if ax.get_figure() else (7, 7)
 
     # add annotation
     ax.annotate(
@@ -692,9 +695,9 @@ def coefficient_annotation_mpl(
 
 
 def auc(y: pd.Series, yhat: pd.Series) -> float:
-    """
-    Compute the area under the ROC curve. Uses the stock implementation from
-    scikit-learn.
+    """Compute the area under the ROC curve.
+
+    Uses the stock implementation from scikit-learn.
 
     Parameters
     ----------
@@ -714,8 +717,8 @@ def auc(y: pd.Series, yhat: pd.Series) -> float:
 def finalize_plot(
     ax: plt.Axes,
     figsize: tuple[int, int],
-    auc: Optional[float] = None,
-    auc_p_value: Optional[float] = None,
+    auc: float | None = None,
+    auc_p_value: float | None = None,
 ) -> plt.Axes:
     """
     Finalize the plot by adjusting the figure size and layout.
@@ -773,11 +776,12 @@ def roc_curve_plot_mpl(
     figsize: tuple[int, int] = (7, 7),
     n_bins: int = 200,
     cv_alpha: float = 0.4,
-    ax: Optional[plt.Axes] = None,
+    ax: plt.Axes | None = None,
 ) -> plt.Axes:
-    """
-    Plot the ROC curve for each fold. Filters the data for each fold label,
-    then plots the ROC curve for a model trained on that fold.
+    """Plot the ROC curve for each fold.
+
+    Filters the data for each fold label, then plots the ROC curve for a
+    model trained on that fold.
 
     Parameters
     ----------
@@ -841,26 +845,21 @@ def roc_curve_plot_mpl(
         ax=ax0,
     )
     ax0 = coefficient_annotation_mpl(
-        coef=coef,
-        std_error=se,
-        pvalue=pvalue,
-        ax=ax0,
-        figsize=figsize,  # type: ignore
+        coef=coef, std_error=se, pvalue=pvalue, ax=ax0, figsize=figsize
     )
     a = auc(y, yhat_proba)
     _, p = _delong_test_against_chance(y, yhat_proba, fold, time_series_validation)
-    ax0 = finalize_plot(ax0, figsize=figsize, auc=a, auc_p_value=p)  # type: ignore
-
-    return ax0
+    return finalize_plot(ax0, figsize=figsize, auc=a, auc_p_value=p)
 
 
 def _compute_auc_variance(
     y: pd.Series,
     yhat: pd.Series,
-    fold: Optional[pd.Series],
-    time_series_validation: bool,
+    fold: pd.Series | None = None,
+    time_series_validation: bool = False,
 ) -> float:
-    """
+    """Use _empirical_auc_variance instead for new code.
+
     This function is depricated. Use _empirical_auc_variance instead for new code. I am
     leaving it here for now to avoid breaking existing code, but will comment out the
     implementation and just return the empirical variance so that the tests pass.
@@ -909,9 +908,10 @@ def _compute_auc_variance(
     """
     warning.warn(
         "This function is deprecated and will be removed in a future release. "
-        "Use `_empirical_auc_variance` instead."
+        "Use `_empirical_auc_variance` instead.",
+        stacklevel=2,
     )
-    return _empirical_auc_variance(y, yhat, fold, time_series_validation)  # type: ignore
+    return _empirical_auc_variance(y, yhat, fold, time_series_validation)
 
 
 def _empirical_auc_variance(
@@ -923,10 +923,10 @@ def _empirical_auc_variance(
     n_bootstraps: int = 1000,
     bagging_fraction: float = 0.8,
 ) -> float:
-    """
-    Compute the empirical variance of the AUC estimator. This is used in the
-    computation of the DeLong test, and is calculated as the unbiased sample
-    variance of the AUC estimator across the folds.
+    """Compute the empirical variance of the AUC estimator.
+
+    This is used in the computation of the DeLong test, and is calculated
+    as the unbiased sample variance of the AUC estimator across the folds.
 
     Parameters
     ----------
@@ -970,21 +970,21 @@ def _empirical_auc_variance(
             f"y must be a binary variable, but it is of type: {get_column_dtype(y)}"
         )
 
-    if to_pd_s(y).isnull().sum() > 0:
+    if to_pd_s(y).isna().sum() > 0:
         raise ValueError(
-            f"y cannot contain missing values, but it contains {y.isnull().sum()} missing values."
+            f"y cannot contain missing values, but it contains {y.isna().sum()} missing values."
         )
-    if to_pd_s(yhat_proba).isnull().sum() > 0:
+    if to_pd_s(yhat_proba).isna().sum() > 0:
         raise ValueError(
-            f"yhat_proba cannot contain missing values, but it contains {yhat_proba.isnull().sum()} missing values."
+            f"yhat_proba cannot contain missing values, but it contains {yhat_proba.isna().sum()} missing values."
         )
-    if to_pd_s(fold).isnull().sum() > 0:
+    if to_pd_s(fold).isna().sum() > 0:
         raise ValueError(
-            f"fold cannot contain missing values, but it contains {fold.isnull().sum()} missing values."
+            f"fold cannot contain missing values, but it contains {fold.isna().sum()} missing values."
         )
 
     # If bootstrapping is enabled, compute the variance using bootstrapping
-    elif use_bootstrap:
+    if use_bootstrap:
         idx = y.reset_index(drop=True).index.to_series()
         idx_ = np.array(
             [
@@ -997,7 +997,11 @@ def _empirical_auc_variance(
         auc_ = np.array(
             [roc_auc_score(y_[i], yhat_proba_[i]) for i in range(n_bootstraps)]
         )
-        return np.var(auc_, ddof=1) * (1 - bagging_fraction) / bagging_fraction
+        return float(
+            np.var(auc_, ddof=1) * (1 - bagging_fraction) / bagging_fraction
+            if bagging_fraction != 0
+            else 0
+        )
 
     # Calculate unique folds
     unique_folds = fold.unique()
@@ -1034,9 +1038,7 @@ def _empirical_auc_variance(
 def _delong_test_against_chance(
     y: pd.Series, yhat_proba: pd.Series, fold: pd.Series, time_series_validation: bool
 ) -> tuple[float, float]:
-    """
-    Implement the DeLong test to compare the ROC AUC against the 45-degree
-    line (AUC = 0.5).
+    """Implement the DeLong test to compare the ROC AUC against the 45-degree line (AUC = 0.5).
 
     The DeLong test uses the Central Limit Theorem (CLT) to approximate
     the distribution of the AUC as normal. The test computes the covariance
@@ -1063,7 +1065,7 @@ def _delong_test_against_chance(
     p_value : float
         The p-value.
     """
-    if to_pd_s(yhat_proba).nunique() == 1:
+    if yhat_proba.min() == yhat_proba.max():
         raise ValueError(
             "yhat_proba must have more than one unique value, "
             f"but it has only one unique value: {yhat_proba.unique()}"
