@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import polars as pl
-from scipy.stats import gaussian_kde, ttest_ind
+from scipy.stats import gaussian_kde, ttest_ind  # type: ignore[import-untyped]
 
 from predictables.univariate.src.plots.util import binary_color, plot_label
 from predictables.util import filter_by_cv_fold, get_column_dtype, to_pd_s
@@ -219,7 +219,6 @@ def density_plot_mpl(
         plot_by,
         cv_fold=cv_label_,
         ax=ax0,
-        use_labels=False,
         alpha=cv_alpha,
         fill_under=False,
         line_width=cv_line_width,

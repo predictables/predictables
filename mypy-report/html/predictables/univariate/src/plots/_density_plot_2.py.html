@@ -796,7 +796,6 @@
 <span id="L786" class="lineno"><a class="lineno" href="#L786">786</a></span>
 <span id="L787" class="lineno"><a class="lineno" href="#L787">787</a></span>
 <span id="L788" class="lineno"><a class="lineno" href="#L788">788</a></span>
-<span id="L789" class="lineno"><a class="lineno" href="#L789">789</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -805,7 +804,7 @@
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
-<span class="line-any" title="No Anys on this line!">from scipy.stats import gaussian_kde, ttest_ind</span>
+<span class="line-any" title="No Anys on this line!">from scipy.stats import gaussian_kde, ttest_ind  # type: ignore[import-untyped]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from predictables.univariate.src.plots.util import binary_color, plot_label</span>
 <span class="line-precise" title="No Anys on this line!">from predictables.util import filter_by_cv_fold, get_column_dtype, to_pd_s</span>
@@ -1055,7 +1054,6 @@ Omitted Generics (x1)">        plot_by,</span>
 Omitted Generics (x1)">        cv_fold=cv_label_,</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x1)">        ax=ax0,</span>
-<span class="line-precise" title="No Anys on this line!">        use_labels=False,</span>
 <span class="line-precise" title="No Anys on this line!">        alpha=cv_alpha,</span>
 <span class="line-precise" title="No Anys on this line!">        fill_under=False,</span>
 <span class="line-precise" title="No Anys on this line!">        line_width=cv_line_width,</span>
