@@ -1099,9 +1099,9 @@
 <span class="line-precise" title="No Anys on this line!">import matplotlib.pyplot as plt</span>
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
-<span class="line-any" title="No Anys on this line!">import plotly.graph_objects as go  # type: ignore[ignore-untyped]</span>
-<span class="line-any" title="No Anys on this line!">from scipy.stats import norm  # type: ignore[ignore-untyped]</span>
-<span class="line-any" title="No Anys on this line!">from sklearn.metrics import roc_auc_score  # type: ignore[ignore-untyped]</span>
+<span class="line-any" title="No Anys on this line!">import plotly.graph_objects as go  # type: ignore</span>
+<span class="line-any" title="No Anys on this line!">from scipy.stats import norm  # type: ignore</span>
+<span class="line-any" title="No Anys on this line!">from sklearn.metrics import roc_auc_score  # type: ignore</span>
 <span class="line-any" title="No Anys on this line!">from sklearn.metrics import RocCurveDisplay, roc_curve</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from predictables.util import DebugLogger, filter_by_cv_fold, get_column_dtype, to_pd_s</span>
@@ -1805,7 +1805,7 @@ Explicit (x1)
 Unannotated (x1)">    ax.annotate(</span>
 <span class="line-precise" title="No Anys on this line!">        significance_message,</span>
 <span class="line-precise" title="No Anys on this line!">        xy=(0.6, 0.2),</span>
-<span class="line-precise" title="No Anys on this line!">        xycoords="plt.Axes fraction",</span>
+<span class="line-precise" title="No Anys on this line!">        xycoords="axes fraction",</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x3)
 Omitted Generics (x2)
@@ -1912,7 +1912,7 @@ Explicit (x1)
 Unannotated (x1)">    ax.annotate(</span>
 <span class="line-precise" title="No Anys on this line!">        annotation_text,</span>
 <span class="line-precise" title="No Anys on this line!">        xy=(0.1, 0.05),</span>
-<span class="line-precise" title="No Anys on this line!">        xycoords="plt.Axes fraction",</span>
+<span class="line-precise" title="No Anys on this line!">        xycoords="axes fraction",</span>
 <span class="line-precise" title="No Anys on this line!">        fontsize=24</span>
 <span class="line-precise" title="No Anys on this line!">        * (figsize[0] / 16),  # scale the font size depending on the figure size</span>
 <span class="line-empty" title="No Anys on this line!">        bbox={</span>

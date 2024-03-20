@@ -6,9 +6,9 @@ import warnings as warning
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import plotly.graph_objects as go  # type: ignore[ignore-untyped]
-from scipy.stats import norm  # type: ignore[ignore-untyped]
-from sklearn.metrics import roc_auc_score  # type: ignore[ignore-untyped]
+import plotly.graph_objects as go  # type: ignore
+from scipy.stats import norm  # type: ignore
+from sklearn.metrics import roc_auc_score  # type: ignore
 from sklearn.metrics import RocCurveDisplay, roc_curve
 
 from predictables.util import DebugLogger, filter_by_cv_fold, get_column_dtype, to_pd_s
@@ -584,7 +584,7 @@ def delong_statistic_annotation_mpl(
     ax.annotate(
         significance_message,
         xy=(0.6, 0.2),
-        xycoords="plt.Axes fraction",
+        xycoords="axes fraction",
         fontsize=24 * (figsize[0] / 16),
         bbox={
             "boxstyle": "round,pad=0.3",
@@ -680,7 +680,7 @@ def coefficient_annotation_mpl(
     ax.annotate(
         annotation_text,
         xy=(0.1, 0.05),
-        xycoords="plt.Axes fraction",
+        xycoords="axes fraction",
         fontsize=24
         * (figsize[0] / 16),  # scale the font size depending on the figure size
         bbox={

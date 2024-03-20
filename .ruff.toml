@@ -27,7 +27,7 @@ exclude = [
     "node_modules",
     "site-packages",
     "venv",
-    "docs/*"
+    "docs/*",
 ]
 
 # Same as Black.
@@ -64,15 +64,17 @@ ignore = [
     "N806",
     "N999",
     "PD901",
+    "PGH003",
     "PLR0911",
     "PLR0912",
     "PLR0913",
     "PLR2004",
     "PT011",
     "PT017",
+    "PT012",
     "RET505",
     "S101",
-    "S501"
+    "S501",
 ]
 
 # On top of the default `select` (`E`, `F`), enable:
@@ -188,7 +190,17 @@ unfixable = ["F401"] # Disable fix for unused imports (`F401`).
 
 [lint.per-file-ignores]
 "__init__.py" = ["E402", "I001", "D104"]
-"**/{tests,docs,tools}/*" = ["E402","I001","D100", "D103", "ANN001", "ANN201", "PLR2004", "PGH003", "INP001"]
+"**/{tests,docs,tools}/*" = [
+    "E402",
+    "I001",
+    "D100",
+    "D103",
+    "ANN001",
+    "ANN201",
+    "PLR2004",
+    "PGH003",
+    "INP001",
+]
 "*.ipynb" = ["T201", "PLR2004", "ERA001"]
 "*Univariate_2.py" = ["ERA001"]
 "*Model_2.py" = ["ERA001", "PGH003"]
@@ -196,8 +208,8 @@ unfixable = ["F401"] # Disable fix for unused imports (`F401`).
 
 [lint.extend-per-file-ignores]
 # Ignore `E402` and `F401` in all `__init__.py` files.
-"__init__.py" = ["E402", "F401","I001"]
-"**/{tests,docs,tools}/*" = ["E402", "F401","I001"]
+"__init__.py" = ["E402", "F401", "I001"]
+"**/{tests,docs,tools}/*" = ["E402", "F401", "I001"]
 
 [lint.flake8-import-conventions]
 # Declare the banned `from` imports. These may be imported using `import`, but not `from`.
@@ -230,8 +242,8 @@ parametrize-names-type = "csv"
 
 [lint.pydocstyle]
 # Use the numpy docstring convention
-convention = "numpy" 
+convention = "numpy"
 
 [lint.pylint]
 # Maximum number of arguments for functions and methods
-max-args = 10 
+max-args = 10

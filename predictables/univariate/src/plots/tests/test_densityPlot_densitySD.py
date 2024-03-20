@@ -11,7 +11,7 @@ from predictables.util import filter_by_cv_fold
 @pytest.fixture
 def x_pd():
     rg = np.random.default_rng(42)
-    return pd.Series(rg.normal(100))
+    return pd.Series(rg.normal(size=100))
 
 
 @pytest.fixture

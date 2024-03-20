@@ -1,3 +1,4 @@
+# mypy: import-untyped"
 from __future__ import annotations
 
 from functools import wraps
@@ -165,9 +166,10 @@ def validate_density_plot_mpl(func: Callable) -> Callable:
                 return float(value)
             except ValueError as err:
                 # If conversion fails, raise an informative error
-                raise ValueError from err(
+                print(  # noqa: T201
                     f"Argument `{arg_name}` must be convertible to float, but got value `{value}` of type `{type(value).__name__}`."
                 )
+                raise err
 
         # Inside the wrapper function of the decorator
         if x_min is not None:
@@ -728,6 +730,7 @@ def calculate_density_sd(
         x_ = filter_by_cv_fold(x, f, cv_fold, time_series_validation, "test")
         by_ = filter_by_cv_fold(by, f, cv_fold, time_series_validation, "test")
         for level, group in x_.groupby(by_):
+            print(f"level: {level}\n\ngroup: {group}")
             density = gaussian_kde(group)
             sd[f"{f}_{level}"] = density(sd["x"])
 

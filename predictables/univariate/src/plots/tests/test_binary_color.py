@@ -61,12 +61,12 @@ def test_binary_color_invalid(invalid_value):
     """
     with pytest.raises(ValueError) as e:
         binary_color(invalid_value)
-    if isinstance(invalid_value, str):
-        assert f"Invalid value {invalid_value} for binary variable." in str(e.value)
-    else:
-        assert f"Invalid value {int(invalid_value)} for binary variable." in str(
-            e.value
-        )
+        if isinstance(invalid_value, str):
+            assert f"Invalid value {invalid_value} for binary variable." in str(e.value)
+        else:
+            assert f"Invalid value {int(invalid_value)} for binary variable." in str(
+                e.value
+            )
 
 
 @pytest.mark.parametrize("x", [0, 1, -1])

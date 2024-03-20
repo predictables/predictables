@@ -12,7 +12,6 @@ from ._load_env import load_env  # F401
 from ._model_name_map import model_name_map  # F401
 from ._model_object_to_model_name import model_object_to_model_name  # F401
 from ._monitor_resources import monitor_resources  # F401
-from ._performance_testing import time_fn  # F401
 from ._profiler import profiler  # F401
 from ._select_cols_by_dtype import select_cols_by_dtype  # F401
 from ._to_pd import to_pd_df, to_pd_s  # F401

@@ -29,8 +29,9 @@
       "editor.formatOnPaste": true,
       "editor.defaultFormatter": "charliermarsh.ruff",
       "terminal.integrated.shell.linux": "/bin/zsh",
-      "terminal.integrated.fontFamily": "Ubuntu Mono derivative Powerline"
+      "terminal.integrated.fontFamily": "Ubuntu Mono derivative Powerline",
+      "terminal.integrated.defaultShell.linux": "/bin/zsh"
     }
   },
-  "postAttachCommand": "install_dotfiles /root .zshrc .zsh_aliases .p10k.zsh && exec zsh && install_dotfiles /app .ruff.toml .prettierrc .mypy.ini .flake8"
+  "postAttachCommand": "install_dotfiles $HOME .zshrc .zsh_aliases && exec zsh && install_dotfiles /app .ruff.toml .prettierrc .mypy.ini .flake8 && py -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && pip install ruff ruff-lsp mypy flake8 pytest coverage pytest-cov pytest-flake8"
 }

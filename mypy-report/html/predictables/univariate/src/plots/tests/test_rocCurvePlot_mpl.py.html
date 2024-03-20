@@ -166,7 +166,7 @@ Unannotated (x1)">def test_invalid_ax_parameter_type(mock_data: tuple[pd.Series,
 <span class="line-unanalyzed" title="No Anys on this line!">    with pytest.raises(TypeError) as err:</span>
 <span class="line-precise" title="No Anys on this line!">        roc_curve_plot_mpl(y, yhat_proba, fold, False, 0.1, 0.01, 0.05, ax="invalid")</span>
 <span class="line-precise" title="No Anys on this line!">    plt.close("all")</span>
-<span class="line-precise" title="No Anys on this line!">    assert "The ax parameter should be a matplotlib.axes.Axes object" in str(</span>
+<span class="line-precise" title="No Anys on this line!">    assert "The ax parameter should be a matplotlib.plt.Axes.plt.Axes object when using the matplotlib" in str(</span>
 <span class="line-unanalyzed" title="No Anys on this line!">        err.value</span>
 <span class="line-empty" title="No Anys on this line!">    ), (</span>
 <span class="line-precise" title="No Anys on this line!">        "The function should raise a TypeError when the ax parameter is not a "</span>
