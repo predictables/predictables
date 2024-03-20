@@ -4,5 +4,6 @@ services:
     image: aaweaver9/py
     volumes:
       - ..:/app
+      - ../../hit-ratios/data:/data
     working_dir: /app
     command: "tail -f /dev/null"
