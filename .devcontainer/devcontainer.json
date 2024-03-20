@@ -32,5 +32,5 @@
       "terminal.integrated.fontFamily": "Ubuntu Mono derivative Powerline"
     }
   },
-  "postAttachCommand": "install_dotfiles $HOME .zshrc .zsh_aliases .p10k.zsh && exec zsh && install_dotfiles /app .ruff.toml .prettierrc .mypy.ini .flake8"
+  "postAttachCommand": "install_dotfiles /root .zshrc .zsh_aliases .p10k.zsh && exec zsh && install_dotfiles /app .ruff.toml .prettierrc .mypy.ini .flake8"
 }
