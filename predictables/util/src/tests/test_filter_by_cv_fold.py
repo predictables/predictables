@@ -55,14 +55,14 @@ def test_filter_by_cv_fold_ts(
     if dtype == "pandas":
         s = pd_series
     elif dtype == "polars":
-        s = pd_series.to_pandas()
+        s = pl.Series(pd_series.to_numpy())
     elif dtype == "numpy":
         s = pd_series.to_numpy()  # type: ignore[assignment]
 
     if dtype2 == "pandas":
         folds = pd_cv_fold_data_ts
     elif dtype2 == "polars":
-        folds = pl.from_pandas(pd_cv_fold_data_ts)  # type: ignore[assignment]
+        folds = pl.Series(pd_cv_fold_data_ts.to_numpy())
     elif dtype2 == "numpy":
         folds = pd_cv_fold_data_ts.to_numpy()  # type: ignore[assignment]
 

@@ -41,5 +41,5 @@
     }
   },
   // "postBuildCommand": "chmod +x /app/.devcontainer/install_code_server && sh /app/.devcontainer/install_code_server",
-  "postAttachCommand": "install_dotfiles $HOME .zshrc .zsh_aliases && exec zsh && install_dotfiles /app .ruff.toml .prettierrc .mypy.ini .flake8 && py -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && pip install ruff ruff-lsp mypy flake8 pytest coverage pytest-cov pytest-flake8",
+  "postAttachCommand": "install_dotfiles $HOME .zshrc .zsh_aliases && exec zsh && install_dotfiles /app .ruff.toml .prettierrc .mypy.ini .flake8 && py -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && pip install ruff ruff-lsp mypy flake8 pytest coverage pytest-cov pytest-flake8"
 }

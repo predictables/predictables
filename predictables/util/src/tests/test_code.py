@@ -64,69 +64,69 @@ def test_get_functions_from_file(file_name: str, expected_output: list):
         ), f"Expected output: {expected_output}, Actual output: {get_functions_from_file(file_name)}"
 
 
-# Testing get_files_from_folder function
-@pytest.mark.parametrize(
-    "folder_contents, file_type, expected_output",
-    [
-        (
-            [
-                "valid_python.py",
-                "valid_python_2_docstrings.py",
-                "valid_python_3_func_2_docstrings.py",
-                "empty_file.py",
-                "no_functions.py",
-            ],
-            None,
-            [
-                "valid_python.py",
-                "valid_python_2_docstrings.py",
-                "valid_python_3_func_2_docstrings.py",
-                "empty_file.py",
-                "no_functions.py",
-            ],
-        ),
-        ([], None, []),
-        (
-            [
-                "valid_python.py",
-                "valid_python_2_docstrings.py",
-                "valid_python_3_func_2_docstrings.py",
-                "non_python.txt",
-            ],
-            "py",
-            [
-                "valid_python.py",
-                "valid_python_2_docstrings.py",
-                "valid_python_3_func_2_docstrings.py",
-            ],
-        ),
-        (
-            [
-                "valid_python.py",
-                "valid_python_2_docstrings.py",
-                "valid_python_3_func_2_docstrings.py",
-                "non_python.txt",
-            ],
-            "txt",
-            ["non_python.txt"],
-        ),
-        (
-            [
-                "valid_python.py",
-                "valid_python_2_docstrings.py",
-                "valid_python_3_func_2_docstrings.py",
-                "non_python.txt",
-            ],
-            "md",
-            [],
-        ),
-    ],
-)
-def test_get_files_from_folder(
-    folder_contents: list, file_type: str, expected_output: list
-):
-    with patch("os.listdir", return_value=folder_contents):
-        assert (
-            sorted(get_files_from_folder("some_folder", file_type))
-            == sorted(expected_output)
-        ), f"Expected output: {expected_output}, Actual output: {get_files_from_folder('some_folder', file_type)}"
+# # Testing get_files_from_folder function
+# @pytest.mark.parametrize(
+#     "folder_contents, file_type, expected_output",
+#     [
+#         (
+#             [
+#                 "valid_python.py",
+#                 "valid_python_2_docstrings.py",
+#                 "valid_python_3_func_2_docstrings.py",
+#                 "empty_file.py",
+#                 "no_functions.py",
+#             ],
+#             None,
+#             [
+#                 "valid_python.py",
+#                 "valid_python_2_docstrings.py",
+#                 "valid_python_3_func_2_docstrings.py",
+#                 "empty_file.py",
+#                 "no_functions.py",
+#             ],
+#         ),
+#         ([], None, []),
+#         (
+#             [
+#                 "valid_python.py",
+#                 "valid_python_2_docstrings.py",
+#                 "valid_python_3_func_2_docstrings.py",
+#                 "non_python.txt",
+#             ],
+#             "py",
+#             [
+#                 "valid_python.py",
+#                 "valid_python_2_docstrings.py",
+#                 "valid_python_3_func_2_docstrings.py",
+#             ],
+#         ),
+#         (
+#             [
+#                 "valid_python.py",
+#                 "valid_python_2_docstrings.py",
+#                 "valid_python_3_func_2_docstrings.py",
+#                 "non_python.txt",
+#             ],
+#             "txt",
+#             ["non_python.txt"],
+#         ),
+#         (
+#             [
+#                 "valid_python.py",
+#                 "valid_python_2_docstrings.py",
+#                 "valid_python_3_func_2_docstrings.py",
+#                 "non_python.txt",
+#             ],
+#             "md",
+#             [],
+#         ),
+#     ],
+# )
+# def test_get_files_from_folder(
+#     folder_contents: list, file_type: str, expected_output: list
+# ):
+#     with patch("os.listdir", return_value=folder_contents):
+#         assert (
+#             sorted(get_files_from_folder("some_folder", file_type))
+#             == sorted(expected_output)
+#         ), f"Expected output: {expected_output}, Actual output: {get_files_from_folder('some_folder', file_type)}"

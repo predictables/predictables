@@ -17,7 +17,7 @@ def validate_lf(func: Callable) -> Callable:
 
     @wraps(func)
     def wrapper(*args, **kwargs):  # noqa: ANN202
-        lf = kwargs["lf"] if "lf" in kwargs else args[0]
+        lf = kwargs.get("lf", args[0] if args else None)
         if isinstance(lf, (pd.DataFrame, pl.DataFrame, np.ndarray)):
             lf_ = to_pl_lf(lf)
         elif isinstance(lf, pl.LazyFrame):

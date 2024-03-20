@@ -424,9 +424,25 @@ class UnivariateAnalysis:
 
         >>> _get_file_stem(None, "Univariate Analysis Report")
         "Univariate Analysis Report"
+
+        >>> _get_file_stem("This.Is.A.Report.pdf", None)
+        "This.Is.A.Report"
         """
         if filename is not None:
-            file_stem = filename.split(".")[0]
+            # Remove the extension from the filename
+
+            # If there is more than one "." in the filename, remove only the last one
+            if filename.count(".") > 1:
+                file_stem = ".".join(filename.split(".")[:-1])
+
+            # If there is only one "." in the filename, remove it
+            elif filename.count(".") == 1:
+                file_stem = filename.split(".")[0]
+
+            # If there are no "." in the filename, return the filename
+            else:
+                file_stem = filename
+
             dbg.msg(
                 f"File stem ({file_stem}) was extracted from filename ({filename}) "
                 "and should not have an extension - UA0005"

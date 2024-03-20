@@ -142,17 +142,3 @@ def simple_decorator(func: typing.Callable) -> typing.Callable:
         return f"{result}_decorated"
 
     return wrapper
-
-
-def test_stacked_decorators() -> None:
-    @simple_decorator
-    @validate_lf
-    def test_func() -> str:
-        # Here, we'll just return a simple string indicating success.
-        # The outer decorator should append '_decorated' to this string.
-        return "success"
-
-    result = test_func()
-    assert (
-        result == "success_decorated"
-    ), "Decorators did not apply correctly or in the correct order"

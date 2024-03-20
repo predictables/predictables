@@ -156,7 +156,6 @@ def test_to_pl_s(series_input: pd.Series | pl.Series | np.ndarray | str) -> None
 
 
 def test_to_pl_s_ndarray_2d() -> None:
-    rg = np.random.Generator(np.random.PCG64(12345))
-    ndarray_2d = rg.random(10, 2)
+    ndarray_2d = np.random.default_rng(42).normal(0, 1, (10, 2))
     with pytest.raises(ValueError):
         to_pl_s(ndarray_2d)

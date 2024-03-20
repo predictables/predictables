@@ -525,6 +525,28 @@ def _get_value_map(
 def _handle_date_list(
     lf: pl.LazyFrame, x_col: str, date_col: str, index_col: str
 ) -> pl.LazyFrame:
+    """Map the list of dates to a list of values and calculate the rolling sum.
+
+    This function is used in conjunction with `_date_list_eval` to map the list of
+    dates to a list of values. The rolling sum is then calculated by summing up the
+    values in the list column of values.
+
+    Parameters
+    ----------
+    lf : pl.LazyFrame
+        The input LazyFrame.
+    x_col : str
+        The name of the value column (eg the column that will be summed).
+    date_col : str
+        The name of the date column.
+    index_col : str
+        The name of the index column.
+
+    Returns
+    -------
+    pl.LazyFrame
+        A LazyFrame with the rolling sum.
+    """
     return (
         lf
         # Melt the elements of each list in the date_list column to create
@@ -547,7 +569,22 @@ def _handle_date_list(
 
 
 def _date_list_eval(value_map: dict) -> pl.Expr:
-    """Take a dictionary mapping dates to values and returns a function that can be used to map a list of dates to a list of values."""
+    """Take a dictionary mapping dates to values and returns a function that can be used to map a list of dates to a list of values.
+
+    This function is used to map the list column of dates to a list column of values. The rolling sum
+    is then calculated by summing up the values in the list column of values.
+
+    Parameters
+    ----------
+    value_map : dict
+        A dictionary mapping dates to values.
+
+    Returns
+    -------
+    pl.Expr
+        An expression that can be used to map a list of dates to a list of values. This is a polars
+        expression that can be used in the with_columns method of a LazyFrame.
+    """
     return (
         pl.when(pl.col("date_list").is_in(list(value_map.keys())))
         .then(
