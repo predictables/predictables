@@ -30,7 +30,14 @@
       "editor.defaultFormatter": "charliermarsh.ruff",
       "terminal.integrated.shell.linux": "/bin/zsh",
       "terminal.integrated.fontFamily": "Ubuntu Mono derivative Powerline",
-      "terminal.integrated.defaultShell.linux": "/bin/zsh"
+      "terminal.integrated.defaultShell.linux": "/bin/zsh",
+      "python.analysis.ignore": ["*"],
+      "ruff.linting.enabled": true,
+      "ruff.interpreter": [".venv/bin/python", "/usr/bin/py"],
+      "ruff.showNotifications": "onWarning",
+      "terminal.integrated.copyOnSelection": true,
+      "terminal.integrated.defaultProfile.linux": "zsh",
+      "terminal.integrated.showExitAlert": false
     }
   },
   "postAttachCommand": "install_dotfiles $HOME .zshrc .zsh_aliases && exec zsh && install_dotfiles /app .ruff.toml .prettierrc .mypy.ini .flake8 && py -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && pip install ruff ruff-lsp mypy flake8 pytest coverage pytest-cov pytest-flake8"
