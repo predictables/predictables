@@ -415,7 +415,7 @@ class DynamicRollingSum:
                         pl.col(c).cast(pl.Categorical).name.keep()
                         for c in self._category_cols
                     ]
-                )
+                ).drop()
                 if self._rejoin
                 else lf
             )

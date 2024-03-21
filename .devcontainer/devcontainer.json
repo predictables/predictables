@@ -17,19 +17,25 @@
         "ms-python.mypy-type-checker",
         "ms-python.flake8",
         "rodolphebarbanneau.python-docstring-highlighter",
-        "ritwickdey.LiveServer"
+        "ritwickdey.LiveServer",
+        "ms-python.python",
+        "ms-toolsai.jupyter"
       ]
     },
     "settings": {
       "workbench.panel.defaultLocation": "bottom",
       "workbench.colorTheme": "GitHub Dark High Contrast",
-      "editor.fontFamily": "Ubuntu Mono derivative Powerline",
+      "editor.fontFamily": "JetBrainsMono Nerd Font",
+      "editor.fontWeight": "100",
+      "editor.fontLigatures": true,
+      "editor.fontSize": 16,
+      "editor.lineHeight": 1.2,
       "editor.formatOnSave": true,
       "editor.formatOnType": true,
       "editor.formatOnPaste": true,
       "editor.defaultFormatter": "charliermarsh.ruff",
       "terminal.integrated.shell.linux": "/bin/zsh",
-      "terminal.integrated.fontFamily": "Ubuntu Mono derivative Powerline",
+      "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
       "terminal.integrated.defaultShell.linux": "/bin/zsh",
       "python.analysis.ignore": ["*"],
       "ruff.linting.enabled": true,
@@ -37,7 +43,11 @@
       "ruff.showNotifications": "onWarning",
       "terminal.integrated.copyOnSelection": true,
       "terminal.integrated.defaultProfile.linux": "zsh",
-      "terminal.integrated.showExitAlert": false
+      "terminal.integrated.showExitAlert": false,
+      "terminal.integrated.fontSize": 16,
+      "terminal.integrated.fontWeight": "500",
+      "notebook.output.fontSize": 15,
+      "notebook.output.lineHeight": 1.2
     }
   },
   // "postBuildCommand": "chmod +x /app/.devcontainer/install_code_server && sh /app/.devcontainer/install_code_server",
