@@ -5,6 +5,7 @@ import datetime
 import numpy as np
 import pandas as pd
 import polars as pl
+import polars.selectors as cs
 
 from predictables.util import validate_lf
 from predictables.encoding.src.lagged_mean_encoding._rolling_op_column_name import (
@@ -330,7 +331,7 @@ class DynamicRollingSum:
         # Otherwise, return a LazyFrame with the same number of rows, but with columns
         # for the index, date, categories, and rolling sum
         if self._category_cols is None:
-            return (
+            out = (
                 self._lf.join(
                     lf.select(
                         [
@@ -352,40 +353,11 @@ class DynamicRollingSum:
                 else lf
             )
 
-            # return (
-            #     pl.join(
-            #         [
-            #             self._lf,
-            #             lf.select(
-            #                 [
-            #                     pl.col(
-            #                         rolling_op_column_name(
-            #                             self._op,
-            #                             self._x_name,
-            #                             None,
-            #                             self._offset,
-            #                             self._window,
-            #                         )
-            #                     ).name.keep()
-            #                 ]
-            #             ),
-            #         ],
-            #         on=[self._index_col],
-            #         how="left",
-            #     )
-            #     if self._rejoin
-            #     else lf
-            # )
         else:
             lf = lf.select(
                 [
                     pl.col(self._index_col).name.keep()
-                    # pl.col(self._date_col).name.keep()
                 ]
-                # + [
-                #     pl.col(c).cast(pl.Utf8).cast(pl.Categorical).name.keep()
-                #     for c in self._category_cols
-                # ]
                 + [
                     rolling_op_column_name(
                         self._op, self._x_name, c, self._offset, self._window
@@ -394,7 +366,7 @@ class DynamicRollingSum:
                 ]
             )
 
-            return (
+            out = (
                 self._lf.with_columns(
                     [pl.col(c).cast(pl.Utf8).name.keep() for c in self._category_cols]
                 )
@@ -420,36 +392,7 @@ class DynamicRollingSum:
                 else lf
             )
 
-        # return (
-        #     pl.join(
-        #         [
-        #             self._lf.with_columns(
-        #                 [
-        #                     pl.col(c).cast(pl.Utf8).name.keep()
-        #                     for c in self._category_cols
-        #                 ]
-        #             ),
-        #             lf.select(
-        #                 [
-        #                     pl.col(c).name.keep()
-        #                     for c in lf.columns
-        #                     if c != self._date_col
-        #                 ]
-        #             ),
-        #         ],
-        #         on=[self._index_col],
-        #         how="left",
-        #     )
-        #     .drop(self._lf.columns[0])
-        #     .with_columns(
-        #         [
-        #             pl.col(c).cast(pl.Categorical).name.keep()
-        #             for c in self._category_cols
-        #         ]
-        #     )
-        #     if self._rejoin
-        #     else lf
-        # )
+        return out.drop(out.select(cs.contains("_right")).columns)
 
     def _run(self) -> pl.LazyFrame:
         """Run the dynamic rolling sum using the provided LazyFrame and parameters.
@@ -517,7 +460,7 @@ class DynamicRollingSum:
 
                 self._lf = (
                     # TODO REMOVE THIS COLLECT
-                    self._lf.collect()
+                    self._lf
                     .with_columns([pl.col(c).cast(pl.Utf8).name.keep()])
                     .join(
                         pl.concat(cat_dfs, how="vertical"), on=["index", c], how="left"
@@ -628,10 +571,10 @@ def dynamic_rolling_sum(
             ]
         )
         # TODO REMOVE THIS COLLECT
-        # .collect()
+        .collect()
         .select([pl.col(index_col), pl.col(date_col), pl.col("value_list")])
         # TODO REMOVE THIS COLLECT
-        # .lazy()
+        .lazy()
         .with_columns(
             [pl.col("value_list").sum().over(index_col).name.prefix("rolling_")]
         )
@@ -651,7 +594,8 @@ def dynamic_rolling_sum(
         lf_order = lf_order.drop(f"{date_col}_left")
 
     # TODO REMOVE THIS COLLECT
-    return lf_order.collect().join(lf_, on=index_col, how="left")
+    return lf_order.join(lf_, on=index_col, how="left")
+    # return lf_order.collect().join(lf_, on=index_col, how="left")
 
 
 def _format_date_col(lf: pl.LazyFrame, date_col: str) -> pl.LazyFrame:

@@ -4,6 +4,9 @@ services:
     image: aaweaver9/py
     volumes:
       - ..:/app
-      - ../../hit-ratios/data:/data
+      # - ../../hit-ratios/data:/data
     working_dir: /app
+    environment:
+      - PYTHONPATH=/app/.venv/bin/python
+      - PYDEVD_DISABLE_FILE_VALIDATION=1
     command: "tail -f /dev/null"

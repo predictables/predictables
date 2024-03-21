@@ -38,8 +38,6 @@
       "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
       "terminal.integrated.defaultShell.linux": "/bin/zsh",
       "python.analysis.ignore": ["*"],
-      "ruff.linting.enabled": true,
-      "ruff.interpreter": [".venv/bin/python", "/usr/bin/py", "/usr/bin/python3"],
       "ruff.showNotifications": "onWarning",
       "terminal.integrated.copyOnSelection": true,
       "terminal.integrated.defaultProfile.linux": "zsh",
@@ -47,9 +45,16 @@
       "terminal.integrated.fontSize": 16,
       "terminal.integrated.fontWeight": "500",
       "notebook.output.fontSize": 15,
-      "notebook.output.lineHeight": 1.2
+      "notebook.output.lineHeight": 1.2,
+      "ruff.interpreter": [".venv/bin/python", "/usr/bin/py", "/usr/bin/python3", "/usr/bin/python"],
+      "ruff.enable": true,
+      "ruff.fixAll": true,
+      "ruff.linting.enabled": true,
+      "ruff.lint.enable": true,
+      "ruff.lint.run": "onSave",
+      "ruff.trace.server": "messages",
+      "ruff.path": [".venv/bin/ruff"]
     }
   },
-  // "postBuildCommand": "chmod +x /app/.devcontainer/install_code_server && sh /app/.devcontainer/install_code_server",
-  "postAttachCommand": "install_dotfiles $HOME .zshrc .zsh_aliases && exec zsh && install_dotfiles /app .ruff.toml .prettierrc .mypy.ini .flake8 && py -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && pip install ruff ruff-lsp mypy flake8 pytest coverage pytest-cov pytest-flake8"
+  "postAttachCommand": "install_dotfiles $HOME .zshrc .zsh_aliases && exec zsh && install_dotfiles /app .ruff.toml .prettierrc .mypy.ini .flake8 && .venv/bin/python -Xfrozen_modules=off"
 }
