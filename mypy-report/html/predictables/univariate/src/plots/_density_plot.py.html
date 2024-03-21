@@ -1045,6 +1045,8 @@
 <span id="L1035" class="lineno"><a class="lineno" href="#L1035">1035</a></span>
 <span id="L1036" class="lineno"><a class="lineno" href="#L1036">1036</a></span>
 <span id="L1037" class="lineno"><a class="lineno" href="#L1037">1037</a></span>
+<span id="L1038" class="lineno"><a class="lineno" href="#L1038">1038</a></span>
+<span id="L1039" class="lineno"><a class="lineno" href="#L1039">1039</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-empty" title="No Anys on this line!"># mypy: import-untyped"</span>
 <span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
@@ -1056,7 +1058,7 @@
 <span class="line-precise" title="No Anys on this line!">import numpy as np</span>
 <span class="line-precise" title="No Anys on this line!">import pandas as pd</span>
 <span class="line-precise" title="No Anys on this line!">import polars as pl</span>
-<span class="line-any" title="No Anys on this line!">from scipy.stats import gaussian_kde, ttest_ind  </span>
+<span class="line-any" title="No Anys on this line!">from scipy.stats import gaussian_kde, ttest_ind</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">from predictables.univariate.src.plots.util import binary_color, plot_label</span>
 <span class="line-precise" title="No Anys on this line!">from predictables.util import (</span>
@@ -1237,10 +1239,12 @@ Explicit (x2)">                f"`cv_label` must be a pandas or polars Series, b
 <span class="line-precise" title="No Anys on this line!">                return float(value)</span>
 <span class="line-precise" title="No Anys on this line!">            except ValueError as err:</span>
 <span class="line-empty" title="No Anys on this line!">                # If conversion fails, raise an informative error</span>
+<span class="line-precise" title="No Anys on this line!">                print(  # noqa: T201</span>
 <span class="line-precise" title="Any Types on this line: 
-Explicit (x2)">                print(f"Argument `{arg_name}` must be convertible to float, but got value `{value}` of type `{type(value).__name__}`.")</span>
+Explicit (x2)">                    f"Argument `{arg_name}` must be convertible to float, but got value `{value}` of type `{type(value).__name__}`."</span>
+<span class="line-empty" title="No Anys on this line!">                )</span>
 <span class="line-precise" title="No Anys on this line!">                raise err</span>
-<span class="line-empty" title="No Anys on this line!">            </span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Inside the wrapper function of the decorator</span>
 <span class="line-precise" title="No Anys on this line!">        if x_min is not None:</span>
 <span class="line-precise" title="No Anys on this line!">            x_min = validate_float_int(x_min, "x_min")</span>

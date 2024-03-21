@@ -441,7 +441,7 @@ Unannotated (x2)
 Unimported (x3)">    if isinstance(data, (pd.DataFrame, pd.Series, pl.DataFrame, pl.Series)):</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)
-Explicit (x3)">        return data.to_numpy()</span>
+Explicit (x2)">        return data.to_numpy()</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x4)
 Unimported (x1)">    elif isinstance(data, pl.LazyFrame):</span>
@@ -698,7 +698,7 @@ Omitted Generics (x4)
 Unimported (x1)">    elif isinstance(data, pl.DataFrame):</span>
 <span class="line-precise" title="No Anys on this line!">        if to == "dataframe":</span>
 <span class="line-precise" title="Any Types on this line: 
-Explicit (x2)">            return data.to_pandas()</span>
+Explicit (x1)">            return data.to_pandas()</span>
 <span class="line-precise" title="No Anys on this line!">        elif to == "lazyframe":</span>
 <span class="line-precise" title="No Anys on this line!">            raise ValueError(</span>
 <span class="line-precise" title="No Anys on this line!">                "Cannot convert to pandas lazy frame. \</span>
@@ -714,10 +714,10 @@ Omitted Generics (x4)
 Unimported (x2)">    elif isinstance(data, pl.Series):</span>
 <span class="line-precise" title="No Anys on this line!">        if to == "dataframe":</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Explicit (x4)">            return data.to_pandas().to_frame()</span>
+Explicit (x3)">            return data.to_pandas().to_frame()</span>
 <span class="line-precise" title="No Anys on this line!">        elif to == "series":</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Explicit (x4)">            return data.to_pandas()</span>
+Explicit (x3)">            return data.to_pandas()</span>
 <span class="line-precise" title="No Anys on this line!">        elif to == "lazyframe":</span>
 <span class="line-precise" title="No Anys on this line!">            raise ValueError(</span>
 <span class="line-precise" title="No Anys on this line!">                "Cannot convert to pandas lazy frame. \</span>
@@ -733,7 +733,7 @@ Omitted Generics (x4)
 Unimported (x1)">    elif isinstance(data, pl.LazyFrame):</span>
 <span class="line-precise" title="No Anys on this line!">        if to == "dataframe":</span>
 <span class="line-precise" title="Any Types on this line: 
-Explicit (x2)">            return data.collect().to_pandas()</span>
+Explicit (x1)">            return data.collect().to_pandas()</span>
 <span class="line-precise" title="No Anys on this line!">        elif to == "lazyframe":</span>
 <span class="line-precise" title="No Anys on this line!">            raise ValueError(</span>
 <span class="line-precise" title="No Anys on this line!">                "Cannot convert to pandas lazy frame. \</span>

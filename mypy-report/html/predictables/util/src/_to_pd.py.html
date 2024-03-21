@@ -68,11 +68,11 @@ Unannotated (x2)">    if isinstance(df, pd.DataFrame):</span>
 <span class="line-precise" title="Any Types on this line: 
 Unimported (x1)">    elif isinstance(df, pl.DataFrame):</span>
 <span class="line-precise" title="Any Types on this line: 
-Explicit (x2)">        return df.to_pandas()</span>
+Explicit (x1)">        return df.to_pandas()</span>
 <span class="line-precise" title="Any Types on this line: 
 Unimported (x1)">    elif isinstance(df, pl.LazyFrame):</span>
 <span class="line-precise" title="Any Types on this line: 
-Explicit (x2)">        return df.collect().to_pandas()</span>
+Explicit (x1)">        return df.collect().to_pandas()</span>
 <span class="line-unanalyzed" title="No Anys on this line!">    elif isinstance(df, pd.Series):</span>
 <span class="line-unanalyzed" title="No Anys on this line!">        return df.to_frame()</span>
 <span class="line-unanalyzed" title="No Anys on this line!">    elif isinstance(df, pl.Series):</span>
@@ -95,10 +95,10 @@ Omitted Generics (x4)
 Unimported (x2)">    elif isinstance(s, pl.Series):</span>
 <span class="line-precise" title="No Anys on this line!">        if s.dtype == "category":</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x7)">            return s.cast(pl.Utf8).to_pandas()[s.name].astype("category")</span>
+Explicit (x6)">            return s.cast(pl.Utf8).to_pandas()[s.name].astype("category")</span>
 <span class="line-empty" title="No Anys on this line!">        else:</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Explicit (x4)">            return s.to_pandas()</span>
+Explicit (x3)">            return s.to_pandas()</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x7)">    elif isinstance(s, list):</span>
 <span class="line-imprecise" title="Any Types on this line: 

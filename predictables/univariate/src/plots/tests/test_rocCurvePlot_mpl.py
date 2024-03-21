@@ -38,8 +38,9 @@ def test_invalid_ax_parameter_type(mock_data: tuple[pd.Series, pd.Series, pd.Ser
     with pytest.raises(TypeError) as err:
         roc_curve_plot_mpl(y, yhat_proba, fold, False, 0.1, 0.01, 0.05, ax="invalid")
     plt.close("all")
-    assert "The ax parameter should be a matplotlib.plt.Axes.plt.Axes object when using the matplotlib" in str(
-        err.value
+    assert (
+        "The ax parameter should be a matplotlib.plt.Axes.plt.Axes object when using the matplotlib"
+        in str(err.value)
     ), (
         "The function should raise a TypeError when the ax parameter is not a "
         f"matplotlib.axes.Axes object, but raised {err.value}"

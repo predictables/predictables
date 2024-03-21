@@ -15,7 +15,6 @@
         "usernamehw.errorlens",
         "charliermarsh.ruff",
         "ms-python.mypy-type-checker",
-        "ms-python.flake8",
         "rodolphebarbanneau.python-docstring-highlighter",
         "ritwickdey.LiveServer",
         "ms-python.python",
@@ -52,9 +51,8 @@
       "ruff.linting.enabled": true,
       "ruff.lint.enable": true,
       "ruff.lint.run": "onSave",
-      "ruff.trace.server": "messages",
-      "ruff.path": [".venv/bin/ruff"]
+      "ruff.trace.server": "messages"
     }
   },
-  "postAttachCommand": "install_dotfiles $HOME .zshrc .zsh_aliases && exec zsh && install_dotfiles /app .ruff.toml .prettierrc .mypy.ini .flake8 && .venv/bin/python -Xfrozen_modules=off"
+  "postAttachCommand": "install_dotfiles $HOME .zshrc .zsh_aliases && exec zsh && install_dotfiles /app .ruff.toml .prettierrc .mypy.ini && .venv/bin/python -Xfrozen_modules=off"
 }

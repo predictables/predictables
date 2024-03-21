@@ -68,7 +68,7 @@ Omitted Generics (x6)">def validate_lf(func: Callable) -&gt; Callable:</span>
 Omitted Generics (x3)">    @wraps(func)</span>
 <span class="line-any" title="No Anys on this line!">    def wrapper(*args, **kwargs):  # noqa: ANN202</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x6)">        lf = kwargs["lf"] if "lf" in kwargs else args[0]</span>
+Unannotated (x7)">        lf = kwargs.get("lf", args[0] if args else None)</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x4)
 Omitted Generics (x41)

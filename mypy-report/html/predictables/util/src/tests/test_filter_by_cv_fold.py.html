@@ -269,8 +269,11 @@ Unannotated (x1)">def test_filter_by_cv_fold_ts(</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">        s = pd_series</span>
 <span class="line-precise" title="No Anys on this line!">    elif dtype == "polars":</span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x4)">        s = pd_series.to_pandas()</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x2)
+Omitted Generics (x6)
+Explicit (x1)
+Unannotated (x1)">        s = pl.Series(pd_series.to_numpy())</span>
 <span class="line-precise" title="No Anys on this line!">    elif dtype == "numpy":</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x6)
@@ -282,8 +285,10 @@ Unannotated (x1)">        s = pd_series.to_numpy()  # type: ignore[assignment]</
 Omitted Generics (x2)">        folds = pd_cv_fold_data_ts</span>
 <span class="line-precise" title="No Anys on this line!">    elif dtype2 == "polars":</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Explicit (x2)
-Omitted Generics (x2)">        folds = pl.from_pandas(pd_cv_fold_data_ts)  # type: ignore[assignment]</span>
+Unimported (x2)
+Omitted Generics (x6)
+Explicit (x1)
+Unannotated (x1)">        folds = pl.Series(pd_cv_fold_data_ts.to_numpy())</span>
 <span class="line-precise" title="No Anys on this line!">    elif dtype2 == "numpy":</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x6)

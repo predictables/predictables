@@ -14,7 +14,9 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 import polars as pl
-from predictables.encoding.src.lagged_mean_encoding._dynamic_rolling_sum import DynamicRollingSum
+from predictables.encoding.src.lagged_mean_encoding._dynamic_rolling_sum import (
+    DynamicRollingSum,
+)
 from predictables.util import to_pl_lf
 
 

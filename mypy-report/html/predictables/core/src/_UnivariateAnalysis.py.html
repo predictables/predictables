@@ -691,6 +691,22 @@
 <span id="L681" class="lineno"><a class="lineno" href="#L681">681</a></span>
 <span id="L682" class="lineno"><a class="lineno" href="#L682">682</a></span>
 <span id="L683" class="lineno"><a class="lineno" href="#L683">683</a></span>
+<span id="L684" class="lineno"><a class="lineno" href="#L684">684</a></span>
+<span id="L685" class="lineno"><a class="lineno" href="#L685">685</a></span>
+<span id="L686" class="lineno"><a class="lineno" href="#L686">686</a></span>
+<span id="L687" class="lineno"><a class="lineno" href="#L687">687</a></span>
+<span id="L688" class="lineno"><a class="lineno" href="#L688">688</a></span>
+<span id="L689" class="lineno"><a class="lineno" href="#L689">689</a></span>
+<span id="L690" class="lineno"><a class="lineno" href="#L690">690</a></span>
+<span id="L691" class="lineno"><a class="lineno" href="#L691">691</a></span>
+<span id="L692" class="lineno"><a class="lineno" href="#L692">692</a></span>
+<span id="L693" class="lineno"><a class="lineno" href="#L693">693</a></span>
+<span id="L694" class="lineno"><a class="lineno" href="#L694">694</a></span>
+<span id="L695" class="lineno"><a class="lineno" href="#L695">695</a></span>
+<span id="L696" class="lineno"><a class="lineno" href="#L696">696</a></span>
+<span id="L697" class="lineno"><a class="lineno" href="#L697">697</a></span>
+<span id="L698" class="lineno"><a class="lineno" href="#L698">698</a></span>
+<span id="L699" class="lineno"><a class="lineno" href="#L699">699</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -1186,9 +1202,25 @@ Omitted Generics (x1)">        return self._feature_list</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        &gt;&gt;&gt; _get_file_stem(None, "Univariate Analysis Report")</span>
 <span class="line-empty" title="No Anys on this line!">        "Univariate Analysis Report"</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">        &gt;&gt;&gt; _get_file_stem("This.Is.A.Report.pdf", None)</span>
+<span class="line-empty" title="No Anys on this line!">        "This.Is.A.Report"</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-precise" title="No Anys on this line!">        if filename is not None:</span>
-<span class="line-precise" title="No Anys on this line!">            file_stem = filename.split(".")[0]</span>
+<span class="line-empty" title="No Anys on this line!">            # Remove the extension from the filename</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">            # If there is more than one "." in the filename, remove only the last one</span>
+<span class="line-precise" title="No Anys on this line!">            if filename.count(".") &gt; 1:</span>
+<span class="line-precise" title="No Anys on this line!">                file_stem = ".".join(filename.split(".")[:-1])</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">            # If there is only one "." in the filename, remove it</span>
+<span class="line-precise" title="No Anys on this line!">            elif filename.count(".") == 1:</span>
+<span class="line-precise" title="No Anys on this line!">                file_stem = filename.split(".")[0]</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">            # If there are no "." in the filename, return the filename</span>
+<span class="line-empty" title="No Anys on this line!">            else:</span>
+<span class="line-precise" title="No Anys on this line!">                file_stem = filename</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">            dbg.msg(</span>
 <span class="line-precise" title="No Anys on this line!">                f"File stem ({file_stem}) was extracted from filename ({filename}) "</span>
 <span class="line-empty" title="No Anys on this line!">                "and should not have an extension - UA0005"</span>
@@ -1330,7 +1362,7 @@ Explicit (x1)
 Error (x1)">        features = (</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Explicit (x2)
-Error (x4)">            self._sort_features_by_ua()</span>
+Error (x5)">            self._sort_features_by_ua()</span>
 <span class="line-precise" title="No Anys on this line!">            .select("Feature")</span>
 <span class="line-empty" title="No Anys on this line!">            .collect()</span>
 <span class="line-empty" title="No Anys on this line!">            .to_series()</span>
@@ -1431,9 +1463,9 @@ Unimported (x1)">            rpt.h1("Overview")</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-precise" title="No Anys on this line!">            .spacer(0.125)</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Error (x5)
+Error (x6)
 Omitted Generics (x12)
-Explicit (x2)">            .table(formatted_df.collect().to_pandas().set_index("Feature"))</span>
+Explicit (x1)">            .table(formatted_df.collect().to_pandas().set_index("Feature"))</span>
 <span class="line-precise" title="No Anys on this line!">            .spacer(0.125)</span>
 <span class="line-empty" title="No Anys on this line!">            .caption(</span>
 <span class="line-precise" title="No Anys on this line!">                "This table shows an overview of the results for the "</span>

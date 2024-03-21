@@ -730,7 +730,6 @@ def calculate_density_sd(
         x_ = filter_by_cv_fold(x, f, cv_fold, time_series_validation, "test")
         by_ = filter_by_cv_fold(by, f, cv_fold, time_series_validation, "test")
         for level, group in x_.groupby(by_):
-            print(f"level: {level}\n\ngroup: {group}")
             density = gaussian_kde(group)
             sd[f"{f}_{level}"] = density(sd["x"])
 

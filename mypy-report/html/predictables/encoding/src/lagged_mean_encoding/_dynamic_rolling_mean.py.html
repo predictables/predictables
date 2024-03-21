@@ -329,28 +329,21 @@ Unannotated (x1)">        self._denominator_col = denominator_col</span>
 <span class="line-precise" title="No Anys on this line!">        num_lf = (</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">            DynamicRollingSum()</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            .lf(self._lf)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            .date_col(self._date_col)</span>
+<span class="line-precise" title="No Anys on this line!">            .lf(self._lf)</span>
+<span class="line-precise" title="No Anys on this line!">            .date_col(self._date_col)</span>
 <span class="line-precise" title="No Anys on this line!">            .x_col(self._numerator_col)</span>
 <span class="line-precise" title="No Anys on this line!">            .x_name("num")</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            .offset(self._offset)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            .window(self._window)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            .category_cols(self._category_cols)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            .index_col(self._index_col)</span>
+<span class="line-precise" title="No Anys on this line!">            .offset(self._offset)</span>
+<span class="line-precise" title="No Anys on this line!">            .window(self._window)</span>
+<span class="line-precise" title="No Anys on this line!">            .category_cols(self._category_cols)</span>
+<span class="line-precise" title="No Anys on this line!">            .index_col(self._index_col)</span>
 <span class="line-empty" title="No Anys on this line!">            .run()</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Update the _lf attribute</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        self._lf = (</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x10)">            self._lf.join(num_lf, on=self._index_col, how="left")</span>
+<span class="line-precise" title="No Anys on this line!">        self._lf = (</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Error (x4)">            self._lf.join(num_lf, on=self._index_col, how="left")</span>
 <span class="line-precise" title="No Anys on this line!">            .drop("date_right")</span>
 <span class="line-precise" title="No Anys on this line!">            .with_columns([pl.col("rolling_value_list").alias("num")])</span>
 <span class="line-precise" title="No Anys on this line!">            .drop("rolling_value_list")</span>
@@ -376,29 +369,22 @@ Unannotated (x10)">            self._lf.join(num_lf, on=self._index_col, how="le
 <span class="line-precise" title="No Anys on this line!">        den_lf = (</span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x2)">            DynamicRollingSum()</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            .lf(self._lf)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            .date_col(self._date_col)</span>
+<span class="line-precise" title="No Anys on this line!">            .lf(self._lf)</span>
+<span class="line-precise" title="No Anys on this line!">            .date_col(self._date_col)</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">            .x_col(self._denominator_col)</span>
 <span class="line-precise" title="No Anys on this line!">            .x_name("den")</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            .offset(self._offset)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            .window(self._window)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            .category_cols(self._category_cols)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            .index_col(self._index_col)</span>
+<span class="line-precise" title="No Anys on this line!">            .offset(self._offset)</span>
+<span class="line-precise" title="No Anys on this line!">            .window(self._window)</span>
+<span class="line-precise" title="No Anys on this line!">            .category_cols(self._category_cols)</span>
+<span class="line-precise" title="No Anys on this line!">            .index_col(self._index_col)</span>
 <span class="line-empty" title="No Anys on this line!">            .run()</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Update the _lf attribute</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        self._lf = (</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x10)">            self._lf.join(den_lf, on=self._index_col, how="left")</span>
+<span class="line-precise" title="No Anys on this line!">        self._lf = (</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Error (x4)">            self._lf.join(den_lf, on=self._index_col, how="left")</span>
 <span class="line-precise" title="No Anys on this line!">            .drop("date_right")</span>
 <span class="line-precise" title="No Anys on this line!">            .with_columns([pl.col("rolling_value_list").alias("den")])</span>
 <span class="line-precise" title="No Anys on this line!">            .drop("rolling_value_list")</span>
@@ -414,20 +400,18 @@ Unannotated (x10)">            self._lf.join(den_lf, on=self._index_col, how="le
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-empty" title="No Anys on this line!">        # Build the numerator and denominator columns, and join them to the</span>
 <span class="line-empty" title="No Anys on this line!">        # original LazyFrame</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">        self._lf.collect()</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        self.build_numerator_col(self._lf)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">        self._lf.collect()</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        self.build_denominator_col(self._lf)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x3)">        self._lf.collect()</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Error (x2)">        self._lf.collect()</span>
+<span class="line-precise" title="No Anys on this line!">        self.build_numerator_col(self._lf)</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Error (x2)">        self._lf.collect()</span>
+<span class="line-precise" title="No Anys on this line!">        self.build_denominator_col(self._lf)</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Error (x2)">        self._lf.collect()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Calculate the rolling mean</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x6)">        self._lf = self._lf.with_columns(</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Error (x2)">        self._lf = self._lf.with_columns(</span>
 <span class="line-empty" title="No Anys on this line!">            [</span>
 <span class="line-precise" title="Any Types on this line: 
 Explicit (x1)">                pl.when(pl.col("den") == 0)</span>
@@ -444,8 +428,8 @@ Explicit (x1)">                    pl.col("num")</span>
 <span class="line-empty" title="No Anys on this line!">            ]</span>
 <span class="line-precise" title="No Anys on this line!">        ).drop(["num", "den"])</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        return self._lf</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Error (x1)">        return self._lf</span>
 </pre></td>
 </tr></tbody>
 </table>

@@ -165,15 +165,15 @@ Explicit (x5)">    with pytest.raises(ValueError) as e:</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x2)">        binary_color(invalid_value)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">    if isinstance(invalid_value, str):</span>
+Unannotated (x2)">        if isinstance(invalid_value, str):</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x7)">        assert f"Invalid value {invalid_value} for binary variable." in str(e.value)</span>
-<span class="line-empty" title="No Anys on this line!">    else:</span>
+Unannotated (x7)">            assert f"Invalid value {invalid_value} for binary variable." in str(e.value)</span>
+<span class="line-empty" title="No Anys on this line!">        else:</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x7)">        assert f"Invalid value {int(invalid_value)} for binary variable." in str(</span>
+Unannotated (x7)">            assert f"Invalid value {int(invalid_value)} for binary variable." in str(</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">            e.value</span>
-<span class="line-empty" title="No Anys on this line!">        )</span>
+Unannotated (x2)">                e.value</span>
+<span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">@pytest.mark.parametrize("x", [0, 1, -1])</span>

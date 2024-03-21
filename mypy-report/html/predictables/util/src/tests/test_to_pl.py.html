@@ -169,7 +169,6 @@
 <span id="L159" class="lineno"><a class="lineno" href="#L159">159</a></span>
 <span id="L160" class="lineno"><a class="lineno" href="#L160">160</a></span>
 <span id="L161" class="lineno"><a class="lineno" href="#L161">161</a></span>
-<span id="L162" class="lineno"><a class="lineno" href="#L162">162</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -442,16 +441,14 @@ Explicit (x2)">        ), f"Expected output type is pl.Series, got {type(result)
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">def test_to_pl_s_ndarray_2d() -&gt; None:</span>
-<span class="line-precise" title="No Anys on this line!">    rg = np.random.Generator(np.random.PCG64(12345))</span>
-<span class="line-any" title="Any Types on this line: 
-Error (x2)
-Explicit (x8)">    ndarray_2d = rg.random(10, 2)</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Explicit (x3)">    ndarray_2d = np.random.default_rng(42).normal(0, 1, (10, 2))</span>
 <span class="line-precise" title="Any Types on this line: 
 Omitted Generics (x6)
 Explicit (x5)">    with pytest.raises(ValueError):</span>
-<span class="line-any" title="Any Types on this line: 
+<span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)
-Error (x1)">        to_pl_s(ndarray_2d)</span>
+Explicit (x1)">        to_pl_s(ndarray_2d)</span>
 </pre></td>
 </tr></tbody>
 </table>

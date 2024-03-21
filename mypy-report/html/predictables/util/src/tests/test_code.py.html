@@ -216,78 +216,72 @@ Omitted Generics (x3)">            get_functions_from_file(file_name) == expecte
 Omitted Generics (x3)">        ), f"Expected output: {expected_output}, Actual output: {get_functions_from_file(file_name)}"</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!"># Testing get_files_from_folder function</span>
-<span class="line-precise" title="No Anys on this line!">@pytest.mark.parametrize(</span>
-<span class="line-precise" title="No Anys on this line!">    "folder_contents, file_type, expected_output",</span>
-<span class="line-empty" title="No Anys on this line!">    [</span>
-<span class="line-empty" title="No Anys on this line!">        (</span>
-<span class="line-empty" title="No Anys on this line!">            [</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python_2_docstrings.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python_3_func_2_docstrings.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "empty_file.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "no_functions.py",</span>
-<span class="line-empty" title="No Anys on this line!">            ],</span>
-<span class="line-precise" title="No Anys on this line!">            None,</span>
-<span class="line-empty" title="No Anys on this line!">            [</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python_2_docstrings.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python_3_func_2_docstrings.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "empty_file.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "no_functions.py",</span>
-<span class="line-empty" title="No Anys on this line!">            ],</span>
-<span class="line-empty" title="No Anys on this line!">        ),</span>
-<span class="line-precise" title="No Anys on this line!">        ([], None, []),</span>
-<span class="line-empty" title="No Anys on this line!">        (</span>
-<span class="line-empty" title="No Anys on this line!">            [</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python_2_docstrings.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python_3_func_2_docstrings.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "non_python.txt",</span>
-<span class="line-empty" title="No Anys on this line!">            ],</span>
-<span class="line-precise" title="No Anys on this line!">            "py",</span>
-<span class="line-empty" title="No Anys on this line!">            [</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python_2_docstrings.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python_3_func_2_docstrings.py",</span>
-<span class="line-empty" title="No Anys on this line!">            ],</span>
-<span class="line-empty" title="No Anys on this line!">        ),</span>
-<span class="line-empty" title="No Anys on this line!">        (</span>
-<span class="line-empty" title="No Anys on this line!">            [</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python_2_docstrings.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python_3_func_2_docstrings.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "non_python.txt",</span>
-<span class="line-empty" title="No Anys on this line!">            ],</span>
-<span class="line-precise" title="No Anys on this line!">            "txt",</span>
-<span class="line-precise" title="No Anys on this line!">            ["non_python.txt"],</span>
-<span class="line-empty" title="No Anys on this line!">        ),</span>
-<span class="line-empty" title="No Anys on this line!">        (</span>
-<span class="line-empty" title="No Anys on this line!">            [</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python_2_docstrings.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "valid_python_3_func_2_docstrings.py",</span>
-<span class="line-precise" title="No Anys on this line!">                "non_python.txt",</span>
-<span class="line-empty" title="No Anys on this line!">            ],</span>
-<span class="line-precise" title="No Anys on this line!">            "md",</span>
-<span class="line-empty" title="No Anys on this line!">            [],</span>
-<span class="line-empty" title="No Anys on this line!">        ),</span>
-<span class="line-empty" title="No Anys on this line!">    ],</span>
-<span class="line-empty" title="No Anys on this line!">)</span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x2)
-Unannotated (x1)">def test_get_files_from_folder(</span>
-<span class="line-empty" title="No Anys on this line!">    folder_contents: list, file_type: str, expected_output: list</span>
-<span class="line-empty" title="No Anys on this line!">):</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)">    with patch("os.listdir", return_value=folder_contents):</span>
-<span class="line-empty" title="No Anys on this line!">        assert (</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x8)">            sorted(get_files_from_folder("some_folder", file_type))</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x7)">            == sorted(expected_output)</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x3)">        ), f"Expected output: {expected_output}, Actual output: {get_files_from_folder('some_folder', file_type)}"</span>
+<span class="line-empty" title="No Anys on this line!"># # Testing get_files_from_folder function</span>
+<span class="line-empty" title="No Anys on this line!"># @pytest.mark.parametrize(</span>
+<span class="line-empty" title="No Anys on this line!">#     "folder_contents, file_type, expected_output",</span>
+<span class="line-empty" title="No Anys on this line!">#     [</span>
+<span class="line-empty" title="No Anys on this line!">#         (</span>
+<span class="line-empty" title="No Anys on this line!">#             [</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python_2_docstrings.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python_3_func_2_docstrings.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "empty_file.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "no_functions.py",</span>
+<span class="line-empty" title="No Anys on this line!">#             ],</span>
+<span class="line-empty" title="No Anys on this line!">#             None,</span>
+<span class="line-empty" title="No Anys on this line!">#             [</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python_2_docstrings.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python_3_func_2_docstrings.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "empty_file.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "no_functions.py",</span>
+<span class="line-empty" title="No Anys on this line!">#             ],</span>
+<span class="line-empty" title="No Anys on this line!">#         ),</span>
+<span class="line-empty" title="No Anys on this line!">#         ([], None, []),</span>
+<span class="line-empty" title="No Anys on this line!">#         (</span>
+<span class="line-empty" title="No Anys on this line!">#             [</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python_2_docstrings.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python_3_func_2_docstrings.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "non_python.txt",</span>
+<span class="line-empty" title="No Anys on this line!">#             ],</span>
+<span class="line-empty" title="No Anys on this line!">#             "py",</span>
+<span class="line-empty" title="No Anys on this line!">#             [</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python_2_docstrings.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python_3_func_2_docstrings.py",</span>
+<span class="line-empty" title="No Anys on this line!">#             ],</span>
+<span class="line-empty" title="No Anys on this line!">#         ),</span>
+<span class="line-empty" title="No Anys on this line!">#         (</span>
+<span class="line-empty" title="No Anys on this line!">#             [</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python_2_docstrings.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python_3_func_2_docstrings.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "non_python.txt",</span>
+<span class="line-empty" title="No Anys on this line!">#             ],</span>
+<span class="line-empty" title="No Anys on this line!">#             "txt",</span>
+<span class="line-empty" title="No Anys on this line!">#             ["non_python.txt"],</span>
+<span class="line-empty" title="No Anys on this line!">#         ),</span>
+<span class="line-empty" title="No Anys on this line!">#         (</span>
+<span class="line-empty" title="No Anys on this line!">#             [</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python_2_docstrings.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "valid_python_3_func_2_docstrings.py",</span>
+<span class="line-empty" title="No Anys on this line!">#                 "non_python.txt",</span>
+<span class="line-empty" title="No Anys on this line!">#             ],</span>
+<span class="line-empty" title="No Anys on this line!">#             "md",</span>
+<span class="line-empty" title="No Anys on this line!">#             [],</span>
+<span class="line-empty" title="No Anys on this line!">#         ),</span>
+<span class="line-empty" title="No Anys on this line!">#     ],</span>
+<span class="line-empty" title="No Anys on this line!"># )</span>
+<span class="line-empty" title="No Anys on this line!"># def test_get_files_from_folder(</span>
+<span class="line-empty" title="No Anys on this line!">#     folder_contents: list, file_type: str, expected_output: list</span>
+<span class="line-empty" title="No Anys on this line!"># ):</span>
+<span class="line-empty" title="No Anys on this line!">#     with patch("os.listdir", return_value=folder_contents):</span>
+<span class="line-empty" title="No Anys on this line!">#         assert (</span>
+<span class="line-empty" title="No Anys on this line!">#             sorted(get_files_from_folder("some_folder", file_type))</span>
+<span class="line-empty" title="No Anys on this line!">#             == sorted(expected_output)</span>
+<span class="line-empty" title="No Anys on this line!">#         ), f"Expected output: {expected_output}, Actual output: {get_files_from_folder('some_folder', file_type)}"</span>
 </pre></td>
 </tr></tbody>
 </table>

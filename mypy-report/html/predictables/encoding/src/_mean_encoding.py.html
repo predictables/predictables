@@ -401,8 +401,7 @@ Omitted Generics (x1)">            c,</span>
 <span class="line-empty" title="No Anys on this line!">    # polars&gt;=0.20.5 requires .len() instead of .count()</span>
 <span class="line-empty" title="No Anys on this line!">    # Add a row number column to the dataframe (so you can resort it later)</span>
 <span class="line-precise" title="No Anys on this line!">    if pl.__version__ &gt;= "0.20.5":</span>
-<span class="line-any" title="Any Types on this line: 
-Error (x2)">        lazy_df = df.lazy().with_columns(pl.arange(0, pl.len()).alias("row_ord"))</span>
+<span class="line-precise" title="No Anys on this line!">        lazy_df = df.lazy().with_columns(pl.arange(0, pl.len()).alias("row_ord"))</span>
 <span class="line-empty" title="No Anys on this line!">    else:</span>
 <span class="line-precise" title="No Anys on this line!">        lazy_df = df.lazy().with_columns(pl.arange(0, pl.count()).alias("row_ord"))</span>
 <span class="line-empty" title="No Anys on this line!"></span>
