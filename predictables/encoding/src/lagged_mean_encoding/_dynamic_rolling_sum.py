@@ -5,6 +5,7 @@ import datetime
 import numpy as np
 import pandas as pd
 import polars as pl
+import polars.selectors as cs
 
 from predictables.encoding.src.lagged_mean_encoding._rolling_op_column_name import (
     rolling_op_column_name,
@@ -75,6 +76,7 @@ class DynamicRollingSum:
     _window: int | None
     _rejoin: bool
     _op: str
+    _has_cat_cols: bool
 
     def __init__(self):
         self._lf = None
@@ -87,6 +89,7 @@ class DynamicRollingSum:
         self._window = None
         self._rejoin = False
         self._op = "ROLLING_SUM"
+        self._has_cat_cols = False
 
     def lf(
         self, lf: pl.LazyFrame | pl.DataFrame | pd.DataFrame | np.ndarray
@@ -106,9 +109,7 @@ class DynamicRollingSum:
         DynamicRollingSum
             The `DynamicRollingSum` object.
         """
-        # TODO: REMOVE THIS COLLECT
-        self._lf = lf.collect()  # type: ignore[assignment]
-        # self._lf = lf
+        self._lf = lf
         return self
 
     def x_col(self, x_col: str = "value") -> "DynamicRollingSum":
@@ -348,6 +349,32 @@ class DynamicRollingSum:
             if getattr(self, param) is None:
                 raise ValueError(f"Parameter {param} has not been set.")
 
+        # If the category columns are set, check that they are in the LazyFrame
+        if self._category_cols is not None:
+            self._has_cat_cols = True
+            if isinstance(self._category_cols, str):
+                if self._category_cols not in self._lf.columns:
+                    raise ValueError(
+                        f"Category column {self._category_cols} not found in LazyFrame. "
+                        "Please provide a valid category column."
+                    )
+                else:
+                    self._category_cols = [self._category_cols]
+            else:
+                for col in self._category_cols:
+                    if col not in self._lf.columns:
+                        raise ValueError(
+                            f"Category column {col} not found in LazyFrame. "
+                            "Please provide a valid category column."
+                        )
+
+        # If no category column is set, add a constant column to the LazyFrame to
+        # allow the grouped rolling sum to be calculated
+        else:
+            self._has_cat_cols = False
+            self._lf = self._lf.with_columns([pl.lit("0").alias("cat")])
+            self._category_cols = ["cat"]
+
     def _get_parameters(self) -> tuple:
         """Get the parameters for the rolling sum.
 
@@ -410,23 +437,157 @@ class DynamicRollingSum:
         str
             The name of the column for the rolling sum.
         """
-        (lf, x_col, x_name, date, cat, idx, lag, win, rejoin, op) = (
-            self._get_parameters()
-        )
+        self._validate_parameters()
+        (_, x_col, _, _, cat, _, lag, win, _, op) = self._get_parameters()
+
+        # Remove brackets from the category column name if any:
+        cat = cat[0] if len(cat) != 1 else cat
 
         return rolling_op_column_name(op, x_col, cat, lag, win)
 
-    def _get_unique_levels(self) -> list[str]:
-        raise NotImplementedError("`_get_unique_levels` method not implemented.")
-        return ["a"]
+    def _get_unique_levels(self) -> list[str] | list[list[str]]:
+        """Get the unique levels of the categorical column.
+
+        Returns the unique levels of the categorical column. If no categorical
+        column is provided, returns an empty list.
+
+        Returns
+        -------
+        list[str]
+            The unique levels of the categorical column.
+        """
+        self._validate_parameters()
+        (lf, _, _, _, cat, _, _, _, _, _) = self._get_parameters()
+
+        # If there is a categorical column, return the unique levels
+        return [lf.select([pl.col(col).unique().name.keep()]).collect()[col].to_list() for col in cat]
 
     def _filter_by_level(self, level: str) -> pl.LazyFrame:
-        raise NotImplementedError("`_filter_by_level` method not implemented.")
-        return pl.LazyFrame()
+        """Filter the LazyFrame by the level of the categorical column.
 
-    def _calculate_sum(self, lf: pl.LazyFrame) -> pl.LazyFrame:
-        raise NotImplementedError("`_calculate_sum` method not implemented.")
-        return pl.LazyFrame()
+        Returns a LazyFrame filtered by the level of the categorical column.
+
+        Parameters
+        ----------
+        level : str
+            The level of the categorical column to filter by.
+
+        Returns
+        -------
+        pl.LazyFrame
+            A LazyFrame filtered by the level of the categorical column.
+        """
+        self._validate_parameters()
+        (lf, _, _, _, cat, _, _, _, _, _) = self._get_parameters()
+
+        return lf.filter(pl.col(cat).cast(pl.Utf8) == str(level))
+
+    def _calculate_sum_at_level(self, level: str) -> pl.LazyFrame:
+        self._validate_parameters()
+        lf, x_col, _, date, cat, idx, lag, win, _, _ = self._get_parameters()
+        
+        # Filter the lf at the level of the category
+        frame = self._filter_by_level(level)
+
+        # Calculate and return the rolling sum at the level of the category
+        return (
+            dynamic_rolling_sum(lf, x_col, date, idx, lag, win)
+                
+            # Rename the sum column
+            .with_columns(
+                [pl.col("rolling_value_list").alias(self._get_column_name(cat))]
+            )
+            # Add the level as a column
+            .with_columns([pl.lit(str(level)).cast(pl.Categorical).alias(cat)])
+        )
+
+    def _calculate_sum(self) -> pl.LazyFrame:
+        self._validate_parameters()
+        lf, x_col, _, date, cat, idx, lag, win, _, _ = self._get_parameters()
+        # Run the dynamic rolling sum at each level of the category
+        frames = [
+            self._calculate_sum_at_level(level) for level in self._get_unique_levels()
+        ]
+
+        # Concatenate the frames
+        return pl.concat(frames, how="vertical").select(
+            [
+                # Index & date columns:
+                pl.col(idx).name.keep(),
+                pl.col(date).name.keep(),
+            ]
+            + [
+                # Categorical columns:
+                pl.col(c).cast(pl.Categorical).name.keep()
+                for c in cat
+            ]
+            + [
+                # Rolling sum column:
+                pl.col(f"{self._get_column_name(c)}").name.keep()
+                for c in cat
+            ]
+        )
+
+    def _drop_right_suffixes(self, lf: pl.LazyFrame) -> pl.LazyFrame:
+        """Drop any columns with "_right" suffixes.
+
+        Returns a LazyFrame with any columns with "_right" suffixes dropped.
+
+        Parameters
+        ----------
+        lf : pl.LazyFrame
+            The input LazyFrame.
+
+        Returns
+        -------
+        pl.LazyFrame
+            A LazyFrame with any columns with "_right" suffixes dropped.
+        """
+        # Test whether or not any changes need to be made
+        has_rights = any([col.endswith("_right") for col in lf.columns])
+
+        # Return the LazyFrame with any columns with "_right" suffixes dropped
+        # if there are any, otherwise return the original LazyFrame
+        return (
+            lf.drop([col for col in lf.columns if col.endswith("_right")])
+            if has_rights
+            else lf
+        )
+
+    def _rejoin_rolling_column(self, lf_with_drs: pl.LazyFrame) -> pl.LazyFrame:
+        """Join the rolling sum to the original LazyFrame if rejoin is True.
+
+        Returns the original LazyFrame with the rolling sum concatenated to the end
+        if rejoin is True. Returns a LazyFrame with the same number of rows, but
+        with columns for the index, date, categories, and rolling sum if rejoin is False.
+
+        Parameters
+        ----------
+        lf_with_drs : pl.LazyFrame
+            The LazyFrame with the rolling sum.
+
+        Returns
+        -------
+        pl.LazyFrame
+            The original LazyFrame with the rolling sum concatenated to the end
+            if rejoin is True. A LazyFrame with the same number of rows, but with
+            columns for the index, date, categories, and rolling sum if rejoin is False.
+        """
+        (lf, _, _, _, _, idx, _, _, rejoin, _) = self._get_parameters()
+        col_name = self._get_column_name()
+
+        return (
+            lf.join(
+                lf_with_drs.select(
+                    [pl.col(idx).name.keep(), pl.col(col_name).name.keep()]
+                ),
+                on=idx,
+                how="left",
+            )
+            if rejoin
+            else lf_with_drs
+        )
+
 
     def run(self) -> pl.LazyFrame:
         """Run the dynamic rolling sum using the provided LazyFrame and parameters.
@@ -442,29 +603,24 @@ class DynamicRollingSum:
         """
         # Validate, collect, and calcluate parameters
         self._validate_parameters()
-        (lf, x_col, x_name, date, cat, idx, lag, win, rejoin, op) = (
-            self._get_parameters()
-        )
-        col_name = self._get_column_name(cat)
 
-        # Run the dynamic rolling sum at each level of the category
-        frames = []
-        for level in self._get_unique_levels():
-            # Add a frame with the rolling sum for each level
-            frame = self._filter_by_level(level)
-            frames.append(
-                self._calculate_sum(frame)
-                
-                # Rename the sum column
-                .with_columns([pl.col("rolling_value_list").alias(col_name)])
-                
-                # Add the level as a column
-                .with_columns([pl.lit(str(level)).alias(cat)])
-            )
+        # Run the dynamic rolling sum if all parameters are set
+        lf_with_drs = self._calculate_sum()
 
-        # Concatenate the frames
-        lf_ = pl.concat(frames, how="vertical")
+        # Drop any columns with "_right" suffixes
+        lf_with_drs = self._drop_right_suffixes(lf_with_drs)
 
+        # Join the rolling sum to the original LazyFrame if rejoin is True
+        lf = self._rejoin_rolling_column(lf_with_drs)
+
+        # Drop any columns with "_right" suffixes (again, just in case)
+        lf = self._drop_right_suffixes(lf)
+
+        # If an additional "cat" column was added, drop it
+        if not self._has_cat_cols:
+            lf = lf.drop("cat")
+
+        return lf
 
 # @validate_lf
 def dynamic_rolling_sum(
@@ -497,54 +653,31 @@ def dynamic_rolling_sum(
     dateval = lf_.select([pl.col(date_col), pl.col(x_col)]).unique().sort(date_col)
 
     lf_ = (
-        # TODO REMOVE THIS COLLECT
-        # lf_
-        lf_.collect()
-        .with_columns(
-            [
-                pl.col("date_list")
-                .list.eval(pl.element().min())
-                .list.first()
-                .alias("min_date"),
-                pl.col("date_list")
-                .list.eval(pl.element().max())
-                .list.first()
-                .alias("max_date"),
-                pl.col("date_list").list.len().alias("n_dates"),
-            ]
-        )
+        lf_
+
+        # Calculate the min, max, and count of the date list column
+        .with_columns([min_date(),max_date(),n_dates()])
+
+        # Melt the elements of each list in the date_list column to create
+        # a new row for each date in each list. Note also this will duplicate
+        # the values in the other columns, including the row index and the
+        # date column
         .explode("date_list")
-        .with_columns(
-            [
-                pl.when(
-                    (pl.col("date_list") >= pl.col("min_date"))
-                    & (pl.col("date_list") <= pl.col("max_date"))
-                )
-                .then(
-                    pl.col("date_list")
-                    .dt.to_string("%m/%d/%Y")
-                    .replace(
-                        old=dateval.collect()
-                        .sort(date_col)
-                        .select(pl.col(date_col).dt.to_string("%m/%d/%Y").name.keep())
-                        .to_series(),
-                        new=dateval.collect().sort(date_col).select(x_col).to_series(),
-                    )
-                )
-                .otherwise(pl.lit(0.0))
-                .str.to_decimal()
-                .fill_null(0.0)
-                .alias("value_list")
-            ]
-        )
-        # TODO REMOVE THIS COLLECT
-        # .collect()
+
+        # Create a new column by mapping the list of dates to a list of values
+        .with_columns(date_list_eval(pl.col(date_col), pl.col(x_col)))
+        .collect() # Collecting here to avoid an error 
+        
+        # Take the index, date, and value list columns
         .select([pl.col(index_col), pl.col(date_col), pl.col("value_list")])
-        # TODO REMOVE THIS COLLECT
-        # .lazy()
+        .lazy()
+
+        # Sum up the values by index (representing the original row order)
         .with_columns(
             [pl.col("value_list").sum().over(index_col).name.prefix("rolling_")]
         )
+
+        # Drop the original value list column
         .drop("value_list")
         .unique()
         .sort(index_col)
@@ -560,9 +693,58 @@ def dynamic_rolling_sum(
     if f"{date_col}_left" in lf_order.columns:
         lf_order = lf_order.drop(f"{date_col}_left")
 
-    # TODO REMOVE THIS COLLECT
-    # return lf_order.join(lf_, on=index_col, how="left")
-    return lf_order.collect().join(lf_, on=index_col, how="left")
+    return lf_order.join(lf_, on=index_col, how="left")
+
+# Functions returning expressions to calculate the min, max, and count
+# of the date list column
+def min_date() -> pl.Expr:
+    """Return the minimum date in the date list column."""
+    return pl.col("date_list").list.eval(pl.element().min()).list.first().alias("min_date")
+
+def max_date() -> pl.Expr:
+    """Return the maximum date in the date list column."""
+    return pl.col("date_list").list.eval(pl.element().max()).list.first().alias("max_date")
+
+def n_dates() -> pl.Expr:
+    """Return the number of dates in the date list column."""
+    return pl.col("date_list").list.len().alias("n_dates")
+
+def date_list_eval(date: pl.Expr, x: pl.Expr) -> pl.Expr:
+    """Take a dictionary mapping dates to values and returns a function that can be used to map a list of dates to a list of values.
+
+    This function is used in conjunction with `_handle_date_list` to map the list
+    of dates to a list of values. The rolling sum is then calculated by summing up
+    the values in the list column of values.
+
+    Parameters
+    ----------
+    value_map : dict
+        A dictionary mapping dates to values.
+
+    Returns
+    -------
+    function
+        A function that can be used to map a list of dates to a list of values.
+    """
+
+    return (
+        # If the date is within the window:
+        pl.when(
+            (pl.col('date_list') >= pl.col('min_date')) 
+            & (pl.col('date_list') <= pl.col('max_date'))
+        )
+
+        # Then map the date to the value:
+        .then(
+            pl.col('date_list').dt.to_string('%m/%d/%Y').replace(old=date,new=x)
+        )
+
+        # Otherwise, map the date to 0.0:
+        .otherwise(pl.lit("0.0"))
+        .str.to_decimal()
+        .fill_null(0.0)
+        .alias('value_list')
+    )
 
 
 def _format_date_col(lf: pl.LazyFrame, date_col: str) -> pl.LazyFrame:

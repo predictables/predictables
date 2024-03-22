@@ -33,7 +33,8 @@ def rolling_op_column_name(
     str
         The column name for the rolling operation.
     """
-    cat_chunk = f"[{category_col}]" if category_col else "[ALL]"
+    cat_chunk = f"{category_col}" if category_col else "[ALL]"
+    cat_chunk = cat_chunk.replace( "'", "")
     lag_chunk = f"lag:{offset}"
     win_chunk = f"win:{window}"
     return f"{op}({value_col}{cat_chunk})[{lag_chunk}/{win_chunk}]"

@@ -200,4 +200,3 @@
 #             out = out.drop([c for c in out.columns if c.lower().strip() == "index"])
 
 #         return out
-
