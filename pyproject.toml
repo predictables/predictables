@@ -46,4 +46,3 @@ directory = "coverage/html"
 
 [tool.coverage.json]
 output = "coverage/coverage.json"
-
