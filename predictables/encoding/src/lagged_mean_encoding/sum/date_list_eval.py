@@ -8,7 +8,10 @@ from predictables.encoding.src.lagged_mean_encoding.sum.get_value_map import (
 
 # Functions returning expressions to calculate the min, max, and count
 # of the date list column
-def date_list_eval(date: pl.Expr, x: pl.Expr) -> pl.Expr:
+# def date_list_eval(date: pl.Expr, x: pl.Expr) -> pl.Expr:
+def date_list_eval(
+    value_map: dict, date_col: str = "date", x_col: str = "value"
+) -> pl.Expr:
     """Take a dictionary mapping dates to values and returns a function that can be used to map a list of dates to a list of values.
 
     This function is used in conjunction with `_handle_date_list` to map the list
@@ -32,7 +35,11 @@ def date_list_eval(date: pl.Expr, x: pl.Expr) -> pl.Expr:
             & (pl.col("date_list") <= pl.col("max_date"))
         )
         # Then map the date to the value:
-        .then(pl.col("date_list").dt.to_string("%m/%d/%Y").replace(old=date, new=x))
+        .then(
+            pl.col("date_list")
+            .dt.to_string("%m/%d/%Y")
+            .replace(old=value_map[date_col], new=value_map[x_col])
+        )
         # Otherwise, map the date to 0.0:
         .otherwise(pl.lit("0.0"))
         .str.to_decimal()
