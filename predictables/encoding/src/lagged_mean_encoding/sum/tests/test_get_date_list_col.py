@@ -110,29 +110,9 @@ def test_pandas_df(pd_df, date_col, offset, window):
 
 
 def test_zero_window(lf, date_col, offset):
-    result = _get_date_list_col(lf, date_col, offset, 0)
-
-    # Check that the result is a LazyFrame
-    assert isinstance(
-        result, pl.LazyFrame
-    ), f"Expected the result to be a LazyFrame, got {type(result)}"
-
-    # Check that the result has a "date_list" column
-    assert (
-        "date_list" in result.columns
-    ), f"Expected 'date_list' column, got {result.columns}"
-
-    # Collect the result and check the "date_list" column
-    result_df = result.collect()
-    for _, _, dt_list in result_df.rows():
-        # Check that the "date_list" column contains a list of dates
-        assert isinstance(dt_list, list), f"Expected list, got {type(dt_list)}"
-        assert all(
-            isinstance(date, datetime.date) for date in dt_list
-        ), f"Expected list of dates, got:\n{dt_list}"
-
-        # Check that the "date_list" column contains the correct number of dates
-        assert len(dt_list) == 0, f"Expected 0 dates, got {len(dt_list)}"
+    """Ensure that a window of 0 raises a ValueError."""
+    with pytest.raises(ValueError):
+        _get_date_list_col(lf, date_col, offset, 0)
 
 
 # Test edge cases
@@ -152,8 +132,8 @@ def test_get_date_list_col_edge_cases(lf, date_col, offset, window):
 
 
 # Test invalid input
-def test_get_date_list_col_invalid_input():
-    with pytest.raises(AttributeError):
+def test_get_date_list_col_invalid_input(lf):
+    with pytest.raises(ValueError):
         _get_date_list_col("not a LazyFrame", "date", 30, 30)
     with pytest.raises(ValueError):
         _get_date_list_col(lf, "not a date column", 30, 30)
