@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import datetime
-
 import numpy as np
 import pandas as pd
 import polars as pl
@@ -18,6 +16,9 @@ from predictables.encoding.src.lagged_mean_encoding.sum.format_columns import (
 )
 from predictables.encoding.src.lagged_mean_encoding.sum.get_value_map import (
     _get_value_map,
+)
+from predictables.encoding.src.lagged_mean_encoding.sum.get_date_list_col import (
+    _get_date_list_col,
 )
 
 
