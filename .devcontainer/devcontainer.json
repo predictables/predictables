@@ -23,7 +23,6 @@
     },
     "settings": {
       "workbench.panel.defaultLocation": "bottom",
-      "workbench.colorTheme": "GitHub Dark High Contrast",
       "editor.fontFamily": "JetBrainsMono Nerd Font",
       "editor.fontWeight": "100",
       "editor.fontLigatures": true,
