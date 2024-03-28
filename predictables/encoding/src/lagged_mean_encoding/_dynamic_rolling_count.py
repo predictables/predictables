@@ -23,7 +23,7 @@ from predictables.util import to_pl_lf
 class DynamicRollingCount(DynamicRollingSum):
     def __init__(self):
         super().__init__()
-        self._x_col = "temp_count_col"
+        self._x_col = "count"
         self._op = "ROLLING_COUNT"
 
     def lf(
@@ -45,7 +45,7 @@ class DynamicRollingCount(DynamicRollingSum):
         DynamicRollingCount
             The `DynamicRollingCount` object.
         """
-        self._lf = to_pl_lf(lf).with_columns([pl.lit(1).alias("temp_count_col")])
+        self._lf = to_pl_lf(lf).with_columns([pl.lit(1).alias("count")])
         return self
 
     def x_col(self, x_col: str | None = None) -> "DynamicRollingCount":  # noqa: ARG002
@@ -69,7 +69,7 @@ class DynamicRollingCount(DynamicRollingSum):
         DynamicRollingCount
             The `DynamicRollingCount` object.
         """
-        self._x_col = "temp_count_col"
+        self._x_col = "count"
         return self
 
     def x_name(self, x_name: str | None = None) -> "DynamicRollingCount":
