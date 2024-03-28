@@ -74,4 +74,3 @@ def validate_date_col(date_col_idx: int, df_idx: int) -> typing.Callable:
         return wrapper
 
     return decorator
-

@@ -12,6 +12,7 @@ debugpy==1.8.1
 decorator==5.1.1
 et-xmlfile==1.1.0
 executing==2.0.1
+fastexcel==0.10.1
 flake8==7.0.0
 fonttools==4.44.0
 graphviz==0.20.1

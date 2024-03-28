@@ -31,13 +31,13 @@ def date_list_eval(
     return (
         # If the date is within the window:
         pl.when(
-            (pl.col("date_list") >= pl.col("min_date"))
-            & (pl.col("date_list") <= pl.col("max_date"))
+            (pl.col("date_list") > pl.col(date_col).min())
+            & (pl.col("date_list") < pl.col(date_col).max())
         )
         # Then map the date to the value:
         .then(
             pl.col("date_list")
-            .dt.to_string("%m/%d/%Y")
+            # .dt.to_string("%m/%d/%Y")
             .replace(old=value_map[date_col], new=value_map[x_col])
         )
         # Otherwise, map the date to 0.0:

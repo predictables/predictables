@@ -44,7 +44,6 @@
       "terminal.integrated.fontWeight": "500",
       "notebook.output.fontSize": 15,
       "notebook.output.lineHeight": 1.2,
-      "ruff.interpreter": [".venv/bin/python", "/usr/bin/py", "/usr/bin/python3", "/usr/bin/python"],
       "ruff.enable": true,
       "ruff.fixAll": true,
       "ruff.linting.enabled": true,

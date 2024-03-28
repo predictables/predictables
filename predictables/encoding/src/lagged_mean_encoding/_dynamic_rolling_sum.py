@@ -42,7 +42,7 @@ class DynamicRollingSum:
     date_col(date_col: str) -> "DynamicRollingSum":
         Sets the column containing the dates that will be used for
         the rolling sum.
-    category_col(category_col: str) -> "DynamicRollingSum":
+    cat_col(cat_col: str) -> "DynamicRollingSum":
         Sets the column containing the category that will be used to group
         the rolling sum which will be grouped by that column.
         This is also the only optional parameter.
@@ -78,26 +78,26 @@ class DynamicRollingSum:
     _x_col: str | None
     _x_name: str
     _date_col: str | None
-    _category_col: str | None
+    _cat_col: str | None
     _index_col: str | None
     _offset: int | None
     _window: int | None
     _rejoin: bool
     _op: str
-    _has_cat_cols: bool
+    _has_cat_col: bool
 
     def __init__(self):
         self._lf = None
         self._x_col = None
         self._x_name = "settoxcol"
         self._date_col = None
-        self._category_col = None
+        self._cat_col = None
         self._index_col = None
         self._offset = None
         self._window = None
         self._rejoin = False
         self._op = "ROLLING_SUM"
-        self._has_cat_cols = False
+        self._has_cat_col = False
 
     def lf(
         self, lf: pl.LazyFrame | pl.DataFrame | pd.DataFrame | np.ndarray
@@ -201,14 +201,14 @@ class DynamicRollingSum:
         # Return self updated with the validated column
         return _set_date_col(self, date_col)
 
-    def category_col(self, category_col: str = "category") -> "DynamicRollingSum":
+    def cat_col(self, cat_col: str = "cat") -> "DynamicRollingSum":
         """Set the category column to be used for the rolling sum.
 
         First checks that the column exists in the LazyFrame.
 
         Parameters
         ----------
-        category_col : str, default "category"
+        cat_col : str, default "category"
             The name of the column to be used for the rolling sum.
 
         Returns
@@ -218,16 +218,19 @@ class DynamicRollingSum:
         """
 
         # Define an inside function to use the validate_column decorator
-        # @validate_column(self._lf, category_col)
-        def _set_category_col(
+        # @validate_column(self._lf, cat_col)
+        def _set_cat_col(
             self,  # noqa: ANN001
-            category_col: str,
+            cat_col: str,
         ) -> "DynamicRollingSum":
-            self._category_col = category_col
-            return self  # type: ignore[no-any-return]
+            self._cat_col = cat_col
+            return self
+
+        # Set the _has_cat_col attribute to True
+        self._has_cat_col = True
 
         # Return self updated with the validated column
-        return _set_category_col(self, category_col)
+        return _set_cat_col(self, cat_col)
 
     def index_col(self, index_col: str = "index") -> "DynamicRollingSum":
         """Set the index column to be used for the rolling sum.
@@ -356,16 +359,16 @@ class DynamicRollingSum:
                 raise ValueError(f"Parameter {param} has not been set.")
 
         # If the category columns are set, check that they are in the LazyFrame
-        if self._category_col is not None:
-            self._has_cat_cols = True
-            if isinstance(self._category_col, str):
-                if self._category_col not in self._lf.columns:
+        if self._cat_col is not None:
+            self._has_cat_col = True
+            if isinstance(self._cat_col, str):
+                if self._cat_col not in self._lf.columns:
                     raise ValueError(
-                        f"Category column {self._category_col} not found in LazyFrame. "
+                        f"Category column {self._cat_col} not found in LazyFrame. "
                         "Please provide a valid category column."
                     )
             else:
-                for col in self._category_col:
+                for col in self._cat_col:
                     if col not in self._lf.columns:
                         raise ValueError(
                             f"Category column {col} not found in LazyFrame. "
@@ -375,9 +378,11 @@ class DynamicRollingSum:
         # If no category column is set, add a constant column to the LazyFrame to
         # allow the grouped rolling sum to be calculated
         else:
-            self._has_cat_cols = False
-            self._lf = self._lf.with_columns([pl.lit("0").alias("cat")])
-            self._category_col = "cat"
+            self._has_cat_col = False
+            self._lf = self._lf.with_columns(
+                [pl.lit("0").cast(pl.Categorical).alias("cat")]
+            )
+            self._cat_col = "cat"
 
     def _get_parameters(self) -> tuple:
         """Get the parameters for the rolling sum.
@@ -389,7 +394,7 @@ class DynamicRollingSum:
         - x_col
         - x_name
         - date_col
-        - category_col
+        - cat_col
         - index_col
         - offset
         - window
@@ -414,7 +419,7 @@ class DynamicRollingSum:
             self._x_col if self._x_col is not None else "",
             self._x_name if self._x_name is not None else "",
             self._date_col if self._date_col is not None else "",
-            self._category_col if self._category_col is not None else "",
+            self._cat_col if self._cat_col is not None else "",
             self._index_col if self._index_col is not None else "",
             self._offset if self._offset is not None else 0,
             self._window if self._window is not None else 0,
@@ -422,19 +427,12 @@ class DynamicRollingSum:
             self._op,
         )
 
-    def _get_column_name(self, category_column: str | None = None) -> str:
+    def _get_column_name(self) -> str:
         """Get the name of the column for the rolling sum.
 
-        Returns the name of the column for the rolling sum. If a categorical
-        column is provided, the name of the column for the rolling sum will
-        be the name of the value column, suffixed with the name of the categorical
-        column. If no categorical column is provided, the name of the column for
-        the rolling sum will be the name of the value column.
-
-        Parameters
-        ----------
-        category_column : str, default None
-            The name of the categorical column, if any.
+        Returns the name of the column for the rolling sum. The name of the column
+        is determined by the operation applied on a rolling basis, the value column,
+        the category column, (if any), the offset/lag, and the window.
 
         Returns
         -------
@@ -444,10 +442,11 @@ class DynamicRollingSum:
         self._validate_parameters()
         (_, x_col, _, _, cat, _, lag, win, _, op) = self._get_parameters()
 
-        # Remove brackets from the category column name if any:
-        cat = cat if len(cat) != 1 else cat
-
-        return rolling_op_column_name(op, x_col, cat, lag, win)
+        return (
+            rolling_op_column_name(op, x_col, cat, lag, win)
+            if cat != "cat"
+            else rolling_op_column_name(op, x_col, None, lag, win)
+        )
 
     def _get_unique_levels(self) -> list[str]:
         """Get the unique levels of the categorical column.
@@ -490,7 +489,6 @@ class DynamicRollingSum:
         self._validate_parameters()
         _, x_col, _, date, cat, idx, lag, win, _, _ = self._get_parameters()
 
-
         # Filter the lf at the level of the category
         frame = self._filter_by_level(level)
 
@@ -498,17 +496,20 @@ class DynamicRollingSum:
         out = dynamic_rolling_sum(frame, x_col, date, idx, lag, win)
 
         # Rename the sum column
-        out = out.with_columns(
-            [pl.col("rolling_value_list").alias(self._get_column_name(cat))]
-        )
+        out = out.with_columns([pl.col(f"rolling_{x_col}").alias(self._get_column_name())])
         # Add the level as a column
-        return out.with_columns(
-            [pl.lit(level).cast(pl.Utf8).cast(pl.Categorical).alias(cat)]
+        return (
+            out.with_columns(
+                [pl.lit(level).cast(pl.Utf8).cast(pl.Categorical).alias(cat)]
+            )
+            .collect()
+            .lazy()
         )
 
     def _calculate_sum(self) -> pl.LazyFrame:
         self._validate_parameters()
         lf, x_col, _, date, cat, idx, lag, win, _, _ = self._get_parameters()
+
         # Run the dynamic rolling sum at each level of the category
         frames = [
             self._calculate_sum_at_level(level) for level in self._get_unique_levels()
@@ -517,19 +518,12 @@ class DynamicRollingSum:
         # Concatenate the frames
         return pl.concat(frames, how="vertical").select(
             [
-                # Index & date columns:
-                pl.col(idx).name.keep(),
-                pl.col(date).name.keep(),
-            ]
-            + [
-                # Categorical columns:
-                pl.col(c).cast(pl.Categorical).name.keep()
-                for c in cat
-            ]
-            + [
-                # Rolling sum column:
-                pl.col(f"{self._get_column_name(c)}").name.keep()
-                for c in cat
+                pl.col(idx).name.keep(),  # -------------------- index column
+                pl.col(date).name.keep(),  # ------------------- date column
+                pl.col(cat).cast(pl.Categorical).name.keep(),  # category column
+                pl.col(
+                    f"{self._get_column_name()}"
+                ).name.keep(),  # ------------------------------ rolling sum column
             ]
         )
 
@@ -621,7 +615,7 @@ class DynamicRollingSum:
         lf = self._drop_right_suffixes(lf)
 
         # If an additional "cat" column was added, drop it
-        if not self._has_cat_cols:
+        if (not self._has_cat_col) | (self._cat_col == "cat"):
             lf = lf.drop("cat")
 
         return lf
@@ -643,10 +637,14 @@ def dynamic_rolling_sum(
         )
     # Data frame with the row index as a column, to resort the data
     # to the original order after the rolling sum
-    lf_order = lf.select([pl.col(index_col).alias("index")])
+    lf_order = lf.select([index_col, date_col])
+
+    # Sum the values in the value column by date so there is a single value
+    # for each date in the date column
+    lf_ = lf.select([pl.col(index_col), pl.col(date_col), pl.col(x_col)])
 
     # Format columns in input LazyFrame
-    lf_ = _format_date_col(lf, date_col)
+    lf_ = _format_date_col(lf_, date_col)
     lf_ = _format_value_col(lf_, x_col)
 
     # Create a list column with the dates to be used for the
@@ -654,50 +652,47 @@ def dynamic_rolling_sum(
     # if they are provided
     lf_ = _get_date_list_col(lf_, date_col, offset, window)
 
-    old_new_mapping = (
-        lf_.select([pl.col(date_col), pl.col(x_col)])
+    # Create a lookup table that joins the dates in the date column to the
+    # sum of the values in the value column for each date
+    mapping = (
+        lf_.select([date_col, x_col])
         .group_by(date_col)
-        .agg(pl.sum(x_col).name.keep())
-        .sort(by=[date_col])
-        .collect()
-        .to_dict(as_series=False)
+        .agg(pl.col(x_col).sum())
+        .sort(date_col)
     )
 
+    # assert mapping.join(lf.select(['date', 'hit']).group_by('date').agg(pl.col('hit').sum()), how='left', on='date').collect().with_columns([
+    #     (pl.col('hit') - pl.col('hit_right').cast(pl.Float64)).alias('diff')
+    # ]).filter(pl.col('diff') != 0).shape[0] == 0
+
     lf_ = (
-        lf_
-        # Calculate the min, max, and count of the date list column
-        .with_columns([min_date(), max_date(), n_dates()])
-        # Melt the elements of each list in the date_list column to create
-        # a new row for each date in each list. Note also this will duplicate
-        # the values in the other columns, including the row index and the
-        # date column
-        .explode("date_list")
-        # Create a new column by mapping the list of dates to a list of values
-        .with_columns(date_list_eval(old_new_mapping, date_col, x_col))
-        .collect()  # Collecting here to avoid an error
-        # Take the index, date, and value list columns
-        .select([pl.col(index_col), pl.col(date_col), pl.col("value_list")])
-        .lazy()
-        # Sum up the values by index (representing the original row order)
-        .with_columns(
-            [pl.col("value_list").sum().over(index_col).name.prefix("rolling_")]
-        )
-        # Drop the original value list column
-        .drop("value_list")
-        .unique()
+        lf_.explode("date_list")
+        .join(mapping, how="left", left_on="date_list", right_on=date_col)
+        .fill_null(0)
+        .drop(["date_list"])
+        .group_by([index_col, date_col])
+        .agg(pl.col(f"{x_col}_right").sum().alias(f"rolling_{x_col}"))
         .sort(index_col)
     )
 
-    # If there is a creeping duplicate, drop it
-    if f"{date_col}_right" in lf_.columns:
-        lf_ = lf_.drop(f"{date_col}_right")
-    if f"{date_col}_left" in lf_.columns:
-        lf_ = lf_.drop(f"{date_col}_left")
-    if f"{date_col}_right" in lf_order.columns:
-        lf_order = lf_order.drop(f"{date_col}_right")
-    if f"{date_col}_left" in lf_order.columns:
-        lf_order = lf_order.drop(f"{date_col}_left")
+    # lf_.join(
+    #     lf.select(["index", "total_30_30_sum"]), how="left", on="index"
+    # ).collect().with_columns(
+    #     [
+    #         (pl.col("rolling_hit") - pl.col("total_30_30_sum").cast(pl.Float64)).alias(
+    #             "diff"
+    #         )
+    #     ]
+    # ).filter(pl.col("diff") != 0)
+
+    
+
+    # If there is a duplicate from a join, drop the duplicate
+    for c in lf_.columns:
+        if c.endswith(("_right", "_left")):
+            lf_ = lf_.drop(c)
+    for c in lf_order.columns:
+        if c.endswith(("_right", "_left")):
+            lf_order = lf_order.drop(c)
 
     return lf_order.join(lf_, on=index_col, how="left")
-
-
