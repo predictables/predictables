@@ -1,2 +1,6 @@
-from ._dynamic_rolling_mean import DynamicRollingMean  # F401
-from ._dynamic_rolling_sum import DynamicRollingSum  # F401
+from ._dynamic_rolling_mean import DynamicRollingMean
+from ._dynamic_rolling_sum import DynamicRollingSum
+from ._dynamic_rolling_count import DynamicRollingCount
+
+from ._smoothed_rolling_mean import SmoothedRollingMean
+from ._smoothed_credibility_weighted_mean import SmoothedCredibilityWeightedMean

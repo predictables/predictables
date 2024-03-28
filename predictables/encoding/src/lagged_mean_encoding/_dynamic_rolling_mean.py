@@ -3,6 +3,9 @@ import polars as pl
 from predictables.encoding.src.lagged_mean_encoding._dynamic_rolling_sum import (
     DynamicRollingSum,
 )
+from predictables.encoding.src.lagged_mean_encoding._dynamic_rolling_count import (
+    DynamicRollingCount,
+)
 
 
 class DynamicRollingMean(DynamicRollingSum):
@@ -11,6 +14,7 @@ class DynamicRollingMean(DynamicRollingSum):
 
         self._numrator_col = None
         self._denominator_col = None
+        self._op = "ROLLING_MEAN"
 
     def x_col(*args, **kwargs) -> "DynamicRollingMean":
         """Set the column to use as the numerator in the rolling mean calculation.
@@ -105,26 +109,19 @@ class DynamicRollingMean(DynamicRollingSum):
             numerator column built.
 
         """
-        num_lf = (
+        self._lf = (
             DynamicRollingSum()
             .lf(self._lf)
-            .date_col(self._date_col)
             .x_col(self._numerator_col)
-            .x_name("num")
+            .date_col(self._date_col)
+            .index_col(self._index_col)
+            .cat_col(self._cat_col)
             .offset(self._offset)
             .window(self._window)
-            .category_cols(self._category_cols)
-            .index_col(self._index_col)
-            .run()
-        )
+            .rejoin(True)
+            .op("ROLLING_SUM")
+        ).run()
 
-        # Update the _lf attribute
-        self._lf = (
-            self._lf.join(num_lf, on=self._index_col, how="left")
-            .drop("date_right")
-            .with_columns([pl.col("rolling_value_list").alias("num")])
-            .drop("rolling_value_list")
-        )
 
     def build_denominator_col(self) -> None:
         """Calculate the denominator column for the rolling mean calculation.
@@ -143,26 +140,18 @@ class DynamicRollingMean(DynamicRollingSum):
             No return value, but the _lf attribute is updated with the
             denominator column built.
         """
-        den_lf = (
-            DynamicRollingSum()
+        self._lf = (
+            DynamicRollingCount()
             .lf(self._lf)
             .date_col(self._date_col)
-            .x_col(self._denominator_col)
-            .x_name("den")
+            .index_col(self._index_col)
+            .cat_col(self._cat_col)
             .offset(self._offset)
             .window(self._window)
-            .category_cols(self._category_cols)
-            .index_col(self._index_col)
-            .run()
-        )
-
-        # Update the _lf attribute
-        self._lf = (
-            self._lf.join(den_lf, on=self._index_col, how="left")
-            .drop("date_right")
-            .with_columns([pl.col("rolling_value_list").alias("den")])
-            .drop("rolling_value_list")
-        )
+            .rejoin(True)
+            .op("ROLLING_COUNT")
+        ).run()
+        
 
     def run(self) -> pl.LazyFrame:
         """Run the rolling mean calculation on the `LazyFrame` and return the result.
@@ -174,25 +163,36 @@ class DynamicRollingMean(DynamicRollingSum):
         """
         # Build the numerator and denominator columns, and join them to the
         # original LazyFrame
-        self._lf.collect()
-        self.build_numerator_col(self._lf)
-        self._lf.collect()
-        self.build_denominator_col(self._lf)
-        self._lf.collect()
+        self.build_numerator_col()
+        num_col_name = self._lf.columns[-1]
+        self.build_denominator_col()
+        den_col_name = self._lf.columns[-1]
 
         # Calculate the rolling mean
-        self._lf = self._lf.with_columns(
+        return self._lf.with_columns(
             [
-                pl.when(pl.col("den") == 0)
+                pl.when(pl.col(den_col_name) == 0)
                 .then(pl.lit(0))
                 .otherwise(
-                    pl.col("num")
+                    pl.col(num_col_name)
                     .cast(pl.Float64)
-                    .truediv(pl.col("den").cast(pl.Float64))
-                    .cast(pl.Float64)
+                    .truediv(pl.col(den_col_name).cast(pl.Float64))
                 )
-                .alias("mean")
+                .cast(pl.Float64)
+                .alias(num_col_name.replace("SUM", "MEAN"))
             ]
-        ).drop(["num", "den"])
+        ).drop([num_col_name, den_col_name])
 
-        return self._lf
+        # self._lf = self._lf.with_columns(
+        #     [
+        #         pl.when(pl.col(den_col_name) == 0)
+        #         .then(pl.lit(0))
+        #         .otherwise(
+        #             pl.col(num_col_name)
+        #             .cast(pl.Float64)
+        #             .truediv(pl.col(den_col_name).cast(pl.Float64))
+        #         )
+        #         .cast(pl.Float64)
+        #         .alias(num_col_name.replace("SUM", "MEAN"))
+        #     ]
+        # ).drop([num_col_name, den_col_name])
