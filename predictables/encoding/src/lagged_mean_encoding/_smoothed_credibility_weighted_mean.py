@@ -1,0 +1,2 @@
+class SmoothedCredibilityWeightedMean:
+    pass

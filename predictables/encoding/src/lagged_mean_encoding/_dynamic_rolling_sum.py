@@ -7,18 +7,12 @@ import polars as pl
 from predictables.encoding.src.lagged_mean_encoding._rolling_op_column_name import (
     rolling_op_column_name,
 )
-from predictables.encoding.src.lagged_mean_encoding.sum.min_date import min_date
-from predictables.encoding.src.lagged_mean_encoding.sum.max_date import max_date
-from predictables.encoding.src.lagged_mean_encoding.sum.n_dates import n_dates
 from predictables.encoding.src.lagged_mean_encoding.sum.format_columns import (
     _format_date_col,
     _format_value_col,
 )
 from predictables.encoding.src.lagged_mean_encoding.sum.get_date_list_col import (
     _get_date_list_col,
-)
-from predictables.encoding.src.lagged_mean_encoding.sum.date_list_eval import (
-    date_list_eval,
 )
 
 
@@ -496,7 +490,9 @@ class DynamicRollingSum:
         out = dynamic_rolling_sum(frame, x_col, date, idx, lag, win)
 
         # Rename the sum column
-        out = out.with_columns([pl.col(f"rolling_{x_col}").alias(self._get_column_name())])
+        out = out.with_columns(
+            [pl.col(f"rolling_{x_col}").alias(self._get_column_name())]
+        )
         # Add the level as a column
         return (
             out.with_columns(
@@ -576,7 +572,13 @@ class DynamicRollingSum:
         col_name = self._get_column_name()
 
         return (
-            lf.join(
+            lf.with_columns(
+                [
+                    pl.col(idx)
+                    .cast(pl.Int64)
+                    .name.keep()  # Hopefully this doesn't break anything
+                ]
+            ).join(
                 lf_with_drs.select(
                     [pl.col(idx).name.keep(), pl.col(col_name).name.keep()]
                 ),
@@ -661,10 +663,6 @@ def dynamic_rolling_sum(
         .sort(date_col)
     )
 
-    # assert mapping.join(lf.select(['date', 'hit']).group_by('date').agg(pl.col('hit').sum()), how='left', on='date').collect().with_columns([
-    #     (pl.col('hit') - pl.col('hit_right').cast(pl.Float64)).alias('diff')
-    # ]).filter(pl.col('diff') != 0).shape[0] == 0
-
     lf_ = (
         lf_.explode("date_list")
         .join(mapping, how="left", left_on="date_list", right_on=date_col)
@@ -675,17 +673,6 @@ def dynamic_rolling_sum(
         .sort(index_col)
     )
 
-    # lf_.join(
-    #     lf.select(["index", "total_30_30_sum"]), how="left", on="index"
-    # ).collect().with_columns(
-    #     [
-    #         (pl.col("rolling_hit") - pl.col("total_30_30_sum").cast(pl.Float64)).alias(
-    #             "diff"
-    #         )
-    #     ]
-    # ).filter(pl.col("diff") != 0)
-
-    
 
     # If there is a duplicate from a join, drop the duplicate
     for c in lf_.columns:
@@ -695,4 +682,8 @@ def dynamic_rolling_sum(
         if c.endswith(("_right", "_left")):
             lf_order = lf_order.drop(c)
 
-    return lf_order.join(lf_, on=index_col, how="left")
+    return lf_order.with_columns([pl.col(index_col).cast(pl.Int64).name.keep()]).join(
+        lf_.with_columns([pl.col(index_col).cast(pl.Int64).name.keep()]),
+        on=index_col,
+        how="left",
+    )

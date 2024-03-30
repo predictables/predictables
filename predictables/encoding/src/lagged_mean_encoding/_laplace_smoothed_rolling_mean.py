@@ -6,17 +6,39 @@ from predictables.encoding.src.lagged_mean_encoding._dynamic_rolling_sum import 
 from predictables.encoding.src.lagged_mean_encoding._dynamic_rolling_count import (
     DynamicRollingCount,
 )
+from predictables.encoding.src.lagged_mean_encoding._dynamic_rolling_mean import (
+    DynamicRollingMean,
+)
 
 
-class DynamicRollingMean(DynamicRollingSum):
+class LaplaceSmoothedMean(DynamicRollingMean):
     def __init__(self):
         super().__init__()
 
         self._numrator_col = None
         self._denominator_col = None
-        self._op = "ROLLING_MEAN"
+        self._op = "SMOOTHED_MEAN"
+        self._laplace_alpha = 1
 
-    def x_col(*args, **kwargs) -> "DynamicRollingMean":
+    def laplace_alpha(self, laplace_alpha: int) -> "LaplaceSmoothedMean":
+        """
+        Set the alpha value for the Laplace smoothing.
+
+        Parameters
+        ----------
+        laplace_alpha : int
+            The alpha value for the Laplace smoothing.
+
+        Returns
+        -------
+        LaplaceSmoothedMean
+            The `LaplaceSmoothedMean` object with the _laplace_alpha attribute
+            set to the passed value.
+        """
+        self._laplace_alpha = laplace_alpha
+        return self
+
+    def x_col(*args, **kwargs) -> "LaplaceSmoothedMean":
         """Set the column to use as the numerator in the rolling mean calculation.
 
         Warning
@@ -29,7 +51,7 @@ class DynamicRollingMean(DynamicRollingSum):
             "Use `numerator_col` and `denominator_col` instead."
         )
 
-    def x_name(*args, **kwargs) -> "DynamicRollingMean":
+    def x_name(*args, **kwargs) -> "LaplaceSmoothedMean":
         """Set the name of the column to use as the numerator in the rolling mean calculation.
 
         Warning
@@ -42,7 +64,7 @@ class DynamicRollingMean(DynamicRollingSum):
             "Use `numerator_col` and `denominator_col` instead."
         )
 
-    def numerator_col(self, numerator_col: str) -> "DynamicRollingMean":
+    def numerator_col(self, numerator_col: str) -> "LaplaceSmoothedMean":
         """
         Set the column to use as the numerator in the rolling mean calculation.
 
@@ -68,7 +90,7 @@ class DynamicRollingMean(DynamicRollingSum):
         self._numerator_col = numerator_col
         return self
 
-    def denominator_col(self, denominator_col: str) -> "DynamicRollingMean":
+    def denominator_col(self, denominator_col: str) -> "LaplaceSmoothedMean":
         """
         Set the column to use as the denominator in the rolling mean calculation.
 
@@ -172,9 +194,12 @@ class DynamicRollingMean(DynamicRollingSum):
                 pl.when(pl.col(den_col_name) == 0)
                 .then(pl.lit(0))
                 .otherwise(
-                    pl.col(num_col_name)
+                    # add alpha to numerator and denominator
+                    (pl.col(num_col_name) + self._laplace_alpha)
                     .cast(pl.Float64)
-                    .truediv(pl.col(den_col_name).cast(pl.Float64))
+                    .truediv(
+                        (pl.col(den_col_name) + self._laplace_alpha).cast(pl.Float64)
+                    )
                 )
                 .cast(pl.Float64)
                 .alias(num_col_name.replace("_ROLLING_SUM", self._op))

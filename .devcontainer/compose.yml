@@ -1,6 +1,7 @@
 version: '3'
 services:
   py:
+    container_name: py-predictables
     image: aaweaver9/py
     volumes:
       - ..:/app
