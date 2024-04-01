@@ -205,7 +205,7 @@ class CredWtdMean(LaplaceSmoothedMean):
                 .fill_null(0)
                 .alias(self._get_column_name())
             ]
-        )  # .drop(["individual", "collective", "n", "Z"])
+        ).drop(["individual", "collective", "n", "Z", "count"])
 
         # If rename is not None, rename the column
         if self._rename is not None:
