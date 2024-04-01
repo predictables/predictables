@@ -5,4 +5,4 @@ from ._dynamic_rolling_count import DynamicRollingCount
 from ._laplace_smoothed_rolling_mean import LaplaceSmoothedMean
 
 from ._smoothed_rolling_mean import SmoothedRollingMean
-from ._smoothed_credibility_weighted_mean import SmoothedCredibilityWeightedMean
+from ._smoothed_credibility_weighted_mean import CredWtdMean

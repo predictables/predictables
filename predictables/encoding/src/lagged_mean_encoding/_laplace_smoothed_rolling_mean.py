@@ -15,7 +15,7 @@ class LaplaceSmoothedMean(DynamicRollingMean):
     def __init__(self):
         super().__init__()
 
-        self._numrator_col = None
+        self._numerator_col = None
         self._denominator_col = None
         self._op = "SMOOTHED_MEAN"
         self._laplace_alpha = 1
@@ -88,6 +88,7 @@ class LaplaceSmoothedMean(DynamicRollingMean):
             return self
 
         self._numerator_col = numerator_col
+        self._x_col = numerator_col
         return self
 
     def denominator_col(self, denominator_col: str) -> "LaplaceSmoothedMean":
@@ -132,17 +133,22 @@ class LaplaceSmoothedMean(DynamicRollingMean):
 
         """
         self._lf = (
-            DynamicRollingSum()
-            .lf(self._lf)
-            .x_col(self._numerator_col)
-            .date_col(self._date_col)
-            .index_col(self._index_col)
-            .cat_col(self._cat_col)
-            .offset(self._offset)
-            .window(self._window)
-            .rejoin(True)
-            .op("_ROLLING_SUM")
-        ).run()
+            (
+                DynamicRollingSum()
+                .lf(self._lf)
+                .x_col(self._numerator_col)
+                .date_col(self._date_col)
+                .index_col(self._index_col)
+                .cat_col(self._cat_col)
+                .offset(self._offset)
+                .window(self._window)
+                .rejoin(True)
+                .op("_ROLLING_SUM")
+            )
+            .run()
+            .fill_nan(0)
+            .fill_null(0)
+        )
 
     def build_denominator_col(self) -> None:
         """Calculate the denominator column for the rolling mean calculation.
@@ -162,16 +168,21 @@ class LaplaceSmoothedMean(DynamicRollingMean):
             denominator column built.
         """
         self._lf = (
-            DynamicRollingCount()
-            .lf(self._lf)
-            .date_col(self._date_col)
-            .index_col(self._index_col)
-            .cat_col(self._cat_col)
-            .offset(self._offset)
-            .window(self._window)
-            .rejoin(True)
-            .op("_ROLLING_COUNT")
-        ).run()
+            (
+                DynamicRollingCount()
+                .lf(self._lf)
+                .date_col(self._date_col)
+                .index_col(self._index_col)
+                .cat_col(self._cat_col)
+                .offset(self._offset)
+                .window(self._window)
+                .rejoin(True)
+                .op("_ROLLING_COUNT")
+            )
+            .run()
+            .fill_nan(0)
+            .fill_null(0)
+        )
 
     def run(self) -> pl.LazyFrame:
         """Run the rolling mean calculation on the `LazyFrame` and return the result.
@@ -189,7 +200,7 @@ class LaplaceSmoothedMean(DynamicRollingMean):
         den_col_name = self._lf.columns[-1]
 
         # Calculate the rolling mean
-        return self._lf.with_columns(
+        out = self._lf.with_columns(
             [
                 pl.when(pl.col(den_col_name) == 0)
                 .then(pl.lit(0))
@@ -204,4 +215,18 @@ class LaplaceSmoothedMean(DynamicRollingMean):
                 .cast(pl.Float64)
                 .alias(num_col_name.replace("_ROLLING_SUM", self._op))
             ]
-        ).drop([num_col_name, den_col_name])
+        )
+
+        out = out.drop([num_col_name, den_col_name])
+
+        # If rename is not None, rename the column
+        if self._rename is not None:
+            out = out.with_columns(
+                [
+                    pl.col(num_col_name.replace("_ROLLING_SUM", self._op)).alias(
+                        self._rename
+                    )
+                ]
+            ).drop([num_col_name.replace("_ROLLING_SUM", self._op)])
+
+        return out

@@ -78,6 +78,7 @@ class DynamicRollingSum:
     _window: int | None
     _rejoin: bool
     _op: str
+    _rename: str | None
     _has_cat_col: bool
 
     def __init__(self):
@@ -91,6 +92,8 @@ class DynamicRollingSum:
         self._window = None
         self._rejoin = False
         self._op = "ROLLING_SUM"
+        self._rename = None
+
         self._has_cat_col = False
 
     def lf(
@@ -329,6 +332,29 @@ class DynamicRollingSum:
             The `DynamicRollingSum` object.
         """
         self._op = op
+        return self
+
+    def rename(self, rename: str | None = None) -> "DynamicRollingSum":
+        """Set the name of the column that is output.
+
+        This method allows you to change the name of the final column. By default,
+        the column is named according to the operation applied on a rolling basis,
+        the value column, the category column (if any), the offset/lag, and the window.
+
+        Parameters
+        ----------
+        rename : str, optional
+            The name of the column to be output. Default is None, which will use
+            the default column name created by the process.
+
+        Returns
+        -------
+        DynamicRollingSum
+            The `DynamicRollingSum` object.
+        """
+        if rename is not None:
+            self._rename = rename
+
         return self
 
     def _validate_parameters(self) -> None:
@@ -619,6 +645,12 @@ class DynamicRollingSum:
         # If an additional "cat" column was added, drop it
         if (not self._has_cat_col) | (self._cat_col == "cat"):
             lf = lf.drop("cat")
+
+        # If self._rename is not None, rename the column
+        if self._rename is not None:
+            lf = lf.with_columns(
+                [pl.col(self._get_column_name()).alias(self._rename)]
+            ).drop([self._get_column_name()])
 
         return lf
 
