@@ -71,7 +71,6 @@ class DynamicRollingSum:
 
     _lf: pl.LazyFrame | None
     _x_col: str | None
-    # _x_name: str
     _date_col: str | None
     _cat_col: str | None
     _index_col: str | None
@@ -85,7 +84,6 @@ class DynamicRollingSum:
     def __init__(self):
         self._lf = None
         self._x_col = None
-        # self._x_name = "settoxcol"
         self._date_col = None
         self._cat_col = None
         self._index_col = None
@@ -143,36 +141,6 @@ class DynamicRollingSum:
         # Return self updated with the validated column
         return _set_x_col(self, x_col)
 
-    # def x_name(self, x_name: str | None = None) -> "DynamicRollingSum":
-    #     """Set the name of the column to be used for the rolling sum.
-
-    #     First checks that the column exists in the LazyFrame.
-
-    #     Parameters
-    #     ----------
-    #     x_name : str, default None
-    #         The name of the column to be used for the rolling sum. If None, the
-    #         name of the column will be set to the value of the x_col parameter.
-
-    #     Returns
-    #     -------
-    #     DynamicRollingSum
-    #         The `DynamicRollingSum` object.
-    #     """
-
-    #     # Define an inside function to use the validate_column decorator
-    #     # @validate_column(self._lf, x_col)
-    #     def _set_x_name(self, x_name: str) -> "DynamicRollingSum":  # noqa: ANN001
-    #         self._x_name = x_name
-    #         return self  # type: ignore[no-any-return]
-
-    #     # Return self updated with the validated column
-    #     if x_name is not None:
-    #         # change the x_name attribute
-    #         return _set_x_name(self, x_name)
-    #     else:
-    #         # don't make changes
-    #         return self
 
     def date_col(self, date_col: str = "date") -> "DynamicRollingSum":
         """Set the date column to be used for the rolling sum.
@@ -404,6 +372,9 @@ class DynamicRollingSum:
             self._has_cat_col = False
             self._lf = lf.with_columns([pl.lit("0").cast(pl.Categorical).alias("cat")])
             self._cat_col = "cat"
+
+        # Final check: is the index Int64
+        self._lf = self._lf.with_columns([pl.col("index").cast(pl.Int64)])
 
     def _get_parameters(self) -> tuple:
         """Get the parameters for the rolling sum.
