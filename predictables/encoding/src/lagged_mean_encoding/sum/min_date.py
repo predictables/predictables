@@ -1,3 +1,5 @@
+"""Return the minimum date in the date list column."""
+
 import polars as pl
 
 

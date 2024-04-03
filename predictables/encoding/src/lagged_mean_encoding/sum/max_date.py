@@ -1,3 +1,5 @@
+"""Return the maximum date in the date list column."""
+
 import polars as pl
 
 

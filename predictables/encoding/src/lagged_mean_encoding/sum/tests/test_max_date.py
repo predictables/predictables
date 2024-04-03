@@ -27,13 +27,10 @@ def result(lf):
     return lf.select([max_date(), pl.col("30_days_prior"), pl.col("date_list")])
 
 
-def test_max_date(lf, result):
+def test_max_date(lf):
     r = lf.select(max_date()).collect()["max_date"]
     e = lf.select(pl.col("30_days_prior").name.keep()).collect()["30_days_prior"]
     e2 = lf.select(pl.col("date_list").list.max().name.keep()).collect()["date_list"]
-
-    print(f"r: {r}")
-    print(f"e: {e}")
 
     assert r.shape == e.shape, f"Expected shape {e.shape}, got {r.shape}"
     pltest.assert_series_equal(r, e, check_names=False)

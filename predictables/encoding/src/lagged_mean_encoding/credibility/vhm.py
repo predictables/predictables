@@ -1,3 +1,5 @@
+"""Calculate the variance of the hypothetical mean for each group."""
+
 import polars as pl
 import polars.selectors as cs
 
@@ -37,15 +39,23 @@ def vhm(
 
     # Add `n_boot` columns of bootstrap samples
     for i in range(n_boot):
-        sample = lf.sample(frac=resample_rate, replace=True)
-        sample_means = sample.groupby(cat_col).agg(
-            pl.col(target_col).mean().alias(f"boot_mean_{i}")
+        means = means.join(
+            lf.select(
+                [
+                    pl.col(cat_col),
+                    pl.col(target_col)
+                    .cast(pl.Float32)
+                    .sample(n=lf.height, fraction=resample_rate, replace=True),
+                ]
+            )
+            .group_by(cat_col)
+            .agg([pl.col(target_col).mean().alias(f"boot_mean_{i}")]),
+            on=cat_col,
         )
-        means = means.join(sample_means, on=cat_col)
 
     # Use a reduce operation to calculate the variance of the bootstrap samples
     return (
-        means.select([cat_col] + [cs.contains("boot_mean")])
+        means.select([cat_col, cs.contains("boot_mean")])
         .with_columns(
             [
                 pl.cum_sum_horizontal(

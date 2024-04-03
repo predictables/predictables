@@ -705,7 +705,6 @@ def dynamic_rolling_sum(
         .sort(index_col)
     )
 
-
     # If there is a duplicate from a join, drop the duplicate
     for c in lf_.columns:
         if c.endswith(("_right", "_left")):
