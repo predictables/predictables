@@ -378,18 +378,20 @@ class DynamicRollingSum:
             if getattr(self, param) is None:
                 raise ValueError(f"Parameter {param} has not been set.")
 
+        lf: pl.LazyFrame = self._lf if self._lf is not None else pl.LazyFrame()
+
         # If the category columns are set, check that they are in the LazyFrame
         if self._cat_col is not None:
             self._has_cat_col = True
             if isinstance(self._cat_col, str):
-                if self._cat_col not in self._lf.columns:
+                if self._cat_col not in lf.columns:
                     raise ValueError(
                         f"Category column {self._cat_col} not found in LazyFrame. "
                         "Please provide a valid category column."
                     )
             else:
                 for col in self._cat_col:
-                    if col not in self._lf.columns:
+                    if col not in lf.columns:
                         raise ValueError(
                             f"Category column {col} not found in LazyFrame. "
                             "Please provide a valid category column."
@@ -399,9 +401,7 @@ class DynamicRollingSum:
         # allow the grouped rolling sum to be calculated
         else:
             self._has_cat_col = False
-            self._lf = self._lf.with_columns(
-                [pl.lit("0").cast(pl.Categorical).alias("cat")]
-            )
+            self._lf = lf.with_columns([pl.lit("0").cast(pl.Categorical).alias("cat")])
             self._cat_col = "cat"
 
     def _get_parameters(self) -> tuple:
@@ -483,7 +483,7 @@ class DynamicRollingSum:
         (lf, _, _, _, cat, _, _, _, _, _) = self._get_parameters()
 
         # If there is a categorical column, return the unique levels
-        return lf.select([pl.col(cat).unique().name.keep()]).collect()[cat].to_list()
+        return lf.select([pl.col(cat).unique().name.keep()]).collect()[cat].to_list()  # type: ignore
 
     def _filter_by_level(self, level: str) -> pl.LazyFrame:
         """Filter the LazyFrame by the level of the categorical column.
@@ -503,7 +503,7 @@ class DynamicRollingSum:
         self._validate_parameters()
         (lf, _, _, _, cat, _, _, _, _, _) = self._get_parameters()
 
-        return lf.filter(pl.col(cat).cast(pl.Utf8) == str(level))
+        return lf.filter(pl.col(cat).cast(pl.Utf8) == str(level))  # type: ignore
 
     def _calculate_sum_at_level(self, level: str) -> pl.LazyFrame:
         self._validate_parameters()
@@ -594,6 +594,7 @@ class DynamicRollingSum:
             if rejoin is True. A LazyFrame with the same number of rows, but with
             columns for the index, date, categories, and rolling sum if rejoin is False.
         """
+        lf: pl.LazyFrame
         (lf, _, _, _, _, idx, _, _, rejoin, _) = self._get_parameters()
         col_name = self._get_column_name()
 

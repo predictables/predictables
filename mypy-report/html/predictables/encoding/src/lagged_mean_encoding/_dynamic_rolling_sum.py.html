@@ -1146,19 +1146,21 @@ Explicit (x13)
 Omitted Generics (x2)">            if getattr(self, param) is None:</span>
 <span class="line-precise" title="No Anys on this line!">                raise ValueError(f"Parameter {param} has not been set.")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="Any Types on this line: 
+Unimported (x1)">        lf: pl.LazyFrame = self._lf if self._lf is not None else pl.LazyFrame()</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # If the category columns are set, check that they are in the LazyFrame</span>
 <span class="line-precise" title="No Anys on this line!">        if self._cat_col is not None:</span>
 <span class="line-precise" title="No Anys on this line!">            self._has_cat_col = True</span>
 <span class="line-precise" title="No Anys on this line!">            if isinstance(self._cat_col, str):</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Error (x1)">                if self._cat_col not in self._lf.columns:</span>
+<span class="line-precise" title="No Anys on this line!">                if self._cat_col not in lf.columns:</span>
 <span class="line-precise" title="No Anys on this line!">                    raise ValueError(</span>
 <span class="line-precise" title="No Anys on this line!">                        f"Category column {self._cat_col} not found in LazyFrame. "</span>
 <span class="line-empty" title="No Anys on this line!">                        "Please provide a valid category column."</span>
 <span class="line-empty" title="No Anys on this line!">                    )</span>
 <span class="line-empty" title="No Anys on this line!">            else:</span>
 <span class="line-unanalyzed" title="No Anys on this line!">                for col in self._cat_col:</span>
-<span class="line-unanalyzed" title="No Anys on this line!">                    if col not in self._lf.columns:</span>
+<span class="line-unanalyzed" title="No Anys on this line!">                    if col not in lf.columns:</span>
 <span class="line-unanalyzed" title="No Anys on this line!">                        raise ValueError(</span>
 <span class="line-unanalyzed" title="No Anys on this line!">                            f"Category column {col} not found in LazyFrame. "</span>
 <span class="line-empty" title="No Anys on this line!">                            "Please provide a valid category column."</span>
@@ -1168,11 +1170,8 @@ Error (x1)">                if self._cat_col not in self._lf.columns:</span>
 <span class="line-empty" title="No Anys on this line!">        # allow the grouped rolling sum to be calculated</span>
 <span class="line-empty" title="No Anys on this line!">        else:</span>
 <span class="line-precise" title="No Anys on this line!">            self._has_cat_col = False</span>
-<span class="line-imprecise" title="Any Types on this line: 
-Error (x1)">            self._lf = self._lf.with_columns(</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x1)">                [pl.lit("0").cast(pl.Categorical).alias("cat")]</span>
-<span class="line-empty" title="No Anys on this line!">            )</span>
+Explicit (x1)">            self._lf = lf.with_columns([pl.lit("0").cast(pl.Categorical).alias("cat")])</span>
 <span class="line-precise" title="No Anys on this line!">            self._cat_col = "cat"</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
@@ -1262,7 +1261,7 @@ Omitted Generics (x4)">        (lf, _, _, _, cat, _, _, _, _, _) = self._get_par
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # If there is a categorical column, return the unique levels</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x10)">        return lf.select([pl.col(cat).unique().name.keep()]).collect()[cat].to_list()</span>
+Omitted Generics (x10)">        return lf.select([pl.col(cat).unique().name.keep()]).collect()[cat].to_list()  # type: ignore</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def _filter_by_level(self, level: str) -&gt; pl.LazyFrame:</span>
 <span class="line-empty" title="No Anys on this line!">        """Filter the LazyFrame by the level of the categorical column.</span>
@@ -1284,7 +1283,7 @@ Omitted Generics (x10)">        return lf.select([pl.col(cat).unique().name.keep
 Omitted Generics (x4)">        (lf, _, _, _, cat, _, _, _, _, _) = self._get_parameters()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x4)">        return lf.filter(pl.col(cat).cast(pl.Utf8) == str(level))</span>
+Omitted Generics (x4)">        return lf.filter(pl.col(cat).cast(pl.Utf8) == str(level))  # type: ignore</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def _calculate_sum_at_level(self, level: str) -&gt; pl.LazyFrame:</span>
 <span class="line-precise" title="No Anys on this line!">        self._validate_parameters()</span>
@@ -1384,13 +1383,13 @@ Omitted Generics (x1)">                pl.col(cat).cast(pl.Categorical).name.kee
 <span class="line-empty" title="No Anys on this line!">            if rejoin is True. A LazyFrame with the same number of rows, but with</span>
 <span class="line-empty" title="No Anys on this line!">            columns for the index, date, categories, and rolling sum if rejoin is False.</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
+<span class="line-precise" title="No Anys on this line!">        lf: pl.LazyFrame</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x5)">        (lf, _, _, _, _, idx, _, _, rejoin, _) = self._get_parameters()</span>
+Omitted Generics (x4)">        (lf, _, _, _, _, idx, _, _, rejoin, _) = self._get_parameters()</span>
 <span class="line-precise" title="No Anys on this line!">        col_name = self._get_column_name()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        return (</span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x5)">            lf.with_columns(</span>
+<span class="line-precise" title="No Anys on this line!">            lf.with_columns(</span>
 <span class="line-empty" title="No Anys on this line!">                [</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x1)">                    pl.col(idx)</span>
@@ -1502,7 +1501,6 @@ Explicit (x1)">        lf_.explode("date_list")</span>
 <span class="line-precise" title="No Anys on this line!">        .agg(pl.col(f"{x_col}_right").sum().alias(f"rolling_{x_col}"))</span>
 <span class="line-precise" title="No Anys on this line!">        .sort(index_col)</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
-<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # If there is a duplicate from a join, drop the duplicate</span>
 <span class="line-precise" title="No Anys on this line!">    for c in lf_.columns:</span>

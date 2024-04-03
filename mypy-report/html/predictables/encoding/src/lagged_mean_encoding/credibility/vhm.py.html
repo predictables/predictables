@@ -133,46 +133,45 @@
 <span class="line-precise" title="No Anys on this line!">    for i in range(n_boot):</span>
 <span class="line-precise" title="No Anys on this line!">        means = means.join(</span>
 <span class="line-precise" title="No Anys on this line!">            lf.select(</span>
-<span class="line-any" title="Any Types on this line: 
-Error (x1)">                [</span>
+<span class="line-empty" title="No Anys on this line!">                [</span>
 <span class="line-precise" title="No Anys on this line!">                    pl.col(cat_col),</span>
-<span class="line-precise" title="No Anys on this line!">                    pl.col(target_col)</span>
-<span class="line-empty" title="No Anys on this line!">                    .cast(pl.Float32)</span>
+<span class="line-imprecise" title="No Anys on this line!">                    pl.col(target_col)</span>
+<span class="line-precise" title="No Anys on this line!">                    .cast(pl.Float32)</span>
 <span class="line-any" title="Any Types on this line: 
 Error (x1)">                    .sample(n=lf.height, fraction=resample_rate, replace=True),</span>
 <span class="line-empty" title="No Anys on this line!">                ]</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-empty" title="No Anys on this line!">            .group_by(cat_col)</span>
+<span class="line-precise" title="No Anys on this line!">            .group_by(cat_col)</span>
 <span class="line-precise" title="No Anys on this line!">            .agg([pl.col(target_col).mean().alias(f"boot_mean_{i}")]),</span>
-<span class="line-empty" title="No Anys on this line!">            on=cat_col,</span>
+<span class="line-precise" title="No Anys on this line!">            on=cat_col,</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    # Use a reduce operation to calculate the variance of the bootstrap samples</span>
-<span class="line-precise" title="No Anys on this line!">    return (</span>
-<span class="line-empty" title="No Anys on this line!">        means.select([cat_col, cs.contains("boot_mean")])</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">    # Use a reduce operation to calculate the variance of the bootstrap samples</span>
+<span class="line-empty" title="No Anys on this line!">    return (</span>
+<span class="line-precise" title="No Anys on this line!">        means.select([cat_col, cs.contains("boot_mean")])</span>
 <span class="line-empty" title="No Anys on this line!">        .with_columns(</span>
-<span class="line-precise" title="No Anys on this line!">            [</span>
-<span class="line-empty" title="No Anys on this line!">                pl.cum_sum_horizontal(</span>
-<span class="line-empty" title="No Anys on this line!">                    means.select(cs.contains("boot_mean")).columns</span>
-<span class="line-any" title="Any Types on this line: 
-Explicit (x1)">                ).alias("cum_sum")</span>
-<span class="line-precise" title="No Anys on this line!">            ]</span>
-<span class="line-precise" title="No Anys on this line!">        )</span>
-<span class="line-precise" title="No Anys on this line!">        .with_columns([(pl.col("cum_sum") / n_boot).alias("cum_mean")])</span>
-<span class="line-empty" title="No Anys on this line!">        .with_columns(</span>
-<span class="line-precise" title="No Anys on this line!">            [</span>
-<span class="line-precise" title="No Anys on this line!">                pl.reduce(</span>
-<span class="line-empty" title="No Anys on this line!">                    function=lambda acc, x: acc + (x - pl.col("cum_mean")) ** 2,</span>
-<span class="line-empty" title="No Anys on this line!">                    exprs=cs.contains("boot_mean"),</span>
-<span class="line-precise" title="No Anys on this line!">                    init=0,</span>
-<span class="line-precise" title="No Anys on this line!">                )</span>
-<span class="line-precise" title="No Anys on this line!">                .truediv(n_boot - 1)</span>
-<span class="line-empty" title="No Anys on this line!">                .alias("variance")</span>
+<span class="line-empty" title="No Anys on this line!">            [</span>
+<span class="line-precise" title="No Anys on this line!">                pl.cum_sum_horizontal(</span>
+<span class="line-precise" title="No Anys on this line!">                    means.select(cs.contains("boot_mean")).columns</span>
+<span class="line-precise" title="No Anys on this line!">                ).alias("cum_sum")</span>
 <span class="line-empty" title="No Anys on this line!">            ]</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-empty" title="No Anys on this line!">        .drop(cs.contains("boot_mean"))</span>
-<span class="line-empty" title="No Anys on this line!">        .drop("cum_sum")</span>
-<span class="line-empty" title="No Anys on this line!">        .drop("cum_mean")</span>
+<span class="line-precise" title="No Anys on this line!">        .with_columns([(pl.col("cum_sum") / n_boot).alias("cum_mean")])</span>
+<span class="line-empty" title="No Anys on this line!">        .with_columns(</span>
+<span class="line-empty" title="No Anys on this line!">            [</span>
+<span class="line-any" title="Any Types on this line: 
+Explicit (x1)">                pl.reduce(</span>
+<span class="line-precise" title="No Anys on this line!">                    function=lambda acc, x: acc + (x - pl.col("cum_mean")) ** 2,</span>
+<span class="line-precise" title="No Anys on this line!">                    exprs=cs.contains("boot_mean"),</span>
+<span class="line-precise" title="No Anys on this line!">                    init=0,</span>
+<span class="line-empty" title="No Anys on this line!">                )</span>
+<span class="line-precise" title="No Anys on this line!">                .truediv(n_boot - 1)</span>
+<span class="line-precise" title="No Anys on this line!">                .alias("variance")</span>
+<span class="line-empty" title="No Anys on this line!">            ]</span>
+<span class="line-empty" title="No Anys on this line!">        )</span>
+<span class="line-precise" title="No Anys on this line!">        .drop(cs.contains("boot_mean"))</span>
+<span class="line-precise" title="No Anys on this line!">        .drop("cum_sum")</span>
+<span class="line-precise" title="No Anys on this line!">        .drop("cum_mean")</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 </pre></td>
 </tr></tbody>
