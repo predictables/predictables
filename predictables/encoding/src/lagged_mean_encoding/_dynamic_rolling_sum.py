@@ -71,7 +71,7 @@ class DynamicRollingSum:
 
     _lf: pl.LazyFrame | None
     _x_col: str | None
-    _x_name: str
+    # _x_name: str
     _date_col: str | None
     _cat_col: str | None
     _index_col: str | None
@@ -85,7 +85,7 @@ class DynamicRollingSum:
     def __init__(self):
         self._lf = None
         self._x_col = None
-        self._x_name = "settoxcol"
+        # self._x_name = "settoxcol"
         self._date_col = None
         self._cat_col = None
         self._index_col = None
@@ -143,36 +143,36 @@ class DynamicRollingSum:
         # Return self updated with the validated column
         return _set_x_col(self, x_col)
 
-    def x_name(self, x_name: str | None = None) -> "DynamicRollingSum":
-        """Set the name of the column to be used for the rolling sum.
+    # def x_name(self, x_name: str | None = None) -> "DynamicRollingSum":
+    #     """Set the name of the column to be used for the rolling sum.
 
-        First checks that the column exists in the LazyFrame.
+    #     First checks that the column exists in the LazyFrame.
 
-        Parameters
-        ----------
-        x_name : str, default None
-            The name of the column to be used for the rolling sum. If None, the
-            name of the column will be set to the value of the x_col parameter.
+    #     Parameters
+    #     ----------
+    #     x_name : str, default None
+    #         The name of the column to be used for the rolling sum. If None, the
+    #         name of the column will be set to the value of the x_col parameter.
 
-        Returns
-        -------
-        DynamicRollingSum
-            The `DynamicRollingSum` object.
-        """
+    #     Returns
+    #     -------
+    #     DynamicRollingSum
+    #         The `DynamicRollingSum` object.
+    #     """
 
-        # Define an inside function to use the validate_column decorator
-        # @validate_column(self._lf, x_col)
-        def _set_x_name(self, x_name: str) -> "DynamicRollingSum":  # noqa: ANN001
-            self._x_name = x_name
-            return self  # type: ignore[no-any-return]
+    #     # Define an inside function to use the validate_column decorator
+    #     # @validate_column(self._lf, x_col)
+    #     def _set_x_name(self, x_name: str) -> "DynamicRollingSum":  # noqa: ANN001
+    #         self._x_name = x_name
+    #         return self  # type: ignore[no-any-return]
 
-        # Return self updated with the validated column
-        if x_name is not None:
-            # change the x_name attribute
-            return _set_x_name(self, x_name)
-        else:
-            # don't make changes
-            return self
+    #     # Return self updated with the validated column
+    #     if x_name is not None:
+    #         # change the x_name attribute
+    #         return _set_x_name(self, x_name)
+    #     else:
+    #         # don't make changes
+    #         return self
 
     def date_col(self, date_col: str = "date") -> "DynamicRollingSum":
         """Set the date column to be used for the rolling sum.
@@ -372,7 +372,7 @@ class DynamicRollingSum:
             "_index_col",
             "_offset",
             "_window",
-            "_x_name",
+            # "_x_name",
             "_rejoin",
         ]
         for param in required_params:
@@ -413,7 +413,7 @@ class DynamicRollingSum:
 
         - lf
         - x_col
-        - x_name
+        # - x_name
         - date_col
         - cat_col
         - index_col
@@ -438,7 +438,8 @@ class DynamicRollingSum:
         return (
             self._lf if self._lf is not None else pl.LazyFrame(),
             self._x_col if self._x_col is not None else "",
-            self._x_name if self._x_name is not None else "",
+            self._x_col if self._x_col is not None else "",
+            # self._x_name if self._x_name is not None else "",
             self._date_col if self._date_col is not None else "",
             self._cat_col if self._cat_col is not None else "",
             self._index_col if self._index_col is not None else "",
@@ -484,7 +485,13 @@ class DynamicRollingSum:
         (lf, _, _, _, cat, _, _, _, _, _) = self._get_parameters()
 
         # If there is a categorical column, return the unique levels
-        return lf.select([pl.col(cat).unique().name.keep()]).collect()[cat].to_list()  # type: ignore
+        return (
+            ["cat"]
+            if (cat is None) | (cat == "cat")
+            else lf.select([pl.col(cat).cast(pl.Utf8).unique().name.keep()])
+            .collect()[cat]
+            .to_list()
+        )
 
     def _filter_by_level(self, level: str) -> pl.LazyFrame:
         """Filter the LazyFrame by the level of the categorical column.
