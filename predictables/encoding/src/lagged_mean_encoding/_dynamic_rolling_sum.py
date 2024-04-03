@@ -14,6 +14,7 @@ from predictables.encoding.src.lagged_mean_encoding.sum.format_columns import (
 from predictables.encoding.src.lagged_mean_encoding.sum.get_date_list_col import (
     _get_date_list_col,
 )
+from predictables.util import to_pl_lf
 
 
 class DynamicRollingSum:
@@ -114,7 +115,7 @@ class DynamicRollingSum:
         DynamicRollingSum
             The `DynamicRollingSum` object.
         """
-        self._lf = lf
+        self._lf = to_pl_lf(lf)
         return self
 
     def x_col(self, x_col: str = "value") -> "DynamicRollingSum":
