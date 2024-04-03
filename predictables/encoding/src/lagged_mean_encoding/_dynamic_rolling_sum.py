@@ -528,12 +528,8 @@ class DynamicRollingSum:
             [pl.col(f"rolling_{x_col}").alias(self._get_column_name())]
         )
         # Add the level as a column
-        return (
-            out.with_columns(
-                [pl.lit(level).cast(pl.Utf8).cast(pl.Categorical).alias(cat)]
-            )
-            .collect()
-            .lazy()
+        return out.with_columns(
+            [pl.lit(level).cast(pl.Utf8).cast(pl.Categorical).alias(cat)]
         )
 
     def _calculate_sum(self) -> pl.LazyFrame:
@@ -724,6 +720,6 @@ def dynamic_rolling_sum(
 
     return lf_order.with_columns([pl.col(index_col).cast(pl.Int64).name.keep()]).join(
         lf_.with_columns([pl.col(index_col).cast(pl.Int64).name.keep()]),
-        on=index_col,
+        on=[index_col, date_col],
         how="left",
     )

@@ -735,7 +735,6 @@
 <span id="L725" class="lineno"><a class="lineno" href="#L725">725</a></span>
 <span id="L726" class="lineno"><a class="lineno" href="#L726">726</a></span>
 <span id="L727" class="lineno"><a class="lineno" href="#L727">727</a></span>
-<span id="L728" class="lineno"><a class="lineno" href="#L728">728</a></span>
 </pre></td>
 <td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from __future__ import annotations</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -810,7 +809,7 @@
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    _lf: pl.LazyFrame | None</span>
 <span class="line-precise" title="No Anys on this line!">    _x_col: str | None</span>
-<span class="line-precise" title="No Anys on this line!">    # _x_name: str</span>
+<span class="line-empty" title="No Anys on this line!">    # _x_name: str</span>
 <span class="line-precise" title="No Anys on this line!">    _date_col: str | None</span>
 <span class="line-precise" title="No Anys on this line!">    _cat_col: str | None</span>
 <span class="line-precise" title="No Anys on this line!">    _index_col: str | None</span>
@@ -819,16 +818,14 @@
 <span class="line-precise" title="No Anys on this line!">    _rejoin: bool</span>
 <span class="line-precise" title="No Anys on this line!">    _op: str</span>
 <span class="line-precise" title="No Anys on this line!">    _rename: str | None</span>
-<span class="line-empty" title="No Anys on this line!">    _has_cat_col: bool</span>
-<span class="line-any" title="No Anys on this line!"></span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    def __init__(self):</span>
+<span class="line-precise" title="No Anys on this line!">    _has_cat_col: bool</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="No Anys on this line!">    def __init__(self):</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">        self._lf = None</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">        self._x_col = None</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        # self._x_name = "settoxcol"</span>
+<span class="line-empty" title="No Anys on this line!">        # self._x_name = "settoxcol"</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">        self._date_col = None</span>
 <span class="line-any" title="Any Types on this line: 
@@ -843,13 +840,14 @@ Unannotated (x1)">        self._window = None</span>
 Unannotated (x1)">        self._rejoin = False</span>
 <span class="line-any" title="Any Types on this line: 
 Unannotated (x1)">        self._op = "ROLLING_SUM"</span>
-<span class="line-empty" title="No Anys on this line!">        self._rename = None</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)"></span>
-<span class="line-empty" title="No Anys on this line!">        self._has_cat_col = False</span>
+Unannotated (x1)">        self._rename = None</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x1)">        self._has_cat_col = False</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x2)"></span>
-<span class="line-empty" title="No Anys on this line!">    def lf(</span>
+Omitted Generics (x2)">    def lf(</span>
 <span class="line-empty" title="No Anys on this line!">        self, lf: pl.LazyFrame | pl.DataFrame | pd.DataFrame | np.ndarray</span>
 <span class="line-empty" title="No Anys on this line!">    ) -&gt; "DynamicRollingSum":</span>
 <span class="line-empty" title="No Anys on this line!">        """Set the LazyFrame to be used for the rolling sum.</span>
@@ -866,12 +864,12 @@ Omitted Generics (x2)"></span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
 <span class="line-empty" title="No Anys on this line!">        DynamicRollingSum</span>
 <span class="line-empty" title="No Anys on this line!">            The `DynamicRollingSum` object.</span>
+<span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x5)">        """</span>
-<span class="line-precise" title="No Anys on this line!">        self._lf = to_pl_lf(lf)</span>
-<span class="line-empty" title="No Anys on this line!">        return self</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    def x_col(self, x_col: str = "value") -&gt; "DynamicRollingSum":</span>
+Omitted Generics (x5)">        self._lf = to_pl_lf(lf)</span>
+<span class="line-precise" title="No Anys on this line!">        return self</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def x_col(self, x_col: str = "value") -&gt; "DynamicRollingSum":</span>
 <span class="line-empty" title="No Anys on this line!">        """Set the column to be used for the rolling sum.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        First checks that the column exists in the LazyFrame.</span>
@@ -888,18 +886,18 @@ Omitted Generics (x5)">        """</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Define an inside function to use the validate_column decorator</span>
+<span class="line-empty" title="No Anys on this line!">        # @validate_column(self._lf, x_col)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        # @validate_column(self._lf, x_col)</span>
+Unannotated (x1)">        def _set_x_col(self, x_col: str) -&gt; "DynamicRollingSum":  # noqa: ANN001</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">        def _set_x_col(self, x_col: str) -&gt; "DynamicRollingSum":  # noqa: ANN001</span>
+Unannotated (x2)">            self._x_col = x_col</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            self._x_col = x_col</span>
-<span class="line-empty" title="No Anys on this line!">            return self  # type: ignore[no-any-return]</span>
+Unannotated (x1)">            return self  # type: ignore[no-any-return]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">        # Return self updated with the validated column</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        # Return self updated with the validated column</span>
-<span class="line-empty" title="No Anys on this line!">        return _set_x_col(self, x_col)</span>
-<span class="line-precise" title="No Anys on this line!"></span>
+Unannotated (x1)">        return _set_x_col(self, x_col)</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # def x_name(self, x_name: str | None = None) -&gt; "DynamicRollingSum":</span>
 <span class="line-empty" title="No Anys on this line!">    #     """Set the name of the column to be used for the rolling sum.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
@@ -918,24 +916,20 @@ Unannotated (x1)">        # Return self updated with the validated column</span>
 <span class="line-empty" title="No Anys on this line!">    #     """</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    #     # Define an inside function to use the validate_column decorator</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    #     # @validate_column(self._lf, x_col)</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">    #     def _set_x_name(self, x_name: str) -&gt; "DynamicRollingSum":  # noqa: ANN001</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    #         self._x_name = x_name</span>
+<span class="line-empty" title="No Anys on this line!">    #     # @validate_column(self._lf, x_col)</span>
+<span class="line-empty" title="No Anys on this line!">    #     def _set_x_name(self, x_name: str) -&gt; "DynamicRollingSum":  # noqa: ANN001</span>
+<span class="line-empty" title="No Anys on this line!">    #         self._x_name = x_name</span>
 <span class="line-empty" title="No Anys on this line!">    #         return self  # type: ignore[no-any-return]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    #     # Return self updated with the validated column</span>
+<span class="line-empty" title="No Anys on this line!">    #     # Return self updated with the validated column</span>
 <span class="line-empty" title="No Anys on this line!">    #     if x_name is not None:</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">    #         # change the x_name attribute</span>
+<span class="line-empty" title="No Anys on this line!">    #         # change the x_name attribute</span>
 <span class="line-empty" title="No Anys on this line!">    #         return _set_x_name(self, x_name)</span>
 <span class="line-empty" title="No Anys on this line!">    #     else:</span>
-<span class="line-precise" title="No Anys on this line!">    #         # don't make changes</span>
+<span class="line-empty" title="No Anys on this line!">    #         # don't make changes</span>
 <span class="line-empty" title="No Anys on this line!">    #         return self</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    def date_col(self, date_col: str = "date") -&gt; "DynamicRollingSum":</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def date_col(self, date_col: str = "date") -&gt; "DynamicRollingSum":</span>
 <span class="line-empty" title="No Anys on this line!">        """Set the date column to be used for the rolling sum.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        First checks that the column exists in the LazyFrame.</span>
@@ -952,19 +946,19 @@ Unannotated (x1)">    #         # change the x_name attribute</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Define an inside function to use the validate_column decorator</span>
+<span class="line-empty" title="No Anys on this line!">        # @validate_column(self._lf, date_col)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        # @validate_column(self._lf, date_col)</span>
+Unannotated (x1)">        def _set_date_col(self, date_col: str) -&gt; "DynamicRollingSum":  # noqa: ANN001</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">        def _set_date_col(self, date_col: str) -&gt; "DynamicRollingSum":  # noqa: ANN001</span>
+Unannotated (x2)">            self._date_col = date_col</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            self._date_col = date_col</span>
-<span class="line-empty" title="No Anys on this line!">            return self  # type: ignore[no-any-return]</span>
+Unannotated (x1)">            return self  # type: ignore[no-any-return]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">        # Return self updated with the validated column</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        # Return self updated with the validated column</span>
-<span class="line-empty" title="No Anys on this line!">        return _set_date_col(self, date_col)</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    def cat_col(self, cat_col: str = "cat") -&gt; "DynamicRollingSum":</span>
+Unannotated (x1)">        return _set_date_col(self, date_col)</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def cat_col(self, cat_col: str = "cat") -&gt; "DynamicRollingSum":</span>
 <span class="line-empty" title="No Anys on this line!">        """Set the category column to be used for the rolling sum.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        First checks that the column exists in the LazyFrame.</span>
@@ -981,25 +975,25 @@ Unannotated (x1)">        # Return self updated with the validated column</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Define an inside function to use the validate_column decorator</span>
+<span class="line-empty" title="No Anys on this line!">        # @validate_column(self._lf, cat_col)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        # @validate_column(self._lf, cat_col)</span>
-<span class="line-empty" title="No Anys on this line!">        def _set_cat_col(</span>
+Unannotated (x1)">        def _set_cat_col(</span>
 <span class="line-empty" title="No Anys on this line!">            self,  # noqa: ANN001</span>
 <span class="line-empty" title="No Anys on this line!">            cat_col: str,</span>
+<span class="line-empty" title="No Anys on this line!">        ) -&gt; "DynamicRollingSum":</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">        ) -&gt; "DynamicRollingSum":</span>
+Unannotated (x2)">            self._cat_col = cat_col</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            self._cat_col = cat_col</span>
-<span class="line-empty" title="No Anys on this line!">            return self</span>
+Unannotated (x1)">            return self</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        # Set the _has_cat_col attribute to True</span>
-<span class="line-empty" title="No Anys on this line!">        self._has_cat_col = True</span>
+<span class="line-empty" title="No Anys on this line!">        # Set the _has_cat_col attribute to True</span>
+<span class="line-precise" title="No Anys on this line!">        self._has_cat_col = True</span>
 <span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">        # Return self updated with the validated column</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        # Return self updated with the validated column</span>
-<span class="line-empty" title="No Anys on this line!">        return _set_cat_col(self, cat_col)</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    def index_col(self, index_col: str = "index") -&gt; "DynamicRollingSum":</span>
+Unannotated (x1)">        return _set_cat_col(self, cat_col)</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def index_col(self, index_col: str = "index") -&gt; "DynamicRollingSum":</span>
 <span class="line-empty" title="No Anys on this line!">        """Set the index column to be used for the rolling sum.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        First checks that the column exists in the LazyFrame.</span>
@@ -1016,19 +1010,19 @@ Unannotated (x1)">        # Return self updated with the validated column</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Define an inside function to use the validate_column decorator</span>
+<span class="line-empty" title="No Anys on this line!">        # @validate_column(self._lf, index_col)</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        # @validate_column(self._lf, index_col)</span>
+Unannotated (x1)">        def _set_index_col(self, index_col: str) -&gt; "DynamicRollingSum":  # noqa: ANN001</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">        def _set_index_col(self, index_col: str) -&gt; "DynamicRollingSum":  # noqa: ANN001</span>
+Unannotated (x2)">            self._index_col = index_col</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">            self._index_col = index_col</span>
-<span class="line-empty" title="No Anys on this line!">            return self  # type: ignore[no-any-return]</span>
+Unannotated (x1)">            return self  # type: ignore[no-any-return]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">        # Return self updated with the validated column</span>
 <span class="line-any" title="Any Types on this line: 
-Unannotated (x1)">        # Return self updated with the validated column</span>
-<span class="line-empty" title="No Anys on this line!">        return _set_index_col(self, index_col)</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    def offset(self, offset: int = 30) -&gt; "DynamicRollingSum":</span>
+Unannotated (x1)">        return _set_index_col(self, index_col)</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def offset(self, offset: int = 30) -&gt; "DynamicRollingSum":</span>
 <span class="line-empty" title="No Anys on this line!">        """Set the offset for the rolling sum.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        The offset is the number of days to offset the rolling sum by.</span>
@@ -1043,11 +1037,11 @@ Unannotated (x1)">        # Return self updated with the validated column</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
 <span class="line-empty" title="No Anys on this line!">        DynamicRollingSum</span>
 <span class="line-empty" title="No Anys on this line!">            The `DynamicRollingSum` object.</span>
-<span class="line-precise" title="No Anys on this line!">        """</span>
+<span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-precise" title="No Anys on this line!">        self._offset = offset</span>
-<span class="line-empty" title="No Anys on this line!">        return self</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    def window(self, window: int = 360) -&gt; "DynamicRollingSum":</span>
+<span class="line-precise" title="No Anys on this line!">        return self</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def window(self, window: int = 360) -&gt; "DynamicRollingSum":</span>
 <span class="line-empty" title="No Anys on this line!">        """Set the window for the rolling sum.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        The window is the number of days to include in the rolling sum. The</span>
@@ -1063,11 +1057,11 @@ Unannotated (x1)">        # Return self updated with the validated column</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
 <span class="line-empty" title="No Anys on this line!">        DynamicRollingSum</span>
 <span class="line-empty" title="No Anys on this line!">            The `DynamicRollingSum` object.</span>
-<span class="line-precise" title="No Anys on this line!">        """</span>
+<span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-precise" title="No Anys on this line!">        self._window = window</span>
-<span class="line-empty" title="No Anys on this line!">        return self</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    def rejoin(self, rejoin: bool = False) -&gt; "DynamicRollingSum":</span>
+<span class="line-precise" title="No Anys on this line!">        return self</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def rejoin(self, rejoin: bool = False) -&gt; "DynamicRollingSum":</span>
 <span class="line-empty" title="No Anys on this line!">        """Set whether to concatenate the rolling sum to the original LazyFrame.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        If true, returns the original LazyFrame with the rolling sum concatenated</span>
@@ -1083,11 +1077,11 @@ Unannotated (x1)">        # Return self updated with the validated column</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
 <span class="line-empty" title="No Anys on this line!">        DynamicRollingSum</span>
 <span class="line-empty" title="No Anys on this line!">            The `DynamicRollingSum` object.</span>
-<span class="line-precise" title="No Anys on this line!">        """</span>
+<span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-precise" title="No Anys on this line!">        self._rejoin = rejoin</span>
-<span class="line-empty" title="No Anys on this line!">        return self</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    def op(self, op: str = "ROLLING_SUM") -&gt; "DynamicRollingSum":</span>
+<span class="line-precise" title="No Anys on this line!">        return self</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def op(self, op: str = "ROLLING_SUM") -&gt; "DynamicRollingSum":</span>
 <span class="line-empty" title="No Anys on this line!">        """Set the operation applied on a rolling basis.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        This method allows you to change the name of the final column. By default,</span>
@@ -1104,11 +1098,11 @@ Unannotated (x1)">        # Return self updated with the validated column</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
 <span class="line-empty" title="No Anys on this line!">        DynamicRollingSum</span>
 <span class="line-empty" title="No Anys on this line!">            The `DynamicRollingSum` object.</span>
-<span class="line-precise" title="No Anys on this line!">        """</span>
+<span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-precise" title="No Anys on this line!">        self._op = op</span>
-<span class="line-empty" title="No Anys on this line!">        return self</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    def rename(self, rename: str | None = None) -&gt; "DynamicRollingSum":</span>
+<span class="line-precise" title="No Anys on this line!">        return self</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def rename(self, rename: str | None = None) -&gt; "DynamicRollingSum":</span>
 <span class="line-empty" title="No Anys on this line!">        """Set the name of the column that is output.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        This method allows you to change the name of the final column. By default,</span>
@@ -1125,19 +1119,19 @@ Unannotated (x1)">        # Return self updated with the validated column</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
 <span class="line-empty" title="No Anys on this line!">        DynamicRollingSum</span>
 <span class="line-empty" title="No Anys on this line!">            The `DynamicRollingSum` object.</span>
-<span class="line-precise" title="No Anys on this line!">        """</span>
+<span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-precise" title="No Anys on this line!">        if rename is not None:</span>
-<span class="line-empty" title="No Anys on this line!">            self._rename = rename</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        return self</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    def _validate_parameters(self) -&gt; None:</span>
+<span class="line-precise" title="No Anys on this line!">            self._rename = rename</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">        return self</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def _validate_parameters(self) -&gt; None:</span>
 <span class="line-empty" title="No Anys on this line!">        """Check that all required parameters have been set.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Raises an exception if any of the required parameters are not set. Does</span>
 <span class="line-empty" title="No Anys on this line!">        not return anything, but raises an exception if any of the required</span>
 <span class="line-empty" title="No Anys on this line!">        parameters are not set.</span>
-<span class="line-precise" title="No Anys on this line!">        """</span>
+<span class="line-empty" title="No Anys on this line!">        """</span>
 <span class="line-precise" title="No Anys on this line!">        required_params = [</span>
 <span class="line-precise" title="No Anys on this line!">            "_lf",</span>
 <span class="line-precise" title="No Anys on this line!">            "_x_col",</span>
@@ -1145,45 +1139,45 @@ Unannotated (x1)">        # Return self updated with the validated column</span>
 <span class="line-precise" title="No Anys on this line!">            "_index_col",</span>
 <span class="line-precise" title="No Anys on this line!">            "_offset",</span>
 <span class="line-precise" title="No Anys on this line!">            "_window",</span>
-<span class="line-precise" title="No Anys on this line!">            # "_x_name",</span>
-<span class="line-empty" title="No Anys on this line!">            "_rejoin",</span>
-<span class="line-precise" title="No Anys on this line!">        ]</span>
+<span class="line-empty" title="No Anys on this line!">            # "_x_name",</span>
+<span class="line-precise" title="No Anys on this line!">            "_rejoin",</span>
+<span class="line-empty" title="No Anys on this line!">        ]</span>
+<span class="line-precise" title="No Anys on this line!">        for param in required_params:</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x13)
-Omitted Generics (x2)">        for param in required_params:</span>
-<span class="line-precise" title="No Anys on this line!">            if getattr(self, param) is None:</span>
-<span class="line-empty" title="No Anys on this line!">                raise ValueError(f"Parameter {param} has not been set.")</span>
-<span class="line-precise" title="Any Types on this line: 
-Unimported (x1)"></span>
-<span class="line-empty" title="No Anys on this line!">        lf: pl.LazyFrame = self._lf if self._lf is not None else pl.LazyFrame()</span>
+Omitted Generics (x2)">            if getattr(self, param) is None:</span>
+<span class="line-precise" title="No Anys on this line!">                raise ValueError(f"Parameter {param} has not been set.")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        # If the category columns are set, check that they are in the LazyFrame</span>
+<span class="line-precise" title="Any Types on this line: 
+Unimported (x1)">        lf: pl.LazyFrame = self._lf if self._lf is not None else pl.LazyFrame()</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">        # If the category columns are set, check that they are in the LazyFrame</span>
 <span class="line-precise" title="No Anys on this line!">        if self._cat_col is not None:</span>
 <span class="line-precise" title="No Anys on this line!">            self._has_cat_col = True</span>
 <span class="line-precise" title="No Anys on this line!">            if isinstance(self._cat_col, str):</span>
 <span class="line-precise" title="No Anys on this line!">                if self._cat_col not in lf.columns:</span>
 <span class="line-precise" title="No Anys on this line!">                    raise ValueError(</span>
-<span class="line-empty" title="No Anys on this line!">                        f"Category column {self._cat_col} not found in LazyFrame. "</span>
+<span class="line-precise" title="No Anys on this line!">                        f"Category column {self._cat_col} not found in LazyFrame. "</span>
 <span class="line-empty" title="No Anys on this line!">                        "Please provide a valid category column."</span>
 <span class="line-empty" title="No Anys on this line!">                    )</span>
-<span class="line-unanalyzed" title="No Anys on this line!">            else:</span>
+<span class="line-empty" title="No Anys on this line!">            else:</span>
 <span class="line-unanalyzed" title="No Anys on this line!">                for col in self._cat_col:</span>
 <span class="line-unanalyzed" title="No Anys on this line!">                    if col not in lf.columns:</span>
 <span class="line-unanalyzed" title="No Anys on this line!">                        raise ValueError(</span>
-<span class="line-empty" title="No Anys on this line!">                            f"Category column {col} not found in LazyFrame. "</span>
+<span class="line-unanalyzed" title="No Anys on this line!">                            f"Category column {col} not found in LazyFrame. "</span>
 <span class="line-empty" title="No Anys on this line!">                            "Please provide a valid category column."</span>
 <span class="line-empty" title="No Anys on this line!">                        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # If no category column is set, add a constant column to the LazyFrame to</span>
 <span class="line-empty" title="No Anys on this line!">        # allow the grouped rolling sum to be calculated</span>
-<span class="line-precise" title="No Anys on this line!">        else:</span>
+<span class="line-empty" title="No Anys on this line!">        else:</span>
+<span class="line-precise" title="No Anys on this line!">            self._has_cat_col = False</span>
 <span class="line-any" title="Any Types on this line: 
-Explicit (x1)">            self._has_cat_col = False</span>
-<span class="line-precise" title="No Anys on this line!">            self._lf = lf.with_columns([pl.lit("0").cast(pl.Categorical).alias("cat")])</span>
-<span class="line-empty" title="No Anys on this line!">            self._cat_col = "cat"</span>
+Explicit (x1)">            self._lf = lf.with_columns([pl.lit("0").cast(pl.Categorical).alias("cat")])</span>
+<span class="line-precise" title="No Anys on this line!">            self._cat_col = "cat"</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
-Omitted Generics (x1)"></span>
-<span class="line-empty" title="No Anys on this line!">    def _get_parameters(self) -&gt; tuple:</span>
+Omitted Generics (x1)">    def _get_parameters(self) -&gt; tuple:</span>
 <span class="line-empty" title="No Anys on this line!">        """Get the parameters for the rolling sum.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        First, validates that all required parameters have been set. Then, returns</span>
@@ -1191,7 +1185,7 @@ Omitted Generics (x1)"></span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        - lf</span>
 <span class="line-empty" title="No Anys on this line!">        - x_col</span>
-<span class="line-empty" title="No Anys on this line!">        - x_name</span>
+<span class="line-empty" title="No Anys on this line!">        # - x_name</span>
 <span class="line-empty" title="No Anys on this line!">        - date_col</span>
 <span class="line-empty" title="No Anys on this line!">        - cat_col</span>
 <span class="line-empty" title="No Anys on this line!">        - index_col</span>
@@ -1211,24 +1205,24 @@ Omitted Generics (x1)"></span>
 <span class="line-empty" title="No Anys on this line!">        &gt;&gt;&gt; (lf, x_col, x_name, date, cat, idx, lag, win, rejoin, op) = (</span>
 <span class="line-empty" title="No Anys on this line!">        ...     d._get_parameters()</span>
 <span class="line-empty" title="No Anys on this line!">        ... )</span>
-<span class="line-precise" title="No Anys on this line!">        """</span>
-<span class="line-empty" title="No Anys on this line!">        self._validate_parameters()</span>
+<span class="line-empty" title="No Anys on this line!">        """</span>
+<span class="line-precise" title="No Anys on this line!">        self._validate_parameters()</span>
+<span class="line-empty" title="No Anys on this line!">        return (</span>
 <span class="line-precise" title="Any Types on this line: 
-Unimported (x1)">        return (</span>
-<span class="line-precise" title="No Anys on this line!">            self._lf if self._lf is not None else pl.LazyFrame(),</span>
-<span class="line-any" title="Any Types on this line: 
-Unannotated (x2)">            self._x_col if self._x_col is not None else "",</span>
-<span class="line-precise" title="No Anys on this line!">            # self._x_name if self._x_name is not None else "",</span>
+Unimported (x1)">            self._lf if self._lf is not None else pl.LazyFrame(),</span>
+<span class="line-precise" title="No Anys on this line!">            self._x_col if self._x_col is not None else "",</span>
+<span class="line-precise" title="No Anys on this line!">            self._x_col if self._x_col is not None else "",</span>
+<span class="line-empty" title="No Anys on this line!">            # self._x_name if self._x_name is not None else "",</span>
 <span class="line-precise" title="No Anys on this line!">            self._date_col if self._date_col is not None else "",</span>
 <span class="line-precise" title="No Anys on this line!">            self._cat_col if self._cat_col is not None else "",</span>
 <span class="line-precise" title="No Anys on this line!">            self._index_col if self._index_col is not None else "",</span>
 <span class="line-precise" title="No Anys on this line!">            self._offset if self._offset is not None else 0,</span>
 <span class="line-precise" title="No Anys on this line!">            self._window if self._window is not None else 0,</span>
 <span class="line-precise" title="No Anys on this line!">            self._rejoin,</span>
-<span class="line-empty" title="No Anys on this line!">            self._op,</span>
+<span class="line-precise" title="No Anys on this line!">            self._op,</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    def _get_column_name(self) -&gt; str:</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def _get_column_name(self) -&gt; str:</span>
 <span class="line-empty" title="No Anys on this line!">        """Get the name of the column for the rolling sum.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Returns the name of the column for the rolling sum. The name of the column</span>
@@ -1239,21 +1233,21 @@ Unannotated (x2)">            self._x_col if self._x_col is not None else "",</s
 <span class="line-empty" title="No Anys on this line!">        -------</span>
 <span class="line-empty" title="No Anys on this line!">        str</span>
 <span class="line-empty" title="No Anys on this line!">            The name of the column for the rolling sum.</span>
-<span class="line-precise" title="No Anys on this line!">        """</span>
+<span class="line-empty" title="No Anys on this line!">        """</span>
+<span class="line-precise" title="No Anys on this line!">        self._validate_parameters()</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x7)">        self._validate_parameters()</span>
-<span class="line-empty" title="No Anys on this line!">        (_, x_col, _, _, cat, _, lag, win, _, op) = self._get_parameters()</span>
+Omitted Generics (x7)">        (_, x_col, _, _, cat, _, lag, win, _, op) = self._get_parameters()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">        return (</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x5)">        return (</span>
+Omitted Generics (x5)">            rolling_op_column_name(op, x_col, cat, lag, win)</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x2)">            rolling_op_column_name(op, x_col, cat, lag, win)</span>
+Omitted Generics (x2)">            if cat != "cat"</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x4)">            if cat != "cat"</span>
-<span class="line-empty" title="No Anys on this line!">            else rolling_op_column_name(op, x_col, None, lag, win)</span>
+Omitted Generics (x4)">            else rolling_op_column_name(op, x_col, None, lag, win)</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    def _get_unique_levels(self) -&gt; list[str]:</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def _get_unique_levels(self) -&gt; list[str]:</span>
 <span class="line-empty" title="No Anys on this line!">        """Get the unique levels of the categorical column.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Returns the unique levels of the categorical column. If no categorical</span>
@@ -1263,24 +1257,24 @@ Omitted Generics (x4)">            if cat != "cat"</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
 <span class="line-empty" title="No Anys on this line!">        list[str]</span>
 <span class="line-empty" title="No Anys on this line!">            The unique levels of the categorical column.</span>
-<span class="line-precise" title="No Anys on this line!">        """</span>
+<span class="line-empty" title="No Anys on this line!">        """</span>
+<span class="line-precise" title="No Anys on this line!">        self._validate_parameters()</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x4)">        self._validate_parameters()</span>
-<span class="line-empty" title="No Anys on this line!">        (lf, _, _, _, cat, _, _, _, _, _) = self._get_parameters()</span>
+Omitted Generics (x4)">        (lf, _, _, _, cat, _, _, _, _, _) = self._get_parameters()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # If there is a categorical column, return the unique levels</span>
-<span class="line-precise" title="No Anys on this line!">        return (</span>
+<span class="line-empty" title="No Anys on this line!">        return (</span>
+<span class="line-precise" title="No Anys on this line!">            ["cat"]</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x4)">            ["cat"]</span>
+Omitted Generics (x4)">            if (cat is None) | (cat == "cat")</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x9)">            if (cat is None) | (cat == "cat")</span>
+Omitted Generics (x9)">            else lf.select([pl.col(cat).cast(pl.Utf8).unique().name.keep()])</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x1)">            else lf.select([pl.col(cat).cast(pl.Utf8).unique().name.keep()])</span>
-<span class="line-empty" title="No Anys on this line!">            .collect()[cat]</span>
+Omitted Generics (x1)">            .collect()[cat]</span>
 <span class="line-empty" title="No Anys on this line!">            .to_list()</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    def _filter_by_level(self, level: str) -&gt; pl.LazyFrame:</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def _filter_by_level(self, level: str) -&gt; pl.LazyFrame:</span>
 <span class="line-empty" title="No Anys on this line!">        """Filter the LazyFrame by the level of the categorical column.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Returns a LazyFrame filtered by the level of the categorical column.</span>
@@ -1294,68 +1288,66 @@ Omitted Generics (x1)">            else lf.select([pl.col(cat).cast(pl.Utf8).uni
 <span class="line-empty" title="No Anys on this line!">        -------</span>
 <span class="line-empty" title="No Anys on this line!">        pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">            A LazyFrame filtered by the level of the categorical column.</span>
-<span class="line-precise" title="No Anys on this line!">        """</span>
+<span class="line-empty" title="No Anys on this line!">        """</span>
+<span class="line-precise" title="No Anys on this line!">        self._validate_parameters()</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x4)">        self._validate_parameters()</span>
-<span class="line-empty" title="No Anys on this line!">        (lf, _, _, _, cat, _, _, _, _, _) = self._get_parameters()</span>
+Omitted Generics (x4)">        (lf, _, _, _, cat, _, _, _, _, _) = self._get_parameters()</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x4)"></span>
-<span class="line-empty" title="No Anys on this line!">        return lf.filter(pl.col(cat).cast(pl.Utf8) == str(level))  # type: ignore</span>
-<span class="line-precise" title="No Anys on this line!"></span>
+Omitted Generics (x4)">        return lf.filter(pl.col(cat).cast(pl.Utf8) == str(level))  # type: ignore</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def _calculate_sum_at_level(self, level: str) -&gt; pl.LazyFrame:</span>
+<span class="line-precise" title="No Anys on this line!">        self._validate_parameters()</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x8)">        self._validate_parameters()</span>
-<span class="line-empty" title="No Anys on this line!">        _, x_col, _, date, cat, idx, lag, win, _, _ = self._get_parameters()</span>
+Omitted Generics (x8)">        _, x_col, _, date, cat, idx, lag, win, _, _ = self._get_parameters()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        # Filter the lf at the level of the category</span>
-<span class="line-empty" title="No Anys on this line!">        frame = self._filter_by_level(level)</span>
+<span class="line-empty" title="No Anys on this line!">        # Filter the lf at the level of the category</span>
+<span class="line-precise" title="No Anys on this line!">        frame = self._filter_by_level(level)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">        # Calculate and return the rolling sum at the level of the category</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x5)">        # Calculate and return the rolling sum at the level of the category</span>
-<span class="line-empty" title="No Anys on this line!">        out = dynamic_rolling_sum(frame, x_col, date, idx, lag, win)</span>
+Omitted Generics (x5)">        out = dynamic_rolling_sum(frame, x_col, date, idx, lag, win)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        # Rename the sum column</span>
+<span class="line-empty" title="No Anys on this line!">        # Rename the sum column</span>
+<span class="line-precise" title="No Anys on this line!">        out = out.with_columns(</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x1)">        out = out.with_columns(</span>
-<span class="line-empty" title="No Anys on this line!">            [pl.col(f"rolling_{x_col}").alias(self._get_column_name())]</span>
+Omitted Generics (x1)">            [pl.col(f"rolling_{x_col}").alias(self._get_column_name())]</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!">        # Add the level as a column</span>
-<span class="line-precise" title="No Anys on this line!">        return (</span>
+<span class="line-empty" title="No Anys on this line!">        return (</span>
+<span class="line-precise" title="No Anys on this line!">            out.with_columns(</span>
 <span class="line-any" title="Any Types on this line: 
 Explicit (x1)
-Omitted Generics (x1)">            out.with_columns(</span>
-<span class="line-empty" title="No Anys on this line!">                [pl.lit(level).cast(pl.Utf8).cast(pl.Categorical).alias(cat)]</span>
+Omitted Generics (x1)">                [pl.lit(level).cast(pl.Utf8).cast(pl.Categorical).alias(cat)]</span>
 <span class="line-empty" title="No Anys on this line!">            )</span>
-<span class="line-empty" title="No Anys on this line!">            .collect()</span>
-<span class="line-empty" title="No Anys on this line!">            .lazy()</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    def _calculate_sum(self) -&gt; pl.LazyFrame:</span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x9)">        self._validate_parameters()</span>
-<span class="line-empty" title="No Anys on this line!">        lf, x_col, _, date, cat, idx, lag, win, _, _ = self._get_parameters()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        # Run the dynamic rolling sum at each level of the category</span>
+<span class="line-precise" title="No Anys on this line!">    def _calculate_sum(self) -&gt; pl.LazyFrame:</span>
+<span class="line-precise" title="No Anys on this line!">        self._validate_parameters()</span>
+<span class="line-any" title="Any Types on this line: 
+Omitted Generics (x9)">        lf, x_col, _, date, cat, idx, lag, win, _, _ = self._get_parameters()</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">        # Run the dynamic rolling sum at each level of the category</span>
 <span class="line-precise" title="No Anys on this line!">        frames = [</span>
-<span class="line-empty" title="No Anys on this line!">            self._calculate_sum_at_level(level) for level in self._get_unique_levels()</span>
+<span class="line-precise" title="No Anys on this line!">            self._calculate_sum_at_level(level) for level in self._get_unique_levels()</span>
 <span class="line-empty" title="No Anys on this line!">        ]</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        # Concatenate the frames</span>
-<span class="line-empty" title="No Anys on this line!">        return pl.concat(frames, how="vertical").select(</span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x1)">            [</span>
+<span class="line-empty" title="No Anys on this line!">        # Concatenate the frames</span>
+<span class="line-precise" title="No Anys on this line!">        return pl.concat(frames, how="vertical").select(</span>
+<span class="line-empty" title="No Anys on this line!">            [</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x1)">                pl.col(idx).name.keep(),  # -------------------- index column</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x1)">                pl.col(date).name.keep(),  # ------------------- date column</span>
-<span class="line-precise" title="No Anys on this line!">                pl.col(cat).cast(pl.Categorical).name.keep(),  # category column</span>
+<span class="line-any" title="Any Types on this line: 
+Omitted Generics (x1)">                pl.col(cat).cast(pl.Categorical).name.keep(),  # category column</span>
 <span class="line-precise" title="No Anys on this line!">                pl.col(</span>
-<span class="line-empty" title="No Anys on this line!">                    f"{self._get_column_name()}"</span>
+<span class="line-precise" title="No Anys on this line!">                    f"{self._get_column_name()}"</span>
 <span class="line-empty" title="No Anys on this line!">                ).name.keep(),  # ------------------------------ rolling sum column</span>
 <span class="line-empty" title="No Anys on this line!">            ]</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    def _drop_right_suffixes(self, lf: pl.LazyFrame) -&gt; pl.LazyFrame:</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def _drop_right_suffixes(self, lf: pl.LazyFrame) -&gt; pl.LazyFrame:</span>
 <span class="line-empty" title="No Anys on this line!">        """Drop any columns with "_right" suffixes.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Returns a LazyFrame with any columns with "_right" suffixes dropped.</span>
@@ -1370,18 +1362,18 @@ Omitted Generics (x1)">                pl.col(date).name.keep(),  # ------------
 <span class="line-empty" title="No Anys on this line!">        pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">            A LazyFrame with any columns with "_right" suffixes dropped.</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-precise" title="No Anys on this line!">        # Test whether or not any changes need to be made</span>
-<span class="line-empty" title="No Anys on this line!">        has_rights = any(col.endswith("_right") for col in lf.columns)</span>
+<span class="line-empty" title="No Anys on this line!">        # Test whether or not any changes need to be made</span>
+<span class="line-precise" title="No Anys on this line!">        has_rights = any(col.endswith("_right") for col in lf.columns)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Return the LazyFrame with any columns with "_right" suffixes dropped</span>
 <span class="line-empty" title="No Anys on this line!">        # if there are any, otherwise return the original LazyFrame</span>
-<span class="line-precise" title="No Anys on this line!">        return (</span>
+<span class="line-empty" title="No Anys on this line!">        return (</span>
 <span class="line-precise" title="No Anys on this line!">            lf.drop([col for col in lf.columns if col.endswith("_right")])</span>
 <span class="line-precise" title="No Anys on this line!">            if has_rights</span>
-<span class="line-empty" title="No Anys on this line!">            else lf</span>
+<span class="line-precise" title="No Anys on this line!">            else lf</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    def _rejoin_rolling_column(self, lf_with_drs: pl.LazyFrame) -&gt; pl.LazyFrame:</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def _rejoin_rolling_column(self, lf_with_drs: pl.LazyFrame) -&gt; pl.LazyFrame:</span>
 <span class="line-empty" title="No Anys on this line!">        """Join the rolling sum to the original LazyFrame if rejoin is True.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Returns the original LazyFrame with the rolling sum concatenated to the end</span>
@@ -1399,35 +1391,35 @@ Omitted Generics (x1)">                pl.col(date).name.keep(),  # ------------
 <span class="line-empty" title="No Anys on this line!">            The original LazyFrame with the rolling sum concatenated to the end</span>
 <span class="line-empty" title="No Anys on this line!">            if rejoin is True. A LazyFrame with the same number of rows, but with</span>
 <span class="line-empty" title="No Anys on this line!">            columns for the index, date, categories, and rolling sum if rejoin is False.</span>
-<span class="line-precise" title="No Anys on this line!">        """</span>
+<span class="line-empty" title="No Anys on this line!">        """</span>
+<span class="line-precise" title="No Anys on this line!">        lf: pl.LazyFrame</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x4)">        lf: pl.LazyFrame</span>
-<span class="line-precise" title="No Anys on this line!">        (lf, _, _, _, _, idx, _, _, rejoin, _) = self._get_parameters()</span>
-<span class="line-empty" title="No Anys on this line!">        col_name = self._get_column_name()</span>
+Omitted Generics (x4)">        (lf, _, _, _, _, idx, _, _, rejoin, _) = self._get_parameters()</span>
+<span class="line-precise" title="No Anys on this line!">        col_name = self._get_column_name()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        return (</span>
-<span class="line-empty" title="No Anys on this line!">            lf.with_columns(</span>
+<span class="line-empty" title="No Anys on this line!">        return (</span>
+<span class="line-precise" title="No Anys on this line!">            lf.with_columns(</span>
+<span class="line-empty" title="No Anys on this line!">                [</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x1)">                [</span>
-<span class="line-precise" title="No Anys on this line!">                    pl.col(idx)</span>
-<span class="line-empty" title="No Anys on this line!">                    .cast(pl.Int64)</span>
+Omitted Generics (x1)">                    pl.col(idx)</span>
+<span class="line-precise" title="No Anys on this line!">                    .cast(pl.Int64)</span>
 <span class="line-empty" title="No Anys on this line!">                    .name.keep()  # Hopefully this doesn't break anything</span>
 <span class="line-empty" title="No Anys on this line!">                ]</span>
-<span class="line-precise" title="No Anys on this line!">            ).join(</span>
+<span class="line-empty" title="No Anys on this line!">            ).join(</span>
+<span class="line-precise" title="No Anys on this line!">                lf_with_drs.select(</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x1)">                lf_with_drs.select(</span>
-<span class="line-empty" title="No Anys on this line!">                    [pl.col(idx).name.keep(), pl.col(col_name).name.keep()]</span>
+Omitted Generics (x1)">                    [pl.col(idx).name.keep(), pl.col(col_name).name.keep()]</span>
+<span class="line-empty" title="No Anys on this line!">                ),</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x1)">                ),</span>
-<span class="line-precise" title="No Anys on this line!">                on=idx,</span>
-<span class="line-empty" title="No Anys on this line!">                how="left",</span>
+Omitted Generics (x1)">                on=idx,</span>
+<span class="line-precise" title="No Anys on this line!">                how="left",</span>
+<span class="line-empty" title="No Anys on this line!">            )</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x1)">            )</span>
-<span class="line-precise" title="No Anys on this line!">            if rejoin</span>
-<span class="line-empty" title="No Anys on this line!">            else lf_with_drs</span>
+Omitted Generics (x1)">            if rejoin</span>
+<span class="line-precise" title="No Anys on this line!">            else lf_with_drs</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">    def run(self) -&gt; pl.LazyFrame:</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def run(self) -&gt; pl.LazyFrame:</span>
 <span class="line-empty" title="No Anys on this line!">        """Run the dynamic rolling sum using the provided LazyFrame and parameters.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        This method wraps the _run method, which is the method that actually</span>
@@ -1439,98 +1431,98 @@ Omitted Generics (x1)">            )</span>
 <span class="line-empty" title="No Anys on this line!">        pl.LazyFrame</span>
 <span class="line-empty" title="No Anys on this line!">            A LazyFrame with columns that vary depending on the value of self._rejoin.</span>
 <span class="line-empty" title="No Anys on this line!">        """</span>
-<span class="line-precise" title="No Anys on this line!">        # Validate, collect, and calcluate parameters</span>
-<span class="line-empty" title="No Anys on this line!">        self._validate_parameters()</span>
+<span class="line-empty" title="No Anys on this line!">        # Validate, collect, and calcluate parameters</span>
+<span class="line-precise" title="No Anys on this line!">        self._validate_parameters()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        # Run the dynamic rolling sum if all parameters are set</span>
-<span class="line-empty" title="No Anys on this line!">        lf_with_drs = self._calculate_sum()</span>
+<span class="line-empty" title="No Anys on this line!">        # Run the dynamic rolling sum if all parameters are set</span>
+<span class="line-precise" title="No Anys on this line!">        lf_with_drs = self._calculate_sum()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        # Drop any columns with "_right" suffixes</span>
-<span class="line-empty" title="No Anys on this line!">        lf_with_drs = self._drop_right_suffixes(lf_with_drs)</span>
+<span class="line-empty" title="No Anys on this line!">        # Drop any columns with "_right" suffixes</span>
+<span class="line-precise" title="No Anys on this line!">        lf_with_drs = self._drop_right_suffixes(lf_with_drs)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        # Join the rolling sum to the original LazyFrame if rejoin is True</span>
-<span class="line-empty" title="No Anys on this line!">        lf = self._rejoin_rolling_column(lf_with_drs)</span>
+<span class="line-empty" title="No Anys on this line!">        # Join the rolling sum to the original LazyFrame if rejoin is True</span>
+<span class="line-precise" title="No Anys on this line!">        lf = self._rejoin_rolling_column(lf_with_drs)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        # Drop any columns with "_right" suffixes (again, just in case)</span>
-<span class="line-empty" title="No Anys on this line!">        lf = self._drop_right_suffixes(lf)</span>
+<span class="line-empty" title="No Anys on this line!">        # Drop any columns with "_right" suffixes (again, just in case)</span>
+<span class="line-precise" title="No Anys on this line!">        lf = self._drop_right_suffixes(lf)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        # If an additional "cat" column was added, drop it</span>
+<span class="line-empty" title="No Anys on this line!">        # If an additional "cat" column was added, drop it</span>
 <span class="line-precise" title="No Anys on this line!">        if (not self._has_cat_col) | (self._cat_col == "cat"):</span>
-<span class="line-empty" title="No Anys on this line!">            lf = lf.drop("cat")</span>
+<span class="line-precise" title="No Anys on this line!">            lf = lf.drop("cat")</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        # If self._rename is not None, rename the column</span>
+<span class="line-empty" title="No Anys on this line!">        # If self._rename is not None, rename the column</span>
 <span class="line-precise" title="No Anys on this line!">        if self._rename is not None:</span>
 <span class="line-precise" title="No Anys on this line!">            lf = lf.with_columns(</span>
 <span class="line-precise" title="No Anys on this line!">                [pl.col(self._get_column_name()).alias(self._rename)]</span>
-<span class="line-empty" title="No Anys on this line!">            ).drop([self._get_column_name()])</span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        return lf</span>
+<span class="line-precise" title="No Anys on this line!">            ).drop([self._get_column_name()])</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">def dynamic_rolling_sum(</span>
+<span class="line-precise" title="No Anys on this line!">        return lf</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">def dynamic_rolling_sum(</span>
 <span class="line-empty" title="No Anys on this line!">    lf: pl.LazyFrame,</span>
 <span class="line-empty" title="No Anys on this line!">    x_col: str,</span>
-<span class="line-precise" title="No Anys on this line!">    date_col: str,</span>
+<span class="line-empty" title="No Anys on this line!">    date_col: str,</span>
 <span class="line-precise" title="No Anys on this line!">    index_col: str = "index",</span>
 <span class="line-precise" title="No Anys on this line!">    offset: int = 30,</span>
-<span class="line-empty" title="No Anys on this line!">    window: int = 360,</span>
+<span class="line-precise" title="No Anys on this line!">    window: int = 360,</span>
 <span class="line-empty" title="No Anys on this line!">) -&gt; pl.LazyFrame:</span>
-<span class="line-precise" title="No Anys on this line!">    # Check to ensure there is an index column:</span>
+<span class="line-empty" title="No Anys on this line!">    # Check to ensure there is an index column:</span>
 <span class="line-precise" title="No Anys on this line!">    if index_col not in lf.columns:</span>
 <span class="line-precise" title="No Anys on this line!">        raise ValueError(</span>
-<span class="line-empty" title="No Anys on this line!">            f"Index column {index_col} not found in LazyFrame. "</span>
+<span class="line-precise" title="No Anys on this line!">            f"Index column {index_col} not found in LazyFrame. "</span>
 <span class="line-empty" title="No Anys on this line!">            "Please provide a valid index column."</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!">    # Data frame with the row index as a column, to resort the data</span>
-<span class="line-precise" title="No Anys on this line!">    # to the original order after the rolling sum</span>
-<span class="line-empty" title="No Anys on this line!">    lf_order = lf.select([index_col, date_col])</span>
+<span class="line-empty" title="No Anys on this line!">    # to the original order after the rolling sum</span>
+<span class="line-precise" title="No Anys on this line!">    lf_order = lf.select([index_col, date_col])</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Sum the values in the value column by date so there is a single value</span>
-<span class="line-precise" title="No Anys on this line!">    # for each date in the date column</span>
-<span class="line-empty" title="No Anys on this line!">    lf_ = lf.select([pl.col(index_col), pl.col(date_col), pl.col(x_col)])</span>
+<span class="line-empty" title="No Anys on this line!">    # for each date in the date column</span>
+<span class="line-precise" title="No Anys on this line!">    lf_ = lf.select([pl.col(index_col), pl.col(date_col), pl.col(x_col)])</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    # Format columns in input LazyFrame</span>
+<span class="line-empty" title="No Anys on this line!">    # Format columns in input LazyFrame</span>
 <span class="line-precise" title="No Anys on this line!">    lf_ = _format_date_col(lf_, date_col)</span>
-<span class="line-empty" title="No Anys on this line!">    lf_ = _format_value_col(lf_, x_col)</span>
+<span class="line-precise" title="No Anys on this line!">    lf_ = _format_value_col(lf_, x_col)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Create a list column with the dates to be used for the</span>
 <span class="line-empty" title="No Anys on this line!">    # rolling sum, optionally grouping by categorical columns</span>
+<span class="line-empty" title="No Anys on this line!">    # if they are provided</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x4)">    # if they are provided</span>
-<span class="line-empty" title="No Anys on this line!">    lf_ = _get_date_list_col(lf_, date_col, offset, window)</span>
+Omitted Generics (x4)">    lf_ = _get_date_list_col(lf_, date_col, offset, window)</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">    # Create a lookup table that joins the dates in the date column to the</span>
-<span class="line-precise" title="No Anys on this line!">    # sum of the values in the value column for each date</span>
+<span class="line-empty" title="No Anys on this line!">    # sum of the values in the value column for each date</span>
 <span class="line-precise" title="No Anys on this line!">    mapping = (</span>
 <span class="line-precise" title="No Anys on this line!">        lf_.select([date_col, x_col])</span>
 <span class="line-precise" title="No Anys on this line!">        .group_by(date_col)</span>
 <span class="line-precise" title="No Anys on this line!">        .agg(pl.col(x_col).sum())</span>
-<span class="line-empty" title="No Anys on this line!">        .sort(date_col)</span>
+<span class="line-precise" title="No Anys on this line!">        .sort(date_col)</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
-<span class="line-precise" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    lf_ = (</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Explicit (x1)">    lf_ = (</span>
-<span class="line-precise" title="No Anys on this line!">        lf_.explode("date_list")</span>
+Explicit (x1)">        lf_.explode("date_list")</span>
 <span class="line-precise" title="No Anys on this line!">        .join(mapping, how="left", left_on="date_list", right_on=date_col)</span>
 <span class="line-precise" title="No Anys on this line!">        .fill_null(0)</span>
 <span class="line-precise" title="No Anys on this line!">        .drop(["date_list"])</span>
 <span class="line-precise" title="No Anys on this line!">        .group_by([index_col, date_col])</span>
 <span class="line-precise" title="No Anys on this line!">        .agg(pl.col(f"{x_col}_right").sum().alias(f"rolling_{x_col}"))</span>
-<span class="line-empty" title="No Anys on this line!">        .sort(index_col)</span>
+<span class="line-precise" title="No Anys on this line!">        .sort(index_col)</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">    # If there is a duplicate from a join, drop the duplicate</span>
+<span class="line-empty" title="No Anys on this line!">    # If there is a duplicate from a join, drop the duplicate</span>
 <span class="line-precise" title="No Anys on this line!">    for c in lf_.columns:</span>
 <span class="line-precise" title="No Anys on this line!">        if c.endswith(("_right", "_left")):</span>
 <span class="line-precise" title="No Anys on this line!">            lf_ = lf_.drop(c)</span>
 <span class="line-precise" title="No Anys on this line!">    for c in lf_order.columns:</span>
 <span class="line-precise" title="No Anys on this line!">        if c.endswith(("_right", "_left")):</span>
-<span class="line-empty" title="No Anys on this line!">            lf_order = lf_order.drop(c)</span>
-<span class="line-imprecise" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">            lf_order = lf_order.drop(c)</span>
+<span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="No Anys on this line!">    return lf_order.with_columns([pl.col(index_col).cast(pl.Int64).name.keep()]).join(</span>
-<span class="line-precise" title="No Anys on this line!">        lf_.with_columns([pl.col(index_col).cast(pl.Int64).name.keep()]),</span>
-<span class="line-precise" title="No Anys on this line!">        on=index_col,</span>
-<span class="line-empty" title="No Anys on this line!">        how="left",</span>
+<span class="line-imprecise" title="No Anys on this line!">        lf_.with_columns([pl.col(index_col).cast(pl.Int64).name.keep()]),</span>
+<span class="line-precise" title="No Anys on this line!">        on=[index_col, date_col],</span>
+<span class="line-precise" title="No Anys on this line!">        how="left",</span>
 <span class="line-empty" title="No Anys on this line!">    )</span>
 </pre></td>
 </tr></tbody>
