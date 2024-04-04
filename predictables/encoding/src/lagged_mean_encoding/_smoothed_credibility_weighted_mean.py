@@ -49,19 +49,6 @@ class CredWtdMean(LaplaceSmoothedMean):
             "Use `numerator_col` and `denominator_col` instead."
         )
 
-    def x_name(*args, **kwargs) -> "CredWtdMean":
-        """Set the name of the column to use as the numerator in the credibility weighted mean calculation.
-
-        Warning
-        -------
-        This method is not implemented for `CredWtdMean`. Use
-        `numerator_col` and `denominator_col` instead.
-        """
-        raise NotImplementedError(
-            "This method is not implemented for `CredWtdMean`. "
-            "Use `numerator_col` and `denominator_col` instead."
-        )
-
     def k(self, k: int) -> "CredWtdMean":
         """
         Set the k value for the credibility weighted mean calculation.
