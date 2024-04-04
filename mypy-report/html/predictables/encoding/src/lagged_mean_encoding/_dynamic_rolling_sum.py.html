@@ -1191,8 +1191,7 @@ Omitted Generics (x4)">            else rolling_op_column_name(op, x_col, None, 
 <span class="line-precise" title="No Anys on this line!">    def _get_unique_levels(self) -&gt; list[str]:</span>
 <span class="line-empty" title="No Anys on this line!">        """Get the unique levels of the categorical column.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        Returns the unique levels of the categorical column. If no categorical</span>
-<span class="line-empty" title="No Anys on this line!">        column is provided, returns an empty list.</span>
+<span class="line-empty" title="No Anys on this line!">        Returns the unique levels of the categorical column.</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        Returns</span>
 <span class="line-empty" title="No Anys on this line!">        -------</span>
@@ -1203,16 +1202,16 @@ Omitted Generics (x4)">            else rolling_op_column_name(op, x_col, None, 
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x4)">        (lf, _, _, _, cat, _, _, _, _, _) = self._get_parameters()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        # If there is a categorical column, return the unique levels</span>
-<span class="line-empty" title="No Anys on this line!">        return (</span>
-<span class="line-precise" title="No Anys on this line!">            ["cat"]</span>
+<span class="line-empty" title="No Anys on this line!">        catcol_name = cat if cat is not None else "cat"</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">        # If there is a categorical column, return the unique levels</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x4)">            if (cat is None) | (cat == "cat")</span>
+Omitted Generics (x4)">        return (</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x9)">            else lf.select([pl.col(cat).cast(pl.Utf8).unique().name.keep()])</span>
-<span class="line-any" title="Any Types on this line: 
-Omitted Generics (x1)">            .collect()[cat]</span>
-<span class="line-empty" title="No Anys on this line!">            .to_list()</span>
+Omitted Generics (x10)">            lf.select([pl.col(catcol_name).cast(pl.Utf8).unique().name.keep()])</span>
+<span class="line-empty" title="No Anys on this line!">            .collect()</span>
+<span class="line-empty" title="No Anys on this line!">            .to_pandas()</span>
+<span class="line-empty" title="No Anys on this line!">            .tolist()</span>
 <span class="line-empty" title="No Anys on this line!">        )</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-precise" title="No Anys on this line!">    def _filter_by_level(self, level: str) -&gt; pl.LazyFrame:</span>

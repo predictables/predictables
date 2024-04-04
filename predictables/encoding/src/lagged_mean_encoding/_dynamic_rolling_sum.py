@@ -444,8 +444,7 @@ class DynamicRollingSum:
     def _get_unique_levels(self) -> list[str]:
         """Get the unique levels of the categorical column.
 
-        Returns the unique levels of the categorical column. If no categorical
-        column is provided, returns an empty list.
+        Returns the unique levels of the categorical column.
 
         Returns
         -------
@@ -455,13 +454,14 @@ class DynamicRollingSum:
         self._validate_parameters()
         (lf, _, _, _, cat, _, _, _, _, _) = self._get_parameters()
 
+        catcol_name = cat if cat is not None else "cat"
+
         # If there is a categorical column, return the unique levels
         return (
-            ["cat"]
-            if (cat is None) | (cat == "cat")
-            else lf.select([pl.col(cat).cast(pl.Utf8).unique().name.keep()])
-            .collect()[cat]
-            .to_list()
+            lf.select([pl.col(catcol_name).cast(pl.Utf8).unique().name.keep()])
+            .collect()
+            .to_pandas()
+            .tolist()
         )
 
     def _filter_by_level(self, level: str) -> pl.LazyFrame:
