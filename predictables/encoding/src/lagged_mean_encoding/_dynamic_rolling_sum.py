@@ -463,6 +463,8 @@ class DynamicRollingSum:
             lf.select([pl.col(catcol_name).cast(pl.Utf8).unique().name.keep()])
             .collect()
             .to_pandas()
+            .iloc[:, 0]
+            .tolist()
         )
 
     def _filter_by_level(self, level: str) -> pl.LazyFrame:
