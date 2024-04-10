@@ -141,7 +141,6 @@ class DynamicRollingSum:
         # Return self updated with the validated column
         return _set_x_col(self, x_col)
 
-
     def date_col(self, date_col: str = "date") -> "DynamicRollingSum":
         """Set the date column to be used for the rolling sum.
 
@@ -456,12 +455,14 @@ class DynamicRollingSum:
 
         catcol_name = cat if cat is not None else "cat"
 
+        if isinstance(lf, pl.DataFrame):
+            lf = pl.LazyFrame(lf)
+
         # If there is a categorical column, return the unique levels
         return (
             lf.select([pl.col(catcol_name).cast(pl.Utf8).unique().name.keep()])
             .collect()
             .to_pandas()
-            .tolist()
         )
 
     def _filter_by_level(self, level: str) -> pl.LazyFrame:
@@ -488,6 +489,10 @@ class DynamicRollingSum:
         self._validate_parameters()
         _, x_col, _, date, cat, idx, lag, win, _, _ = self._get_parameters()
 
+        # # ====== COLLECT TO DATAFRAME FOR DEBUGGING ======
+        # lf, x_col, _, date, cat, idx, lag, win, _, _ = self._get_parameters()
+        # lf.collect().to_pandas()
+
         # Filter the lf at the level of the category
         frame = self._filter_by_level(level)
 
@@ -506,6 +511,9 @@ class DynamicRollingSum:
     def _calculate_sum(self) -> pl.LazyFrame:
         self._validate_parameters()
         lf, x_col, _, date, cat, idx, lag, win, _, _ = self._get_parameters()
+
+        # # ====== COLLECT TO DATAFRAME FOR DEBUGGING ======
+        # lf.collect().to_pandas()
 
         # Run the dynamic rolling sum at each level of the category
         frames = [
@@ -605,6 +613,9 @@ class DynamicRollingSum:
         """
         # Validate, collect, and calcluate parameters
         self._validate_parameters()
+
+        # # collect to dataframe
+        # self._lf.collect().to_pandas()
 
         # Run the dynamic rolling sum if all parameters are set
         lf_with_drs = self._calculate_sum()
