@@ -19,5 +19,5 @@ observations 1-12 to predict 13, the second validation set uses observations
 import polars as pl
 import lightgbm as lgb
 
-from predictables.encoding.src._log_transform import log_encoding
-from predictables.encoding.src._logit_transform import logit_encoding
+from predictables.encoding.src._log_transform import log_transform
+from predictables.encoding.src._logit_transform import logit_transform
