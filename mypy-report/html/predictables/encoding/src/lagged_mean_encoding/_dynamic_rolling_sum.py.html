@@ -1115,7 +1115,7 @@ Explicit (x1)">            self._lf = lf.with_columns([pl.lit("0").cast(pl.Categ
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-empty" title="No Anys on this line!">        # Final check: is the index Int64</span>
 <span class="line-imprecise" title="Any Types on this line: 
-Error (x1)">        self._lf = self._lf.with_columns([pl.col("index").cast(pl.Int64)])</span>
+Error (x1)">        self._lf = self._lf.with_columns([pl.col("index").cast(pl.Int64)])  # type: ignore</span>
 <span class="line-empty" title="No Anys on this line!"></span>
 <span class="line-imprecise" title="Any Types on this line: 
 Omitted Generics (x1)">    def _get_parameters(self) -&gt; tuple:</span>
@@ -1202,11 +1202,11 @@ Omitted Generics (x4)">            else rolling_op_column_name(op, x_col, None, 
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x4)">        (lf, _, _, _, cat, _, _, _, _, _) = self._get_parameters()</span>
 <span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-empty" title="No Anys on this line!">        catcol_name = cat if cat is not None else "cat"</span>
-<span class="line-empty" title="No Anys on this line!"></span>
-<span class="line-precise" title="No Anys on this line!">        # If there is a categorical column, return the unique levels</span>
 <span class="line-any" title="Any Types on this line: 
-Omitted Generics (x4)">        return (</span>
+Omitted Generics (x3)">        catcol_name = cat if cat is not None else "cat"</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">        # If there is a categorical column, return the unique levels</span>
+<span class="line-empty" title="No Anys on this line!">        return (</span>
 <span class="line-any" title="Any Types on this line: 
 Omitted Generics (x10)">            lf.select([pl.col(catcol_name).cast(pl.Utf8).unique().name.keep()])</span>
 <span class="line-empty" title="No Anys on this line!">            .collect()</span>

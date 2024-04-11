@@ -374,7 +374,7 @@ class DynamicRollingSum:
             self._cat_col = "cat"
 
         # Final check: is the index Int64
-        self._lf = self._lf.with_columns([pl.col("index").cast(pl.Int64)])
+        self._lf = self._lf.with_columns([pl.col("index").cast(pl.Int64)])  # type: ignore
 
     def _get_parameters(self) -> tuple:
         """Get the parameters for the rolling sum.
