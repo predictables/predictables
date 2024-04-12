@@ -27,7 +27,7 @@ INDEX_COLUMN = "index"
 WINDOW = 30
 N_COLS = 18
 
-PROJECT_ROOT = "/rdata/aweaver/EGModeling/Hit Ratio/bop_model"
+PROJECT_ROOT = "/rdata/aweaver/EGModeling/hit_ratio/bop_model"
 ########################################
 
 
@@ -517,3 +517,7 @@ def main() -> None:
     df_test.collect().write_parquet(f"{PROJECT_ROOT}/mean_encoding/test.parquet")
 
     all_categories(df_train, cat_cols(df_train))
+
+
+if __name__ == "__main__":
+    main()
