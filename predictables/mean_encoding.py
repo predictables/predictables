@@ -4,17 +4,18 @@ The constants defined at the beginning are all that are needed to run the script
 """
 
 from __future__ import annotations
+
 import logging
 import os
-from pathlib import Path
 import subprocess
 import sys
+import typing
+from pathlib import Path
 
 import numpy as np
 import polars as pl
 import polars.selectors as cs
 from tqdm import tqdm
-import typing
 
 sys.path.append("/rdata/aweaver/EGModeling")
 from predictables.encoding import DynamicRollingSum
@@ -26,8 +27,7 @@ DATE_COLUMN = "sub_received_date"
 INDEX_COLUMN = "index"
 WINDOW = 30
 N_COLS = 18
-
-PROJECT_ROOT = "/rdata/aweaver/EGModeling/hit_ratio/bop_model"
+PROJECT_ROOT = Path(__file__).resolve().parent
 ########################################
 
 
@@ -495,27 +495,72 @@ def one_category(
 def all_categories(
     lf: pl.LazyFrame = read("train"),  # noqa: B008
     cat_cols: list[str] = cat_cols(read("train")),  # noqa: B008
+    start_at: int | None = None,
 ) -> None:
     """Generate time series columns for all categorical columns."""
-    for c in tqdm(cat_cols):
-        print(f"Processing {c}")  # noqa: T201
-        try:
-            one_category(c, N_COLS, lf)
-        except Exception as e:
-            print(f"Error at {c}:\n{e}")  # noqa: T201
-            continue
+    for i, c in tqdm(enumerate(cat_cols), total=len(cat_cols)):
+        if (start_at is not None) and (i < start_at):
+            pass
+        elif c.lower() in [
+            "cin_agy_contact_phone_numb",
+            "agy_nm_numb",
+            "agy_numb",
+            "agy_nm",
+            "exp_primary_naics",
+            "exp_second_naics",
+            "bop_primary_class_cd_desc",
+            "account_class_desc",
+            "acct_bop_class_desc",
+            "account_class_cd",
+            "acct_prior_carrier",
+            "bop_primary_class_cd",
+            "acct_bop_class_cd",
+            "acct_prior_carrier_company_id",
+            "cin_prop_csp_terr",
+            "naics_5",
+            "bop_primary_naics",
+            "naics",
+            "sales_field_rep_user_id",
+            "sales_field_rep_full_nm",
+            "sales_field_rep_email",
+            "curr_sales_field_rep_full_nm",
+            "state_bop_iso_terr_desc",
+            "naics_4",
+            "cin_bop_iso_terr_desc",
+        ]:
+            print(f"Ignoring column {i}, '{c}', because the cardinality is > 50")  # noqa: T201
+        else:
+            print(f"Processing {c}")  # noqa: T201
+            try:
+                one_category(c, N_COLS, lf)
+            except Exception as e:
+                print(f"Error at {c}:\n{e}")  # noqa: T201
+                continue
 
 
-def main() -> None:
+def main(val: bool = False, test: bool = False) -> None:
     """Run the main mean-encoding loop."""
+    logging.basicConfig(filename=f"{PROJECT_ROOT}/main.log", level=logging.DEBUG)
+    logging.info("Reading df_train")
     df_train = read("train")
-    df_val = read("val")
-    df_test = read("test")
+    if val:
+        logging.info("Reading df_val")
+        df_val = read("val")
 
+    if test:
+        logging.info("Reading df_test")
+        df_test = read("test")
+
+    logging.info("writing df_train, df_val, df_test to parquet files")
     df_train.collect().write_parquet(f"{PROJECT_ROOT}/mean_encoding/train.parquet")
-    df_val.collect().write_parquet(f"{PROJECT_ROOT}/mean_encoding/val.parquet")
-    df_test.collect().write_parquet(f"{PROJECT_ROOT}/mean_encoding/test.parquet")
 
+    if val:
+        df_val.collect().write_parquet(f"{PROJECT_ROOT}/mean_encoding/val.parquet")
+
+    if test:
+        df_test.collect().write_parquet(f"{PROJECT_ROOT}/mean_encoding/test.parquet")
+
+    logging.info("before stepping into all_categories")
     all_categories(df_train, cat_cols(df_train))
 
 
