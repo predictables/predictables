@@ -1,48 +1,273 @@
 [project]
+requires-python = ">=3.8"
 name = "predictables"
-version = "0.0.1"
-description = "A library for creating predictable objects"
-readme = "README.md"
-license = "MIT"
-keywords = [
-  "predictable",
-  "object",
-  "mock",
-  "stub",
-  "fake",
-  "test",
-  "testing",
-  "unittest",
-  "pytest",
-  "mocking",
-  "stubbing",
-  "faking",
-  "mocks",
-  "stubs",
-  "fakes",
-  "unittests",
-  "pytests",
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "aaweaver-actuary", email = "andrewayersweaver+github.com" }
 ]
-authors = [{ name = "Andy Weaver" }]
-maintainers = [{ name = "Andy Weaver" }]
-
+dependencies = [
+    "polars>=0.20.18",
+]
+readme = "README.md"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.black]
+
+# ===================================================================================================
+# =========== tools -s================================================================================
+# ===================================================================================================
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["predictables"]
+
+# ===================================================================================================
+# =========== ruff -s================================================================================
+# ===================================================================================================
+[tool.ruff]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".env",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "env",
+    "node_modules",
+    "site-packages",
+    "venv",
+    "docs/*",
+    ".ignore",
+    ".ignore/*"
+]
+
+# Same as Black.
 line-length = 88
+indent-width = 4
 
-[tool.coverage.run]
-source = ["predictables"]
+# Assume Python 3.8
+target-version = "py38"
+fix = true
+extend-include = ["*.ipynb"]
 
-[tool.coverage.report]
-precision = 1
-sort = "Miss"
 
-[tool.coverage.html]
-directory = "coverage/html"
+[tool.ruff.format]
+docstring-code-format = true     # Enable reformatting of code snippets in docstrings.
+docstring-code-line-length = 75  # Format all docstring code snippets with a line length of 75
+skip-magic-trailing-comma = true
 
-[tool.coverage.json]
-output = "coverage/coverage.json"
+[tool.ruff.lint]
+dummy-variable-rgx = "^_$" # Only ignore variables named "_"
+fixable = ["ALL"]
+exclude = ["*.ipynb"]
+ignore = [
+    "ANN002",
+    "ANN003",
+    "ANN101",
+    "ANN102",
+    "ANN204",
+    "C901",
+    "F403",
+    "FIX002",
+    "G004",
+    "N802",
+    "N803",
+    "N806",
+    "N999",
+    "PD901",
+    "PGH003",
+    "PLR0911",
+    "PLR0912",
+    "PLR0913",
+    "PLR2004",
+    "PT011",
+    "PT017",
+    "PT012",
+    "RET505",
+    "S101",
+    "S501",
+]
+
+# On top of the default `select` (`E`, `F`), enable:
+extend-select = [
+    "B",        # flake8-bugbear (`B`)
+    "Q",        # flake8-quotes (`Q`)
+    "C90",      # mccabe (`C90`)
+    "N",        # pep-8-naming (`N`)
+    "D",        # pydocstyle (`D`)
+    "S",        # flake-8-bandit (`S`)
+    "ANN",      # flake-8-annotations (`ANN`)
+    "C4",       # flake-8-comprehensions (`C4`)
+    "FA",       # flake8-future-annotations (FA)
+    "ICN",      # flake8-import-conventions (ICN)
+    "G",        # flake8-logging-format (G)
+    "INP",      # flake8-no-pep420 (INP)
+    "PIE",      # flake8-pie (PIE)
+    "T20",      # flake8-print (T20)
+    "PYI",      # flake8-pyi (PYI)
+    "PT",       # flake8-pytest-style (PT)
+    "RSE",      # flake8-raise (RSE)
+    "RET",      # flake8-return (RET)
+    "SLF",      # flake8-self (SLF)
+    "SLOT",     # flake8-slots (SLOT)
+    "SIM",      # flake8-simplify (SIM)
+    "TID",      # flake8-tidy-imports (TID)
+    "ARG",      # flake8-unused-arguments (ARG)
+    "PTH",      # flake8-use-pathlib (PTH)
+    "TD",       # flake8-todos (TD)
+    "FIX",      # flake8-fixme (FIX)
+    "ERA",      # eradicate (ERA)
+    "PD",       # pandas-vet (PD)
+    "PGH",      # pygrep-hooks (PGH)
+    "PL",       # Pylint (PL)
+    "FLY",      # flynt (FLY)
+    "NPY",      # NumPy-specific rules (NPY)
+    "PERF",     # Perflint (PERF)
+    "RUF",      # Ruff-specific rules (RUF)
+]
+extend-fixable = [
+    "B",        # flake8-bugbear (`B`)
+    "Q",        # flake8-quotes (`Q`)
+    "C90",      # mccabe (`C90`)
+    "N",        # pep-8-naming (`N`)
+    "D",        # pydocstyle (`D`)
+    "S",        # flake-8-bandit (`S`)
+    "ANN",      # flake-8-annotations (`ANN`)
+    "C4",       # flake-8-comprehensions (`C4`)
+    "FA",       # flake8-future-annotations (FA)
+    "ICN",      # flake8-import-conventions (ICN)
+    "G",        # flake8-logging-format (G)
+    "INP",      # flake8-no-pep420 (INP)
+    "PIE",      # flake8-pie (PIE)
+    "T20",      # flake8-print (T20)
+    "PYI",      # flake8-pyi (PYI)
+    "PT",       # flake8-pytest-style (PT)
+    "RSE",      # flake8-raise (RSE)
+    "RET",      # flake8-return (RET)
+    "SLF",      # flake8-self (SLF)
+    "SLOT",     # flake8-slots (SLOT)
+    "SIM",      # flake8-simplify (SIM)
+    "TID",      # flake8-tidy-imports (TID)
+    "ARG",      # flake8-unused-arguments (ARG)
+    "PTH",      # flake8-use-pathlib (PTH)
+    "TD",       # flake8-todos (TD)
+    "FIX",      # flake8-fixme (FIX)
+    "ERA",      # eradicate (ERA)
+    "PD",       # pandas-vet (PD)
+    "PGH",      # pygrep-hooks (PGH)
+    "PL",       # Pylint (PL)
+    "FLY",      # flynt (FLY)
+    "NPY",      # NumPy-specific rules (NPY)
+    "PERF",     # Perflint (PERF)
+    "RUF",      # Ruff-specific rules (RUF)
+]
+unfixable = ["F401"] # Disable fix for unused imports (`F401`).
+
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402", "I001", "D104"]
+"**/{tests,docs,tools}/*" = [
+    "E402",
+    "I001",
+    "D100",
+    "D103",
+    "ANN001",
+    "ANN201",
+    "PLR2004",
+    "PGH003",
+    "INP001",
+]
+"*.ipynb" = ["T201", "PLR2004", "ERA001"]
+"*Univariate_2.py" = ["ERA001"]
+"*Model_2.py" = ["ERA001", "PGH003"]
+"*_lagged_mean_encoding*" = ["ALL"]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"__init__.py" = ["E402", "F401", "I001"]
+"**/{tests,docs,tools}/*" = ["E402", "F401", "I001"]
+
+[tool.ruff.lint.flake8-import-conventions]
+# Declare the banned `from` imports. These may be imported using `import`, but not `from`.
+# So "from pandas import DataFrame" is banned, but "import pandas as pd" is allowed.
+banned-from = [
+    "pandas",                   # Use `import pandas as pd` instead
+    "numpy",                    # Use `import numpy as np` instead
+    "matplotlib",               # Use `import matplotlib.pyplot as plt` instead
+    "polars",                   # Use `import polars as pl` instead
+    "polars.selectors",         # Use `import polars.selectors as cs` instead
+    "plotly.express",           # Use `import plotly.express as px` instead
+    "plotly.graph_objects",     # Use `import plotly.graph_objects as go` instead
+]
+
+[tool.ruff.lint.flake8-import-conventions.extend-aliases]
+"polars" = "pl"                 # Allow "pl" as an alias for "polars"
+"polars.selectors" = "cs"       # Allow "cs" as an alias for "polars.selectors" -- this follows API conventions in Polars
+"plotly.express" = "px"         # Allow "px" as an alias for "plotly.express"
+"plotly.graph_objects" = "go"   # Allow "go" as an alias for "plotly.graph_objects"
+
+[tool.ruff.lint.flake8-pytest-style]
+# @pytest.fixture functions should not have parentheses in their names
+# (e.g. `@pytest.fixture()` is not allowed).
+fixture-parentheses = false
+
+# @pytest.mark.parametrize parameter names should be a comma-separated list
+# (e.g. `@pytest.mark.parametrize("a, b", [(1, 2), (3, 4)])` is allowed, but
+# `@pytest.mark.parametrize("a b", [(1, 2), (3, 4)])` is not).
+parametrize-names-type = "csv"
+
+[tool.ruff.lint.pydocstyle]
+# Use the numpy docstring convention
+convention = "numpy"
+
+[tool.ruff.lint.pylint]
+# Maximum number of arguments for functions and methods
+max-args = 10
+
+# ===================================================================================================
+# =========== mypy -s================================================================================
+# ===================================================================================================
+
+[tool.mypy]
+warn_unused_configs = true
+warn_unused_ignores = true
+warn_return_any = true
+warn_unreachable = true
+pretty = true
+show_error_codes = true
+
+# ===================================================================================================
+# =========== pytest -s==============================================================================
+# ===================================================================================================
+
+[tool.pytest.ini_options]
+addopts = "--maxfail=3"
+log_format = "%(asctime)s %(levelname)s %(message)s"
+log_file_format = "%(asctime)s %(levelname)s %(message)s"
+python_files = "test_*.py"
+python_functions = "test_*"

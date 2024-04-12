@@ -52,7 +52,6 @@ platformdirs==4.2.0
 plotly==5.18.0
 pluggy==1.4.0
 polars==0.20.16
--e git+https://github.com/predictables/predictables@856f0740db03a561d49575505713a2f5ba582246#egg=predictables
 prompt-toolkit==3.0.43
 psutil==5.9.8
 ptyprocess==0.7.0
