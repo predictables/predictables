@@ -118,8 +118,8 @@ class NAICSEarlyStopper:
             self.save_checkpoint(val_score, model)
             self.counter = 0
 
-    def save_checkpoint(self, val_score, model):
-        """Saves model when validation loss decreases."""
+    def save_checkpoint(self, val_score: float, model: torch.nn.Module) -> None:
+        """Save model when validation loss decreases."""
         if self.verbose:
             self.trace_func(
                 f"Validation loss decreased ({self.val_score_min:.6f} --> {val_score:.6f}).  Saving model ..."
