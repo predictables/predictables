@@ -1,6 +1,26 @@
+from __future__ import annotations
 import numpy as np
 import torch
 import typing
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+defaults = {
+    "patience": int(os.getenv("EARLY_STOPPER_PATIENCE"))
+    if os.getenv("EARLY_STOPPER_PATIENCE")
+    else 7,
+    "verbose": bool(os.getenv("EARLY_STOPPER_VERBOSE"))
+    if os.getenv("EARLY_STOPPER_VERBOSE")
+    else False,
+    "delta": float(os.getenv("EARLY_STOPPER_DELTA"))
+    if os.getenv("EARLY_STOPPER_DELTA")
+    else 0,
+    "path": os.getenv("EARLY_STOPPER_CHECKPOINT_PATH")
+    if os.getenv("EARLY_STOPPER_CHECKPOINT_PATH")
+    else "checkpoint.pt",
+}
 
 
 class NAICSEarlyStopper:
@@ -14,14 +34,25 @@ class NAICSEarlyStopper:
 
     Here 'patience' is the number of training epochs we are
     willing to wait for the validation loss to further improve.
+
+    The early stopper settings can be configured by setting
+    the following environment variables:
+    - EARLY_STOPPER_PATIENCE: How long to wait after last time
+      validation loss improved.
+    - EARLY_STOPPER_VERBOSE: If True, prints a message for each
+        validation loss improvement.
+    - EARLY_STOPPER_DELTA: Minimum change in the monitored quantity
+        to qualify as an improvement.
+    - EARLY_STOPPER_CHECKPOINT_PATH: Path for the checkpoint to be
+        saved to.
     """
 
     def __init__(
         self,
-        patience: int = 7,
-        verbose: bool = False,
-        delta: int = 0,
-        path: str = "checkpoint.pt",
+        patience: int | None = None,
+        verbose: bool | None = None,
+        delta: int | None = None,
+        path: str | None = None,
         trace_func: typing.Callable = print,
     ):
         """Initialize the early stopper.
@@ -43,14 +74,14 @@ class NAICSEarlyStopper:
         trace_func : function, optional
             Trace print function, by default print
         """
-        self.patience = patience
-        self.verbose = verbose
+        self.patience = defaults["patience"] if patience is None else patience
+        self.verbose = defaults["verbose"] if verbose is None else verbose
         self.counter = 0
         self.best_score = None
         self.early_stop = False
         self.val_score_min = np.inf
-        self.delta = delta
-        self.path = path
+        self.delta = defaults["delta"] if delta is None else delta
+        self.path = defaults["path"] if path is None else path
         self.trace_func = trace_func
 
     def __call__(self, val_score: float, model: torch.nn.Module) -> None:
