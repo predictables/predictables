@@ -4,6 +4,7 @@ import torch
 import typing
 import os
 from dotenv import load_dotenv
+from predictables.config import logger
 
 load_dotenv()
 
@@ -83,6 +84,11 @@ class NAICSEarlyStopper:
         self.delta = defaults["delta"] if delta is None else delta
         self.path = defaults["path"] if path is None else path
         self.trace_func = trace_func
+        self.num_almost_triggered = 0
+
+        logger.debug(
+            f"Initialized EarlyStopper with patience={self.patience}, verbose={self.verbose}, delta={self.delta}, path={self.path}"
+        )
 
     def __call__(self, val_score: float, model: torch.nn.Module) -> None:
         """Inspect the current state of the model.
@@ -137,14 +143,29 @@ class NAICSEarlyStopper:
 
         # If the passed validation score is less than the best
         # score plus the delta, increment the counter.
-        elif val_score < self.best_score + self.delta:
+        elif val_score > self.best_score - self.delta:
             self.counter += 1
+            logger.debug(
+                f"EarlyStopping counter incremented: counter/patience = {self.counter}/{self.patience}"
+            )
             self.trace_func(
                 f"EarlyStopping counter: {self.counter} out of {self.patience}"
             )
             if self.counter >= self.patience:
+                logger.info("Early stopping triggered, stopping training.")
+
                 self.early_stop = True
+
+            elif self.counter - 1 == self.patience:
+                self.num_almost_triggered += 1
+                logger.info(
+                    f"After one more epoch, early stopping will be triggered if validation score does not improve. This has now happened {self.num_almost_triggered} time(s)."
+                )
+
         else:
+            logger.debug(
+                f"Validation score improved significantly ({val_score} > {self.best_score}); resetting early stopping counter (currently at {self.counter})."
+            )
             self.best_score = val_score
             self.save_checkpoint(val_score, model)
             self.counter = 0
@@ -157,3 +178,6 @@ class NAICSEarlyStopper:
             )
         torch.save(model.state_dict(), self.path)
         self.val_score_min = val_score
+        logger.info(
+            f"Checkpoint saved: Improved score to {val_score}, model saved to {self.path}"
+        )
