@@ -80,7 +80,7 @@ class NAICSEarlyStopper:
         self.counter = 0
         self.best_score = None
         self.early_stop = False
-        self.val_score_min = np.inf
+        self.best_val_score = np.inf
         self.delta = defaults["delta"] if delta is None else delta
         self.path = defaults["path"] if path is None else path
         self.trace_func = trace_func
@@ -171,13 +171,13 @@ class NAICSEarlyStopper:
             self.counter = 0
 
     def save_checkpoint(self, val_score: float, model: torch.nn.Module) -> None:
-        """Save model when validation loss decreases."""
+        """Save model when validation loss improves."""
         if self.verbose:
             self.trace_func(
-                f"Validation loss decreased ({self.val_score_min:.6f} --> {val_score:.6f}).  Saving model ..."
+                f"Validation score improved ({self.best_val_score:.6f} --> {val_score:.6f}).  Saving model ..."
             )
         torch.save(model.state_dict(), self.path)
-        self.val_score_min = val_score
+        self.best_val_score = val_score
         logger.info(
             f"Checkpoint saved: Improved score to {val_score}, model saved to {self.path}"
         )
