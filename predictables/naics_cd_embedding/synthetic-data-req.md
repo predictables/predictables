@@ -48,12 +48,17 @@ the naics code columns contain synthetic naics codes according to the following 
 - mean = mean of parents probability
     - for stability, converted to logits before deviating
 - standard deviation is the square root of the absolute value of the mean logit
+- one of the main goals is to test the validity of the embedding process: does the embedding preserve the known mean values?
+    - to this end it is critical that the means remain consistent
+    - when randomly generating the noise terms, do not generate the final noise term randomly-calculate it such that the mean of the parent is preserved
+    - clearly set a new random seed before each generation task to ensure reproduciblity 
 
 ## test suite 
 - this data set will be generated with test driven development
     - define parametrized pytest tests to check each of the above requirements are met
         - allow numeric requirements to be within 1% of their expected value
         - test the hierarchy in the naics codes as described above specifically for every row in the dataset
+- the structure of the codes is such that parametrized tests should be constructed with a comprehension instead of listing them individually
 
 ## desired output
 ultimately two scripts should be created:
