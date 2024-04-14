@@ -52,6 +52,9 @@ the naics code columns contain synthetic naics codes according to the following 
     - to this end it is critical that the means remain consistent
     - when randomly generating the noise terms, do not generate the final noise term randomly-calculate it such that the mean of the parent is preserved
     - clearly set a new random seed before each generation task to ensure reproduciblity 
+- some nuance about this process:
+    - there is not any actual variability in the naics 2 probabilities. They are determined according to the specs. The variability is implemented for sub codes, and even then, is adjusted with the last code so that the mean of the parent code is preserved. At the end, the means are individually randomized somewhat, but the group means are completely determined. 
+- convert the adjusted logits back to probabilities by passing them through a sigmoid function
 
 ## test suite 
 - this data set will be generated with test driven development
@@ -59,8 +62,16 @@ the naics code columns contain synthetic naics codes according to the following 
         - allow numeric requirements to be within 1% of their expected value
         - test the hierarchy in the naics codes as described above specifically for every row in the dataset
 - the structure of the codes is such that parametrized tests should be constructed with a comprehension instead of listing them individually
+- the test suite should be quite verbose, to help to quickly identify issues
 
 ## desired output
 ultimately two scripts should be created:
 1. test suite (first)
 2. dataset generation script (second, following TDD)
+
+## constraints
+- I do not have access to the environment right now
+- I am under severe time limitations
+- my job and the health of my family depend on this
+- it will be sufficient for you to execute the tests directly
+    - this will additionally be more efficient, as it will allow you to take feedback and iterate as needed, without wasting your effort or processing resources to come back and ask me follow up questions, or for permission to continue
