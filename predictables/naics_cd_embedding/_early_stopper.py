@@ -4,21 +4,21 @@ import torch
 import typing
 import os
 from dotenv import load_dotenv
-from predictables.config import logger
+from predictables.core import logger
 
 load_dotenv()
 
 defaults = {
-    "patience": int(os.getenv("EARLY_STOPPER_PATIENCE"))
+    "patience": int(os.getenv("EARLY_STOPPER_PATIENCE", "7"))
     if os.getenv("EARLY_STOPPER_PATIENCE")
     else 7,
-    "verbose": bool(os.getenv("EARLY_STOPPER_VERBOSE"))
+    "verbose": bool(os.getenv("EARLY_STOPPER_VERBOSE", "False"))
     if os.getenv("EARLY_STOPPER_VERBOSE")
     else False,
-    "delta": float(os.getenv("EARLY_STOPPER_DELTA"))
+    "delta": float(os.getenv("EARLY_STOPPER_DELTA", "0"))
     if os.getenv("EARLY_STOPPER_DELTA")
     else 0,
-    "path": os.getenv("EARLY_STOPPER_CHECKPOINT_PATH")
+    "path": os.getenv("EARLY_STOPPER_CHECKPOINT_PATH", "checkpoint.pt")
     if os.getenv("EARLY_STOPPER_CHECKPOINT_PATH")
     else "checkpoint.pt",
 }

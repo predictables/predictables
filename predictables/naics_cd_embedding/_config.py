@@ -21,16 +21,16 @@ class NAICSSingleLevelConfig:
     nunique: int
     embed_dim: int
     dropout: float
-    lambda_: float
-    l1_ratio: float
+    # lambda_: float  # noqa: ERA001
+    # l1_ratio: float  # noqa: ERA001
 
     def __post_init__(self):
         """Ensure that the configuration is valid."""
         assert self.nunique is not None, "nunique must be provided"
         assert self.embed_dim is not None, "embed_dim must be provided"
         assert self.dropout is not None, "dropout must be provided"
-        assert self.lambda_ is not None, "lambda must be provided"
-        assert self.l1_ratio is not None, "l1_ratio must be provided"
+        # assert self.lambda_ is not None, "lambda must be provided"
+        # assert self.l1_ratio is not None, "l1_ratio must be provided"
 
         assert (
             self.nunique > 0
@@ -67,13 +67,13 @@ class NAICSConfig:
                 The proportion of the regularization penalty applied to the L1 norm.
     """
 
-    naics2: NAICSSingleLevelConfig | None
-    naics3: NAICSSingleLevelConfig | None
-    naics4: NAICSSingleLevelConfig | None
-    naics5: NAICSSingleLevelConfig | None
-    naics6: NAICSSingleLevelConfig | None
     is_classification: bool = False
     current_level: int = 2
+    naics2: NAICSSingleLevelConfig | None = None
+    naics3: NAICSSingleLevelConfig | None = None
+    naics4: NAICSSingleLevelConfig | None = None
+    naics5: NAICSSingleLevelConfig | None = None
+    naics6: NAICSSingleLevelConfig | None = None
 
     def __post_init__(self):
         """Ensure that the configuration is valid."""
@@ -88,15 +88,15 @@ class NAICSConfig:
         elif self.naics6 is None:
             self.current_level = 6
 
-        assert (
-            self.lambda_ > 0
-        ), f"lambda_ must be larger than 0, but {self.lambda_} was provided."
-        assert (
-            0 <= self.l1_ratio <= 1
-        ), f"l1_ratio must be between 0 and 1, but got {self.l1_ratio}."
-        assert (
-            0 <= self.l1_ratio <= 1
-        ), f"l1_ratio must be between 0 and 1, but got {self.l1_ratio}."
+        # assert (
+        #     self.lambda_ > 0
+        # ), f"lambda_ must be larger than 0, but {self.lambda_} was provided."
+        # assert (
+        #     0 <= self.l1_ratio <= 1   # noqa: ERA001
+        # ), f"l1_ratio must be between 0 and 1, but got {self.l1_ratio}."
+        # assert (
+        #     0 <= self.l1_ratio <= 1   # noqa: ERA001
+        # ), f"l1_ratio must be between 0 and 1, but got {self.l1_ratio}."
 
     def add(
         self,
@@ -131,7 +131,9 @@ class NAICSConfig:
 
         # Create a configuration for a single level
         config_ = NAICSSingleLevelConfig(
-            nunique=nunique, embed_dim=embed_dim, dropout=dropout
+            nunique=nunique,  # type: ignore
+            embed_dim=embed_dim,  # type: ignore
+            dropout=dropout,  # type: ignore
         )
 
         # Update the configuration for the specified level
@@ -152,4 +154,4 @@ class NAICSConfig:
         int | float
             The value of the specified attribute for the given NAICS code level.
         """
-        return getattr(getattr(self, f"naics{level}"), attribute)
+        return getattr(getattr(self, f"naics{level}"), attribute)  # type: ignore

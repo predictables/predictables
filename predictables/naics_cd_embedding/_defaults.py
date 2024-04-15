@@ -2,19 +2,19 @@
 
 from __future__ import annotations
 from dataclasses import dataclass
-from predictables.naics_cd_embedding_model import NAICSEmbeddingModel
-from predictables.naics_cd_embedding_config import NAICSConfig
-import torch
+from predictables.naics_cd_embedding._model import NAICSEmbeddingModel
+from predictables.naics_cd_embedding._config import NAICSConfig
+import torch  # type: ignore
 
 
 @dataclass
 class NAICSDefaults:
     """Default values for the NAICS embedding model."""
 
-    _config: NAICSConfig = None
-    _model: NAICSEmbeddingModel = None
-    _loss: torch.nn.BCEWithLogitsLoss | torch.nn.MSELoss = None
-    _optimizer: torch.optim.Adam = None
+    _config: NAICSConfig | None = None
+    _model: NAICSEmbeddingModel | None = None
+    _loss: torch.nn.BCEWithLogitsLoss | torch.nn.MSELoss | None = None
+    _optimizer: torch.optim.Adam | None = None
 
     def __post_init__(self):
         """Initialize the default values for the NAICS embedding model."""
@@ -25,7 +25,7 @@ class NAICSDefaults:
 
     def config(self) -> None:
         """Get a default configuration for the NAICS embedding model."""
-        config = NAICSConfig(is_classification=True)
+        config = NAICSConfig(is_classification=True)  # type: ignore
         config.add(2, 20, 128, 0.5)
         config.add(3, 100, 128, 0.4)
         config.add(4, 500, 128, 0.3)
@@ -41,16 +41,16 @@ class NAICSDefaults:
         """Get the default loss function for the NAICS embedding model."""
         self._loss = (
             torch.nn.BCEWithLogitsLoss()
-            if self._config.is_classification
+            if self._config.is_classification  # type: ignore
             else torch.nn.MSELoss()
         )
 
     def optim(self) -> None:
         """Get the default optimizer for the NAICS embedding model."""
-        self._optim = torch.optim.Adam(self._model.parameters(), lr=0.001)
+        self._optim = torch.optim.Adam(self._model.parameters(), lr=0.001)  # type: ignore
 
     def get(
         self,
     ) -> tuple[NAICSConfig, NAICSEmbeddingModel, torch.nn.Module, torch.optim.Adam]:
         """Get the default values for the NAICS embedding model."""
-        return self._config, self._model, self._loss, self._optim
+        return self._config, self._model, self._loss, self._optim  # type: ignore
