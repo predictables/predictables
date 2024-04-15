@@ -12,7 +12,7 @@ class NAICSDataset(torch.utils.data.Dataset):
     """Custom Dataset for handling NAICS data with one-hot encoding of categorical NAICS codes."""
 
     def __init__(self, lf: pl.LazyFrame):
-        self.encoder = OneHotEncoder(sparse=False)
+        self.encoder = OneHotEncoder(sparse_output=False)
 
         # Validate that lf contains columns named 'naics_2_cd' through 'naics_6_cd'
         for i in range(2, 6):
@@ -25,14 +25,18 @@ class NAICSDataset(torch.utils.data.Dataset):
         ), "Column 'naics_6_cd' or 'naics_cd' not found in DataFrame. Expected a column with one of these exact names."
 
         # Assuming 'naics_2_cd' through 'naics_6_cd' need encoding
-        naics_features = lf.select(
-            [
-                pl.col("naics_2_cd"),
-                pl.col("naics_3_cd"),
-                pl.col("naics_4_cd"),
-                pl.col("naics_5_cd"),
-                pl.col("naics_6_cd"),
-            ]
+        naics_features = (
+            lf.select(
+                [
+                    pl.col("naics_2_cd"),
+                    pl.col("naics_3_cd"),
+                    pl.col("naics_4_cd"),
+                    pl.col("naics_5_cd"),
+                    pl.col("naics_6_cd"),
+                ]
+            )
+            .collect()
+            .to_numpy()
         )
         encoded_features = self.encoder.fit_transform(naics_features)
 
