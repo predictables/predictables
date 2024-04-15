@@ -18,7 +18,8 @@
         "rodolphebarbanneau.python-docstring-highlighter",
         "ritwickdey.LiveServer",
         "ms-python.python",
-        "ms-toolsai.jupyter"
+        "ms-toolsai.jupyter",
+        "vscodevim.vim"
       ]
     },
     "settings": {
