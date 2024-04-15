@@ -3,7 +3,7 @@
 from __future__ import annotations
 import polars as pl
 from tqdm import tqdm
-from catboost import CatBoostRegressor
+from catboost import CatBoostRegressor  # type: ignore[untyped-import]
 import os
 import typing
 
@@ -30,8 +30,19 @@ def get_file_list() -> list[str]:
 
 
 def get_cat_col_from_filename(file: str) -> str:
-    """Get the categorical column name from the filename."""
-    return file.split(f"_{N_COLS}")[0]
+    """Get the categorical column name from the filename.
+
+    For example, if the filename is "first_insured_state_id_18_lags.parquet",
+    this function will return "first_insured_state_id", because it is splitting
+    at the first occurrence of "_18" (as long as the constant `N_COLS` is still
+    18). If there is no "_18" in the filename, it will return the filename without
+    the extension.
+    """
+    return (
+        file.split(f"_{N_COLS}")[0]
+        if file.find(f"_{N_COLS}") != -1
+        else file.split(".")[0]
+    )
 
 
 def start_idx_generator(prior_p: int = 6) -> typing.Generator[int]:
@@ -41,7 +52,23 @@ def start_idx_generator(prior_p: int = 6) -> typing.Generator[int]:
 
 
 def idx_to_column_name(idx: int, file: str) -> str:
-    """Convert an index to a column name."""
+    """Convert an index to a column name.
+
+    The column name is in the format "logit[MEAN_ENCODED_{cat_col}_{lag}]".
+    The filename is parsed to get the categorical column name, and then
+    the lag is calculated from the index.
+
+    For example, if the filename is "first_insured_state_id_18_lags.parquet",
+    and the index is 6, this function will return
+    "logit[MEAN_ENCODED_first_insured_state_id_360]"
+
+    Here
+    360 = 12 * 30 (lags are in 30-day periods)
+
+    The lag is calculated as follows:
+    12 = 18 - 6
+       = N_COLS - idx
+    """
     return f"logit[MEAN_ENCODED_{get_cat_col_from_filename(file)}_{idx_to_lag(idx)}]"
 
 def column_name_to_index(column_name: str) -> int:
