@@ -60,7 +60,6 @@ import torch.nn.functional as F  # noqa: N812
 from predictables.naics_cd_embedding_config import NAICSConfig
 
 
-
 class NAICSEmbeddingModel(nn.Module):
     """Generate an embedding of NAICS codes in a lower-dimensional space.
 
@@ -197,7 +196,3 @@ class NAICSEmbeddingModel(nn.Module):
 
         # No activation for non-classification tasks
         return logits
-
-
-
-

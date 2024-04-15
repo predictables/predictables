@@ -22,7 +22,7 @@ class NAICSSingleLevelConfig:
     embed_dim: int
     dropout: float
     lambda_: float
-    l1_ratio: float 
+    l1_ratio: float
 
     def __post_init__(self):
         """Ensure that the configuration is valid."""
@@ -31,7 +31,7 @@ class NAICSSingleLevelConfig:
         assert self.dropout is not None, "dropout must be provided"
         assert self.lambda_ is not None, "lambda must be provided"
         assert self.l1_ratio is not None, "l1_ratio must be provided"
-        
+
         assert (
             self.nunique > 0
         ), f"nunique must be a positive integer, got {self.nunique}"
@@ -41,7 +41,8 @@ class NAICSSingleLevelConfig:
         assert (
             0 <= self.dropout < 1
         ), f"dropout must be in the range [0, 1), got {self.dropout}"
-        
+
+
 @dataclass
 class NAICSConfig:
     """Global configuration for the NAICS embedding model.
@@ -86,7 +87,7 @@ class NAICSConfig:
             self.current_level = 5
         elif self.naics6 is None:
             self.current_level = 6
-            
+
         assert (
             self.lambda_ > 0
         ), f"lambda_ must be larger than 0, but {self.lambda_} was provided."

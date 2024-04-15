@@ -1,4 +1,5 @@
 """Train an embedding model for NAICS codes."""
+
 import torch
 from ._defaults import NAICSDefaults
 from ._data import NAICSDataLoader
