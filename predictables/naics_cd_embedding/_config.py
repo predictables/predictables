@@ -29,7 +29,7 @@ class NAICSSingleLevelConfig:
         assert self.nunique is not None, "nunique must be provided"
         assert self.embed_dim is not None, "embed_dim must be provided"
         assert self.dropout is not None, "dropout must be provided"
-		assert self.lambda_ is not None, "lambda must be provided"
+        assert self.lambda_ is not None, "lambda must be provided"
         assert self.l1_ratio is not None, "l1_ratio must be provided"
         
         assert (
@@ -61,10 +61,9 @@ class NAICSConfig:
     is_classification : bool
         Whether the model is used for classification or regression.
     lambda_ : float
-    	The regularization penalty.
+        The regularization penalty.
     l1_ratio : float
-		The proportion of the regularization penalty applied to the L1 norm.
-
+                The proportion of the regularization penalty applied to the L1 norm.
     """
 
     naics2: NAICSSingleLevelConfig | None
@@ -89,10 +88,13 @@ class NAICSConfig:
             self.current_level = 6
             
         assert (
-        	self.lambda_ > 0
+            self.lambda_ > 0
         ), f"lambda_ must be larger than 0, but {self.lambda_} was provided."
-		assert (
-			0 <= self.l1_ratio <= 1
+        assert (
+            0 <= self.l1_ratio <= 1
+        ), f"l1_ratio must be between 0 and 1, but got {self.l1_ratio}."
+        assert (
+            0 <= self.l1_ratio <= 1
         ), f"l1_ratio must be between 0 and 1, but got {self.l1_ratio}."
 
     def add(
