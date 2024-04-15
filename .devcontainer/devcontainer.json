@@ -19,7 +19,7 @@
         "ritwickdey.LiveServer",
         "ms-python.python",
         "ms-toolsai.jupyter"
-    },
+    ]},
     "settings": {
       "workbench.panel.defaultLocation": "bottom",
       "editor.fontFamily": "JetBrainsMono Nerd Font",
