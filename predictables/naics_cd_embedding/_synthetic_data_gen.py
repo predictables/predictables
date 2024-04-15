@@ -1,7 +1,7 @@
 from __future__ import annotations
 import numpy as np
 import pandas as pd
-from predictables import logger
+import predictables
 
 
 # Adjusted probability calculation function with enhanced noise
@@ -91,6 +91,8 @@ def validate_data(data: pd.DataFrame) -> tuple[bool, pd.Series, float]:
 
 # Main execution block
 if __name__ == "__main__":
+    from predictables import logger
+
     full_data = generate_full_naics_data()
     final_sampled_data = sample_and_set_targets(full_data)
 

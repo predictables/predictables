@@ -1,5 +1,5 @@
 from .config import print_message_if_no_env_file
-from .logging import get_logger
+from predictables.util.logging import get_logger
 
 # Check for .env file presence
 print_message_if_no_env_file()
