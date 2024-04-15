@@ -16,10 +16,6 @@ class NAICSSingleLevelConfig:
         The size of the embedding vectors for each NAICS code.
     dropout : float
         The dropout probability for the model.
-    lambda_ : float
-    	The regularization penalty.
-    l1_ratio : float
-		The proportion of the regularization penalty applied to the L1 norm.
     """
 
     nunique: int
@@ -45,13 +41,7 @@ class NAICSSingleLevelConfig:
         assert (
             0 <= self.dropout < 1
         ), f"dropout must be in the range [0, 1), got {self.dropout}"
-        assert (
-        	self.lambda_ > 0
-        ), f"lambda_ must be larger than 0, but {self.lambda_} was provided."
-		assert (
-			0 <= self.l1_ratio <= 1
-        ), f"l1_ratio must be between 0 and 1, but got {self.l1_ratio}."
-
+        
 @dataclass
 class NAICSConfig:
     """Global configuration for the NAICS embedding model.
@@ -70,6 +60,11 @@ class NAICSConfig:
         Configuration for the 6-digit NAICS codes.
     is_classification : bool
         Whether the model is used for classification or regression.
+    lambda_ : float
+    	The regularization penalty.
+    l1_ratio : float
+		The proportion of the regularization penalty applied to the L1 norm.
+
     """
 
     naics2: NAICSSingleLevelConfig | None
@@ -92,6 +87,13 @@ class NAICSConfig:
             self.current_level = 5
         elif self.naics6 is None:
             self.current_level = 6
+            
+        assert (
+        	self.lambda_ > 0
+        ), f"lambda_ must be larger than 0, but {self.lambda_} was provided."
+		assert (
+			0 <= self.l1_ratio <= 1
+        ), f"l1_ratio must be between 0 and 1, but got {self.l1_ratio}."
 
     def add(
         self,
