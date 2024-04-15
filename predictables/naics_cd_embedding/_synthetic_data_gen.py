@@ -101,10 +101,10 @@ if __name__ == "__main__":
 
     # Perform validation
     structure_valid, prob_stats, mean_target = validate_data(final_sampled_data)
-    print("Data Generation and Validation Complete")
-    print(f"Hierarchical Structure Valid: {structure_valid}")
-    print(f"Probability Stats:\n{prob_stats}")
-    print(f"Mean Target: {mean_target}")
+    print("Data Generation and Validation Complete")  # noqa: T201
+    print(f"Hierarchical Structure Valid: {structure_valid}")  # noqa: T201
+    print(f"Probability Stats:\n{prob_stats}")  # noqa: T201
+    print(f"Mean Target: {mean_target}")  # noqa: T201
 
     # Export to Parquet
     final_sampled_data.to_parquet("final_naics_data.parquet")
