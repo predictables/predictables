@@ -2,9 +2,9 @@
 requires-python = ">=3.8"
 name = "predictables"
 version = "0.1.0"
-description = "Add your description here"
+description = "Predictable modelling tools for actuaries."
 authors = [
-    { name = "aaweaver-actuary", email = "andrewayersweaver+github.com" }
+    { name = "aaweaver-actuary", email = "andrewayersweaver+github@gmail.com" }
 ]
 dependencies = [
     "polars>=0.20.18",
