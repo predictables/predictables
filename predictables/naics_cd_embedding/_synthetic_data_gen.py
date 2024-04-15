@@ -1,7 +1,6 @@
 from __future__ import annotations
 import numpy as np
 import pandas as pd
-import predictables
 
 
 # Adjusted probability calculation function with enhanced noise
@@ -75,12 +74,18 @@ def sample_and_set_targets(
 # Validation functions
 def validate_data(data: pd.DataFrame) -> tuple[bool, pd.Series, float]:
     # Check hierarchical structure
-    structure_check = all(
-        data["naics_3_cd"].str.startswith(data["naics_2_cd"])
-        & data["naics_4_cd"].str.startswith(data["naics_3_cd"])
-        & data["naics_5_cd"].str.startswith(data["naics_4_cd"])
-        & data["naics_6_cd"].str.startswith(data["naics_5_cd"])
-    )
+    structure_check = True
+    for row in data.iterrows():
+        if not all(
+            [
+                row[1]["naics_3_cd"].startswith(row[1]["naics_2_cd"]),
+                row[1]["naics_4_cd"].startswith(row[1]["naics_3_cd"]),
+                row[1]["naics_5_cd"].startswith(row[1]["naics_4_cd"]),
+                row[1]["naics_6_cd"].startswith(row[1]["naics_5_cd"]),
+            ]
+        ):
+            structure_check = False
+            break
 
     # Probability and target consistency
     probability_stats = data["probability"].describe()
@@ -91,17 +96,15 @@ def validate_data(data: pd.DataFrame) -> tuple[bool, pd.Series, float]:
 
 # Main execution block
 if __name__ == "__main__":
-    from predictables import logger
-
     full_data = generate_full_naics_data()
     final_sampled_data = sample_and_set_targets(full_data)
 
     # Perform validation
     structure_valid, prob_stats, mean_target = validate_data(final_sampled_data)
-    logger.info("Data Generation and Validation Complete")
-    logger.debug(f"Hierarchical Structure Valid: {structure_valid}")
-    logger.debug(f"Probability Stats:\n{prob_stats}")
-    logger.debug(f"Mean Target: {mean_target}")
+    print("Data Generation and Validation Complete")
+    print(f"Hierarchical Structure Valid: {structure_valid}")
+    print(f"Probability Stats:\n{prob_stats}")
+    print(f"Mean Target: {mean_target}")
 
     # Export to Parquet
     final_sampled_data.to_parquet("final_naics_data.parquet")
