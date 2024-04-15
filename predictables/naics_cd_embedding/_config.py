@@ -16,18 +16,26 @@ class NAICSSingleLevelConfig:
         The size of the embedding vectors for each NAICS code.
     dropout : float
         The dropout probability for the model.
+    lambda_ : float
+    	The regularization penalty.
+    l1_ratio : float
+		The proportion of the regularization penalty applied to the L1 norm.
     """
 
     nunique: int
     embed_dim: int
     dropout: float
+    lambda_: float
+    l1_ratio: float 
 
     def __post_init__(self):
         """Ensure that the configuration is valid."""
         assert self.nunique is not None, "nunique must be provided"
         assert self.embed_dim is not None, "embed_dim must be provided"
         assert self.dropout is not None, "dropout must be provided"
-
+		assert self.lambda_ is not None, "lambda must be provided"
+        assert self.l1_ratio is not None, "l1_ratio must be provided"
+        
         assert (
             self.nunique > 0
         ), f"nunique must be a positive integer, got {self.nunique}"
@@ -37,7 +45,12 @@ class NAICSSingleLevelConfig:
         assert (
             0 <= self.dropout < 1
         ), f"dropout must be in the range [0, 1), got {self.dropout}"
-
+        assert (
+        	self.lambda_ > 0
+        ), f"lambda_ must be larger than 0, but {self.lambda_} was provided."
+		assert (
+			0 <= self.l1_ratio <= 1
+        ), f"l1_ratio must be between 0 and 1, but got {self.l1_ratio}."
 
 @dataclass
 class NAICSConfig:
