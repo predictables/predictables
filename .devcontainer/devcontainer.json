@@ -18,9 +18,7 @@
         "rodolphebarbanneau.python-docstring-highlighter",
         "ritwickdey.LiveServer",
         "ms-python.python",
-        "ms-toolsai.jupyter",
-        "vscodevim.vim"
-      ]
+        "ms-toolsai.jupyter"
     },
     "settings": {
       "workbench.panel.defaultLocation": "bottom",

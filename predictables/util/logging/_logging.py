@@ -3,7 +3,7 @@
 import logging
 import os
 from dotenv import load_dotenv
-from predictables.util.src.logging._LogLevel import LogLevel
+from predictables.util.logging._LogLevel import LogLevel
 
 # Load environment variables at the beginning
 load_dotenv()
@@ -12,7 +12,7 @@ load_dotenv()
 def get_logging_level() -> int:
     """Get the logging level from the environment."""
     level_str = os.getenv("LOGGING_LEVEL", "INFO").upper()
-    return LogLevel.from_str(level_str).value
+    return int(LogLevel.from_str(level_str).to_int())
 
 
 def get_logfile_name() -> str:

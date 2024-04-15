@@ -2,16 +2,10 @@
 
 from __future__ import annotations
 import polars as pl
-import os
-import shutil
-from pathlib import Path
 from tqdm import tqdm
-from predictables.util.transform import logit_transform
 from catboost import CatBoostRegressor
-import polars.selectors as cs
-from pathlib import Path
+import os
 import typing
-import sys
 
 from predictables.logit_transform import get_data, idx_to_lag
 
@@ -25,12 +19,14 @@ N_COLS = 18
 
 PROJECT_ROOT = "/rdata/aweaver/EGModeling/hit_ratio/bop_model"
 FOLDER = f"{PROJECT_ROOT}/mean_encoding_backup"
+
+N_CV_FOLDS = 5
 ########################################
 
 
 def get_file_list() -> list[str]:
     """Get the list of logit-transformed files in `FOLDER`."""
-    return [""]
+    return os.listdir(FOLDER)
 
 
 def get_cat_col_from_filename(file: str) -> str:
@@ -48,20 +44,57 @@ def idx_to_column_name(idx: int, file: str) -> str:
     """Convert an index to a column name."""
     return f"logit[MEAN_ENCODED_{get_cat_col_from_filename(file)}_{idx_to_lag(idx)}]"
 
+def column_name_to_index(column_name: str) -> int:
+    """Convert a column name to an index."""
+    return int(column_name.split("_")[-1])
+
 
 def column_name_generator(
     file: str, prior_p: int = 6
 ) -> typing.Generator[tuple[list[str], str]]:
     """Generate tuples of lagged columns and the target column, for fitting time-series models incrementally."""
-    cat_col = get_cat_col_from_filename(file)
     for start_idx in start_idx_generator():
         yield [
             idx_to_column_name(i, file)
             for i in list(range(start_idx, start_idx + prior_p + 1))
         ]
 
+def fit_single_catboost_model_for_single_col(
+    file: str, n_prior_periods: int, lag: int = 1
+) -> CatBoostRegressor:
+    """Fit a single CatBoost model to the lagged columns, offset by lag."""
+    lf = get_data(file)
+    lf = lf.with_columns([pl.lit(n_prior_periods)])
+    CatBoostRegressor()
+
+
+def fit_all_catboost_models_for_single_col(file: str) -> dict[str, CatBoostRegressor]:
+    """Fit all CatBoost models to the lagged columns for a single categorical column."""
+    lf = get_data(file)
+    models = {}
+    for cols, target_col in column_name_generator(file):
+        lf = lf.select([*cols, target_col])
+        model = fit_single_catboost_model_for_single_col(file, len(cols) - 1)
+        models[target_col] = model
+    return models
+
+
+# def fit_catboost_models_for_all_cols(files: list[str]) -> dict[str, dict[str, CatBoostRegressor]]:
+
 
 def main() -> None:
+    """Fit CatBoost regression models to the lagged logit-transformed columns.
+
+    The most recent mean-encoded categorical column is 30 days before the submission
+    recieved date. In order to push the values to the actual date of the submission,
+    we do the following:
+
+    1. Fit CatBoost regression models to the lagged logit-transformed columns, using
+       1-12 prior 30-day periods of data.
+    2. For each fitted model, use time-series cross validation to select the model
+       that performs best on the validation set. There are 18 months of data, so we
+       can use 5-fold cross validation.
+    """
     # parse the command-line args
 
     

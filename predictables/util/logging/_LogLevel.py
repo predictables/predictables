@@ -101,6 +101,9 @@ class LogLevel(Enum):
             level.name
         ]
 
+    def to_int(self) -> int:
+        return self.get_int(self)
+
     def int_(self, level: "LogLevel") -> int:
         return self.get_int(level)
 
