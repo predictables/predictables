@@ -1,14 +1,14 @@
 """Fit time series models to the lagged columns of a dataset, and estimate the current value."""
 
-import pandas as pd
 import polars as pl
 import polars.selectors as cs
 import numpy as np
+from sklearn import BaseEstimator
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import TimeSeriesSplit
+from catboost import CatBoostRegressor
 from sklearn.metrics import mean_squared_error
 
-from collections.abc import Generator
+
 
 
 def synthetic_lf() -> pl.LazyFrame:
@@ -69,11 +69,15 @@ def load_and_preprocess_data(filepath: str) -> pl.LazyFrame:
     pl.LazyFrame
         A Polars LazyFrame with only the "index" and "logit" columns.
     """
-    lf = pl.scan_parquet(filepath)
-    return lf.select(
-        [pl.col("index")]
-        + [pl.col(c) for c in lf.select(cs.starts_with("logit")).columns]
-    )
+    try:
+        lf = pl.scan_parquet(filepath)
+        logit_columns = [pl.col(c) for c in lf.select(cs.starts_with("logit")).columns]
+        if not logit_columns:
+            raise ValueError("No logit columns found in the data.")
+        return lf.select([pl.col("index"), *logit_columns])
+    except Exception as e:
+        print(f"Failed to load or preprocess data: {e!s}")  # noqa: T201
+        return None
 
 
 def extract_features(lf: pl.LazyFrame) -> list:
@@ -134,74 +138,118 @@ def recode_columns(lf: pl.LazyFrame) -> pl.LazyFrame:
     )
 
 
-def X_y_generator(
-    lf: pl.LazyFrame, feature_name: str, n_folds: int = 5, n_prior_periods: int = 6
-) -> Generator:
-    """Generate X, y splits for time series cross-validation.
+def prepare_data(filename: str) -> np.ndarray:
+    """Prepare the data for time series modeling by converting to a numpy array."""
+    lf = load_and_preprocess_data(filename)
+    return recode_columns(lf).drop("index").collect().to_numpy()
+
+
+# Modified cross-validation function to include logging
+def sliding_window_cv(
+    data: np.ndarray, model: BaseEstimator, train_size: int, test_size: int = 1
+) -> tuple:
+    """Perform sliding window cross-validation on a time series dataset.
 
     Parameters
     ----------
-    lf : pl.LazyFrame
-        The input Polars LazyFrame.
-    feature_name : str
-        The feature name used in the column names.
-    n_folds : int
-        The number of folds to use in the time series cross-validation.
-    n_prior_periods : int
-        The number of prior periods to use as features.
+    data : np.ndarray
+        The input time series data, with shape (n_samples, n_features).
+    model : BaseEstimator
+        A scikit-learn compatible model object.
+    train_size : int
+        The number of lagged features to use for training.
+    test_size : int
+        The number of periods to predict, by default 1. This procedure
+        is intended for a next-period prediction only.
 
-    Yields
-    ------
+    Returns
+    -------
     tuple
-        A tuple of X and y splits.
+        A tuple containing the list of MSE results for each fold, and the average MSE.
     """
+    n_samples, n_features = data.shape
+    results = []
 
-    def col_name(i: int, feature: str) -> str:
-        return f"{feature}_{i}"
+    for i in range(n_features - train_size - test_size + 1):
+        train_start, train_end = i, i + train_size
+        test_index = train_end
 
-    def find_first_col_idx(n_folds: int, n_prior_periods: int) -> int:
-        return n_prior_periods + n_folds - 1
+        X_train = data[:, train_start:train_end]
+        y_train = data[:, test_index - 1]
+        X_test = data[:, train_start + 1 : train_end + 1]
+        y_test = data[:, test_index]
 
-    for fold in range(n_folds, 0, -1):
-        cols = [col_name(fold + i, feature_name) for i in range(n_prior_periods)]
-        yield (
-            lf.select(cols[1:]).collect().to_numpy(),
-            lf.select([cols[0]]).collect().to_numpy(),
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
+        mse = mean_squared_error(y_test, y_pred)
+        results.append(mse)
+        print(  # noqa: T201
+            f"Fold {i+1}, Train indices: {train_start}-{train_end}, Test index: {test_index}, MSE: {mse}"
         )
 
+    return results, np.mean(results)
 
-# def time_series_cv_corrected(
-#     lf: pl.LazyFrame, features: list, max_lag: int, n_splits: int = 5
-# ) -> tuple:
-#     tscv = TimeSeriesSplit(n_splits=n_splits)
-#     results = []
-#     for p in range(1, max_lag + 1):
-#         mse_scores = []
-#         for train_index, test_index in tscv.split(df):
-#             train_df, test_df = df.iloc[train_index], df.iloc[test_index]
-#             feature_cols = [f'{feature}_{lag}' for feature in features for lag in range(1, max_lag + 1) if f'{feature}_{lag}' in df.columns]
-#             X_train = train_df[feature_cols].values
-#             X_test = test_df[feature_cols].values
-#             if f'{features[0]}_{p}' in df.columns:
-#                 y_train = train_df[f'{features[0]}_{p}'].values
-#                 y_test = test_df[f'{features[0]}_{p}'].values
-#             else:
-#                 continue
-#             model = RandomForestRegressor(n_estimators=100, random_state=42)
-#             model.fit(X_train, y_train)
-#             predictions = model.predict(X_test)
-#             mse = mean_squared_error(y_test, predictions)
-#             mse_scores.append(mse)
-#         if mse_scores:
-#             avg_mse = np.mean(mse_scores)
-#             results.append((p, avg_mse))
-#     best_p = min(results, key=lambda x: x[1])[0] if results else None
-#     return results, best_p
 
-# # Main execution
-# df_synthetic = synthetic_dataframe()
-# df_transformed, features, _ = extract_features_and_lags(df_synthetic.copy())
-# results, best_p = time_series_cv_corrected(df_transformed, features, max_lag=3, n_splits=3)
-# print("Results (Lag, MSE):", results)
-# print("Best lag period based on MSE:", best_p)
-# df_transformed.head()
+def fit_models_with_various_lags(data: np.ndarray, model: BaseEstimator) -> dict:
+    """Fit models using varying numbers of lagged features from 1 to 12 and perform cross-validation.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The input time series data, with shape (n_samples, n_features).
+    model : BaseEstimator
+        A scikit-learn compatible model object to be used for the time series predictions.
+
+    Returns
+    -------
+    dict
+        A dictionary where keys are the number of lags and values are the average MSE for each configuration.
+    """
+    mse_results = {}
+    for lags in range(1, 13):  # Lags from 1 to 12
+        # Adjust the model training by setting the train_size to 'lags'
+        _, average_mse = sliding_window_cv(data, model, train_size=lags)
+        mse_results[lags] = average_mse
+        print(f"Completed CV for {lags} lags: Average MSE = {average_mse}")  # noqa: T201
+
+    return mse_results
+
+
+def fit_rf_models(data: np.ndarray, **kwargs) -> dict:
+    """Fit random forest models using varying numbers of lagged features from 1 to 12 and perform cross-validation.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The input time series data, with shape (n_samples, n_features).
+    **kwargs
+        Additional keyword arguments to pass to the RandomForestRegressor.
+
+    Returns
+    -------
+    dict
+        A dictionary where keys are the number of lags and values are the average MSE for each configuration.
+    """
+    return fit_models_with_various_lags(
+        data, RandomForestRegressor(random_state=42, **kwargs)
+    )
+
+
+def fit_catboost_models(data: np.ndarray, **kwargs) -> dict:
+    """Fit CatBoost models using varying numbers of lagged features from 1 to 12 and perform cross-validation.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The input time series data, with shape (n_samples, n_features).
+    **kwargs
+        Additional keyword arguments to pass to the CatBoostRegressor.
+
+    Returns
+    -------
+    dict
+        A dictionary where keys are the number of lags and values are the average MSE for each configuration.
+    """
+    return fit_models_with_various_lags(
+        data, CatBoostRegressor(random_state=42, verbose=False, **kwargs)
+    )
