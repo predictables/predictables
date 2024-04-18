@@ -1,14 +1,121 @@
 """Fit time series models to the lagged columns of a dataset, and estimate the current value."""
 
-import pandas as pd
 import polars as pl
 import polars.selectors as cs
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import TimeSeriesSplit
+from catboost import CatBoostRegressor
 from sklearn.metrics import mean_squared_error
+from tqdm import tqdm
 
-from collections.abc import Generator
+
+class TimeSeriesEncoding:
+    """Fit time series models to the lagged columns of a dataset, and estimate the current value.
+
+    This class is designed to work with a dataset that has been preprocessed to include
+    lagged columns for a single feature. The goal is to predict the current value of the
+    feature based on the lagged values, with the intention of using this current value
+    as an encoding for a categorical feature in a machine learning model.
+    """
+
+    def __init__(
+        self, lf: pl.LazyFrame, model: CatBoostRegressor, max_number_of_lags: int = 12
+    ):
+        """Initialize the TimeSeriesEncoding object with data, model, and parameters."""
+        self.lf = lf
+        self.original_lf = lf
+        self.model = model
+        self.max_number_of_lags = max_number_of_lags
+        self.data = self.prep_data()
+        self.feature_name = self.get_feature()
+        self.lags = self.get_lags()
+        self.mse_results = self.fit_models()
+
+    def get_feature(self) -> str:
+        """Extract the primary feature name assumed to be the target for prediction."""
+        return extract_features(self.lf)[0]
+
+    def get_lags(self) -> list:
+        """Determine the number of lags used in the dataset from the column names."""
+        return extract_lags(self.lf)
+
+    def prep_data(self) -> np.ndarray:
+        """Prepare the data by dropping non-numeric columns and converting to numpy array."""
+        return self.lf.drop("index").collect().to_numpy()
+
+    def fit_models(self) -> dict:
+        """Fit models with varying numbers of lagged features and perform cross-validation."""
+        mse_results = {}
+        for lags in range(1, self.max_number_of_lags + 1):
+            try:
+                data = (
+                    self.lf.drop("index")
+                    .filter(
+                        pl.all_horizontal(
+                            [
+                                pl.col(
+                                    f"logit[MEAN_ENCODED_{self.feature_name}_{lag*30}]"
+                                ).is_finite()
+                                for lag in range(1, lags + 1)
+                            ]
+                        )
+                    )
+                    .collect()
+                    .to_numpy()
+                )
+                _, average_mse = sliding_window_cv(data, self.model, train_size=lags)
+                mse_results[lags] = average_mse
+            except Exception as e:  # noqa: PERF203
+                print(f"Error with lag {lags}: {e}")  # noqa: T201
+        return mse_results
+
+    def find_optimal_lags(self) -> int:
+        """Determine the optimal number of lags using the MSE results from cross-validation."""
+        # Fit the models, get the key with the minimum MSE
+        return min(self.mse_results, key=self.mse_results.get)
+
+    def predict_current_value(self) -> np.ndarray:
+        """Use the optimal number of lags to fit the model and predict the current value."""
+        optimal_lags = self.find_optimal_lags()
+        X_train = (
+            self.lf.select(
+                [
+                    f"logit[MEAN_ENCODED_{self.feature_name}_{lag*30}]"
+                    for lag in range(optimal_lags + 1, 1, -1)
+                ]
+            )
+            .collect()
+            .to_numpy()
+        )
+        y_train = (
+            self.lf.select([f"logit[MEAN_ENCODED_{self.feature_name}_30]"])
+            .collect()
+            .to_numpy()
+        )
+        model = self.model.fit(X_train, y_train)
+
+        X_pred = (
+            self.lf.select(
+                [
+                    f"logit[MEAN_ENCODED_{self.feature_name}_{lag*30}]"
+                    for lag in range(optimal_lags, 0, -1)
+                ]
+            )
+            .collect()
+            .to_numpy()
+        )
+        return model.predict(X_pred)
+
+    def encode_feature(self) -> pl.DataFrame:
+        """Encode the feature using the predicted current values."""
+        predictions = self.predict_current_value()
+        return pl.concat(
+            [
+                self.lf.select("index"),
+                pl.DataFrame({f"{self.feature_name}_current": predictions}).lazy(),
+            ],
+            how="horizontal",
+        )
 
 
 def synthetic_lf() -> pl.LazyFrame:
@@ -69,11 +176,15 @@ def load_and_preprocess_data(filepath: str) -> pl.LazyFrame:
     pl.LazyFrame
         A Polars LazyFrame with only the "index" and "logit" columns.
     """
-    lf = pl.scan_parquet(filepath)
-    return lf.select(
-        [pl.col("index")]
-        + [pl.col(c) for c in lf.select(cs.starts_with("logit")).columns]
-    )
+    try:
+        lf = pl.scan_parquet(filepath)
+        logit_columns = [pl.col(c) for c in lf.select(cs.starts_with("logit")).columns]
+        if not logit_columns:
+            raise ValueError("No logit columns found in the data.")
+        return lf.select([pl.col("index"), *logit_columns])
+    except Exception as e:
+        print(f"Failed to load or preprocess data: {e!s}")  # noqa: T201
+        return None
 
 
 def extract_features(lf: pl.LazyFrame) -> list:
@@ -134,74 +245,233 @@ def recode_columns(lf: pl.LazyFrame) -> pl.LazyFrame:
     )
 
 
-def X_y_generator(
-    lf: pl.LazyFrame, feature_name: str, n_folds: int = 5, n_prior_periods: int = 6
-) -> Generator:
-    """Generate X, y splits for time series cross-validation.
+def prepare_data(filename: str) -> np.ndarray:
+    """Prepare the data for time series modeling by converting to a numpy array."""
+    lf = load_and_preprocess_data(filename)
+    return recode_columns(lf).drop("index").collect().to_numpy()
+
+
+# Modified cross-validation function to include logging
+def sliding_window_cv(
+    data: np.ndarray, model: CatBoostRegressor, train_size: int, test_size: int = 1
+) -> tuple:
+    """Perform sliding window cross-validation on a time series dataset.
 
     Parameters
     ----------
-    lf : pl.LazyFrame
-        The input Polars LazyFrame.
-    feature_name : str
-        The feature name used in the column names.
-    n_folds : int
-        The number of folds to use in the time series cross-validation.
-    n_prior_periods : int
-        The number of prior periods to use as features.
+    data : np.ndarray
+        The input time series data, with shape (n_samples, n_features).
+    model : BaseEstimator
+        A scikit-learn compatible model object.
+    train_size : int
+        The number of lagged features to use for training.
+    test_size : int
+        The number of periods to predict, by default 1. This procedure
+        is intended for a next-period prediction only.
 
-    Yields
-    ------
+    Returns
+    -------
     tuple
-        A tuple of X and y splits.
+        A tuple containing the list of MSE results for each fold, and the average MSE.
     """
+    n_samples, n_features = data.shape
+    results = []
 
-    def col_name(i: int, feature: str) -> str:
-        return f"{feature}_{i}"
+    for i in range(n_features - train_size - test_size + 1):
+        train_start, train_end = i, i + train_size
+        test_index = train_end
 
-    def find_first_col_idx(n_folds: int, n_prior_periods: int) -> int:
-        return n_prior_periods + n_folds - 1
+        X_train = data[:, train_start:train_end]
+        y_train = data[:, test_index - 1]
+        X_test = data[:, train_start + 1 : train_end + 1]
+        y_test = data[:, test_index]
 
-    for fold in range(n_folds, 0, -1):
-        cols = [col_name(fold + i, feature_name) for i in range(n_prior_periods)]
-        yield (
-            lf.select(cols[1:]).collect().to_numpy(),
-            lf.select([cols[0]]).collect().to_numpy(),
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
+        mse = mean_squared_error(y_test, y_pred)
+        results.append(mse)
+    try:
+        print(  # noqa: T201
+            f"Averaged MSE for {train_size} lags: {np.mean(results):.4f}"
         )
 
+        return results, np.mean(results)
+    except Exception as e:
+        print(f"Error with {train_size} lags: {e}")  # noqa: T201
+        return None
 
-# def time_series_cv_corrected(
-#     lf: pl.LazyFrame, features: list, max_lag: int, n_splits: int = 5
-# ) -> tuple:
-#     tscv = TimeSeriesSplit(n_splits=n_splits)
-#     results = []
-#     for p in range(1, max_lag + 1):
-#         mse_scores = []
-#         for train_index, test_index in tscv.split(df):
-#             train_df, test_df = df.iloc[train_index], df.iloc[test_index]
-#             feature_cols = [f'{feature}_{lag}' for feature in features for lag in range(1, max_lag + 1) if f'{feature}_{lag}' in df.columns]
-#             X_train = train_df[feature_cols].values
-#             X_test = test_df[feature_cols].values
-#             if f'{features[0]}_{p}' in df.columns:
-#                 y_train = train_df[f'{features[0]}_{p}'].values
-#                 y_test = test_df[f'{features[0]}_{p}'].values
-#             else:
-#                 continue
-#             model = RandomForestRegressor(n_estimators=100, random_state=42)
-#             model.fit(X_train, y_train)
-#             predictions = model.predict(X_test)
-#             mse = mean_squared_error(y_test, predictions)
-#             mse_scores.append(mse)
-#         if mse_scores:
-#             avg_mse = np.mean(mse_scores)
-#             results.append((p, avg_mse))
-#     best_p = min(results, key=lambda x: x[1])[0] if results else None
-#     return results, best_p
 
-# # Main execution
-# df_synthetic = synthetic_dataframe()
-# df_transformed, features, _ = extract_features_and_lags(df_synthetic.copy())
-# results, best_p = time_series_cv_corrected(df_transformed, features, max_lag=3, n_splits=3)
-# print("Results (Lag, MSE):", results)
-# print("Best lag period based on MSE:", best_p)
-# df_transformed.head()
+def fit_models_with_various_lags(data: np.ndarray, model) -> dict:  # noqa: ANN001
+    """Fit models using varying numbers of lagged features from 1 to 12 and perform cross-validation.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The input time series data, with shape (n_samples, n_features).
+    model : Any
+        A scikit-learn compatible model object to be used for the time series predictions.
+
+    Returns
+    -------
+    dict
+        A dictionary where keys are the number of lags and values are the average MSE for each configuration.
+    """
+    mse_results = {}
+    for lags in range(1, 13):  # Lags from 1 to 12
+        # Adjust the model training by setting the train_size to 'lags'
+        _, average_mse = sliding_window_cv(data, model, train_size=lags)
+        mse_results[lags] = average_mse
+        print(f"Completed CV for {lags} lags: Average MSE = {average_mse}")  # noqa: T201
+
+    return mse_results
+
+
+def fit_rf_models(data: np.ndarray, **kwargs) -> dict:
+    """Fit random forest models using varying numbers of lagged features from 1 to 12 and perform cross-validation.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The input time series data, with shape (n_samples, n_features).
+    **kwargs
+        Additional keyword arguments to pass to the RandomForestRegressor.
+
+    Returns
+    -------
+    dict
+        A dictionary where keys are the number of lags and values are the average MSE for each configuration.
+    """
+    return fit_models_with_various_lags(
+        data, RandomForestRegressor(random_state=42, **kwargs)
+    )
+
+
+def fit_catboost_models(data: np.ndarray, **kwargs) -> dict:
+    """Fit CatBoost models using varying numbers of lagged features from 1 to 12 and perform cross-validation.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The input time series data, with shape (n_samples, n_features).
+    **kwargs
+        Additional keyword arguments to pass to the CatBoostRegressor.
+
+    Returns
+    -------
+    dict
+        A dictionary where keys are the number of lags and values are the average MSE for each configuration.
+    """
+    return fit_models_with_various_lags(
+        data, CatBoostRegressor(random_state=42, verbose=False, **kwargs)
+    )
+
+
+def generate_catboost_feature(
+    data: np.ndarray, feature_name: str, **kwargs
+) -> pl.LazyFrame:
+    """Generate predictions for a given feature using CatBoost models.
+
+    First, use cross-validation to determine the appropriate number of lags
+    to use, which will be defined as the number whose average MSE is within
+    1 SD of the minimum average MSE.
+
+    Then, fit a CatBoost model using the optimal number of lags:
+    - Use up to 12 lags depending on the results of the cross-validation.
+    - The lag-1 feature is the first in the X matrix, and lags 2-12 are
+      subsequent, again depending on the number of lags.
+    - The ultimate goal is to predict the lag-0, or current value of the feature.
+
+    Return a polars LazyFrame with 4 columns:
+    1. the index column
+    2. the actual lag-1 values
+    3. the predicted lag-1 values, using the CatBoost model
+    4. the predicted lag-0 values, using the CatBoost model
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The input time series data, with shape (n_samples, n_features).
+    feature_name : str
+        The name of the feature to predict.
+    **kwargs
+        Additional keyword arguments to pass to the CatBoostRegressor.
+
+    Returns
+    -------
+    pl.LazyFrame
+        A Polars LazyFrame with the index, actual, and predicted values for the feature.
+    """
+    # Fit Catboost models with varying lags
+    mse_results = fit_catboost_models(data, **kwargs)
+
+    # Find the optimal number of lags (smallest number of lags within 1 SD of the minimum MSE)
+    min_mse = min(mse_results.values())
+    sd = np.std(list(mse_results.values()))
+    optimal_lags = min([k for k, v in mse_results.items() if v <= min_mse + sd])
+
+    # Fit the CatBoost model with the optimal number N of lags, using data starting with
+    # lag-1 and ending with lag-N as the X matrix, and lag-0 (unknown) as the target
+    X_train = data[:-1, :optimal_lags]  # Use the first (N-1) samples for training
+    y_train = data[:-1, optimal_lags]  # Predicting the next value
+
+    X_test = data[-1:, :optimal_lags]  # Use the last sample for testing/prediction
+
+    model = CatBoostRegressor(random_state=42, n_jobs=-1, **kwargs)
+
+    model.fit(X_train, y_train)
+
+    # Predict the lag-1 values
+    y_pred_lag1 = model.predict(X_train)
+
+    # Predict the lag-0 values
+    y_pred_lag0 = model.predict(X_test)
+
+    # Create a Polars LazyFrame with the index, actual, and predicted values
+    return pl.DataFrame(
+        {
+            "index": np.arange(len(data)),
+            f"{feature_name}_predicted_lag1": y_pred_lag1,
+            f"{feature_name}_predicted_lag0": y_pred_lag0,
+        }
+    ).lazy()
+
+
+def read_data(file: str) -> pl.LazyFrame:
+    """Read a parquet file and select only the logit columns."""
+    lf = pl.scan_parquet(f"./mean_encoding_backup/{file}").select(
+        [pl.col("index"), cs.starts_with("logit")]
+    )
+
+    return (
+        lf.select(["index", *list(reversed(lf.columns[1:12]))])
+        .with_columns(
+            [pl.col(c).is_finite().name.prefix("fin_") for c in lf.columns[1:12]]
+        )
+        .filter(pl.all_horizontal([pl.col(f"fin_{c}") for c in lf.columns[1:12]]))
+        .select(["index", *list(reversed(lf.columns[1:12]))])
+    )
+
+
+if __name__ == "__main__":
+    import polars as pl
+    import polars.selectors as cs
+    from catboost import CatBoostRegressor
+    import os
+
+    files = [
+        c
+        for c in os.listdir("./mean_encoding_backup")
+        if c.split(".")[0] not in ["train", "val", "test"]
+    ]
+
+    for file in tqdm(files):
+        print(f"\n{file}\n")  # noqa: T201
+        ts = TimeSeriesEncoding(read_data(file), CatBoostRegressor(verbose=0))
+        pl.concat(
+            [
+                ts.encode_feature(),
+                ts.original_lf.select(cs.ends_with("_30]")),
+                ts.original_lf.select(cs.ends_with("_60]")),
+            ],
+            how="horizontal",
+        ).collect().write_parquet(f"./final_encoding/{ts.get_feature()}.parquet")
