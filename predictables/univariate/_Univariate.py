@@ -135,15 +135,20 @@ class Univariate(Model):
 
         self.cv_dict = {}
         for fold in self.unique_folds:
-            self.cv_dict[fold] = Model(
-                self.df,
-                fold_n=fold,
-                fold_col=self.fold_col,
-                feature_col=(
-                    self.feature_col if self.feature_col is not None else None
-                ),
-                target_col=(self.target_col if self.target_col is not None else None),
-            )
+            try:
+                self.cv_dict[fold] = Model(
+                    self.df,
+                    fold_n=fold,
+                    fold_col=self.fold_col,
+                    feature_col=(
+                        self.feature_col if self.feature_col is not None else None
+                    ),
+                    target_col=(
+                        self.target_col if self.target_col is not None else None
+                    ),
+                )
+            except:
+                dbg.msg(f"Error in fold {fold} | Ux0001f")
 
         self.agg_results = pl.from_pandas(
             pd.DataFrame({"fold": [*self.unique_folds_str, "mean", "std"]})
