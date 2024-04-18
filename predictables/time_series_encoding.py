@@ -33,7 +33,12 @@ class TimeSeriesEncoding:
 
     def get_feature(self) -> str:
         """Extract the primary feature name assumed to be the target for prediction."""
-        return extract_features(self.lf)[0]
+        return (
+            self.lf.drop("index")
+            .columns[0]
+            .replace("logit[MEAN_ENCODED_", "")
+            .replace("_30]", "")
+        )
 
     def get_lags(self) -> list:
         """Determine the number of lags used in the dataset from the column names."""
@@ -44,35 +49,72 @@ class TimeSeriesEncoding:
         return self.lf.drop("index").collect().to_numpy()
 
     def fit_models(self) -> dict:
-        """Fit models with varying numbers of lagged features and perform cross-validation."""
+        """Fit models with varying numbers of lagged features and perform cross-validation.
+
+        Structure of the return dict:
+        {
+            number_of_lags: {
+                "mean": average_mse,
+                "sd": standard_deviation_mse
+            }
+
+            for number_of_lags in range(1, self.max_number_of_lags + 1)
+        }
+        """
         mse_results = {}
+
         for lags in range(1, self.max_number_of_lags + 1):
             try:
-                data = (
-                    self.lf.drop("index")
-                    .filter(
-                        pl.all_horizontal(
-                            [
-                                pl.col(
-                                    f"logit[MEAN_ENCODED_{self.feature_name}_{lag*30}]"
-                                ).is_finite()
-                                for lag in range(1, lags + 1)
-                            ]
+                data = self.lf.drop("index")
+
+                for lag in range(1, lags + 1):
+                    try:
+                        data = data.filter(
+                            pl.col(
+                                f"logit[MEAN_ENCODED_{self.feature_name}_{lag*30}]"
+                            ).is_finite()
                         )
-                    )
-                    .collect()
-                    .to_numpy()
+                    except Exception as e:  # noqa: PERF203
+                        print(f"Error with lag {lag}, feature {self.feature_name}: {e}")  # noqa: T201
+
+                _mse_result, average_mse = sliding_window_cv(
+                    data.collect().to_numpy(), self.model, train_size=lags
                 )
-                _, average_mse = sliding_window_cv(data, self.model, train_size=lags)
-                mse_results[lags] = average_mse
+                mse_results[lags] = {"mean": average_mse, "sd": np.std(_mse_result)}
             except Exception as e:  # noqa: PERF203
                 print(f"Error with lag {lags}: {e}")  # noqa: T201
         return mse_results
 
+    def get_min_mse(self) -> float:
+        """Return the minimum average MSE from the cross-validation results."""
+        return min([v["mean"] for v in self.mse_results.values()])
+
+    def get_min_mse_index(self) -> int:
+        """Return the number of lags with the minimum average MSE."""
+        return min(self.mse_results, key=lambda x: self.mse_results[x]["mean"])
+
+    def get_sd_mse(self) -> float:
+        """Return the standard deviation of the average MSE from the cross-validation results."""
+        return np.std([v["mean"] for v in self.mse_results.values()])
+
     def find_optimal_lags(self) -> int:
-        """Determine the optimal number of lags using the MSE results from cross-validation."""
-        # Fit the models, get the key with the minimum MSE
-        return min(self.mse_results, key=self.mse_results.get)
+        """Determine the optimal number of lags using the MSE results from cross-validation.
+
+        Here the optimial number of lags is defined as the largest (and thus most stable)
+        number of lags whose average MSE is within 1 standard deviation of the minimum
+        average MSE.
+        """
+        if not self.mse_results:
+            return 0
+        else:
+            # Return the largest number of lags whose average MSE is within 1 SD of the minimum
+            return max(
+                [
+                    k
+                    for k, v in self.mse_results.items()
+                    if v["mean"] <= self.get_min_mse() + self.get_sd_mse()
+                ]
+            )
 
     def predict_current_value(self) -> np.ndarray:
         """Use the optimal number of lags to fit the model and predict the current value."""
@@ -80,15 +122,36 @@ class TimeSeriesEncoding:
         X_train = (
             self.lf.select(
                 [
-                    f"logit[MEAN_ENCODED_{self.feature_name}_{lag*30}]"
+                    pl.when(
+                        pl.col(
+                            f"logit[MEAN_ENCODED_{self.feature_name}_{lag*30}]"
+                        ).is_finite()
+                    )
+                    .then(pl.col(f"logit[MEAN_ENCODED_{self.feature_name}_{lag*30}]"))
+                    .otherwise(pl.lit(0))
+                    .cast(pl.Float32)
+                    .alias(f"logit[MEAN_ENCODED_{self.feature_name}_{lag*30}]")
                     for lag in range(optimal_lags + 1, 1, -1)
                 ]
             )
             .collect()
             .to_numpy()
         )
+
         y_train = (
-            self.lf.select([f"logit[MEAN_ENCODED_{self.feature_name}_30]"])
+            self.lf.select(
+                [
+                    pl.when(
+                        pl.col(
+                            f"logit[MEAN_ENCODED_{self.feature_name}_30]"
+                        ).is_finite()
+                    )
+                    .then(pl.col(f"logit[MEAN_ENCODED_{self.feature_name}_30]"))
+                    .otherwise(pl.lit(0))
+                    .cast(pl.Float32)
+                    .alias(f"logit[MEAN_ENCODED_{self.feature_name}_30]")
+                ]
+            )
             .collect()
             .to_numpy()
         )
@@ -97,7 +160,15 @@ class TimeSeriesEncoding:
         X_pred = (
             self.lf.select(
                 [
-                    f"logit[MEAN_ENCODED_{self.feature_name}_{lag*30}]"
+                    pl.when(
+                        pl.col(
+                            f"logit[MEAN_ENCODED_{self.feature_name}_{lag*30}]"
+                        ).is_finite()
+                    )
+                    .then(pl.col(f"logit[MEAN_ENCODED_{self.feature_name}_{lag*30}]"))
+                    .otherwise(pl.lit(0))
+                    .cast(pl.Float32)
+                    .alias(f"logit[MEAN_ENCODED_{self.feature_name}_{lag*30}]")
                     for lag in range(optimal_lags, 0, -1)
                 ]
             )
@@ -443,12 +514,12 @@ def read_data(file: str) -> pl.LazyFrame:
     )
 
     return (
-        lf.select(["index", *list(reversed(lf.columns[1:12]))])
+        lf.select(["index", *list(reversed(lf.columns[1:]))])
         .with_columns(
-            [pl.col(c).is_finite().name.prefix("fin_") for c in lf.columns[1:12]]
+            [pl.col(c).is_finite().name.prefix("fin_") for c in lf.columns[1:]]
         )
-        .filter(pl.all_horizontal([pl.col(f"fin_{c}") for c in lf.columns[1:12]]))
-        .select(["index", *list(reversed(lf.columns[1:12]))])
+        .filter(pl.all_horizontal([pl.col(f"fin_{c}") for c in lf.columns[1:]]))
+        .select(["index", *list(reversed(lf.columns[1:]))])
     )
 
 
@@ -475,3 +546,17 @@ if __name__ == "__main__":
             ],
             how="horizontal",
         ).collect().write_parquet(f"./final_encoding/{ts.get_feature()}.parquet")
+
+        # Structure of the mse_results dict:
+
+        # {  # noqa: ERA001, RUF100
+        # number_of_lags: {"mean": average_mse, "sd": standard_deviation_mse}  # noqa: ERA001
+        #     for number_of_lags in range(1, self.max_number_of_lags + 1)
+        # }    # noqa: ERA001, RUF100
+
+        print(  # noqa: T201
+            f"Minimum MSE: {ts.get_min_mse()}\n"
+            f"Min MSE Lags: {ts.get_min_mse_index()}\n"
+            f"SD: {ts.get_sd_mse()}\n"
+            f"Optimal Lags: {ts.find_optimal_lags()}\n"
+        )
