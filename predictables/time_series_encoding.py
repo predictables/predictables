@@ -118,96 +118,6 @@ class TimeSeriesEncoding:
         )
 
 
-class TimeSeriesEncoding:
-    """Fit time series models to the lagged columns of a dataset, and estimate the current value.
-
-    This class is designed to work with a dataset that has been preprocessed to include
-    lagged columns for a single feature. The goal is to predict the current value of the
-    feature based on the lagged values, with the intention of using this current value
-    as an encoding for a categorical feature in a machine learning model.
-    """
-
-    def __init__(
-        self, lf: pl.LazyFrame, model: CatBoostRegressor, max_number_of_lags: int = 12
-    ):
-        """Initialize the TimeSeriesEncoding object with data, model, and parameters."""
-        self.lf = lf
-        self.model = model
-        self.max_number_of_lags = max_number_of_lags
-        self.data = self.prep_data()
-        self.feature_name = self.get_feature()
-        self.lags = self.get_lags()
-        self.mse_results = self.fit_models()
-
-    def get_feature(self) -> str:
-        """Extract the primary feature name assumed to be the target for prediction."""
-        return extract_features(self.lf)[0]
-
-    def get_lags(self) -> list:
-        """Determine the number of lags used in the dataset from the column names."""
-        return extract_lags(self.lf)
-
-    def prep_data(self) -> np.ndarray:
-        """Prepare the data by dropping non-numeric columns and converting to numpy array."""
-        return self.lf.drop("index").collect().to_numpy()
-
-    def fit_models(self) -> dict:
-        """Fit models with varying numbers of lagged features and perform cross-validation."""
-        mse_results = {}
-        for lags in range(1, self.max_number_of_lags + 1):
-            _, average_mse = sliding_window_cv(self.data, self.model, train_size=lags)
-            mse_results[lags] = average_mse
-        return mse_results
-
-    def find_optimal_lags(self) -> int:
-        """Determine the optimal number of lags using the MSE results from cross-validation."""
-        # Fit the models, get the key with the minimum MSE
-        return min(self.mse_results, key=self.mse_results.get)
-
-    def predict_current_value(self) -> np.ndarray:
-        """Use the optimal number of lags to fit the model and predict the current value."""
-        optimal_lags = self.find_optimal_lags()
-        X_train = (
-            self.lf.select(
-                [
-                    f"logit[MEAN_ENCODED_{self.feature_name}_{lag*30}]"
-                    for lag in range(optimal_lags + 1, 1, -1)
-                ]
-            )
-            .collect()
-            .to_numpy()
-        )
-        y_train = (
-            self.lf.select([f"logit[MEAN_ENCODED_{self.feature_name}_30]"])
-            .collect()
-            .to_numpy()
-        )
-        model = self.model.fit(X_train, y_train)
-
-        X_pred = (
-            self.lf.select(
-                [
-                    f"logit[MEAN_ENCODED_{self.feature_name}_{lag*30}]"
-                    for lag in range(optimal_lags, 0, -1)
-                ]
-            )
-            .collect()
-            .to_numpy()
-        )
-        return model.predict(X_pred)
-
-    def encode_feature(self) -> pl.DataFrame:
-        """Encode the feature using the predicted current values."""
-        predictions = self.predict_current_value()
-        return pl.concat(
-            [
-                self.lf.select("index"),
-                pl.DataFrame({f"{self.feature_name}_current": predictions}).lazy(),
-            ],
-            how="horizontal",
-        )
-
-
 def synthetic_lf() -> pl.LazyFrame:
     """Generate a synthetic dataset for testing time series models.
 
@@ -380,11 +290,15 @@ def sliding_window_cv(
         y_pred = model.predict(X_test)
         mse = mean_squared_error(y_test, y_pred)
         results.append(mse)
-    print(  # noqa: T201
-        f"Averaged MSE for {train_size} lags: {np.mean(results):.4f}"
-    )
+    try:
+        print(  # noqa: T201
+            f"Averaged MSE for {train_size} lags: {np.mean(results):.4f}"
+        )
 
-    return results, np.mean(results)
+        return results, np.mean(results)
+    except Exception as e:
+        print(f"Error with {train_size} lags: {e}")  # noqa: T201
+        return None
 
 
 def fit_models_with_various_lags(data: np.ndarray, model) -> dict:  # noqa: ANN001
@@ -450,6 +364,7 @@ def fit_catboost_models(data: np.ndarray, **kwargs) -> dict:
     return fit_models_with_various_lags(
         data, CatBoostRegressor(random_state=42, verbose=False, **kwargs)
     )
+
 
 def generate_catboost_feature(
     data: np.ndarray, feature_name: str, **kwargs
@@ -519,3 +434,44 @@ def generate_catboost_feature(
             f"{feature_name}_predicted_lag0": y_pred_lag0,
         }
     ).lazy()
+
+
+def read_data(file: str) -> pl.LazyFrame:
+    """Read a parquet file and select only the logit columns."""
+    lf = pl.scan_parquet(f"./mean_encoding_backup/{file}").select(
+        [pl.col("index"), cs.starts_with("logit")]
+    )
+
+    return (
+        lf.select(["index", *list(reversed(lf.columns[1:12]))])
+        .with_columns(
+            [pl.col(c).is_finite().name.prefix("fin_") for c in lf.columns[1:12]]
+        )
+        .filter(pl.all_horizontal([pl.col(f"fin_{c}") for c in lf.columns[1:12]]))
+        .select(["index", *list(reversed(lf.columns[1:12]))])
+    )
+
+
+if __name__ == "__main__":
+    import polars as pl
+    import polars.selectors as cs
+    from catboost import CatBoostRegressor
+    import os
+
+    files = [
+        c
+        for c in os.listdir("./mean_encoding_backup")
+        if c.split(".")[0] not in ["train", "val", "test"]
+    ]
+
+    for file in tqdm(files):
+        print(f"\n{file}\n")  # noqa: T201
+        ts = TimeSeriesEncoding(read_data(file), CatBoostRegressor(verbose=0))
+        pl.concat(
+            [
+                ts.encode_feature(),
+                ts.original_lf.select(cs.ends_with("_30]")),
+                ts.original_lf.select(cs.ends_with("_60]")),
+            ],
+            how="horizontal",
+        ).collect().write_parquet(f"./final_encoding/{ts.get_feature()}.parquet")
