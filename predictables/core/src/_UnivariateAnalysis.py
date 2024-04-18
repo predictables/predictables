@@ -268,7 +268,18 @@ class UnivariateAnalysis:
                 )  # debug only
 
             # Check the skewness of the feature
-            skewness = self.df.select(pl.col(col).skew().name.keep()).collect().item()
+            skewness = (
+                self.df.select(
+                    [
+                        pl.when(pl.col(col).skew().is_not_null())
+                        .then(pl.col(col).skew())
+                        .otherwise(0.0)
+                        .name.keep()
+                    ]
+                )
+                .collect()
+                .item()
+            )
 
             if skewness > 0.5:
                 # Considered to be right-skewed, so add a log-transformed
