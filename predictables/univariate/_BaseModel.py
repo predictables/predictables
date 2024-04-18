@@ -274,7 +274,7 @@ class Model:
             pl.lit(self.model.conf_int()[0].to_numpy()[0]).alias("lower_ci")
         )
         results = results.with_columns(
-            pl.lit(self.model.conf_int()[1]).alias("upper_ci")
+            pl.lit(self.model.conf_int()[1].to_numpy()[0]).alias("upper_ci")
         )
         results = results.with_columns(pl.lit(self.model.nobs).alias("n"))
         results = results.with_columns(pl.lit(self.model.params.shape[0]).alias("k"))
