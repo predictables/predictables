@@ -239,7 +239,14 @@ class Univariate(Model):
         self.figsize = kwargs.get("figsize", (7, 7))
 
         self.skewness = (
-            self.df.select(pl.col(self.feature_name).skew().name.keep())
+            self.df.select(
+                [
+                    pl.when(pl.col(self.feature_name).skew().is_not_null())
+                    .then(pl.col(self.feature_name).skew())
+                    .otherwise(pl.lit(0))
+                    .name.keep()
+                ]
+            )
             .collect()
             .item()
         )
