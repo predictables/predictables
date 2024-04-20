@@ -3,7 +3,68 @@ import numpy as np
 import pandas as pd
 
 class Shap:
+    """
+    A class for performing and visualizing SHAP (SHapley Additive exPlanations) analysis
+    on a fitted CatBoost model. This class provides methods to calculate SHAP values,
+    generate various plots and analyses that help in interpreting the model's predictions,
+    and understand the contribution of each feature towards the decision made by the model.
 
+    Attributes
+    ----------
+    model : CatBoost model
+        A pre-trained CatBoost classifier model.
+    data : DataFrame or ndarray
+        The dataset used for generating SHAP values, where rows represent samples
+        and columns represent features.
+    feature_names : list of str, optional
+        Names of the features. If not provided and 'data' is a DataFrame, 'data.columns' will be used.
+    explainer : shap.TreeExplainer
+        The explainer object used to compute SHAP values for the model.
+    shap_values : ndarray
+        The computed SHAP values for the input data.
+
+    Methods
+    -------
+    summary_plot()
+        Generates a summary plot of SHAP values across all features.
+    scatter_plot(feature)
+        Generates a scatter plot for SHAP values of a specific feature.
+    feature_importance()
+        Calculates and plots the feature importance based on SHAP values.
+    dependence_plot(feature, interaction_index=None)
+        Generates a SHAP dependence plot for a specific feature.
+    decision_plot(instance_index)
+        Plots the decision plot for a particular instance.
+    interaction_values()
+        Calculates and plots SHAP interaction values for all features.
+    temporal_shap_trends()
+        Placeholder for analyzing temporal trends in SHAP values.
+    segmented_shap_analysis()
+        Placeholder for segmenting SHAP analysis by subsets of data.
+    shap_clustering()
+        Placeholder for clustering instances based on SHAP values.
+    model_confidence()
+        Placeholder for analyzing model confidence using SHAP values.
+    shap_value_distribution_by_class()
+        Placeholder for analyzing SHAP value distributions by predicted class.
+    feature_interaction_network()
+        Placeholder for generating a network graph of feature interactions.
+    shap_value_change_detection()
+        Placeholder for detecting significant changes in SHAP value impacts.
+    text_and_sentiment_analysis_of_feature_impacts()
+        Placeholder for analyzing the impact of text and sentiment on features.
+    
+    Examples
+    --------
+    >>> model = <your trained CatBoost model>
+    >>> data = <your dataset>
+    >>> shap_analyzer = Shap(model=model, data=data)
+    >>> shap_analyzer.summary_plot()
+
+    Call specific analyses or visualizations:
+    >>> shap_analyzer.scatter_plot('feature_name')
+    >>> shap_analyzer.dependence_plot('feature_name')
+    """
     __slots__ = ["model", "data", "feature_names", "explainer", "shap_values"]
         
     def __init__(self, model, data, feature_names=None):
