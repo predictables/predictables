@@ -3,6 +3,9 @@ import numpy as np
 import pandas as pd
 
 class Shap:
+
+    __slots__ = ["model", "data", "feature_names", "explainer", "shap_values"]
+        
     def __init__(self, model, data, feature_names=None):
         """
         Initializes the Shap with a fitted CatBoost model, dataset, and optionally feature names.
@@ -13,7 +16,6 @@ class Shap:
         - feature_names: List of strings, names of the features if data is not a dataframe.
 
         """
-        __slots__ = ["model", "data", "feature_names", "explainer", "shap_values"]
         self.model = model
         self.data = data
         self.feature_names = feature_names if feature_names is not None else data.columns.tolist()
