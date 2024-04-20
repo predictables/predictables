@@ -79,5 +79,5 @@ class Shap:
 
 # Usage Example
 # Assume 'model' is your pre-trained CatBoost model and 'X' is your feature dataset
-shap_analyzer = SHAPAnalysis(model=model, data=X)
+shap_analyzer = Shap(model=model, data=X)
 shap_analyzer.summary_plot()  # This will generate the summary plot as an example
