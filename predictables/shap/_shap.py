@@ -13,7 +13,7 @@ class Shap:
         - feature_names: List of strings, names of the features if data is not a dataframe.
 
         """
-        slots = ["model", "data", "feature_names", "explainer", "shap_values"]
+        __slots__ = ["model", "data", "feature_names", "explainer", "shap_values"]
         self.model = model
         self.data = data
         self.feature_names = feature_names if feature_names is not None else data.columns.tolist()
