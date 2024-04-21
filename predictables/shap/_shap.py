@@ -23,6 +23,20 @@ class Shap:
     shap_values : ndarray
         The computed SHAP values for the input data.
 
+    Helper Methods
+    --------------
+    _validate_data(data)
+        Validates the input data and returns it as a
+        pandas DataFrame if it is not already one.
+    _validate_feature_names(feature_names, data)
+        Validates the feature names and returns it as a list if it is not already one.
+        If 'data' is a DataFrame, 'data.columns' will be used as the default feature names.
+    _validate_model(model)
+        Validates the input model and returns it as a CatBoost model if it is not already one.
+    _validate_explainer(explainer)
+
+
+
     Methods
     -------
     summary_plot()
@@ -65,16 +79,23 @@ class Shap:
     >>> shap_analyzer.scatter_plot('feature_name')
     >>> shap_analyzer.dependence_plot('feature_name')
     """
-    __slots__ = ["model", "data", "feature_names", "explainer", "shap_values"]
+
+    __slots__ = ["model", "data", "feature_names", "explainer", "shap_values", "control_features"]
         
-    def __init__(self, model, data, feature_names=None):
+    def __init__(self, model: CatBoostClassifier, data: pl.LazyFrame, feature_names: list | None =None, control_features: list | None=None):
         """
         Initializes the Shap with a fitted CatBoost model, dataset, and optionally feature names.
 
-        Parameters:
-        - model: A trained CatBoost model.
-        - data: Dataframe or array-like, the data used for generating Shap values.
-        - feature_names: List of strings, names of the features if data is not a dataframe.
+        Parameters
+        ----------
+        model : CatBoost model
+            A pre-trained CatBoost classifier model.
+        data : DataFrame or ndarray
+            The dataset used for generating SHAP values, where rows represent samples
+            and columns represent features.
+        feature_names : list of str, optional
+            Names of the features. If not provided and 'data' is a DataFrame, 'data.columns' will be used.
+
 
         """
         self.model = model
@@ -82,10 +103,19 @@ class Shap:
         self.feature_names = feature_names if feature_names is not None else data.columns.tolist()
         self.explainer = base_shap.TreeExplainer(model)
         self.shap_values = self.explainer.shap_values(data)
+        self.control_features = None
 
     def summary_plot(self):
         """Generate and display the Shap summary plot for all features."""
         base_shap.summary_plot(self.shap_values, self.data, feature_names=self.feature_names)
+
+    def summary_plot_plotly(self):
+        """Generate and display the Shap summary plot for all features."""
+        # Get the data for the summary plot
+        shap_values_df = pd.DataFrame(self.shap_values, columns=self.feature_names)
+
+        # Create the summary plot
+        fig = px.bar(shap_values_df, x="feature_names", y=shap_values_df.columns, color="feature_names", orientation="h")
 
     def scatter_plot(self, feature):
         """Generate a scatter plot of the Shap values for a single feature."""
@@ -110,35 +140,27 @@ class Shap:
 
     def temporal_shap_trends(self):
         """Analyze temporal trends in Shap values."""
-        pass
 
     def segmented_shap_analysis(self):
         """Segment Shap analysis by data subsets."""
-        pass
 
     def shap_clustering(self):
         """Cluster instances based on Shap values."""
-        pass
 
     def model_confidence(self):
         """Analyze model confidence using Shap values."""
-        pass
 
     def shap_value_distribution_by_class(self):
         """Analyze Shap value distributions by predicted class."""
-        pass
 
     def feature_interaction_network(self):
         """Generate a network graph of feature interactions."""
-        pass
 
     def shap_value_change_detection(self):
         """Detect significant changes in Shap value impacts."""
-        pass
 
     def text_and_sentiment_analysis_of_feature_impacts(self):
         """Placeholder for text and sentiment analysis of categorical feature impacts."""
-        pass
 
 # Usage Example
 # Assume 'model' is your pre-trained CatBoost model and 'X' is your feature dataset
