@@ -2,6 +2,7 @@ import shap as base_shap
 import numpy as np
 import pandas as pd
 
+
 class Shap:
     """
     A class for performing and visualizing SHAP (SHapley Additive exPlanations) analysis
@@ -67,7 +68,7 @@ class Shap:
         Placeholder for detecting significant changes in SHAP value impacts.
     text_and_sentiment_analysis_of_feature_impacts()
         Placeholder for analyzing the impact of text and sentiment on features.
-    
+
     Examples
     --------
     >>> model = <your trained CatBoost model>
@@ -76,13 +77,26 @@ class Shap:
     >>> shap_analyzer.summary_plot()
 
     Call specific analyses or visualizations:
-    >>> shap_analyzer.scatter_plot('feature_name')
-    >>> shap_analyzer.dependence_plot('feature_name')
+    >>> shap_analyzer.scatter_plot("feature_name")
+    >>> shap_analyzer.dependence_plot("feature_name")
     """
 
-    __slots__ = ["model", "data", "feature_names", "explainer", "shap_values", "control_features"]
-        
-    def __init__(self, model: CatBoostClassifier, data: pl.LazyFrame, feature_names: list | None =None, control_features: list | None=None):
+    __slots__ = [
+        "model",
+        "data",
+        "feature_names",
+        "explainer",
+        "shap_values",
+        "control_features",
+    ]
+
+    def __init__(
+        self,
+        model: CatBoostClassifier,
+        data: pl.LazyFrame,
+        feature_names: list | None = None,
+        control_features: list | None = None,
+    ):
         """
         Initializes the Shap with a fitted CatBoost model, dataset, and optionally feature names.
 
@@ -100,14 +114,18 @@ class Shap:
         """
         self.model = model
         self.data = data
-        self.feature_names = feature_names if feature_names is not None else data.columns.tolist()
+        self.feature_names = (
+            feature_names if feature_names is not None else data.columns.tolist()
+        )
         self.explainer = base_shap.TreeExplainer(model)
         self.shap_values = self.explainer.shap_values(data)
         self.control_features = None
 
     def summary_plot(self):
         """Generate and display the Shap summary plot for all features."""
-        base_shap.summary_plot(self.shap_values, self.data, feature_names=self.feature_names)
+        base_shap.summary_plot(
+            self.shap_values, self.data, feature_names=self.feature_names
+        )
 
     def summary_plot_plotly(self):
         """Generate and display the Shap summary plot for all features."""
@@ -115,23 +133,46 @@ class Shap:
         shap_values_df = pd.DataFrame(self.shap_values, columns=self.feature_names)
 
         # Create the summary plot
-        fig = px.bar(shap_values_df, x="feature_names", y=shap_values_df.columns, color="feature_names", orientation="h")
+        fig = px.bar(
+            shap_values_df,
+            x="feature_names",
+            y=shap_values_df.columns,
+            color="feature_names",
+            orientation="h",
+        )
 
     def scatter_plot(self, feature):
         """Generate a scatter plot of the Shap values for a single feature."""
-        base_shap.dependence_plot(feature, self.shap_values, self.data, feature_names=self.feature_names)
+        base_shap.dependence_plot(
+            feature, self.shap_values, self.data, feature_names=self.feature_names
+        )
 
     def feature_importance(self):
         """Calculate and plot the feature importance based on Shap values."""
-        base_shap.summary_plot(self.shap_values, self.data, plot_type="bar", feature_names=self.feature_names)
+        base_shap.summary_plot(
+            self.shap_values,
+            self.data,
+            plot_type="bar",
+            feature_names=self.feature_names,
+        )
 
     def dependence_plot(self, feature, interaction_index=None):
         """Generate a Shap dependence plot for a specific feature."""
-        base_shap.dependence_plot(feature, self.shap_values, self.data, interaction_index=interaction_index, feature_names=self.feature_names)
+        base_shap.dependence_plot(
+            feature,
+            self.shap_values,
+            self.data,
+            interaction_index=interaction_index,
+            feature_names=self.feature_names,
+        )
 
     def decision_plot(self, instance_index):
         """Plot the decision plot for a particular instance."""
-        base_shap.decision_plot(self.explainer.expected_value, self.shap_values[instance_index], self.data.iloc[instance_index])
+        base_shap.decision_plot(
+            self.explainer.expected_value,
+            self.shap_values[instance_index],
+            self.data.iloc[instance_index],
+        )
 
     def interaction_values(self):
         """Calculate and plot Shap interaction values."""
@@ -161,6 +202,7 @@ class Shap:
 
     def text_and_sentiment_analysis_of_feature_impacts(self):
         """Placeholder for text and sentiment analysis of categorical feature impacts."""
+
 
 # Usage Example
 # Assume 'model' is your pre-trained CatBoost model and 'X' is your feature dataset

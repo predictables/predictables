@@ -24,5 +24,3 @@ If these configuration values are ok, you can ignore this message. The impact wi
 To suppress this message and/or set custom values for these variables, create a .env file in the root directory of your project.
     """
         warnings.warn(msg, UserWarning, stacklevel=2)
-
-

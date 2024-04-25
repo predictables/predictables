@@ -103,11 +103,7 @@ def main() -> None:
         # In each file, loop over the indices and logit-transform the corresponding columns
         for idx in range(1, N_COLS + 1):
             col_name = get_column_name(cat_col, idx_to_lag(idx))
-            lf = lf.with_columns(
-                [
-                    pl.col(col_name).name.keep()
-                ]
-            ).with_columns(
+            lf = lf.with_columns([pl.col(col_name).name.keep()]).with_columns(
                 [
                     logit_transform(
                         col_name, f"logit[MEAN_ENCODED_{cat_col}_{idx_to_lag(idx)}]"

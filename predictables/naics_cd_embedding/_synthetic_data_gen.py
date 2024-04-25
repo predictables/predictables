@@ -59,6 +59,7 @@ def generate_full_naics_data() -> pd.DataFrame:
                         )
     return pd.DataFrame(data)
 
+
 def sample_from_hierarchy(data: pd.DataFrame) -> pd.DataFrame:
     return data.sample(
         n=N_SAMPLES, replace=True, weights="probability", random_state=RANDOM_SEED

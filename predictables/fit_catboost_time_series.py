@@ -71,6 +71,7 @@ def idx_to_column_name(idx: int, file: str) -> str:
     """
     return f"logit[MEAN_ENCODED_{get_cat_col_from_filename(file)}_{idx_to_lag(idx)}]"
 
+
 def column_name_to_index(column_name: str) -> int:
     """Convert a column name to an index."""
     return int(column_name.split("_")[-1])
@@ -85,6 +86,7 @@ def column_name_generator(
             idx_to_column_name(i, file)
             for i in list(range(start_idx, start_idx + prior_p + 1))
         ]
+
 
 def fit_single_catboost_model_for_single_col(
     file: str, n_prior_periods: int, lag: int = 1
@@ -124,7 +126,6 @@ def main() -> None:
     """
     # parse the command-line args
 
-    
     # Get the list of logit-transformed files
     files = get_file_list()
 
