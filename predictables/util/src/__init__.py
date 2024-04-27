@@ -20,4 +20,5 @@ from .logging._DebugLogger import DebugLogger
 from .logging._Logger import Logger
 from .logging._LogLevel import LogLevel
 from .validation import *
+from ._sk_classifier import SKClassifier
 # from .column_types import *   # noqa: ERA001
