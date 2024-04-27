@@ -1,3 +1,17 @@
+"""Select a subset of a current model's features by recursively removing highly correlated features that do not impact the model's predictive ability significantly. 
+
+Process:
+1. Identify highly correlated features - with absolute Pearson r more than 0.5
+2. In order from most to least correlated pairs:
+    a. Get the mean cross validated auc on holdout data for the current model, as well as standard deviation
+    b. Get the mean CV AUCs from refitting on the data minus each of the identified correlated columns
+    c. If the mean CV AUC on holdout data is within one standard deviation below the mean AUC from the current model or higher than the current mean, we say that the validation AUC is not statistically different, and remove that feature.
+    d. Keep whichever feature results in the higher AUC. 
+    e. If the AUC decreases more than a standard deviation below the mean of the current model, this degradation is considered unacceptable and we move to the next set of correlated variables. 
+3. Repeat for each set of correlated features, updating the current model when a feature is dropped. 
+4. The output of this script is the feature set with the useless features removed.
+"""
+
 import polars as pl
 import polars.selectors as cs
 import numpy as np
