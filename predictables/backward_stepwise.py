@@ -1,15 +1,17 @@
-"""Select a subset of a current model's features by recursively removing highly correlated features that do not impact the model's predictive ability significantly. 
+"""Perform backward stepwise feature selection by recursively eliminating features from a model based on their correlation and impact on predictive performance, evaluated through AUC metrics.
 
-Process:
-1. Identify highly correlated features - with absolute Pearson r more than 0.5
-2. In order from most to least correlated pairs:
-    a. Get the mean cross validated auc on holdout data for the current model, as well as standard deviation
-    b. Get the mean CV AUCs from refitting on the data minus each of the identified correlated columns
-    c. If the mean CV AUC on holdout data is within one standard deviation below the mean AUC from the current model or higher than the current mean, we say that the validation AUC is not statistically different, and remove that feature.
-    d. Keep whichever feature results in the higher AUC. 
-    e. If the AUC decreases more than a standard deviation below the mean of the current model, this degradation is considered unacceptable and we move to the next set of correlated variables. 
-3. Repeat for each set of correlated features, updating the current model when a feature is dropped. 
-4. The output of this script is the feature set with the useless features removed.
+    The process involves:
+    1. Identifying pairs of features with a Pearson correlation coefficient above a specified threshold (default is 0.5).
+    2. For each correlated pair, the model's performance is evaluated three times: using all features, minus the first feature, and minus the second feature.
+    3. The feature whose removal causes the least decrease in AUC (within one standard deviation of the AUC when all features are used) is eliminated. This standard deviation acts as a threshold to ensure that only features whose absence does not statistically degrade the model's performance are removed.
+    4. This iterative process continues until all pairs of correlated features have been evaluated, refining the feature set to improve model simplicity without significantly reducing performance.
+
+    Args:
+    - model (CatBoostClassifier): The pre-trained model whose features are to be evaluated.
+    - threshold (float): The correlation threshold above which feature pairs are considered for elimination.
+
+    Returns:
+    - pl.LazyFrame: The dataset with the reduced set of features after removing highly correlated and less impactful ones.
 """
 
 import polars as pl
