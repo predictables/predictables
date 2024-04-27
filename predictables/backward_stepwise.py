@@ -21,9 +21,11 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_auc_score
 from catboost import CatBoostClassifier
 
+from predictables.util import SKClassifier
 
 
-def backward_stepwise_feature_selection(model: CatBoostClassifier, threshold: float = 0.5) -> pl.LazyFrame:
+
+def backward_stepwise_feature_selection(model: SKClassifier, threshold: float = 0.5) -> pl.LazyFrame:
     """Select a subset of the current features by iteratively removing highly-correlated features that do not significantly impact the model."""
     gen = generate_X_y()
     X_train, y_train, X_test, y_test = next(gen)
@@ -45,7 +47,7 @@ def backward_stepwise_feature_selection(model: CatBoostClassifier, threshold: fl
 
 
 
-def fit_models(model: CatBoostClassifier, col1: str, col2: str) -> tuple[list[CatBoostClassifier], list[CatBoostClassifier], list[CatBoostClassifier]]:
+def fit_models(model: SKClassifier, col1: str, col2: str) -> tuple[list[SKClassifier], list[SKClassifier], list[SKClassifier]]:
     gen_cur, gen1, gen2 = generate_X_y(), generate_X_y(), generate_X_y()
 
     cur_models = [
