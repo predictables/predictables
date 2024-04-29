@@ -492,8 +492,8 @@ class DynamicRollingSum:
         _, x_col, _, date, cat, idx, lag, win, _, _ = self._get_parameters()
 
         # # ====== COLLECT TO DATAFRAME FOR DEBUGGING ======
-        # lf, x_col, _, date, cat, idx, lag, win, _, _ = self._get_parameters()
-        # lf.collect().to_pandas()
+        # lf, x_col, _, date, cat, idx, lag, win, _, _ = self._get_parameters()  # noqa: ERA001
+        # lf.collect().to_pandas()  # noqa: ERA001
 
         # Filter the lf at the level of the category
         frame = self._filter_by_level(level)
@@ -515,7 +515,7 @@ class DynamicRollingSum:
         lf, x_col, _, date, cat, idx, lag, win, _, _ = self._get_parameters()
 
         # # ====== COLLECT TO DATAFRAME FOR DEBUGGING ======
-        # lf.collect().to_pandas()
+        # lf.collect().to_pandas()  # noqa: ERA001
 
         # Run the dynamic rolling sum at each level of the category
         frames = [
@@ -617,7 +617,7 @@ class DynamicRollingSum:
         self._validate_parameters()
 
         # # collect to dataframe
-        # self._lf.collect().to_pandas()
+        # self._lf.collect().to_pandas()  # noqa: ERA001
 
         # Run the dynamic rolling sum if all parameters are set
         lf_with_drs = self._calculate_sum()

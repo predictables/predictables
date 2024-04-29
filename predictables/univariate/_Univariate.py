@@ -147,8 +147,8 @@ class Univariate(Model):
                         self.target_col if self.target_col is not None else None
                     ),
                 )
-            except:
-                dbg.msg(f"Error in fold {fold} | Ux0001f")
+            except Exception as e:  # noqa: PERF203
+                dbg.msg(f"Error in fold {fold} | {e} | Ux0001f")
 
         self.agg_results = pl.from_pandas(
             pd.DataFrame({"fold": [*self.unique_folds_str, "mean", "std"]})

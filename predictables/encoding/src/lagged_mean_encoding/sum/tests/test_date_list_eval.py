@@ -43,12 +43,6 @@ def value_map():
     }
 
 
-# def test_lf(basic_date_df):
-#     return _get_date_list_col(basic_date_df.lazy(), "date", 0, 2).with_columns(
-#         [pl.col("date").dt.day().alias("x")]
-#     )
-
-
 @pytest.mark.parametrize(
     "window,expected",
     [(1, [1, 2, 3, 4, 5]), (2, [1, 3, 5, 7, 9]), (3, [1, 3, 6, 9, 12])],

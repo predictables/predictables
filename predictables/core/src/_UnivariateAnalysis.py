@@ -246,15 +246,6 @@ class UnivariateAnalysis:
                     f"Column type {col_type} is not supported for univariate analysis"
                 )
             feature_list.append(obj_name)
-            # try:
-            #         f"results for feature {col}: "
-            #     dbg.msg(
-            #         "{getattr(self, obj_name).results.head()} | UA0001a"
-            #     )  # debug only
-            # except AttributeError:
-            #     dbg.msg(
-            #         f"No results attribute found for feature {col} | UA0001b"
-            #     )  # debug only
 
             # Check the skewness of the feature
             skewness = (
@@ -388,7 +379,6 @@ class UnivariateAnalysis:
 
     def get_features(self) -> list[str]:
         """Return a list of feature names that have been analyzed."""
-        # dbg.msg("Getting features - UA0002")  # debug only
         return self._feature_list
 
     def _get_file_stem(
@@ -443,10 +433,6 @@ class UnivariateAnalysis:
             else:
                 file_stem = filename
 
-            # dbg.msg(
-            #     f"File stem ({file_stem}) was extracted from filename ({filename}) "
-            #     "and should not have an extension - UA0005"
-            # )  # debug only
             return file_stem
 
         return default
@@ -464,7 +450,6 @@ class UnivariateAnalysis:
         if start_num is not None and end_num is not None:
             return f"{file_stem}_{start_num}_{end_num+1}.pdf"
         else:
-            # dbg.msg(f"Returning default ({default}) | UA0006d")
             return default
 
     @staticmethod

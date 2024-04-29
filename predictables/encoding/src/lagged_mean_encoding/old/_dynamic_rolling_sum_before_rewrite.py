@@ -1,4 +1,4 @@
-from __future__ import annotations
+from __future__ import annotations  # noqa: INP001
 
 import datetime
 
@@ -106,9 +106,9 @@ class DynamicRollingSum:
         DynamicRollingSum
             The `DynamicRollingSum` object.
         """
-        # TODO: REMOVE THIS COLLECT
+        # TODO: REMOVE THIS COLLECT  # noqa: TD002, TD003
         self._lf = lf.collect()  # type: ignore[assignment]
-        # self._lf = lf
+        # self._lf = lf  # noqa: ERA001
         return self
 
     def x_col(self, x_col: str = "value") -> "DynamicRollingSum":
@@ -391,7 +391,7 @@ class DynamicRollingSum:
             self._op,
         )
 
-    def _get_column_name(self, category_column: str | None = None) -> str:
+    def _get_column_name(self) -> str:
         """Get the name of the column for the rolling sum.
 
         Returns the name of the column for the rolling sum. If a categorical
@@ -399,11 +399,6 @@ class DynamicRollingSum:
         be the name of the value column, suffixed with the name of the categorical
         column. If no categorical column is provided, the name of the column for
         the rolling sum will be the name of the value column.
-
-        Parameters
-        ----------
-        category_column : str, default None
-            The name of the categorical column, if any.
 
         Returns
         -------
@@ -416,9 +411,10 @@ class DynamicRollingSum:
 
         return rolling_op_column_name(op, x_col, cat, lag, win)
 
-    def _compute_rolling_sum_for_level(self, level: str, category_column: str):
-        """
-        Computes the rolling sum for a specific level within a categorical column.
+    def _compute_rolling_sum_for_level(
+        self, level: str, category_column: str
+    ) -> pl.LazyFrame:
+        """Compute the rolling sum for a specific level within a categorical column.
 
         Parameters
         ----------
@@ -454,11 +450,7 @@ class DynamicRollingSum:
             [pl.col("rolling_value_list").alias(col_name)]
         ).drop("rolling_value_list")
 
-        lf_rolling_sum = lf_rolling_sum.with_columns(
-            [pl.lit(str(level)).alias(category_column)]
-        )
-
-        return lf_rolling_sum
+        return lf_rolling_sum.with_columns([pl.lit(str(level)).alias(category_column)])
 
     def run(self) -> pl.LazyFrame:
         """Run the dynamic rolling sum using the provided LazyFrame and parameters.
@@ -481,7 +473,7 @@ class DynamicRollingSum:
         if self._category_cols is None:
             col = self._get_column_name()
             out = (
-                # TODO: REMOVE THIS COLLECT
+                # TODO: REMOVE THIS COLLECT  # noqa: TD002, TD003
                 # self._lf.join(
                 self._lf.collect().join(
                     lf.select(pl.col(col)), on=[self._index_col], how="left"
@@ -526,18 +518,12 @@ class DynamicRollingSum:
                 else lf
             )
 
-        print(f"1: {out.columns}")
-
         # If there are any columns suffixed with "_right", drop them
-        if any([c.endswith("_right") for c in out.columns]):
+        if any(c.endswith("_right") for c in out.columns):
             out = out.drop([c for c in out.columns if c.endswith("_right")])
 
-        print(f"2: {out.columns}")
-
-        if any([c.lower().strip() == "index" for c in out.columns]):
+        if any(c.lower().strip() == "index" for c in out.columns):
             out = out.drop([c for c in out.columns if c.lower().strip() == "index"])
-
-        print(f"3: {out.columns}")
 
         return out
 
@@ -606,7 +592,7 @@ class DynamicRollingSum:
                 ]
 
                 self._lf = (
-                    # TODO REMOVE THIS COLLECT
+                    # TODO REMOVE THIS COLLECT  # noqa: TD002, TD003, TD004
                     self._lf.collect()
                     .with_columns([pl.col(c).cast(pl.Utf8).name.keep()])
                     .join(
@@ -679,7 +665,7 @@ def dynamic_rolling_sum(
     dateval = lf_.select([pl.col(date_col), pl.col(x_col)]).unique().sort(date_col)
 
     lf_ = (
-        # TODO REMOVE THIS COLLECT
+        # TODO REMOVE THIS COLLECT  # noqa: TD002, TD003, TD004
         # lf_
         lf_.collect()
         .with_columns(
@@ -719,10 +705,10 @@ def dynamic_rolling_sum(
                 .alias("value_list")
             ]
         )
-        # TODO REMOVE THIS COLLECT
+        # TODO REMOVE THIS COLLECT  # noqa: TD002, TD003, TD004
         # .collect()
         .select([pl.col(index_col), pl.col(date_col), pl.col("value_list")])
-        # TODO REMOVE THIS COLLECT
+        # TODO REMOVE THIS COLLECT  # noqa: TD002, TD003, TD004
         # .lazy()
         .with_columns(
             [pl.col("value_list").sum().over(index_col).name.prefix("rolling_")]
@@ -742,8 +728,8 @@ def dynamic_rolling_sum(
     if f"{date_col}_left" in lf_order.columns:
         lf_order = lf_order.drop(f"{date_col}_left")
 
-    # TODO REMOVE THIS COLLECT
-    # return lf_order.join(lf_, on=index_col, how="left")
+    # TODO REMOVE THIS COLLECT  # noqa: TD002, TD003, TD004
+    # return lf_order.join(lf_, on=index_col, how="left")  # noqa: ERA001
     return lf_order.collect().join(lf_, on=index_col, how="left")
 
 

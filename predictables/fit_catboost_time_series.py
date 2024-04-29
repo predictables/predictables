@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 import polars as pl
-from tqdm import tqdm
 from catboost import CatBoostRegressor  # type: ignore[untyped-import]
 import os
 import typing
@@ -89,7 +88,7 @@ def column_name_generator(
 
 
 def fit_single_catboost_model_for_single_col(
-    file: str, n_prior_periods: int, lag: int = 1
+    file: str, n_prior_periods: int
 ) -> CatBoostRegressor:
     """Fit a single CatBoost model to the lagged columns, offset by lag."""
     lf = get_data(file)
@@ -124,15 +123,3 @@ def main() -> None:
        that performs best on the validation set. There are 18 months of data, so we
        can use 5-fold cross validation.
     """
-    # parse the command-line args
-
-    # Get the list of logit-transformed files
-    files = get_file_list()
-
-    for file in tqdm(
-        files,
-        total=len(files),
-        desc="Fitting time-series models to categorical variables.",
-    ):
-        cat_col = get_cat_col_from_filename(file)
-        lf = get_data(file)

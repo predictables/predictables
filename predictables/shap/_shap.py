@@ -1,11 +1,9 @@
 import shap as base_shap
-import numpy as np
 import pandas as pd
 
 
 class Shap:
-    """
-    A class for performing and visualizing SHAP (SHapley Additive exPlanations) analysis
+    """A class for performing and visualizing SHAP (SHapley Additive exPlanations) analysis
     on a fitted CatBoost model. This class provides methods to calculate SHAP values,
     generate various plots and analyses that help in interpreting the model's predictions,
     and understand the contribution of each feature towards the decision made by the model.

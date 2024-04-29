@@ -64,7 +64,8 @@ exclude = [
     "venv",
     "docs/*",
     ".ignore",
-    ".ignore/*"
+    ".ignore/*",
+    "_shap.py"
 ]
 
 # Same as Black.

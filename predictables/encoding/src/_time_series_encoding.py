@@ -18,11 +18,8 @@ observations 1-12 to predict 13, the second validation set uses observations
 
 from __future__ import annotations
 import polars as pl
-import lightgbm as lgb
 
 from warnings import UserWarning
-
-from predictables.util.transform import log_transform, logit_transform
 
 
 class TimeSeriesEncoding:
@@ -50,7 +47,3 @@ class TimeSeriesEncoding:
         # Warn the user that the columns are assumed to be in order and continue
         if not self._lf[X_cols].is_sorted(by=[id_column]):
             UserWarning(order_warning_msg.format(X_cols=X_cols))
-
-    def _is_sorted(self) -> bool:
-        """Check if the columns are sorted by the `lag` value."""
-        cols = [col.split("lag:")[1] for col in self._X_cols]
