@@ -67,8 +67,8 @@ def evaluate_what_if_any_column_to_drop(current_auc, ex1_auc, ex2_auc) -> int:
     current model and continue to the next pair-return 0 to indicate this.
     """
     # Test whichever column has the highest auc
-    if max(mean(ex1_auc), mean(ex2_auc)) > mean(current_auc) - np.std(current_auc):
-        return 1 if mean(ex1_auc) < mean(ex2_auc) else 2
+    if max(np.mean(ex1_auc), np.mean(ex2_auc)) > np.mean(current_auc) - np.std(current_auc):
+        return 1 if np.mean(ex1_auc) < np.mean(ex2_auc) else 2
     else:
         return 0
             
