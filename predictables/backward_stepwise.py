@@ -13,9 +13,6 @@
     Returns:
     - pl.LazyFrame: The dataset with the reduced set of features after removing highly correlated and less impactful ones.
 """
-from sklearn.model_selection import train_test_split
-import pandas as pd
-
 import polars as pl
 import polars.selectors as cs
 import numpy as np
@@ -26,10 +23,9 @@ from catboost import CatBoostClassifier
 from predictables.util import SKClassifier # duck type indicating that the model is an sklearn classifier implementing the fit and predict methods 
 
 
-
-def backward_stepwise_feature_selection(model: SKClassifier, threshold: float = 0.5) -> pl.LazyFrame:
+def backward_stepwise_feature_selection(X: pl.LazyFrame, y: np.ndarray, model: SKClassifier, threshold: float = 0.5) -> pl.LazyFrame:
     """Select a subset of the current features by iteratively removing highly-correlated features that do not significantly impact the model."""
-    gen = generate_X_y()
+    gen = generate_X_y(X, y)
     X_train, y_train, X_test, y_test = next(gen)
     current_features = X_train.columns
     
@@ -48,15 +44,25 @@ def backward_stepwise_feature_selection(model: SKClassifier, threshold: float = 
     return X_train.drop(columns_to_drop)
             
 
-def generate_X_y() -> tuple[pd.DataFrame, np.ndarray, pd.DataFrame, np.ndarray]:
+def generate_X_y(X: pl.LazyFrame, y: np.ndarray) -> tuple[pd.DataFrame, np.ndarray, pd.DataFrame, np.ndarray]:
     """Yield training and testing splits for time series cross validation."""
-    # Example data loading: Replace this with actual data loading
-    data = pd.read_csv('path_to_your_data.csv')
-    X = data.drop('target_column', axis=1)
-    y = data['target_column'].values
-
-    return train_test_split(X, y, test_size=0.25, random_state=42)
-
+    for i in range(5, 11):
+        train_idx = X.with_row_index().filter(
+            pl.col("fold") < i+1
+        ).select(
+            pl.col("index")
+        ).collect().to_numpy()
+        
+        val_idx = X.with_row_index().filter(
+            pl.col("fold") == i+1
+        ).select(
+            pl.col("index")
+        ).collect().to_numpy()
+        
+        dfx = X.collect().to_pandas()
+        
+        yield dfx.iloc[train_idx], y[train_idx], dfx.iloc[val_idx], y[val_idx]
+    
 def evaluate_what_if_any_column_to_drop(current_auc, ex1_auc, ex2_auc) -> int:
     """Return 0, 1, or 2 to indicate you should drop no column, column 1, or column 2, respectively.
     
