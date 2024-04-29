@@ -7,7 +7,7 @@
     4. This iterative process continues until all pairs of correlated features have been evaluated, refining the feature set to improve model simplicity without significantly reducing performance.
 
     Args:
-    - model (CatBoostClassifier): The pre-trained model whose features are to be evaluated.
+    - model (SKClassifier): The pre-trained model whose features are to be evaluated.
     - threshold (float): The correlation threshold above which feature pairs are considered for elimination.
 
     Returns:
@@ -21,7 +21,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_auc_score
 from catboost import CatBoostClassifier
 
-from predictables.util import SKClassifier
+from predictables.util import SKClassifier # duck type indicating that the model is an sklearn classifier implementing the fit and predict methods 
 
 
 
