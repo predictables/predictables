@@ -30,14 +30,24 @@ def backward_stepwise_feature_selection(model: SKClassifier, threshold: float = 
     gen = generate_X_y()
     X_train, y_train, X_test, y_test = next(gen)
     current_features = X_train.columns
+    
     corr_pairs = identify_highly_correlated_pairs(X_train, threshold)
 
     for col1, col2 in corr_pairs:
-        current_model, model_ex_1, model_ex_2 = fit_models(model, col1, col2)
-        current_auc, ex1_auc, ex2_auc = roc_auc_eval(
-            current_model, model_ex_1, model_ex_2, col1, col2
-        )
+        current_auc, ex1_auc, ex2_auc = evaluate_single_model(model, col1, col2)
+        
+        col_to_drop = evaluate_what_if_any_column_to_drop(current_auc, ex1_auc, ex2_auc)
 
+
+def evaluate_what_if_any_column_to_drop(current_auc, ex1_auc, ex2_auc):
+    """Return 0, 1, or 2 to indicate you should drop no column, column 1, or column 2, respectively.
+    
+    If the mean AUC from the model fit without either column 1 or 2 is greater than the mean AUC
+    of the current model less one standard deviation, make the new current
+    model be the one with the highest mean AUC by returning either 1 or 2 depending on which was
+    higher. If both smaller models are worse than the current, do not make any adjustment to the
+    current model and continue to the next pair-return 0 to indicate this.
+    """
         # Test whichever column has the highest auc
         if mean(ex1_auc) > mean(ex2_auc):
 
@@ -45,7 +55,13 @@ def backward_stepwise_feature_selection(model: SKClassifier, threshold: float = 
             # drop the column
             if mean(current_auc) 
 
-
+def evaluate_single_model(model: SKClassifier, col1: str, col2: str):
+    current_model, model_ex_1, model_ex_2 = fit_models(model, col1, col2)
+    current_auc, ex1_auc, ex2_auc = roc_auc_eval(
+        current_model, model_ex_1, model_ex_2, col1, col2
+    )
+    
+    return current_auc, ex1_auc, ex2_auc
 
 def fit_models(model: SKClassifier, col1: str, col2: str) -> tuple[list[SKClassifier], list[SKClassifier], list[SKClassifier]]:
     gen_cur, gen1, gen2 = generate_X_y(), generate_X_y(), generate_X_y()
