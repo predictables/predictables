@@ -51,7 +51,7 @@ pillow==10.2.0
 platformdirs==4.2.0
 plotly==5.18.0
 pluggy==1.4.0
-polars==0.20.16
+polars==0.20.23
 prompt-toolkit==3.0.43
 psutil==5.9.8
 ptyprocess==0.7.0
