@@ -13,6 +13,8 @@
     Returns:
     - pl.LazyFrame: The dataset with the reduced set of features after removing highly correlated and less impactful ones.
 """
+from sklearn.model_selection import train_test_split
+import pandas as pd
 
 import polars as pl
 import polars.selectors as cs
@@ -38,6 +40,23 @@ def backward_stepwise_feature_selection(model: SKClassifier, threshold: float = 
         
         col_to_drop = evaluate_what_if_any_column_to_drop(current_auc, ex1_auc, ex2_auc)
 
+
+def generate_X_y() -> tuple[pd.DataFrame, np.ndarray, pd.DataFrame, np.ndarray]:
+    """
+    Generates training and testing datasets. 
+    
+    Returns:
+    - X_train (pd.DataFrame): Training features.
+    - y_train (np.ndarray): Training labels.
+    - X_test (pd.DataFrame): Testing features.
+    - y_test (np.ndarray): Testing labels.
+    """
+    # Example data loading: Replace this with actual data loading
+    data = pd.read_csv('path_to_your_data.csv')
+    X = data.drop('target_column', axis=1)
+    y = data['target_column'].values
+
+    return train_test_split(X, y, test_size=0.25, random_state=42)
 
 def evaluate_what_if_any_column_to_drop(current_auc, ex1_auc, ex2_auc):
     """Return 0, 1, or 2 to indicate you should drop no column, column 1, or column 2, respectively.
