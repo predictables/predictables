@@ -33,24 +33,23 @@ def backward_stepwise_feature_selection(model: SKClassifier, threshold: float = 
     X_train, y_train, X_test, y_test = next(gen)
     current_features = X_train.columns
     
+    columns_to_drop = []
+    
     corr_pairs = identify_highly_correlated_pairs(X_train, threshold)
 
     for col1, col2 in corr_pairs:
-        current_auc, ex1_auc, ex2_auc = evaluate_single_model(model, col1, col2)
+        current_auc, ex1_auc, ex2_auc = evaluate_single_model(model, col1, col2, columns_to_drop)
         
         col_to_drop = evaluate_what_if_any_column_to_drop(current_auc, ex1_auc, ex2_auc)
 
+        if col_to_drop > 0:
+            columns_to_drop.append(drop_column_from_data(col_to_drop, col1, col2))
+            
+    return X_train.drop(columns_to_drop)
+            
 
 def generate_X_y() -> tuple[pd.DataFrame, np.ndarray, pd.DataFrame, np.ndarray]:
-    """
-    Generates training and testing datasets. 
-    
-    Returns:
-    - X_train (pd.DataFrame): Training features.
-    - y_train (np.ndarray): Training labels.
-    - X_test (pd.DataFrame): Testing features.
-    - y_test (np.ndarray): Testing labels.
-    """
+    """Yield training and testing splits for time series cross validation."""
     # Example data loading: Replace this with actual data loading
     data = pd.read_csv('path_to_your_data.csv')
     X = data.drop('target_column', axis=1)
@@ -58,7 +57,7 @@ def generate_X_y() -> tuple[pd.DataFrame, np.ndarray, pd.DataFrame, np.ndarray]:
 
     return train_test_split(X, y, test_size=0.25, random_state=42)
 
-def evaluate_what_if_any_column_to_drop(current_auc, ex1_auc, ex2_auc):
+def evaluate_what_if_any_column_to_drop(current_auc, ex1_auc, ex2_auc) -> int:
     """Return 0, 1, or 2 to indicate you should drop no column, column 1, or column 2, respectively.
     
     If the mean AUC from the model fit without either column 1 or 2 is greater than the mean AUC
@@ -67,27 +66,27 @@ def evaluate_what_if_any_column_to_drop(current_auc, ex1_auc, ex2_auc):
     higher. If both smaller models are worse than the current, do not make any adjustment to the
     current model and continue to the next pair-return 0 to indicate this.
     """
-        # Test whichever column has the highest auc
-        if mean(ex1_auc) > mean(ex2_auc):
+    # Test whichever column has the highest auc
+    if max(mean(ex1_auc), mean(ex2_auc)) > mean(current_auc) - np.std(current_auc):
+        return 1 if mean(ex1_auc) < mean(ex2_auc) else 2
+    else:
+        return 0
+            
 
-            # If the current AUC is within a SD of mean(ex1_auc)
-            # drop the column
-            if mean(current_auc) 
-
-def evaluate_single_model(model: SKClassifier, col1: str, col2: str):
-    current_model, model_ex_1, model_ex_2 = fit_models(model, col1, col2)
+def evaluate_single_model(model: SKClassifier, col1: str, col2: str, columns_to_drop: list[str]):
+    current_model, model_ex_1, model_ex_2 = fit_models(model, col1, col2, columns_to_drop)
     current_auc, ex1_auc, ex2_auc = roc_auc_eval(
         current_model, model_ex_1, model_ex_2, col1, col2
     )
     
     return current_auc, ex1_auc, ex2_auc
 
-def fit_models(model: SKClassifier, col1: str, col2: str) -> tuple[list[SKClassifier], list[SKClassifier], list[SKClassifier]]:
+def fit_models(model: SKClassifier, col1: str, col2: str, columns_to_drop: list[str]) -> tuple[list[SKClassifier], list[SKClassifier], list[SKClassifier]]:
     gen_cur, gen1, gen2 = generate_X_y(), generate_X_y(), generate_X_y()
 
     cur_models = [
         model.fit(
-            X_train.collect().to_numpy(),
+            X_train.drop(columns_to_drop).collect().to_numpy(),
             y_train.to_numpy().ravel()
         )
         for X_train, y_train, _, _
@@ -96,7 +95,7 @@ def fit_models(model: SKClassifier, col1: str, col2: str) -> tuple[list[SKClassi
 
     ex1_models = [
         model.fit(
-            X_train.collect().to_numpy(),
+            X_train.drop(columns_to_drop).collect().to_numpy(),
             y_train.to_numpy().ravel()
         )
         for X_train, y_train, _, _
@@ -105,7 +104,7 @@ def fit_models(model: SKClassifier, col1: str, col2: str) -> tuple[list[SKClassi
 
     ex2_models = [
         model.fit(
-            X_train.collect().to_numpy(),
+            X_train.drop(columns_to_drop).collect().to_numpy(),
             y_train.to_numpy().ravel()
         )
         for X_train, y_train, _, _
