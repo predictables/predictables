@@ -188,76 +188,117 @@ def select_feature_to_remove(
 
 
 def backward_stepwise_feature_selection(
-    X: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
-    y: pd.Series | np.ndarray,
+    X: pd.DataFrame,
+    y: pd.Series,
     model: SKClassifier,
-    threshold: float = 0.5,
-) -> pd.DataFrame | pl.DataFrame | pl.LazyFrame:
-    """Perform backward stepwise feature selection by recursively eliminating features that show high correlation and minimal impact on the predictive performance of a model.
+    start_fold: int = 5,
+    end_fold: int = 9,
+    correlation_threshold: float = 0.75,
+    tolerance: float = 1e-2,
+) -> list[str]:
+    """Perform backward stepwise feature selection using time-series cross-validation.
+
+    This process recursively eliminates features that show high correlation with
+    other features, and minimal impact on the predictive performance of a model
+    when removed.
 
     Parameters
     ----------
-    X : DataFrame or LazyFrame
-        The feature dataset.
-    y : array
-        The target dataset.
+    X : pd.DataFrame
+        The input features.
+    y : pd.Series
+        The target variable.
     model : SKClassifier
-        An sklearn-style classifier that supports fit and predict_proba methods.
-    threshold : float, optional
-        The Pearson correlation coefficient threshold to consider two features as highly correlated.
+        An sklearn-style classifier.
+    start_fold : int
+        The starting fold for time-series cross-validation.
+    end_fold : int
+        The ending fold for time-series cross-validation.
+    correlation_threshold : float
+        The threshold for considering features as highly correlated.
+    tolerance : float
+        The tolerance for considering a difference as statistically significant.
+        Default is 1e-2.
 
     Returns
     -------
-    DataFrame or LazyFrame
-        The modified dataset with reduced features.
+    list[str]
+        The list of selected features after backward elimination.
 
-    Detailed Steps:
+    Raises
+    ------
+    ValueError
+        If less than two features are provided.
+
+    Detailed Process
+    ----------------
     1. Calculate correlations between all pairs of features.
     2. Identify pairs of features with correlation above the threshold.
     3. Evaluate the impact of removing each feature in these pairs on model performance.
     4. Remove the feature whose exclusion leads to the least performance degradation.
     5. Repeat until no highly correlated pairs remain or performance cannot be maintained.
     """
-    # Initialize data structures and preprocess data
-    remaining_features = list(X.columns)
-    correlations = X.corr()  # Assuming X is a pandas DataFrame
+    features = initialize_feature_set(X)
+    if len(features) < 2:
+        raise ValueError(
+            "Backward stepwise feature selection requires at least two features."
+        )
 
-    while True:
-        # Identify highly correlated feature pairs
-        correlated_pairs = [
-            (i, j)
-            for i in remaining_features
-            for j in remaining_features
-            if i != j and abs(correlations.loc[i, j]) > threshold
-        ]
+    correlations = calculate_all_feature_correlations(X[features])
+    correlated_pairs = identify_highly_correlated_pairs(
+        correlations, correlation_threshold
+    )
 
-        if not correlated_pairs:
+    # Continue until no features can be justifiably removed
+    while len(features) > 1:
+        scores_with = {}
+        scores_without = {}
+
+        for feature in features:
+            # Evaluate the impact of removing each feature
+            scores_with[feature], scores_without[feature] = (
+                evaluate_feature_removal_impact(
+                    X[features], y, model, feature, start_fold, end_fold
+                )
+            )
+
+        # Check correlation and performance impacts to select features to remove
+        feature_to_remove = None
+        for feature1, feature2 in correlated_pairs:
+            if feature1 in features and feature2 in features:
+                feature_to_remove = select_feature_to_remove(
+                    scores_with[feature1],
+                    scores_without[feature1],
+                    feature1,
+                    scores_with[feature2],
+                    scores_without[feature2],
+                    feature2,
+                    tolerance,
+                )
+                if feature_to_remove:
+                    break
+
+        # If no correlated feature meets the criterion for removal, proceed by performance
+        if not feature_to_remove:
+            for feature in features:
+                if (
+                    np.mean(scores_without[feature]) - np.mean(scores_with[feature])
+                    > tolerance
+                ):
+                    feature_to_remove = feature
+                    break
+
+        # If no feature meets the criterion for removal, stop
+        if feature_to_remove is None:
             break
 
-        # Assess and remove features
-        for feature1, feature2 in correlated_pairs:
-            if feature1 not in remaining_features or feature2 not in remaining_features:
-                continue
+        # Remove the selected feature and update the correlation pairs
+        features.remove(feature_to_remove)
+        correlated_pairs = [
+            (f1, f2)
+            for f1, f2 in correlated_pairs
+            if f1 != feature_to_remove and f2 != feature_to_remove
+        ]
+        print(f"Removed feature: {feature_to_remove}")
 
-            score_with_1, score_without_1 = evaluate_feature_removal_impact(
-                X, y, model, feature1, remaining_features
-            )
-            score_with_2, score_without_2 = evaluate_feature_removal_impact(
-                X, y, model, feature2, remaining_features
-            )
-
-            feature_to_remove = select_feature_to_remove(
-                score_with_1,
-                score_without_1,
-                feature1,
-                score_with_2,
-                score_without_2,
-                feature2,
-            )
-            if feature_to_remove:
-                remaining_features.remove(feature_to_remove)
-                # Update the correlation matrix to reflect the removal
-                correlations = correlations.drop(columns=feature_to_remove)
-
-    # Reduce the dataset to the remaining features
-    return X[remaining_features]
+    return features
