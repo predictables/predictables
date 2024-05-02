@@ -11,14 +11,15 @@ from predictables.util import to_pd_df, SKClassifier
 
 def initialize_feature_set(X: pd.DataFrame | pl.DataFrame | pl.LazyFrame) -> list[str]:
     """Return a list of feature names from the input DataFrame."""
-    return list(X.columns) if isinstance(X, pd.DataFrame) else X.columns
+    out = list(X.columns) if isinstance(X, pd.DataFrame) else X.columns
+    return [f for f in out if f not in ["fold", "target", "y"]]
 
 
 def calculate_all_feature_correlations(
     X: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
 ) -> pd.DataFrame | pl.DataFrame:
     """Return the correlation matrix of all features in the input DataFrame."""
-    return to_pd_df(X).corr()
+    return to_pd_df(X)[initialize_feature_set(X)].corr()
 
 
 def identify_highly_correlated_pairs(
@@ -107,7 +108,6 @@ def evaluate_feature_removal_impact(
     """
     score_with, score_without = [], []
     generator = generate_X_y(X, y, start_fold, end_fold)
-
     for X_train, y_train, X_test, y_test in generator:
         # Train and evaluate with the feature
         model_clone = clone(model)
@@ -122,6 +122,7 @@ def evaluate_feature_removal_impact(
         y_pred = model_clone.predict_proba(X_test_reduced)[..., 1]
         score_without.append(roc_auc_score(y_test, y_pred))
 
+
     # Return the list of performances
     return score_with, score_without
 
@@ -133,7 +134,7 @@ def select_feature_to_remove(
     score_with_2: list[float],
     score_without_2: list[float],
     feature2: str,
-    tolerance: float = 1e-2,
+    tolerance: float = 1e-4,
 ) -> str | None:
     """Select which feature to remove based on statistical significance of impact scores.
 
@@ -156,7 +157,7 @@ def select_feature_to_remove(
         The second feature being considered for removal.
     tolerance : float
         The tolerance for considering a difference as statistically significant.
-        Default is 1e-2.
+        Default is 1e-4.
 
     Returns
     -------
@@ -171,20 +172,15 @@ def select_feature_to_remove(
     std_with_2 = np.std(score_with_2)
     mean_without_2 = np.mean(score_without_2)
 
-    # Calculate the net improvement threshold, considering one standard deviation
-    net_improvement_1 = (mean_without_1 - mean_with_1) - std_with_1
-    net_improvement_2 = (mean_without_2 - mean_with_2) - std_with_2
-
-    # Determine which feature to remove based on net improvement
-    if net_improvement_1 > tolerance and net_improvement_2 > tolerance:
-        # Both features show net improvement when removed, remove the one with more net improvement
-        return feature2 if net_improvement_1 < net_improvement_2 else feature1
-    elif net_improvement_1 > tolerance:
-        return feature1
-    elif net_improvement_2 > tolerance:
+    if mean_without_1 > mean_without_2:
+        if mean_without_1 > mean_with_1 - std_with_1 + tolerance:
+            return feature1
+        else:
+            return None
+    elif mean_without_2 > mean_with_2 - std_with_2 + tolerance:
         return feature2
-
-    return None
+    else:
+        return None
 
 
 def backward_stepwise_feature_selection(
@@ -193,8 +189,8 @@ def backward_stepwise_feature_selection(
     model: SKClassifier,
     start_fold: int = 5,
     end_fold: int = 9,
-    correlation_threshold: float = 0.75,
-    tolerance: float = 1e-2,
+    correlation_threshold: float = 0.5,
+    tolerance: float = 1e-4,
 ) -> list[str]:
     """Perform backward stepwise feature selection using time-series cross-validation.
 
@@ -254,11 +250,13 @@ def backward_stepwise_feature_selection(
         scores_with = {}
         scores_without = {}
 
-        for feature in features:
+        for feature in ["fold", *features]:
+            if feature == "fold":
+                continue
             # Evaluate the impact of removing each feature
             scores_with[feature], scores_without[feature] = (
                 evaluate_feature_removal_impact(
-                    X[features], y, model, feature, start_fold, end_fold
+                    X[["fold", *features]], y, model, feature, start_fold, end_fold
                 )
             )
 
@@ -295,10 +293,10 @@ def backward_stepwise_feature_selection(
         # Remove the selected feature and update the correlation pairs
         features.remove(feature_to_remove)
         correlated_pairs = [
-            (f1, f2)
-            for f1, f2 in correlated_pairs
-            if f1 != feature_to_remove and f2 != feature_to_remove
+            (f1, f2) for f1, f2 in correlated_pairs if feature_to_remove not in (f1, f2)
         ]
-        print(f"Removed feature: {feature_to_remove}")
+        print(  # noqa: T201
+            f"Removed feature: {feature_to_remove}\nAUC before: {np.mean(scores_with[feature_to_remove]):.4f}\nAUC after: {np.mean(scores_without[feature_to_remove]):.4f}\n"
+        )
 
     return features

@@ -2,6 +2,7 @@ import pytest
 import pandas as pd
 import polars as pl
 import numpy as np
+from sklearn.ensemble import RandomForestClassifier
 
 from predictables.feature_selection.src._backward_stepwise import (
     initialize_feature_set,
@@ -10,6 +11,7 @@ from predictables.feature_selection.src._backward_stepwise import (
     generate_X_y,
     evaluate_feature_removal_impact,
     select_feature_to_remove,
+    backward_stepwise_feature_selection,
 )
 
 
@@ -369,3 +371,115 @@ def test_features_with_consistent_improvement():
     assert (
         result == "feature1"
     ), "Feature 1 should be removed due to consistent and significant improvement."
+
+
+def test_initialization_with_few_features():
+    # Test with DataFrame that has fewer than two features
+    X = pd.DataFrame({"feature1": np.random.default_rng(42).uniform(0, 1, size=10)})
+    y = pd.Series(np.random.default_rng(42).integers(0, 2, size=10))
+    model = RandomForestClassifier()
+    with pytest.raises(ValueError):
+        backward_stepwise_feature_selection(X, y, model)
+
+
+def test_initialization_with_no_fold_column():
+    # Ensure the generate_X_y raises an error if no 'fold' column
+    X = pd.DataFrame(
+        np.random.default_rng(42).uniform(0, 1, size=(10, 2)),
+        columns=["feature1", "feature2"],
+    )
+    y = pd.Series(np.random.default_rng(42).integers(0, 2, size=10))
+    with pytest.raises(ValueError):
+        list(generate_X_y(X, y))  # Should raise because 'fold' column is missing
+
+
+def test_feature_removal__INTEGRATION_TEST():
+    # Generate data ensuring every fold contains data
+    rng = np.random.default_rng(42)
+
+    # Ensures equal distribution of folds
+    fold_numbers = np.tile(np.arange(0, 6), 20)
+
+    # Shuffle to avoid ordered split bias
+    np.random.default_rng(42).shuffle(fold_numbers)
+    X = pd.DataFrame(
+        {
+            "fold": fold_numbers,
+            "feature1": rng.uniform(
+                0, 1, size=120
+            ),  # this is the selected high-impact feature
+            "feature2": rng.poisson(
+                2982349, size=120
+            ),  # this is the selected low-impact feature
+        }
+    )
+    X["y"] = (X["feature1"] > 0.5).astype(
+        int
+    )  # ensure feature1 is important by using it to determine y
+    y = X["y"]
+    X = X.drop(columns="y")
+    model = RandomForestClassifier(random_state=42)
+
+    selected_features = backward_stepwise_feature_selection(
+        X, y, model, start_fold=1, end_fold=5
+    )
+    assert (
+        "feature2" not in selected_features
+    ), f"Feature 2 should be removed, but got {selected_features} as the selected features."
+
+
+def test_handling_of_correlated_features():
+    rng = np.random.default_rng(42)
+
+    # Generate a dataset with explicitly correlated features
+    fold_numbers = np.tile(np.arange(1, 11), 100)
+
+    # Add 100 fold 0 samples to ensure all folds have data
+    fold_numbers = np.concatenate([fold_numbers, np.zeros(500)])
+    rng.shuffle(fold_numbers)
+    base_feature = rng.normal(0, 1, size=1500)
+
+    X = pd.DataFrame(
+        {
+            "fold": fold_numbers,
+            "feature1": base_feature,  # Base feature
+            "feature2": base_feature * 1.01
+            + rng.normal(0, 0.01, size=1500),  # Almost the same as feature1
+            "feature3": base_feature * 0.99
+            + rng.normal(0, 0.01, size=1500),  # Almost the same as feature1
+            "feature4": rng.lognormal(
+                0, 1, size=1500
+            ),  # Independent high-impact feature
+            "feature5": rng.beta(2, 5, size=1500),  # Another independent feature
+        }
+    )
+
+    # Target variable not strongly influenced by correlated features to ensure they are deemed less important
+    X["y"] = (
+        (2 * X["feature4"] + X["feature5"] + rng.normal(0, 1, size=1500)) > 1.5
+    ).astype(int)
+    y = X["y"]
+    X = X.drop(columns="y")
+    model = RandomForestClassifier(random_state=42)
+
+    original_features = set(X.columns)
+
+    # Perform feature selection
+    selected_features = backward_stepwise_feature_selection(
+        X, y, model, start_fold=5, end_fold=9, tolerance=0.01
+    )
+
+    removed_features = original_features - set(selected_features)
+    retained_features = set(selected_features)
+
+    # Assertions to verify that not all correlated features are retained
+    correlated_features = {"feature1", "feature2", "feature3"}
+    assert (
+        len(removed_features & correlated_features) > 0
+    ), f"At least one correlated feature should be removed, but got {removed_features & correlated_features} as the removed features."
+    assert (
+        len(removed_features & correlated_features) < len(correlated_features)
+    ), f"Not all correlated features should be removed, but got {removed_features & correlated_features} as the removed features."
+    assert (
+        len(retained_features & correlated_features) == 1
+    ), f"Only one correlated feature should be retained, but got {retained_features & correlated_features} as the retained features."
