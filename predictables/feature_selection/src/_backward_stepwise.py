@@ -25,13 +25,14 @@ def calculate_all_feature_correlations(
 def identify_highly_correlated_pairs(
     correlations: pd.DataFrame, threshold: float = 0.5
 ) -> list[tuple[str, str]]:
-    """Return a list of pairs of feature names with a correlation coefficient above the threshold."""
-    return [
-        (correlations.columns[i], correlations.columns[j])
+    """Return a SORTED list of pairs of feature names with a correlation coefficient above the threshold."""
+    corr_list = [
+        (correlations.columns[i], correlations.columns[j], abs(correlations.iloc[i, j]))
         for i in range(correlations.shape[0])
         for j in range(i + 1, correlations.shape[1])
         if abs(correlations.iloc[i, j]) > threshold
     ]
+    return sorted(corr_list, key=lambda x: x[2], reverse=True)
 
 
 def generate_X_y(
@@ -249,7 +250,7 @@ def backward_stepwise_feature_selection(
         scores_with = {}
         scores_without = {}
 
-        for feature in ["fold", *features]:
+        for feature in tqdm(["fold", *features], desc="Evaluating the impact of removing each feature"):
             if feature == "fold":
                 continue
             # Evaluate the impact of removing each feature
@@ -261,7 +262,7 @@ def backward_stepwise_feature_selection(
 
         # Check correlation and performance impacts to select features to remove
         feature_to_remove = None
-        for feature1, feature2 in correlated_pairs:
+        for feature1, feature2 in tqdm(correlated_pairs, desc="evaluating correlated features against one another"):
             if feature1 in features and feature2 in features:
                 feature_to_remove = select_feature_to_remove(
                     scores_with[feature1],
@@ -277,10 +278,9 @@ def backward_stepwise_feature_selection(
 
         # If no correlated feature meets the criterion for removal, proceed by performance
         if not feature_to_remove:
-            for feature in features:
+            for feature in tqdm(features, desc="No feature to remove. Checking again."):
                 if (
-                    np.mean(scores_without[feature]) - np.mean(scores_with[feature])
-                    > tolerance
+                    np.mean(scores_without[feature]) > np.mean(scores_with[feature]) - np.std(scores_with[feature]) + tolerance
                 ):
                     feature_to_remove = feature
                     break
