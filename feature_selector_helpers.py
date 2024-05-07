@@ -1,4 +1,6 @@
-import pandas as pd # type: ignore
+"""Helper functions for the feature selector."""
+
+import pandas as pd  # type: ignore
 import polars as pl  # type: ignore
 import polars.selectors as cs  # type: ignore
 from catboost import CatBoostClassifier  # type: ignore
@@ -148,7 +150,7 @@ def get_train() -> pl.LazyFrame:
         .lazy()
     )
 
-    return train.with_columns( # type: ignore
+    return train.with_columns(  # type: ignore
         [
             pl.col(col).cast(pl.Int64)
             for col in train.select(
@@ -217,7 +219,10 @@ def get_y() -> pd.Series:
     )
 
 
-def next_gen_gen(X:pd.DataFrame, y:pd.Series, stepwise_hyperparameters:dict):
+def next_gen_gen(
+    X: pd.DataFrame, y: pd.Series, stepwise_hyperparameters: dict
+) -> tuple:
+    """Generate the next generation."""
     xy_gen = X_y_generator(X, y)
     for X_train, y_train, X_test, y_test in xy_gen:
         yield (
