@@ -194,9 +194,16 @@ def calculate_aucs_from_fitted_models(
     cur_model, ex1_model, ex2_model = fit_models(model, col1, col2, columns_to_drop)
     return (
         [roc_auc_eval(model, X_test, y_test) for X_test, y_test, _, _ in cur_model],
-        [roc_auc_eval(model, X_test, y_test, [col1]) for X_test, y_test, _, _ in ex1_model],
-        [roc_auc_eval(model, X_test, y_test, [col2]) for X_test, y_test, _, _ in ex2_model],
+        [
+            roc_auc_eval(model, X_test, y_test, [col1])
+            for X_test, y_test, _, _ in ex1_model
+        ],
+        [
+            roc_auc_eval(model, X_test, y_test, [col2])
+            for X_test, y_test, _, _ in ex2_model
+        ],
     )
+
 
 def evaluate_what_if_any_column_to_drop(
     current_auc: list[float], ex1_auc: list[float], ex2_auc: list[float]

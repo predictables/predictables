@@ -122,7 +122,6 @@ def evaluate_feature_removal_impact(
         y_pred = model_clone.predict_proba(X_test_reduced)[..., 1]
         score_without.append(roc_auc_score(y_test, y_pred))
 
-
     # Return the list of performances
     return score_with, score_without
 
