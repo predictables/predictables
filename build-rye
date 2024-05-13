@@ -1,0 +1,6 @@
+#! /usr/bin/env bash
+
+export RYE_HOME=$HOME/.rye
+export PATH=$RYE_HOME/bin:$RYE_HOME/shims:$PATH
+
+curl -sSf https://rye-up.com/get | bash
