@@ -1,0 +1,17 @@
+.column-item {
+  padding: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  transition: all 0.2;
+}
+
+.column-item:hover {
+  transform: scale(1.05);
+}
+
+.column-item:focus {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+  transform: scale(1);
+}
