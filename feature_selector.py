@@ -80,12 +80,13 @@ class FeatureSelector:
         """Return the column to drop."""
         return self.col_to_drop
 
-    def _fit_single_model(self,
-    X_train: pd.DataFrame,
+    def _fit_single_model(
+        self,
+        X_train: pd.DataFrame,
         y_train: pd.Series,
         X_test: pd.DataFrame,
-        y_test: pd.Series,   # noqa: ARG002
-        model, # type: ignore  # noqa: ANN001
+        y_test: pd.Series,  # noqa: ARG002
+        model,  # type: ignore  # noqa: ANN001
     ) -> np.ndarray:
         """Fit a single model and return the predictions."""
         model.fit(X_train, y_train)
@@ -97,7 +98,7 @@ class FeatureSelector:
         y_train: pd.Series,
         X_test: pd.DataFrame,
         y_test: pd.Series,
-        model, # type: ignore  # noqa: ANN001
+        model,  # type: ignore  # noqa: ANN001
     ) -> float:
         """Get the AUC value for a single model."""
         y_pred = self._fit_single_model(X_train, y_train, X_test, y_test, model)
