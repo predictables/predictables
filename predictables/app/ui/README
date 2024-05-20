@@ -1,0 +1,120 @@
+# Search and Select Component
+
+## Description
+A modular search and select component to choose column names for an EDA tool. It allows dynamic filtering of columns through a search bar and enables selection of columns, visually distinguishing selected ones.
+
+## Features
+- Render a list of columns in a grid layout that flows to the next line when the available horizontal space is used up.
+- Dynamically filter the columns based on the search term.
+- Select columns and visually distinguish them.
+- Return an object with keys `feature` and `target`.
+
+## Setup
+
+### Install Dependencies
+```bash
+npm install
+```
+### Run the application
+```bash
+npm start
+```
+
+### Run tests
+```bash
+npm test
+```
+
+## File Structure
+
+
+search-select-component/
+│
+├── public/
+│   └── index.html
+│
+├── src/
+│   ├── components/
+│   │   ├── ColumnList.jsx
+│   │   ├── ColumnItem.jsx
+│   │   ├── SearchBar.jsx
+│   │   └── SearchSelect.jsx
+│   │
+│   ├── App.jsx
+│   ├── index.js
+│   └── styles/
+│       ├── ColumnList.css
+│       ├── ColumnItem.css
+│       ├── SearchBar.css
+│       └── SearchSelect.css
+│
+├── tests/
+│   ├── ColumnList.test.js
+│   ├── ColumnItem.test.js
+│   ├── SearchBar.test.js
+│   └── SearchSelect.test.js
+│
+├── .gitignore
+├── jest.config.js
+├── package.json
+└── README.md
+
+## Components
+
+### `SearchSelect`
+- **Props**: `columns` (array of column names)
+- **State**:
+  - `searchTerm` (string): Current value of the search bar.
+  - `selectedColumns` (object): Object with keys `feature` and `target`, each containing a list of selected column names.
+- **Functions**:
+  - `handleSearchChange(event)`: Updates `searchTerm` with the value from the search bar.
+  - `handleColumnSelect(column)`: Adds or removes the column from the `selectedColumns`.
+- **Render**:
+  - `SearchBar` component
+  - `ColumnList` component with filtered columns based on `searchTerm`
+
+### `SearchBar`
+- **Props**: `searchTerm`, `onSearchChange`
+- **Render**:
+  - Input field bound to `searchTerm`
+  - Event listener on input change to call `onSearchChange`
+
+### `ColumnList`
+- **Props**: `columns`, `onColumnSelect`, `selectedColumns`
+- **Render**:
+  - Iterates over `columns` to render `ColumnItem` for each column
+
+### `ColumnItem`
+- **Props**: `column`, `isSelected`, `onColumnSelect`
+- **Render**:
+  - Displays column name
+  - Applies selected style if `isSelected` is true
+  - Event listener on click to call `onColumnSelect`
+
+## CSS
+- **ColumnList.css**: Styles for the grid layout
+- **ColumnItem.css**: Styles for each column item, including the selected state
+- **SearchBar.css**: Styles for the search bar
+- **SearchSelect.css**: Styles for the main component layout
+
+## Tests
+
+### `ColumnList.test.js`
+- Test that `ColumnList` renders the correct number of `ColumnItem` components.
+- Test that `ColumnList` passes the correct props to `ColumnItem`.
+
+### `ColumnItem.test.js`
+- Test that `ColumnItem` displays the column name.
+- Test that `ColumnItem` applies the correct class when selected.
+- Test that `ColumnItem` calls the `onColumnSelect` prop when clicked.
+
+### `SearchBar.test.js`
+- Test that `SearchBar` displays the correct initial search term.
+- Test that `SearchBar` calls the `onSearchChange` prop when the input changes.
+
+### `SearchSelect.test.js`
+- Test that `SearchSelect` updates the search term when `SearchBar` changes.
+- Test that `SearchSelect` filters columns correctly based on the search term.
+- Test that `SearchSelect` updates the selected columns correctly when `ColumnItem` is clicked.
+
+
