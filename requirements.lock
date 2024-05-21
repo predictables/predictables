@@ -32,6 +32,8 @@ backoff==2.2.1
     # via segment-analytics-python
 blinker==1.8.2
     # via streamlit
+bokeh==3.4.1
+    # via predictables
 cachetools==5.3.3
     # via pygwalker
     # via streamlit
@@ -56,6 +58,7 @@ comm==0.2.1
     # via ipywidgets
     # via predictables
 contourpy==1.2.0
+    # via bokeh
     # via matplotlib
     # via predictables
 coverage==7.4.4
@@ -133,6 +136,7 @@ jedi==0.19.1
     # via predictables
 jinja2==3.1.4
     # via altair
+    # via bokeh
     # via pydeck
     # via pygwalker
 joblib==1.3.2
@@ -192,6 +196,7 @@ nest-asyncio==1.6.0
     # via predictables
 numpy==1.26.4
     # via altair
+    # via bokeh
     # via catboost
     # via contourpy
     # via lightgbm
@@ -211,6 +216,7 @@ openpyxl==3.1.2
     # via predictables
 packaging==23.2
     # via altair
+    # via bokeh
     # via ipykernel
     # via matplotlib
     # via plotly
@@ -221,6 +227,7 @@ packaging==23.2
     # via streamlit
 pandas==2.2.1
     # via altair
+    # via bokeh
     # via catboost
     # via predictables
     # via pygwalker
@@ -240,6 +247,7 @@ pexpect==4.9.0
     # via ipython
     # via predictables
 pillow==10.2.0
+    # via bokeh
     # via matplotlib
     # via predictables
     # via reportlab
@@ -324,6 +332,7 @@ pytz==2024.1
     # via predictables
     # via pygwalker
 pyyaml==6.0.1
+    # via bokeh
     # via predictables
     # via pyaml
 pyzmq==25.1.2
@@ -393,6 +402,7 @@ tomli==2.0.1
 toolz==0.12.1
     # via altair
 tornado==6.4
+    # via bokeh
     # via ipykernel
     # via jupyter-client
     # via predictables
@@ -467,6 +477,8 @@ widgetsnbextension==4.0.10
     # via predictables
 xgboost==2.0.3
     # via predictables
+xyzservices==2024.4.0
+    # via bokeh
 zipp==3.17.0
     # via importlib-metadata
     # via importlib-resources

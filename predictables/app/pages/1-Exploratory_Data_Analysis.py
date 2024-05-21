@@ -2,22 +2,18 @@
 
 import streamlit as st
 from pygwalker.api.streamlit import StreamlitRenderer
+from predictables.app import is_data_loaded, initialize_state
 
 # Initialize state variables if needed
-if "data" not in st.session_state:
-    st.session_state["data"] = None
-
+initialize_state()
 
 st.set_page_config(page_title="Exploratory Data Analysis", layout="wide")
 
 st.markdown("# Exploratory Data Analysis")
 
-
-data = st.session_state.data
-
-if data is not None:
+if is_data_loaded():
     # Generate the EDA report
-    pyg_app = StreamlitRenderer(data)
+    pyg_app = StreamlitRenderer(st.session_state.data)
     pyg_app.explorer()
 else:
     st.write("No data has been loaded yet.")

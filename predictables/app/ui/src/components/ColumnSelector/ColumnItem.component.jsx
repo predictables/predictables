@@ -1,5 +1,5 @@
 import React from 'react';
-import './styles/ColumnItem.css';
+import './ColumnItem.styles.css';w
 
 const ColumnItem = ({ column, isSelected, onColumnSelect }) => {
   return (

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import SearchBar from './SearchBar';
-import ColumnList from './ColumnList';
-import './styles/SearchSelect.css';
+import SearchBar from './SearchBar.component';
+import ColumnList from './ColumnList.component';
+import './SearchSelect.styles.css';
 
 const SearchSelect = ({ columns }) => {
   const [searchTerm, setSearchTerm] = useState('');

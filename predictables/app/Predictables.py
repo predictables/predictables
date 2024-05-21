@@ -3,6 +3,7 @@
 from __future__ import annotations
 import streamlit as st
 import pandas as pd
+from predictables.app import initialize_state
 
 
 @st.cache_data
@@ -25,7 +26,6 @@ def load_data(file: list[str] | None = None) -> pd.DataFrame | None:
 
     return data
 
-
 def main() -> None:
     """Generate the main page."""
     st.title("Predictables")
@@ -34,11 +34,7 @@ def main() -> None:
     st.write("Please check back later.")
 
     # Initialize state variables
-    if "data" not in st.session_state:
-        st.session_state["data"] = None
-
-    if "columns" not in st.session_state:
-        st.session_state["columns"] = None
+    initialize_state()
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import ColumnItem from '../src/components/ColumnItem';
+import ColumnItem from './ColumnItem.component';
 
 test('renders ColumnItem with correct text', () => {
   const column = 'Column1';

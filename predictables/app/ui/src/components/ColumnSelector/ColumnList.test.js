@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import ColumnList from '../src/components/ColumnList';
+import ColumnList from './ColumnList.component';
 
 test('renders ColumnList with correct number of ColumnItems', () => {
   const columns = ['Column1', 'Column2', 'Column3'];

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import SearchBar from '../src/components/SearchBar';
+import SearchBar from './SearchBar.component';
 
 test('renders SearchBar with correct initial value', () => {
   render(<SearchBar searchTerm="test" onSearchChange={() => {}} />);

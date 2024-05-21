@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import SearchSelect from '../src/components/SearchSelect';
+import SearchSelect from './SearchSelect.component';
 
 const columns = ['Column1', 'Column2', 'Column3'];
 

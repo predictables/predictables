@@ -1,0 +1,17 @@
+.menu {
+  display: flex;
+  flex-direction: column;
+  background-color: #4a56e2;
+  width: 100%;
+  padding: 10px;
+}
+
+.menu-item {
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background-color: #3a46d2;
+}

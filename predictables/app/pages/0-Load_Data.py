@@ -1,12 +1,11 @@
 """Load data into the Predictables app."""
 
 import streamlit as st
+from predictables.app import initialize_state, is_data_loaded, update_state
 from predictables.app.Predictables import load_data
 
 # Initialize state variables if needed
-if "data" not in st.session_state:
-    st.session_state["data"] = None
-
+initialize_state()
 
 st.set_page_config(page_title="Load Data", layout="wide")
 
@@ -16,11 +15,28 @@ st.markdown("# Load Data")
 st.write(
     "Upload a CSV or Parquet file to use Predictables. If multiple files are uploaded, the files will attempt to be concatenated, and if they cannot be concatenated, the first file will be used."
 )
-file = st.file_uploader(
+
+col1, col2 = st.columns(2)
+
+col2.write(
+    f"Current target variable: {st.session_state['target_variable']}",
+    key="target-variable-statement",
+)
+
+file = col1.file_uploader(
     "Upload a CSV or Parquet file", type=["csv", "parquet"], accept_multiple_files=True
 )
 
-if st.session_state.get("data", None) is not None:
+
+if is_data_loaded():
+    # Select the target variable from the dataset to use
+    target_variable = col2.selectbox(
+        "Target Variable",
+        st.session_state["columns"],
+        key="target-variable",
+        placeholder="Target variable...",
+        on_change=lambda: update_state("target_variable", target_variable),
+    )
     st.dataframe(st.session_state["data"])
 
 elif file:
@@ -29,4 +45,17 @@ elif file:
     st.session_state.update(
         columns=df.columns.tolist()
     )  # Update the state with the columns
-    st.dataframe(st.session_state["data"])  # Display the data
+    target_variable = col2.selectbox(
+        "Target Variable",
+        st.session_state["columns"],
+        key="target-variable",
+        placeholder="Target variable...",
+        on_change=lambda: update_state("target_variable", target_variable),
+    )
+
+    # rewrite the target variable statement
+    col2.write(
+        f"Current target variable: {st.session_state['target_variable']}",
+        key="target-variable-statement",
+    )
+    st.dataframe(st.session_state["data"])

@@ -1,6 +1,6 @@
 import React from 'react';
-import ColumnItem from './ColumnItem';
-import './styles/ColumnList.css';
+import ColumnItem from './ColumnItem.component';
+import './ColumnList.styles.css';
 
 const ColumnList = ({ columns, selectedColumns, onColumnSelect }) => {
   return (
