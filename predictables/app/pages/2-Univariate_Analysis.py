@@ -12,28 +12,9 @@ from predictables.app import (
     scatter,
 )
 from predictables.util import get_column_dtype, fmt_col_name
-from predictables.univariate import Univariate
 
-
-# Initialize state variables if needed
-initialize_state()
-
-target_variable = st.session_state["target_variable"]
-univariate_feature_variable = st.session_state["univariate_feature_variable"]
-feat = (
-    f" for feature `{fmt_col_name(univariate_feature_variable)}`"
-    if univariate_feature_variable != ""
-    else " "
-)
-st.markdown(
-    f"## Univariate analysis {feat} with target `{fmt_col_name(target_variable)}`"
-)
-
-if not is_data_loaded():
-    st.markdown(
-        "**Warning: ** No data is loaded. Return to the `Load Data` page before coming back."
-    )
-else:
+def when_data_loaded() -> None:
+    """Populate this page only when data are loaded."""
     idx = (
         st.session_state["columns"].index(
             st.session_state["univariate_feature_variable"]
@@ -120,16 +101,43 @@ else:
 
     with col2:
         if target_type == "continuous":
-            p = scatter()
+            p = scatter(
+                X,
+                y,
+                fmt_col_name(univariate_feature_variable),
+                fmt_col_name(target_variable),
+            )
+
             st.bokeh_chart(p)
 
         elif target_type in ["categorical", "binary"]:
             p = boxplot(
                 X,
-                y.map({0: "No Hit", 1: "Hit"}),
+                y,
                 fmt_col_name(univariate_feature_variable),
                 fmt_col_name(target_variable),
-                f"Boxplot of `{fmt_col_name(univariate_feature_variable)}` vs `{fmt_col_name(target_variable)}`",
             )
 
             st.bokeh_chart(p)
+
+
+# Initialize state variables if needed
+initialize_state()
+
+target_variable = st.session_state["target_variable"]
+univariate_feature_variable = st.session_state["univariate_feature_variable"]
+feat = (
+    f" for feature `{fmt_col_name(univariate_feature_variable)}`"
+    if univariate_feature_variable != ""
+    else " "
+)
+st.markdown(
+    f"## Univariate analysis {feat} with target `{fmt_col_name(target_variable)}`"
+)
+
+if not is_data_loaded():
+    st.markdown(
+        "**Warning: ** No data is loaded. Return to the `Load Data` page before coming back."
+    )
+else:
+    when_data_loaded()
