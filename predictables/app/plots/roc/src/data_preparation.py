@@ -4,7 +4,7 @@ from __future__ import annotations
 import pandas as pd
 
 
-def load_data(filepath: str) -> pd.DataFrame:
+def load_data(filepath: str, fold_column: str = "fold") -> pd.DataFrame:
     """Load the data from a CSV file.
 
     Parameters
@@ -17,10 +17,15 @@ def load_data(filepath: str) -> pd.DataFrame:
     DataFrame
         Loaded data.
     """
-    return pd.read_csv(filepath)
+    df = pd.read_csv(filepath)
+
+    if fold_column not in df.columns:
+        raise KeyError(f"Column '{fold_column}' not found in the data:\n{df.head()}")
+
+    return df
 
 
-def prepare_data(
+def prepare_roc_data(
     data: pd.DataFrame, use_time_series_validation: bool
 ) -> list[tuple[pd.DataFrame, pd.DataFrame]]:
     """Prepare the data based on the use_time_series_validation flag.

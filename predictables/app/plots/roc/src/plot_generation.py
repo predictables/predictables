@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 from bokeh.plotting import figure
-from bokeh.models import HoverTool, Span
+from bokeh.models import HoverTool
 import numpy as np
 
 
@@ -34,16 +34,21 @@ def generate_roc_auc_plot(
         title="ROC AUC Plot",
         x_axis_label="False Positive Rate",
         y_axis_label="True Positive Rate",
+        plot_width=750,
+        plot_height=450,
     )
 
     # Plot ROC curves for each fold
+    lines = []
     for i, (fpr, tpr, roc_auc) in enumerate(roc_curves):
-        p.line(
-            fpr,
-            tpr,
-            legend_label=f"Fold {i+1} (AUC = {roc_auc:.2f})",
-            line_width=2,
-            alpha=0.6,
+        lines.append(
+            p.line(
+                fpr,
+                tpr,
+                legend_label=f"Fold {i+1} (AUC = {roc_auc:.2f})",
+                line_width=3,
+                alpha=0.7,
+            )
         )
 
     # Plot mean ROC curve
@@ -59,8 +64,13 @@ def generate_roc_auc_plot(
     )
 
     # Add 45-degree line
-    diag_line = Span(
-        location=0, dimension="width", line_dash="dashed", line_color="red"
+    diag_line = p.line(
+        [0, 1],
+        [0, 1],
+        line_dash="dashed",
+        line_width=1,
+        color="red",
+        legend_label="Line of Equality",
     )
     p.add_layout(diag_line)
 

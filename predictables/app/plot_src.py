@@ -4,8 +4,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 from bokeh.plotting import figure
-from bokeh.models import Whisker, ColumnDataSource
-import streamlit as st
+from bokeh.models import Whisker, ColumnDataSource, HoverTool
 
 from .constants import (
     PLOT_WIDTH,
@@ -126,6 +125,8 @@ def boxplot(
         y_axis_label=X_name,
         width=plot_width,
         height=plot_height,
+        tools="hover,box_select,lasso_select,reset,tap",
+        tooltips=[("Value", "@X"), ("Level", "@y")],
     )
 
     # Outlier range
@@ -139,6 +140,7 @@ def boxplot(
         line_alpha=0.5,
     )
     p.add_layout(whisker)
+
 
     # Quantile boxes
     p.vbar(
@@ -157,15 +159,18 @@ def boxplot(
 
     # # Outliers
     outlier_source = data.loc[data.is_outlier]
-    p.scatter(
+    outliers = p.scatter(
         x="y",
         y="X",
         source=outlier_source,
-        line_color="black",
-        fill_color="green",
-        fill_alpha=0.5,
         size=12,
+        selection_color="firebrick",
+        selection_fill_alpha=0.5,
+        nonselection_line_color="black",
+        nonselection_fill_color="green",
+        nonselection_fill_alpha=0.5,
     )
 
+    p.hover.renderers = [outliers]
     return p
 

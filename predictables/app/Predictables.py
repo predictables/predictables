@@ -3,6 +3,7 @@
 from __future__ import annotations
 import streamlit as st
 import pandas as pd
+
 from predictables.app import initialize_state
 
 
@@ -21,10 +22,15 @@ def load_data(file: list[str] | None = None) -> pd.DataFrame | None:
     except ValueError as _:
         data = dflist[0].reset_index(drop=True)
 
+    for column in ["fold", "target"]:
+        if column in data.columns:
+            data[column] = data[column].fillna(-1).astype(int)
+
     # add data to the state and return it
     st.session_state["data"] = data
 
     return data
+
 
 def main() -> None:
     """Generate the main page."""
