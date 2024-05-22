@@ -3,6 +3,7 @@ import streamlit as st
 from typing import Any
 import os
 from dotenv import load_dotenv, find_dotenv
+from .plot_src import histogram, scatter, boxplot
 
 load_dotenv(find_dotenv())
 
@@ -34,3 +35,8 @@ def initialize_state() -> None:
 def is_data_loaded() -> bool:
     """Check if data is loaded."""
     return st.session_state["data"].shape != (0, 0)
+
+def two_column_layout_with_spacers() -> tuple:
+    """Create a two-column layout with spacers."""
+    _, col1, _, col2, _ = st.columns([0.05, 0.4, 0.1, 0.4, 0.05])
+    return col1, col2

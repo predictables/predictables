@@ -32,7 +32,7 @@ backoff==2.2.1
     # via segment-analytics-python
 blinker==1.8.2
     # via streamlit
-bokeh==3.4.1
+bokeh==2.4.3
     # via predictables
 cachetools==5.3.3
     # via pygwalker
@@ -58,7 +58,6 @@ comm==0.2.1
     # via ipywidgets
     # via predictables
 contourpy==1.2.0
-    # via bokeh
     # via matplotlib
     # via predictables
 coverage==7.4.4
@@ -229,7 +228,6 @@ packaging==23.2
     # via streamlit
 pandas==2.2.1
     # via altair
-    # via bokeh
     # via catboost
     # via predictables
     # via pygwalker
@@ -455,6 +453,7 @@ types-tqdm==4.66.0.20240106
     # via predictables
 typing-extensions==4.10.0
     # via altair
+    # via bokeh
     # via cattrs
     # via ipython
     # via mypy
@@ -484,8 +483,6 @@ widgetsnbextension==4.0.10
     # via predictables
 xgboost==2.0.3
     # via predictables
-xyzservices==2024.4.0
-    # via bokeh
 zipp==3.17.0
     # via importlib-metadata
     # via importlib-resources
