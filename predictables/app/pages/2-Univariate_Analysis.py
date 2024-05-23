@@ -3,7 +3,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier
 from predictables.app import (
     update_state,
     initialize_state,
@@ -14,16 +13,25 @@ from predictables.app import (
     scatter,
     # build_models,
 )
-from predictables.app.plots.roc import (
-    prepare_roc_data,
-    calculate_roc_auc,
-    calculate_mean_roc_auc,
-    generate_roc_auc_plot,
-)
+from predictables.app.plots.roc import roc_curve
+from predictables.app.plots.quintile_lift import quintile_lift
 from predictables.util import get_column_dtype, fmt_col_name
-
-
 from bokeh.plotting import figure
+
+st.set_page_config(
+    page_title="PredicTables - Univariate",
+    page_icon=None,
+    layout="wide",  # or {"centered", "wide"}
+    initial_sidebar_state="auto",  # or {"auto", "collapsed", "expanded"}
+    menu_items={
+        "Get help": None,  # or a url for this link to point to
+        "Report a bug": None,  # or a url for this link to point to
+        "About": """# PredicTables
+
+        PredicTables is an app that provides a simple interface for exploring and analyzing data.
+        """,
+    },
+)
 
 
 def get_feat() -> str:
@@ -115,7 +123,7 @@ def very_basic_analysis(
 
             st.bokeh_chart(p)
 
-def density_plot(X: pd.Series, y: pd.Series, folds: pd.Series) -> None:
+def density_plot(X: pd.Series, y: pd.Series) -> None:
     """Generate kernel density plot by level of the target variable."""
     from scipy.stats import gaussian_kde
 
@@ -160,68 +168,12 @@ def density_plot(X: pd.Series, y: pd.Series, folds: pd.Series) -> None:
             fill_alpha=0.2,
         )
 
-    # for fold in folds.unique():
-    #     for level in y.unique():
-    #         x0, y0 = kde(X[(y == level) & (folds == fold)], 100)
-    #         p.line(
-    #             x0,
-    #             y0,
-    #             line_width=1,
-    #             line_color="grey",
-    #             line_dash="dashed",
-    #             legend_label=f"Fold {fold} - {fmt_col_name(target_variable)} = {level}",
-    #         )
-
     p.legend.location = "top_right"
     p.legend.click_policy = "hide"
 
     st.bokeh_chart(p)
 
 
-def roc_curve(
-    df: pd.DataFrame, univariate_feature_variable: str, target_variable: str
-) -> None:
-    """Generate ROC curve for the univariate analysis."""
-    col1, col2 = two_column_layout_with_spacers()
-    with col1:
-        ## ROC Curve
-        roc_data = prepare_roc_data(df, use_time_series_validation=True)
-
-        # Calculate ROC AUC for each fold
-        roc_curves = []
-        features = [univariate_feature_variable]
-        target = target_variable
-
-        for train_data, validation_data in roc_data:
-            roc_curve = calculate_roc_auc(train_data, validation_data, features, target)
-            roc_curves.append(roc_curve)
-
-        # Calculate mean ROC AUC and standard error
-        mean_fpr, mean_tpr, std_error = calculate_mean_roc_auc(roc_curves)
-
-        # Generate ROC AUC plot
-        p = generate_roc_auc_plot(roc_curves, mean_fpr, mean_tpr, std_error)
-        st.bokeh_chart(p)
-
-    with col2:
-        st.markdown("### ROC AUC Statistics")
-        df = pd.DataFrame(
-            {
-                "Fold": [f"Fold-{i}" for i in range(1, len(roc_curves) + 1)]
-                + ["Mean"]
-                + ["Std Error"],
-                "ROC AUC": [roc_auc for _, _, roc_auc in roc_curves]
-                + [np.mean([roc_auc for _, _, roc_auc in roc_curves])]
-                + [
-                    np.std([roc_auc for _, _, roc_auc in roc_curves])
-                    / np.sqrt(len(roc_curves))
-                ],
-            }
-        ).set_index("Fold")
-
-        df["ROC AUC"] = df["ROC AUC"].apply(lambda x: f"{x:.1%}")
-
-        st.dataframe(df)
 
 
 def stacked_bar_chart(X: pd.Series, y: pd.Series) -> None:
@@ -251,85 +203,6 @@ def stacked_bar_chart(X: pd.Series, y: pd.Series) -> None:
 
     st.bokeh_chart(p)
 
-
-def lift_plot(X: pd.Series, y: pd.Series, folds: pd.Series) -> None:
-    """Generate a quintile lift plot for the univariate analysis."""
-    p = figure(
-        title="Quintile Lift Plot",
-        x_axis_label="Quintile",
-        y_axis_label="Lift",
-        width=750,
-        height=450,
-    )
-
-    for fold in folds.drop_duplicates().sort_values().tolist()[:-1]:
-        x_train = X[folds <= fold]
-        x_test = X[folds == fold + 1]
-
-        y_train = y[folds <= fold]
-        y_test = y[folds == fold + 1]
-
-        naive_model = np.mean(y_train)
-
-        quintile_df = pd.DataFrame(
-            {
-                "quintile": [f"Q{i}" for i in range(1, 6)],
-                "mean_target": [y_test.quantile(i / 5) for i in range(1, 6)],
-                "naive_model": [naive_model for _ in range(5)],
-            }
-        )
-
-        model = RandomForestClassifier(n_estimators=100, random_state=42)
-        model.fit(x_train.to_numpy().reshape(-1, 1), y_train)
-        yhat_test = model.predict_proba(x_test.to_numpy().reshape(-1, 1))[:, 1]
-
-        # Create quintile buckets and adjust labels accordingly
-        quintile_bucket, bins = pd.qcut(
-            yhat_test, 5, labels=False, retbins=True, duplicates="drop"
-        )
-        quintile_labels = [f"Q{i}" for i in range(1, len(bins))]
-        quintile_bucket = pd.cut(
-            yhat_test, bins=bins, labels=quintile_labels, include_lowest=True
-        )
-
-        quintile_df["model"] = (
-            pd.DataFrame({"y": yhat_test, "quintile_bucket": quintile_bucket})
-            .groupby("quintile_bucket")["y"]
-            .mean()
-            .reindex(quintile_labels)
-            .to_numpy()
-        )
-
-        # Plot a line for the naive model
-        p.line(
-            quintile_df["quintile"],
-            quintile_df["naive_model"],
-            legend_label=f"Naive Model: Fold {fold}",
-            line_width=1,
-            line_color="green",
-        )
-
-        # Plot a line for the model predictions
-        p.line(
-            quintile_df["quintile"],
-            quintile_df["model"],
-            legend_label=f"Model: Fold {fold}",
-            line_width=1,
-            line_color="firebrick",
-        )
-
-        # Plot a vertical bar for the actual values
-        p.vbar(
-            x="quintile",
-            top="mean_target",
-            source=quintile_df,
-            width=0.5,
-            fill_alpha=0.7,
-            line_color=None,
-            fill_color="skyblue",
-        )
-
-    st.bokeh_chart(p)
 
 
 def when_data_loaded() -> None:
@@ -376,27 +249,36 @@ def when_data_loaded() -> None:
     very_basic_analysis(X, y, feature_type, target_type)
 
     # == Univariate Analysis Graphs =====================
-    col1, col2 = two_column_layout_with_spacers()
     if feature_type == "continuous" and target_type in ["categorical", "binary"]:
+        st.markdown("### Density Plot")
+        col1, col2 = two_column_layout_with_spacers()
         with col1:
-            density_plot(X, y, fold)
-
-        with col2:
-            st.markdown("### Density Plot")
+            density_plot(X, y)
 
     elif feature_type in ["categorical", "binary"] and target_type in [
         "categorical",
         "binary",
     ]:
+        st.markdown("### Stacked Bar Chart")
+        col1, col2 = two_column_layout_with_spacers()
         with col1:
             stacked_bar_chart(X, y)
 
-        with col2:
-            st.markdown("### Stacked Bar Chart")
+    # == ROC-AUC Curve =====================
+    st.markdown("### ROC AUC Plot")
+    p, roc_df = roc_curve(df, univariate_feature_variable, target_variable)
+    col1, col2 = two_column_layout_with_spacers()
 
-    roc_curve(df, univariate_feature_variable, target_variable)
+    col1.bokeh_chart(p)
+    col2.dataframe(roc_df)
 
-    lift_plot(X, y, fold)
+    # == Quintile Lift Plot =====================
+    st.markdown("### Quintile Lift Plot")
+    p, quintile_df = quintile_lift(X, y, fold)
+
+
+    st.bokeh_chart(p)
+    st.dataframe(quintile_df)
 
 
 # Initialize state variables if needed

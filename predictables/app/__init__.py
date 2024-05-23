@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv, find_dotenv
 from sklearn.linear_model import LogisticRegressionCV
 from .plot_src import histogram, scatter, boxplot
+from .src import train_test_split
 
 load_dotenv(find_dotenv())
 

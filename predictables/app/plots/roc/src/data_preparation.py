@@ -47,7 +47,7 @@ def prepare_roc_data(
 
     if use_time_series_validation:
         for fold in folds:
-            train_data = data[data["fold"] <= fold]
+            train_data = data[data["fold"] < fold + 1]
             validation_data = data[data["fold"] == fold + 1]
             if not validation_data.empty:
                 prepared_data.append((train_data, validation_data))
