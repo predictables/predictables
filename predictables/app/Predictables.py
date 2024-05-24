@@ -4,7 +4,7 @@ from __future__ import annotations
 import streamlit as st
 import pandas as pd
 
-from predictables.app import initialize_state
+from predictables.app import initialize_state, update_state
 
 
 @st.cache_data
@@ -27,7 +27,7 @@ def load_data(file: list[str] | None = None) -> pd.DataFrame | None:
             data[column] = data[column].fillna(-1).astype(int)
 
     # add data to the state and return it
-    st.session_state["data"] = data
+    update_state("data", data)
 
     return data
 

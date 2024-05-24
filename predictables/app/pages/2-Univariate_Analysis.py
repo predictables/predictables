@@ -3,15 +3,12 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from predictables.app import (
+from predictables.app import initialize_state, histogram, boxplot, scatter
+from predictables.app.src.util import (
     update_state,
-    initialize_state,
     is_data_loaded,
     two_column_layout_with_spacers,
-    histogram,
-    boxplot,
-    scatter,
-    # build_models,
+    get_data,
 )
 from predictables.app.plots.roc import roc_curve
 from predictables.app.plots.quintile_lift import quintile_lift
@@ -208,19 +205,19 @@ def stacked_bar_chart(X: pd.Series, y: pd.Series) -> None:
 def when_data_loaded() -> None:
     """Populate this page only when data are loaded."""
     idx = (
-        st.session_state["columns"].index(
+        get_data()["columns"].index(
             st.session_state["univariate_feature_variable"]
         )
         if st.session_state["univariate_feature_variable"]
-        in st.session_state["columns"]
+        in get_data()["columns"]
         else 0
     )
 
-    update_state("univariate_feature_variable", st.session_state["columns"][idx])
+    update_state("univariate_feature_variable", get_data()["columns"][idx])
 
     univariate_feature_variable = st.selectbox(
         "Feature Variable",
-        st.session_state["columns"],
+        get_data()["columns"],
         key="univariate-feature-variable",
         placeholder="Feature variable...",
         index=idx,
@@ -234,9 +231,9 @@ def when_data_loaded() -> None:
     )
 
     # Extract X and y from the data
-    X = st.session_state["data"][univariate_feature_variable]
-    y = st.session_state["data"][target_variable]
-    fold = st.session_state["data"]["fold"]
+    X = get_data()[univariate_feature_variable]
+    y = get_data()[target_variable]
+    fold = get_data()["fold"]
 
     df = pd.DataFrame(
         {univariate_feature_variable: X, target_variable: y, "fold": fold}

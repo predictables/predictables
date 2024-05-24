@@ -1,0 +1,1 @@
+from .scree_plot import scree_plot

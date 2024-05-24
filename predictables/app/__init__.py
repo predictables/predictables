@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pandas as pd
 import streamlit as st
 from typing import Any
@@ -5,14 +7,21 @@ import os
 from dotenv import load_dotenv, find_dotenv
 from sklearn.linear_model import LogisticRegressionCV
 from .plot_src import histogram, scatter, boxplot
-from .src import train_test_split
+from .src import (
+    train_test_split,
+    X_y_gen,
+    fit_model,
+    fit_model_with_cross_validation,
+    pca,
+    exlude_variable_button,
+    confirm_excluded_variable,
+)
+from .src.shap import shap_values, shap_bar_plot, shap_beeswarm_plot
 
 load_dotenv(find_dotenv())
 
 
-def update_state(key: str, value: Any) -> None:  # noqa: ANN401
-    """Update the state with a new key-value pair."""
-    st.session_state.update(**{key: value}) if key in st.session_state else None
+
 
 
 def initialize_state() -> None:
@@ -36,33 +45,9 @@ def initialize_state() -> None:
     if "models" not in st.session_state:
         st.session_state["models"] = {}
 
+    if "is_time_series_data" not in st.session_state:
+        st.session_state["is_time_series_data"] = True
 
-def is_data_loaded() -> bool:
-    """Check if data is loaded."""
-    return st.session_state["data"].shape != (0, 0)
+    if "excluded_variables" not in st.session_state:
+        st.session_state["excluded_variables"] = []
 
-def two_column_layout_with_spacers() -> tuple:
-    """Create a two-column layout with spacers."""
-    _, col1, _, col2, _ = st.columns([0.05, 0.4, 0.1, 0.4, 0.05])
-    return col1, col2
-
-# @st.cache_data
-# def build_models(data: pd.DataFrame, ts_cross_validation: bool = True) -> None:
-#     """Build models using the data."""
-#     models = {}
-#     unique_folds = data["fold"].unique()
-
-#     for fold in unique_folds:
-#         if fold > 0:
-#             qry = f"fold != {fold}" if not ts_cross_validation else f"fold <= {fold}"
-#             filtered_data = data.query(qry)
-#             X = filtered_data.drop(columns=["target"])
-#             y = filtered_data["target"]
-
-#             # Build a logistic regression model
-#             model = LogisticRegressionCV(cv=5, max_iter=1000)
-#             model.fit(X, y)
-
-#             models[fold] = model
-
-#     st.session_state.update(models=models)

@@ -68,6 +68,22 @@ def quintile_lift(
         fill_color="skyblue",
     )
 
+    p.line(
+        x=df["quintile"],
+        y=df["random_forest_model"],
+        line_width=3,
+        line_color="firebrick",
+        legend_label="Random Forest Model",
+    )
+
+    p.line(
+        x=df["quintile"],
+        y=df["naive_model"],
+        line_width=3,
+        line_color="green",
+        legend_label="Naive Model",
+    )
+
     p.legend.location = "bottom_right"
     p.legend.click_policy = "hide"
 
