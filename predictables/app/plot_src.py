@@ -141,7 +141,6 @@ def boxplot(
     )
     p.add_layout(whisker)
 
-
     # Quantile boxes
     p.vbar(
         x="y",
@@ -173,4 +172,3 @@ def boxplot(
 
     p.hover.renderers = [outliers]
     return p
-

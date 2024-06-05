@@ -4,7 +4,8 @@ from __future__ import annotations
 import streamlit as st
 import pandas as pd
 
-from predictables.app import initialize_state, update_state
+from predictables.app import initialize_state
+from predictables.app.src.util import update_state
 
 
 @st.cache_data
