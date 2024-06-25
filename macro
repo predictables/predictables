@@ -1,0 +1,10 @@
+{%- macro recode_company_code_to_company_numb(column_name) -%}
+case
+    when {{column_name}}='CID' then 3
+    when {{column_name}}='CIC' then 5
+    when {{column_name}}='CCC' then 7
+    when {{column_name}}='CSU' then 1
+    when {{column_name}}='CGU' then 4
+    else null
+end
+{%- endmacro -%}
