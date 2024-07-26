@@ -113,6 +113,7 @@ dependencies = [
     "duckdb>=0.10.2",
     "pygwalker==0.4.8.5",
     "gw-dsl-parser==0.1.48a5",
+    "pyodbc>=5.1.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.9"

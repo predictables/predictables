@@ -6,10 +6,9 @@
 #   features: []
 #   all-features: false
 #   with-sources: false
+#   generate-hashes: false
 
 -e file:.
-altair==5.3.0
-    # via streamlit
 annotated-types==0.6.0
     # via pydantic
 appdirs==1.4.4
@@ -23,20 +22,13 @@ asttokens==2.4.1
     # via stack-data
 attrs==23.2.0
     # via cattrs
-    # via jsonschema
     # via lsprotocol
     # via predictables
-    # via referencing
 backoff==2.2.1
     # via kanaries-track
     # via segment-analytics-python
-blinker==1.8.2
-    # via streamlit
-bokeh==2.4.3
-    # via predictables
 cachetools==5.3.3
     # via pygwalker
-    # via streamlit
 catboost==1.2.2
     # via predictables
 cattrs==23.2.3
@@ -52,9 +44,6 @@ charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via predictables
-    # via streamlit
-cloudpickle==3.0.0
-    # via shap
 comm==0.2.1
     # via ipykernel
     # via ipywidgets
@@ -97,10 +86,6 @@ flake8==7.0.0
 fonttools==4.44.0
     # via matplotlib
     # via predictables
-gitdb==4.0.11
-    # via gitpython
-gitpython==3.1.43
-    # via streamlit
 graphviz==0.20.1
     # via catboost
     # via predictables
@@ -136,17 +121,10 @@ jedi==0.19.1
     # via ipython
     # via predictables
 jinja2==3.1.4
-    # via altair
-    # via bokeh
-    # via pydeck
     # via pygwalker
 joblib==1.3.2
     # via predictables
     # via scikit-learn
-jsonschema==4.22.0
-    # via altair
-jsonschema-specifications==2023.12.1
-    # via jsonschema
 jupyter-client==8.6.0
     # via ipykernel
     # via predictables
@@ -164,16 +142,12 @@ kiwisolver==1.4.5
     # via predictables
 lightgbm==4.3.0
     # via predictables
-llvmlite==0.42.0
-    # via numba
 lsprotocol==2023.0.1
     # via predictables
     # via pygls
     # via ruff-lsp
 lxml==5.1.0
     # via predictables
-markdown-it-py==3.0.0
-    # via rich
 markupsafe==2.1.5
     # via jinja2
 matplotlib==3.8.1
@@ -186,8 +160,6 @@ matplotlib-inline==0.1.6
 mccabe==0.7.0
     # via flake8
     # via predictables
-mdurl==0.1.2
-    # via markdown-it-py
 monotonic==1.6
     # via segment-analytics-python
 mypy==1.9.0
@@ -198,33 +170,23 @@ mypy-extensions==1.0.0
 nest-asyncio==1.6.0
     # via ipykernel
     # via predictables
-numba==0.59.1
-    # via shap
 numpy==1.26.4
-    # via altair
-    # via bokeh
     # via catboost
     # via contourpy
     # via lightgbm
     # via matplotlib
-    # via numba
     # via pandas
     # via pandas-stubs
     # via patsy
     # via predictables
     # via pyarrow
-    # via pydeck
     # via scikit-learn
     # via scipy
-    # via shap
     # via statsmodels
-    # via streamlit
     # via xgboost
 openpyxl==3.1.2
     # via predictables
 packaging==23.2
-    # via altair
-    # via bokeh
     # via ipykernel
     # via matplotlib
     # via plotly
@@ -232,17 +194,12 @@ packaging==23.2
     # via pygwalker
     # via pytest
     # via ruff-lsp
-    # via shap
     # via statsmodels
-    # via streamlit
 pandas==2.2.1
-    # via altair
     # via catboost
     # via predictables
     # via pygwalker
-    # via shap
     # via statsmodels
-    # via streamlit
 pandas-stubs==2.2.0.240218
     # via predictables
 parso==0.8.3
@@ -257,11 +214,9 @@ pexpect==4.9.0
     # via ipython
     # via predictables
 pillow==10.2.0
-    # via bokeh
     # via matplotlib
     # via predictables
     # via reportlab
-    # via streamlit
 platformdirs==4.2.0
     # via jupyter-core
     # via predictables
@@ -276,8 +231,6 @@ polars==0.20.23
 prompt-toolkit==3.0.43
     # via ipython
     # via predictables
-protobuf==4.25.3
-    # via streamlit
 psutil==5.9.8
     # via ipykernel
     # via predictables
@@ -294,7 +247,6 @@ pyarrow==15.0.0
     # via fastexcel
     # via predictables
     # via pygwalker
-    # via streamlit
 pycodestyle==2.11.1
     # via flake8
     # via predictables
@@ -302,8 +254,6 @@ pydantic==2.7.1
     # via pygwalker
 pydantic-core==2.18.2
     # via pydantic
-pydeck==0.9.1
-    # via streamlit
 pyflakes==3.2.0
     # via flake8
     # via predictables
@@ -313,8 +263,9 @@ pygls==1.3.0
 pygments==2.17.2
     # via ipython
     # via predictables
-    # via rich
 pygwalker==0.4.8.5
+    # via predictables
+pyodbc==5.1.0
     # via predictables
 pyparsing==3.1.1
     # via matplotlib
@@ -343,56 +294,38 @@ pytz==2024.1
     # via predictables
     # via pygwalker
 pyyaml==6.0.1
-    # via bokeh
     # via predictables
     # via pyaml
 pyzmq==25.1.2
     # via ipykernel
     # via jupyter-client
     # via predictables
-referencing==0.35.1
-    # via jsonschema
-    # via jsonschema-specifications
 reportlab==4.0.9
     # via predictables
 requests==2.31.0
     # via kanaries-track
     # via pygwalker
     # via segment-analytics-python
-    # via streamlit
-rich==13.7.1
-    # via streamlit
-rpds-py==0.18.1
-    # via jsonschema
-    # via referencing
 ruff==0.3.3
     # via ruff-lsp
 ruff-lsp==0.0.53
 scikit-learn==1.3.2
     # via predictables
-    # via shap
 scipy==1.12.0
     # via catboost
     # via lightgbm
     # via predictables
     # via scikit-learn
-    # via shap
     # via statsmodels
     # via xgboost
 segment-analytics-python==2.2.3
     # via pygwalker
-shap==0.45.1
-    # via streamlit-shap
 six==1.16.0
     # via asttokens
     # via catboost
     # via patsy
     # via predictables
     # via python-dateutil
-slicer==0.0.8
-    # via shap
-smmap==5.0.1
-    # via gitdb
 sqlalchemy==2.0.30
     # via pygwalker
 sqlglot==23.17.0
@@ -402,36 +335,24 @@ stack-data==0.6.3
     # via predictables
 statsmodels==0.14.0
     # via predictables
-streamlit==1.34.0
-    # via predictables
-streamlit-shap==1.0.2
-    # via predictables
 tenacity==8.2.3
     # via plotly
     # via predictables
-    # via streamlit
 threadpoolctl==3.3.0
     # via predictables
     # via scikit-learn
 tokenize-rt==5.2.0
     # via predictables
-toml==0.10.2
-    # via streamlit
 tomli==2.0.1
     # via coverage
     # via mypy
     # via pytest
-toolz==0.12.1
-    # via altair
 tornado==6.4
-    # via bokeh
     # via ipykernel
     # via jupyter-client
     # via predictables
-    # via streamlit
 tqdm==4.66.1
     # via predictables
-    # via shap
 tqdm-stubs==0.2.1
     # via predictables
 traitlets==5.14.1
@@ -471,8 +392,6 @@ types-six==1.16.21.20240311
 types-tqdm==4.66.0.20240106
     # via predictables
 typing-extensions==4.10.0
-    # via altair
-    # via bokeh
     # via cattrs
     # via ipython
     # via mypy
@@ -482,7 +401,6 @@ typing-extensions==4.10.0
     # via pygwalker
     # via ruff-lsp
     # via sqlalchemy
-    # via streamlit
 tzdata==2024.1
     # via pandas
     # via predictables
@@ -490,8 +408,6 @@ urllib3==2.2.1
     # via requests
 wasmtime==12.0.0
     # via gw-dsl-parser
-watchdog==4.0.0
-    # via streamlit
 wcwidth==0.2.13
     # via predictables
     # via prompt-toolkit

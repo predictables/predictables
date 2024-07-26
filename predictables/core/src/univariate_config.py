@@ -13,12 +13,38 @@ class UnivariateConfig:
 
     model_name: str
     df_train: pl.LazyFrame
-    df_val: pl.LazyFrame
-    target_column_name: str
-    feature_column_names: List[str]
-    time_series_validation: bool
+    df_val_: pl.LazyFrame
+    target_column_name: str | None = None
+    feature_column_names: List[str] | None = None
+    time_series_validation: bool = True
     cv_column_name: str = "cv"
     cv_folds: pl.Series | None = None
+
+    def __post_init__(self):
+        """Initialize the configuration."""
+        if self.feature_column_names is None:
+            self.feature_column_names = self.df_train.columns
+
+        # Raise a ValueError if the dataframe is empty
+        if self.df_train.collect().shape[0] == 0:
+            raise ValueError(
+                "Empty dataframes are not supported. Training data is empty."
+            )
+
+        if self.df_val_.collect().shape[0] == 0:
+            raise ValueError(
+                "Empty dataframes are not supported. Validation data is empty."
+            )
+
+        # Raise a key error if the target column is not in the dataframe
+        if self.target_column_name not in self.df_train.columns:
+            raise KeyError(
+                f"Target column {self.target_column_name} not found in training data."
+            )
+        if self.target_column_name not in self.df_val_.columns:
+            raise KeyError(
+                f"Target column {self.target_column_name} not found in validation data."
+            )
 
     @property
     def df(self) -> pl.LazyFrame:
@@ -33,12 +59,17 @@ class UnivariateConfig:
     @property
     def df_val(self) -> pl.LazyFrame:
         """Return the validation data."""
-        return self.df_val
+        return self.df_val_
 
     @df_val.setter
     def df_val(self, df: pl.LazyFrame) -> None:
         """Set the validation data."""
-        self.df_val = df
+        self.df_val_ = df
+
+    @property
+    def target(self) -> str:
+        """Return the target column name."""
+        return self.target_column_name if self.target_column_name else "target"
 
     @property
     def features(self) -> List[str]:
@@ -48,7 +79,7 @@ class UnivariateConfig:
     @property
     def X_y_by_cv(self) -> Generator[tuple[pd.DataFrame, pd.DataFrame], None, None]:
         """Return the training and validation data as a generator."""
-        for i in range(self.cv_folds.min(), self.cv_folds.max() + 1):
+        for i in range(self.cv_folds.min() + 1, self.cv_folds.max() + 1):
             df_train, df_val = (
                 self.filter_for_time_series(self.df, i)
                 if self.time_series_validation
