@@ -8,7 +8,7 @@ from predictables.core.src.univariate_config import UnivariateConfig
 from predictables.core.src.univariate_feature_transformer.base_feature_transformer import (
     UnivariateFeatureTransformer,
 )
-from predictables.core.src.univariate_feature_evaluator import (
+from predictables.core.src.OLD_univariate_feature_evaluator import (
     UnivariateFeatureEvaluator,
 )
 from predictables.core.src.univariate_report_builder import UnivariateReportBuilder
