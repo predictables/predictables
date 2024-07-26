@@ -167,6 +167,12 @@ class HitRatioFineTuningDB(DuckDB):
 
 
 @dataclass
+class HitRatioFineTuningDB(DuckDB):
+    db_file: str = "/sas/data/project/EG/ActShared/SmallBusiness/Modeling/dat/hit_ratio_fine_tuning_db.duckdb"
+    slots = "db_file"
+
+
+@dataclass
 class DuckPond(DuckDB):
     db_file: str = "/sas/data/project/EG/ActShared/SmallBusiness/aw/dbt/duckpond.duckdb"
     slots = "db_file"
