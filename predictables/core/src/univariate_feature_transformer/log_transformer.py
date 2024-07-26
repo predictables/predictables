@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from predictables.core.src.feature_transformers.base_feature_transformer import BaseFeatureTransformer
+from predictables.core.src.univariate_feature_transformer.base_feature_transformer import BaseFeatureTransformer
 import polars as pl
 from typing import List
 import logging

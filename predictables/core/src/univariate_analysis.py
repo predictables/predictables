@@ -5,7 +5,7 @@ from typing import List, Tuple
 
 from predictables.util import to_pl_lf
 from predictables.core.src.univariate_config import UnivariateConfig
-from predictables.core.src.feature_transformers.base_feature_transformer import (
+from predictables.core.src.univariate_feature_transformer.base_feature_transformer import (
     UnivariateFeatureTransformer,
 )
 from predictables.core.src.univariate_feature_evaluator import (
