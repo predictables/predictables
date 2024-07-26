@@ -1,0 +1,161 @@
+============================= test session starts ==============================
+platform linux -- Python 3.9.19, pytest-8.0.0, pluggy-1.4.0
+rootdir: /home/andy/predictables
+configfile: pyproject.toml
+plugins: cov-4.1.0, flake8-1.1.1, mock-3.14.0
+collected 29 items
+
+predictables/core/tests/test_base_feature_transformer.py ...             [ 10%]
+predictables/core/tests/test_feature_evaluator.py ....FFF
+
+=================================== FAILURES ===================================
+____________________________ test_evaluate_feature _____________________________
+
+mocker = <pytest_mock.plugin.MockerFixture object at 0x7f91873bc280>
+univariate_feature_evaluator = UnivariateFeatureEvaluator(config=UnivariateConfig(model_name='test_model', df_train=<LazyFrame at 0x7F91873BC430>, df...re_column_names=['feature1', 'feature2'], time_series_validation=True, cv_column_name='cv', cv_folds=None), results=[])
+
+    def test_evaluate_feature(mocker, univariate_feature_evaluator):
+        """Test the feature evaluation method."""
+        mock_univariate = mocker.patch("predictables.univariate.Univariate", autospec=True)
+        mock_results = pl.DataFrame({"AUC": [0.7]}).lazy()
+        mock_univariate.return_value.results = mock_results
+        mock_univariate.return_value.cv_dict = {
+            1: MagicMock(results=mock_results),
+            2: MagicMock(results=mock_results),
+        }
+    
+>       univariate_feature_evaluator.evaluate_feature("feature1")
+
+predictables/core/tests/test_feature_evaluator.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+predictables/core/src/univariate_feature_evaluator/univariate_feature_evaluator.py:27: in evaluate_feature
+    univariate = Univariate(
+predictables/univariate/_Univariate.py:179: in __init__
+    att = [
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f9186eff7f0>
+
+    att = [
+>       self.cv_dict[fold].results.select(attribute).collect().item(0, 0)
+        for fold in self.unique_folds
+    ]
+E   KeyError: 1
+
+predictables/univariate/_Univariate.py:180: KeyError
+------------------------------ Captured log call -------------------------------
+07:37:35 ERROR Error evaluating feature feature1: 1
+_____________________ test_evaluate_feature_error_handling _____________________
+
+mocker = <pytest_mock.plugin.MockerFixture object at 0x7f9186e62af0>
+univariate_feature_evaluator = UnivariateFeatureEvaluator(config=UnivariateConfig(model_name='test_model', df_train=<LazyFrame at 0x7F9186E62190>, df...re_column_names=['feature1', 'feature2'], time_series_validation=True, cv_column_name='cv', cv_folds=None), results=[])
+
+    def test_evaluate_feature_error_handling(mocker, univariate_feature_evaluator):
+        """Test error handling in the feature evaluation method."""
+        mock_univariate = mocker.patch(
+            "predictables.univariate.Univariate", side_effect=Exception("Test error")
+        )
+    
+        with pytest.raises(Exception, match="Test error"):
+>           univariate_feature_evaluator.evaluate_feature("feature1")
+
+predictables/core/tests/test_feature_evaluator.py:122: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+predictables/core/src/univariate_feature_evaluator/univariate_feature_evaluator.py:27: in evaluate_feature
+    univariate = Univariate(
+predictables/univariate/_Univariate.py:179: in __init__
+    att = [
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f9186190e80>
+
+    att = [
+>       self.cv_dict[fold].results.select(attribute).collect().item(0, 0)
+        for fold in self.unique_folds
+    ]
+E   KeyError: 1
+
+predictables/univariate/_Univariate.py:180: KeyError
+
+During handling of the above exception, another exception occurred:
+
+mocker = <pytest_mock.plugin.MockerFixture object at 0x7f9186e62af0>
+univariate_feature_evaluator = UnivariateFeatureEvaluator(config=UnivariateConfig(model_name='test_model', df_train=<LazyFrame at 0x7F9186E62190>, df...re_column_names=['feature1', 'feature2'], time_series_validation=True, cv_column_name='cv', cv_folds=None), results=[])
+
+    def test_evaluate_feature_error_handling(mocker, univariate_feature_evaluator):
+        """Test error handling in the feature evaluation method."""
+        mock_univariate = mocker.patch(
+            "predictables.univariate.Univariate", side_effect=Exception("Test error")
+        )
+    
+        with pytest.raises(Exception, match="Test error"):
+>           univariate_feature_evaluator.evaluate_feature("feature1")
+E           AssertionError: Regex pattern did not match.
+E            Regex: 'Test error'
+E            Input: '1'
+
+predictables/core/tests/test_feature_evaluator.py:122: AssertionError
+------------------------------ Captured log call -------------------------------
+07:37:35 ERROR Error evaluating feature feature1: 1
+_______________________ test_evaluate_multiple_features ________________________
+
+mocker = <pytest_mock.plugin.MockerFixture object at 0x7f91861f5280>
+univariate_feature_evaluator = UnivariateFeatureEvaluator(config=UnivariateConfig(model_name='test_model', df_train=<LazyFrame at 0x7F91861F5190>, df...re_column_names=['feature1', 'feature2'], time_series_validation=True, cv_column_name='cv', cv_folds=None), results=[])
+
+    def test_evaluate_multiple_features(mocker, univariate_feature_evaluator):
+        """Test evaluating multiple features."""
+        mock_univariate = mocker.patch("predictables.univariate.Univariate", autospec=True)
+        mock_results1 = pl.DataFrame({"feature": ["feature1"], "AUC": [0.7]}).lazy()
+        mock_results2 = pl.DataFrame({"feature": ["feature2"], "AUC": [0.8]}).lazy()
+        mock_univariate.side_effect = [
+            MagicMock(
+                results=mock_results1,
+                cv_dict={
+                    1: MagicMock(results=mock_results1),
+                    2: MagicMock(results=mock_results1),
+                },
+            ),
+            MagicMock(
+                results=mock_results2,
+                cv_dict={
+                    1: MagicMock(results=mock_results2),
+                    2: MagicMock(results=mock_results2),
+                },
+            ),
+        ]
+    
+>       univariate_feature_evaluator.evaluate_feature("feature1")
+
+predictables/core/tests/test_feature_evaluator.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+predictables/core/src/univariate_feature_evaluator/univariate_feature_evaluator.py:27: in evaluate_feature
+    univariate = Univariate(
+predictables/univariate/_Univariate.py:179: in __init__
+    att = [
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f9186104cd0>
+
+    att = [
+>       self.cv_dict[fold].results.select(attribute).collect().item(0, 0)
+        for fold in self.unique_folds
+    ]
+E   KeyError: 1
+
+predictables/univariate/_Univariate.py:180: KeyError
+------------------------------ Captured log call -------------------------------
+07:37:35 ERROR Error evaluating feature feature1: 1
+=============================== warnings summary ===============================
+predictables/core/tests/test_feature_evaluator.py::test_evaluate_feature
+predictables/core/tests/test_feature_evaluator.py::test_evaluate_feature_error_handling
+predictables/core/tests/test_feature_evaluator.py::test_evaluate_multiple_features
+  /home/andy/predictables/.venv/lib/python3.9/site-packages/statsmodels/regression/linear_model.py:956: RuntimeWarning: divide by zero encountered in log
+    llf = -nobs2*np.log(2*np.pi) - nobs2*np.log(ssr / nobs) - nobs2
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED predictables/core/tests/test_feature_evaluator.py::test_evaluate_feature
+FAILED predictables/core/tests/test_feature_evaluator.py::test_evaluate_feature_error_handling
+FAILED predictables/core/tests/test_feature_evaluator.py::test_evaluate_multiple_features
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 3 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+=================== 3 failed, 7 passed, 3 warnings in 2.34s ====================

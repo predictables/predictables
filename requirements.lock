@@ -271,9 +271,12 @@ pytest==8.0.0
     # via predictables
     # via pytest-cov
     # via pytest-flake8
+    # via pytest-mock
 pytest-cov==4.1.0
     # via predictables
 pytest-flake8==1.1.1
+    # via predictables
+pytest-mock==3.14.0
     # via predictables
 python-dateutil==2.8.2
     # via arrow

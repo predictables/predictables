@@ -35,6 +35,21 @@ class BaseFeatureEvaluator:
         return self.config.target_column_name
 
     @property
+    def target(self) -> str:
+        """Return the target column name."""
+        return self.config.target_column_name
+
+    @property
+    def feature_column_names(self) -> List[str]:
+        """Return the feature column names."""
+        return self.config.feature_column_names
+
+    @property
+    def features(self) -> List[str]:
+        """Return the feature column names."""
+        return self.config.feature_column_names
+
+    @property
     def time_series_validation(self) -> bool:
         """Return whether to use time series validation."""
         return self.config.time_series_validation
