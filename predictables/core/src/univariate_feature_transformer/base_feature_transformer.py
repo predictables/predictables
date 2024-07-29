@@ -3,42 +3,39 @@
 from __future__ import annotations
 
 import polars as pl
-from typing import List
+from typing import List, Protocol
 from dataclasses import dataclass
 
-from predictables.core.src.univariate_config import UnivariateConfig
+from predictables.core.src.univariate_config import UnivariateConfigInterface
+
+
+@dataclass
+class FeatureTransformerInterface(Protocol):
+    def transform_features(self) -> list[str]:
+        """Transform features and return the list of transformed feature names."""
+        ...
 
 
 @dataclass
 class BaseFeatureTransformer:
     """Base class for feature transformers."""
 
-    config: UnivariateConfig
+    config: UnivariateConfigInterface
 
     @property
     def df(self) -> pl.LazyFrame:
         """Return the training data."""
-        return self.config.df_train
-
-    @df.setter
-    def df(self, df: pl.LazyFrame) -> None:
-        """Set the training data."""
-        self.config.df_train = df
+        return self.config.df
 
     @property
     def df_val(self) -> pl.LazyFrame:
         """Return the validation data."""
         return self.config.df_val
 
-    @df_val.setter
-    def df_val(self, df: pl.LazyFrame) -> None:
-        """Set the validation data."""
-        self.config.df_val = df
-
     @property
-    def feature_column_names(self) -> List[str]:
+    def features(self) -> List[str]:
         """Return the feature column names."""
-        return self.config.feature_column_names
+        return self.config.features
 
     def transform_features(self) -> List[str]:
         """Transform features and return the list of transformed feature names."""

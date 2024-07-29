@@ -1,96 +1,91 @@
 """Perform a full univariate analysis."""
 
 from __future__ import annotations
-from typing import List, Tuple
-
-from predictables.util import to_pl_lf
-from predictables.core.src.univariate_config import UnivariateConfig
+from tqdm import tqdm
+from predictables.core.src.univariate_feature_evaluator import (
+    UnivariateFeatureEvaluator,
+    FeatureEvaluatorInterface,
+)
+from predictables.core.src.univariate_config import UnivariateConfigInterface
 from predictables.core.src.univariate_feature_transformer.base_feature_transformer import (
+    FeatureTransformerInterface,
     UnivariateFeatureTransformer,
 )
-from predictables.core.src.OLD_univariate_feature_evaluator import (
-    UnivariateFeatureEvaluator,
+from predictables.core.src.univariate_report_builder import (
+    UnivariateReportBuilder,
+    ReportBuilderInterface,
 )
-from predictables.core.src.univariate_report_builder import UnivariateReportBuilder
-from dataclasses import dataclass
-from tqdm import tqdm
-import polars as pl
-
-from predictables.util import Report
+from predictables.util import Report, to_pl_lf
 
 
-@dataclass
 class UnivariateAnalysis:
     """Perform a full univariate analysis."""
 
-    config: UnivariateConfig
-
-    feature_transformer: UnivariateFeatureTransformer
-    feature_evaluator: UnivariateFeatureEvaluator
-    report_builder: UnivariateReportBuilder
-
-    reports: List[Report]
-
-    @property
-    def df(self) -> pl.LazyFrame:
-        """Return the training data."""
-        return to_pl_lf(self.config.df_train)
-
-    @df.setter
-    def df(self, df: pl.LazyFrame) -> None:
-        """Update the training data."""
-        self.config.df_train = df
+    def __init__(
+        self,
+        config: UnivariateConfigInterface,
+        feature_transformer: FeatureTransformerInterface | None = None,
+        feature_evaluator: FeatureEvaluatorInterface | None = None,
+        report_builder: ReportBuilderInterface | None = None,
+    ) -> None:
+        self._config = config
+        self._feature_transformer = feature_transformer
+        self._feature_evaluator = feature_evaluator
+        self._report_builder = report_builder
 
     @property
-    def df_val(self) -> pl.LazyFrame:
-        """Return the validation data."""
-        return to_pl_lf(self.config.df_val)
-
-    @df_val.setter
-    def df_val(self, df: pl.LazyFrame) -> None:
-        """Update the validation data."""
-        self.config.df_val = df
+    def config(self) -> UnivariateConfigInterface:
+        """Return the univariate config."""
+        return self._config
 
     @property
-    def cv_folds(self) -> pl.Series:
-        """Return the cross-validation fold labels."""
+    def feature_transformer(self) -> FeatureTransformerInterface:
+        """Return the feature transformer."""
+        if self._feature_transformer is None:
+            self._feature_transformer = UnivariateFeatureTransformer(self.config)
+
         return (
-            self.df.select([pl.col(self.config.cv_column_name)]).collect().to_series()
-            if self.config.cv_folds is None
-            else self.config.cv_folds
+            UnivariateFeatureTransformer(self.config)
+            if self._feature_transformer is None
+            else self._feature_transformer
         )
 
-    @cv_folds.setter
-    def cv_folds(self, cv_folds: pl.Series) -> None:
-        """Update the cross-validation fold labels."""
-        self.config.cv_folds = cv_folds
+    @property
+    def feature_evaluator(self) -> FeatureEvaluatorInterface:
+        """Return the feature evaluator."""
+        if self._feature_evaluator is None:
+            self._feature_evaluator = UnivariateFeatureEvaluator(self.config)
 
-    def __post_init__(self) -> None:
-        """Initialize the univariate analysis."""
-        self.feature_transformer = UnivariateFeatureTransformer(self.config)
-        self.feature_evaluator = UnivariateFeatureEvaluator(self.config)
-
-        self.features = self.feature_transformer.transform_features()
-        self.reports = []
-
-    def _initialize_cv_folds(self, cv_folds: pl.Series | None) -> pl.Series:
-        """Return the cross-validation fold labels."""
         return (
-            self.df.select([pl.col(self.config.cv_column_name)]).collect().to_series()
-            if cv_folds is None
-            else cv_folds
+            UnivariateFeatureEvaluator(self.config)
+            if self._feature_evaluator is None
+            else self._feature_evaluator
         )
 
-    def perform_analysis(self) -> None:
+    @property
+    def report_builder(self) -> ReportBuilderInterface:
+        """Return the report builder."""
+        if self._report_builder is None:
+            self._report_builder = UnivariateReportBuilder(self.config)
+
+        return (
+            UnivariateReportBuilder(self.config)
+            if self._report_builder is None
+            else self._report_builder
+        )
+
+    def perform_analysis(self) -> list[str]:
         """Perform the univariate analysis for each feature."""
-        for feature in tqdm(self.features, desc="Performing univariate analysis"):
+        for feature in tqdm(
+            self.config.features, desc="Performing univariate analysis"
+        ):
             self.feature_evaluator.evaluate_feature(feature)
-        self.sorted_features = self.feature_evaluator.sort_features()
+        return self.feature_evaluator.sort_features()
 
     def build_report(
         self,
         filename: str | None = None,
-        margins: Tuple[int, int] | None = None,
+        margins: tuple[int, int] | None = None,
         max_per_file: int = 25,
     ) -> None:
         """Build the univariate analysis report."""

@@ -4,7 +4,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import List
 import polars as pl
-from predictables.core.src.univariate_config import UnivariateConfig
+from predictables.core.src.univariate_config import UnivariateConfigInterface
+
 import logging
 
 
@@ -12,8 +13,7 @@ import logging
 class BaseFeatureEvaluator:
     """Base class for feature evaluators."""
 
-    config: UnivariateConfig
-
+    config: UnivariateConfigInterface
     @property
     def df(self) -> pl.LazyFrame:
         """Return the training data."""

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from predictables.core.src.univariate_feature_transformer.base_feature_transformer import BaseFeatureTransformer
 import polars as pl
 from typing import List
@@ -10,12 +9,14 @@ import logging
 
 __all__ = ["LogTransformer"]
 
-
-@dataclass
 class LogTransformer(BaseFeatureTransformer):
     """Apply log transformation to features based on skewness."""
 
-    _skewness_threshold: float = 0.5
+    def __init__(
+        self, 
+        skewness_threshold: float = 0.5
+    ):
+        self._skewness_threshold = skewness_threshold
 
     @property
     def skewness_threshold(self) -> float:
@@ -76,12 +77,20 @@ class LogTransformer(BaseFeatureTransformer):
         """
         try:
             log_feature = f"log1p_{feature}"
-            self.df = self.df.with_columns(pl.col(feature).log1p().alias(log_feature))
-            self.df_val = self.df_val.with_columns(
-                pl.col(feature).log1p().alias(log_feature)
+            self.config.df(
+                self.df.with_columns(
+                    pl.col(feature).log1p().alias(log_feature)
+                )
+            )
+            self.config.df_val(
+                self.df_val.with_columns(
+                    pl.col(feature).log1p().alias(log_feature)
+                )
             )
         except Exception as e:
-            logging.error(f"Error applying log transform to feature {feature}: {e}")
+            logging.error(
+                f"Error applying log transform to feature {feature}: {e}"
+            )
             raise
 
     def transform_features(self) -> List[str]:
@@ -93,7 +102,7 @@ class LogTransformer(BaseFeatureTransformer):
             A list of transformed feature names.
         """
         transformed_features = []
-        for feature in self.feature_column_names:
+        for feature in self.config.features:
             transformed_features.append(feature)
             try:
                 skewness = self._calculate_skewness(feature)

@@ -1,14 +1,20 @@
 """Builds a univariate analysis report for a given model and dataset."""
 
 from __future__ import annotations
-import polars as pl
+
 from dataclasses import dataclass
-from tqdm import tqdm
+from datetime import datetime
 from typing import List
 
-from predictables.util import Report
+import polars as pl
+from tqdm import tqdm
+
 from predictables.univariate import Univariate
-from datetime import datetime
+from predictables.util import Report
+from predictables.util.formatter import FormatterInterface, PercentFormatter
+
+from predictables.core.src.univariate_config import UnivariateConfig, UnivariateConfigInterface
+from predictables.core.src.univariate_feature_transformer import FeatureTransformerInterface
 
 
 def _format_values(col: str) -> pl.Expr:
@@ -30,16 +36,68 @@ def segment_features_for_report(
         features[i : i + max_per_file] for i in range(0, len(features), max_per_file)
     ]
 
+class UnivariateReportConfig:
+    """Configuration options for a univariate report."""
 
-@dataclass
+    def __init__(
+        self,
+        filename: str | None,
+        margins: List[float] | None,
+        max_per_file: int = 25
+    ):
+        self._filename = filename
+        self._margins = margins
+        self._max_per_file = max_per_file
+
+    @property
+    def filename(self) -> str:
+        """Return either the user-provided filename or a default if None is provided."""
+        return (
+            "univariate_analysis"
+            if self._filename is None
+            else self._filename
+        )
+
+    @filename.setter
+    def filename(self, name: str) -> None:
+        """Set the filename."""
+        self._filename = name.replace(".pdf", "")
+
+    @property
+    def margins(self) -> str:
+        """Return a tuple with the margins or a default if None is provided."""
+        return (
+            (0.5, 0.5, 0.5, 0.5)
+            if self._margins is None
+            else self._margins
+        )
+
 class UnivariateReportBuilder:
     """Builds a univariate analysis report for a given model and dataset."""
 
-    sorted_features: pl.LazyFrame
-    model_name: str
+    def __init__(
+        self,
+        config: UnivariateConfigInterface,
+        feature_evaluator: FeatureEvaluatorInterface
+    ): 
+        self._config = config
+        self._feature_evaluator = feature_evaluator
+
+    @property
+    def config(self) -> UnivariateConfigInterface:
+        """Return the configuration for the univariate analysis."""
+        return self._config
+
+    @property
+    def feature_evaluator(self) -> FeatureEvaluatorInterface:
+        """Return the feature evaluator."""
+
+
+    # sorted_features: pl.LazyFrame
+    # model_name: str
 
     def build_report(
-        self, filename: str | None, margins: List[float] | None, max_per_file: int
+        self
     ) -> None:
         """Build a univariate analysis report."""
         filestem = self._get_file_stem(filename)
